@@ -1,0 +1,21 @@
+1. Lag deg github konto
+2. Legg til ssh-nøkkel til kontoen din på github
+3. Si ifra til Eirik at han skal adde deg som contributor
+
+sudo apt-get install git-core -y
+
+git config --global user.name "Tekkub"
+git config --global user.email "tekkub@gmail.com"
+
+mkdir cloud-storage-vault
+cd cloud-storage-vault
+git init
+git remote add origin git@github.com:zerqent/cloud-storage-vault
+git pull origin master
+
+
+# Basic git
+git add file                    # Legger til fil som skal være med i neste commit
+git commit -m "Commit beskjed"  # Commit
+git push origin master          # Sender dine usendte commits til repoet
+git pull                        # Henter andres commit fra repoet
