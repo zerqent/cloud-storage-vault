@@ -1,3 +1,4 @@
+
 1. Lag deg github konto
 2. Legg til ssh-nøkkel til kontoen din på github
 3. Si ifra til Eirik at han skal adde deg som contributor
