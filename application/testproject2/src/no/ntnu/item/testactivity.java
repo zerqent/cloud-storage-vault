@@ -10,7 +10,7 @@ public class testactivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        System.out.println("Hello World");
+        System.out.println("Hello World2");
         setContentView(R.layout.main);
     }
 }
