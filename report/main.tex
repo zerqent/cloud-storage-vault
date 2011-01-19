@@ -1,0 +1,175 @@
+\documentclass[english,12pt,a4paper]{book}
+%TODO: Correct format, not a4
+\usepackage[T1]{fontenc} % In case we want special characters
+\usepackage[utf8]{inputenc} % We are all writing in UTF-8
+
+\usepackage[numbers]{natbib} % We need to tweak our referencing a bit.
+\usepackage{appendix} % Fixes formatting of appendices
+\usepackage[printonlyused]{acronym} % Package to handle the acronym list
+\usepackage{graphicx} % We *may* use images
+\graphicspath{{images/}} % and it is clean to put them in a separate dir
+\usepackage{hyperref} % Internal and external links is nice
+\hypersetup{pdfborder=0 0 0} % ..especially without red borders
+\usepackage{amstext} % To support \text in math mode
+
+% Packages and settings for code listings
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{upquote}
+\usepackage{xcolor}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{
+language=Java,
+keywordstyle=\bfseries\ttfamily\color[rgb]{0,0,1},
+identifierstyle=\ttfamily,
+commentstyle=\color[rgb]{0.133,0.545,0.133},
+stringstyle=\ttfamily\color[rgb]{0.627,0.126,0.941},
+showstringspaces=false,
+basicstyle=\small,
+numberstyle=\footnotesize,
+numbers=left,
+stepnumber=1,
+numbersep=10pt,
+tabsize=2,
+breaklines=true,
+prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+breakatwhitespace=false,
+aboveskip={1.5\baselineskip},
+columns=fixed,
+upquote=true,
+extendedchars=true,
+frame=bottomline,
+inputencoding=utf8
+}
+
+% Set equal margins on book style
+% \usepackage{layout} % Use \layout to print out the margins (debug)
+\usepackage{geometry}
+\geometry{bindingoffset=1cm}
+
+% Restyle chapter headers
+\usepackage{fix-cm}
+\makeatletter
+\renewcommand{\@makechapterhead}[1]{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \vspace{15pt}%
+    \ifnum \c@secnumdepth >\m@ne
+        %\hfill\huge\scshape \@chapapp\space
+        \hfill\fontsize{60}{90}\selectfont \thechapter % Chapter number
+        \par\nobreak
+        \vskip 20\p@
+    \fi
+    \interlinepenalty\@M
+    \hfill \Huge \scshape #1\par % Chapter title
+    \vspace{5pt}
+    \hrule
+    \nobreak
+    \vskip 40\p@
+  }}
+\makeatother
+
+\author{Eirik Haver \and Eivind Melvold \and Pål Ruud}
+\title{Master thesis - Cloud Storage Vault}
+\date{\today}
+
+\begin{document}
+
+\include{title}
+\pagestyle{empty}
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\pagestyle{plain}
+\pagenumbering{Roman}
+\setcounter{page}{1}
+
+%  Writers should follow a checklist consisting of:
+% Motivation: Why do we care about the problem and results?
+% Problem Statement: What problem are we trying to solve? Scope/limits.
+% Approach: How did we go about solving or making progress on the problem?
+% Results: What is the answer? Numbers, not vague 'very', 'small' etc.
+% Conclusions: What are the implications of your answer? Further work.
+%
+%  Each section is typically a single sentence, although there is room for
+%  creativity.
+
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+The work behind this project report was carried out during the spring semester
+in 2011 at the Norwegian University of Science and Technology (NTNU), Department
+of Telematics (ITEM).
+\vspace{13pt}
+
+\begin{center}
+Eirik Haver, Eivind Melvold and Pål Ruud
+\vspace{13pt}
+
+\end{center}
+
+\tableofcontents
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\lstlistlistingname}
+\lstlistoflistings
+\cleardoublepage
+
+\chapter*{Acronyms}
+\addcontentsline{toc}{chapter}{Acronyms}
+
+\begin{acronym}
+\acro{SHA}{Secure Hash Algorithm}
+\end{acronym}
+
+%**************************************%
+\chapter{Introduction}
+%**************************************%
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{Method}
+
+\section{Outline}
+
+The work is presented as per the following chapters:
+
+\paragraph{Chapter 2} provides background knowledge of the technologies and
+software used.
+
+%**************************************%
+\chapter{Background technologies}
+%**************************************%
+
+\chapter{Delete me}
+Just delete this\cite{s_nistround2}, at some point \ac{SHA}.
+
+%**************************************%
+\chapter{Conclusion and Future Work}
+%**************************************%
+
+% BibTeX bibliography lives in external file
+\bibliographystyle{plainnat}
+\bibliography{references}
+% TODO: Can we fix references in order of apperance?
+
+\appendix
+\appendixpage
+\addappheadtotoc
+% Appendix goes here
+
+
+\end{document}
