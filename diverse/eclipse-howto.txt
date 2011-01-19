@@ -1,0 +1,11 @@
+1. Sjekk ut GIT repo
+2. Fiks maven som i guiden (drit i eclipse ting)
+
+3. Last ned Eclipse Classic (64 bit)
+4. Legg inn ADT: https://dl-ssl.google.com/android/eclipse/ (0.9.9+)
+    - Spesifiser hvor android sdk ligger (se i Windows-Preferences-Android)
+3. Legg inn m2eclipse: http://m2eclipse.sonatype.org/sites/m2e (0.12.0+)
+4. Legg også inn Android pluginen:
+https://svn.codespot.com/a/eclipselabs.org/m2eclipse-android-integration/updates/m2eclipse-android-integration/
+
+5. Importer som MAVEN project inn i eclipse (Existing maven project)
