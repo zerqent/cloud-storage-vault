@@ -3,20 +3,25 @@
       package="no.ntnu.item"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:label="@string/testactivity" android:icon="@drawable/icon">
-        <activity android:label="@string/testactivity" android:name="testactivity">
+    <application android:label="@string/TestActivity" android:icon="@drawable/icon">
+        <activity android:label="@string/TestActivity" android:name="TestActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:label="@string/DownloadActivity" android:name="DownloadActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:label="@string/BrowseActivity" android:name="BrowseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-    <application android:label="@string/downloadactivity" android:icon="@drawable/icon">
-        <activity android:label="@string/downloadactivity" android:name="downloadactivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
+
 </manifest> 

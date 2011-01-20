@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="testactivity">testactivity</string>
-    <string name="downloadactivity">downloadactivity</string>
+    <string name="TestActivity">Menu</string>
+    <string name="DownloadActivity">Choose File to Download</string>
+    <string name="BrowseActivity">Choose File to Upload</string>
 </resources>
