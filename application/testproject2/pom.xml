@@ -26,10 +26,17 @@
            <scope>provided</scope>
         </dependency>
         <dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>4.8.2</version>
+		</dependency>
+        <dependency>
+            <!-- S3 Library -->
       		<groupId>net.java.dev.jets3t</groupId>
       		<artifactId>jets3t</artifactId>
       		<version>0.8.0</version>
-    	</dependency>
+        </dependency>
+
    </dependencies>
 
   <build>
