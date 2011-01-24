@@ -10,6 +10,7 @@ import java.util.Stack;
 import no.ntnu.item.exception.CloudServiceException;
 import no.ntnu.item.exception.DirDoesNotExistException;
 import no.ntnu.item.exception.FileNotFoundException;
+import no.ntnu.item.file.FileContainer;
 import no.ntnu.item.provider.CloudFileManager;
 
 import org.jets3t.service.S3ServiceException;
@@ -37,11 +38,21 @@ public class AmazonS3FileManager implements CloudFileManager {
 	}
 	
 	public void chDir(String dir) throws DirDoesNotExistException, CloudServiceException {
+		if(dir.equals("..")) {
+			if (this.location.size() > 0) {
+				this.location.pop();
+			}
+			return;
+		} else if(dir.equals(".")) {
+			return;
+		}
+		
+		
 		String tmp = this.getAbsPath(dir);
-//		if (!this.isDirectory(dir)) {
-//			System.out.println("Not directory");
-//			throw new DirDoesNotExistException(null);
-//		}
+		if (!this.isDirectory(dir)) {
+			System.out.println("Not directory");
+			throw new DirDoesNotExistException(null);
+		}
 		
 		if (dir.startsWith("/")) {
 			this.location = new Stack<String>();
@@ -92,40 +103,46 @@ public class AmazonS3FileManager implements CloudFileManager {
 		if(path.endsWith("/") || abspath.endsWith("/")) {
 			return false;
 		}
-		try {
-			boolean onServer = this.provider.fileExists(abspath);
-			return onServer;
-			// TODO: Need to actually check on server;
-		} catch (S3ServiceException e) {
-			throw new CloudServiceException(null);
-		}
+		return this.provider.fileExists(abspath.substring(1));
+			
 	}
 
 	public boolean isDirectory(String path) throws CloudServiceException {
-		String abspath = this.getAbsPath(path) + "/";
-//		if (!path.endsWith("/") && !abspath.endsWith("/")) {
-//			return false;
-//		}
-		try {
-			boolean onServer = this.provider.fileExists(abspath);
-			return onServer;
-		} catch (S3ServiceException e) {
-			throw new CloudServiceException(null);
+		String abspath = this.getAbsPath(path);
+		if (!abspath.endsWith("/")) {
+			abspath += "/";
 		}
+		return this.provider.fileExists(abspath.substring(1));
 	}
 
-	public File download(String path) throws FileNotFoundException,
+	public FileContainer download(String path) throws FileNotFoundException,
 			CloudServiceException {
+		if (!isFile(path)) {
+			throw new FileNotFoundException("File does not exist on server");
+		}
 		String abspath = this.getAbsPath(path);
-		String a = this.provider.downloadFile(abspath);
-		// TODO: Need to look at how binary data/not text will work
-		return null;
+		return this.provider.downloadFile(abspath);
 	}
 
 	public void upload(File file, String destination) throws FileNotFoundException,
 			CloudServiceException {
 		String abspath = this.getAbsPath(destination);
-		this.provider.uploadFile(file);
+		this.provider.uploadFile(file, this.getCwd());
+	}
+
+	@Override
+	public void delete(String path) throws FileNotFoundException,
+			CloudServiceException {
+		if (!isFile(path)) {
+			throw new FileNotFoundException("File does not exist on server");
+		}
+		String abspath = this.getAbsPath(path);
+		try {
+			this.provider.deleteFile(abspath);
+		} catch (S3ServiceException e) {
+			throw new FileNotFoundException("file not found - or is it?");
+		}
+		
 	}
 
 	

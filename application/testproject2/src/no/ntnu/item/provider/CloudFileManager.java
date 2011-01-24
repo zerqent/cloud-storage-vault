@@ -6,6 +6,7 @@ import java.util.List;
 import no.ntnu.item.exception.CloudServiceException;
 import no.ntnu.item.exception.DirDoesNotExistException;
 import no.ntnu.item.exception.FileNotFoundException;
+import no.ntnu.item.file.FileContainer;
 
 public interface CloudFileManager {
 	
@@ -19,7 +20,9 @@ public interface CloudFileManager {
 	
 	public boolean isDirectory(String path) throws CloudServiceException;
 	
-	public File download(String path) throws FileNotFoundException, CloudServiceException;
+	public FileContainer download(String path) throws FileNotFoundException, CloudServiceException;
 	
 	public void upload(File file, String destination) throws FileNotFoundException, CloudServiceException; // TODO: Better Exception for this
+	
+	public void delete(String path) throws FileNotFoundException, CloudServiceException;
 }

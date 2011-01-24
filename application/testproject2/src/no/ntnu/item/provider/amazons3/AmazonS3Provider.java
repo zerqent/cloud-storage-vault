@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import no.ntnu.item.exception.CloudServiceException;
+import no.ntnu.item.file.FileContainer;
 import no.ntnu.item.provider.CloudProvider;
 
 import org.jets3t.service.S3Service;
@@ -24,18 +26,16 @@ public class AmazonS3Provider{
 	private String defaultBucket = "testvault2"; // TODO: should user care about buckets?
 	private S3Bucket currentBucket;
 	
-	public AmazonS3Provider() {
+	public AmazonS3Provider() throws CloudServiceException {
 		// TODO: Should store these in a separate file, which should not go on github
 		String awsAccessKey = "";
 		String awsSecretKey = "";
 		this.awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
 		try {
 			this.s3Service = new RestS3Service(awsCredentials);
-			S3Bucket[] myBuckets = s3Service.listAllBuckets();
 			this.currentBucket = s3Service.getBucket(this.defaultBucket);
 		} catch (S3ServiceException e) {
-			// Fail to connect
-			e.printStackTrace();
+			throw new CloudServiceException("Unable to connect to Amazon S3");
 		}
 		
 	}
@@ -57,21 +57,24 @@ public class AmazonS3Provider{
 	}
 	
 	@SuppressWarnings("deprecation")
-	public boolean fileExists(String filename) throws S3ServiceException {
-		this.s3Service.getObjectDetails(this.currentBucket, filename);
-		return true;
+	public boolean fileExists(String filename) {
+		try {
+			this.s3Service.getObjectDetails(this.currentBucket, filename);
+			return true;
+		} catch (S3ServiceException e) {
+			return false;
+		}
 	}
 
-	public String downloadFile(String absolutePath) {
+	@SuppressWarnings("deprecation")
+	public FileContainer downloadFile(String absolutePath) {
+		FileContainer container;
 		try {
 			S3Object object = this.s3Service.getObject(this.currentBucket, absolutePath);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(object.getDataInputStream()));
-			String data = "";
-			String tmp = "";
-			while ((data = reader.readLine()) != null) {
-				tmp += data;
-			}
-			return tmp;
+			container = new FileContainer(object.getContentType());
+			container.setEncoding(object.getContentEncoding());
+			container.readDataBinary(object.getDataInputStream(), (int)object.getContentLength());
+			return container;
 		} catch (S3ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,32 +82,24 @@ public class AmazonS3Provider{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Should not happen
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public void uploadFile(String filename, String Data) {
-		S3Object object;
-		try {
-			object = new S3Object(filename, Data);
-			this.s3Service.putObject(this.currentBucket, object);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (S3ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void uploadFile(File file) {
+	public void uploadFile(File file, String placement) {
 		try {
 			S3Object object = new S3Object(file);
+			if (placement == null || placement.equals("") || placement.equals("/")) {
+				placement = "";
+			} else {
+				if (!placement.endsWith("/") && placement.length() > 1) {
+					placement += "/";
+				}	
+			}
+			
+			object.setKey(placement + file.getName());
 			this.s3Service.putObject(this.currentBucket, object);
 		} catch (NoSuchAlgorithmException e) {
 			// ON object creation
@@ -116,5 +111,9 @@ public class AmazonS3Provider{
 			// ON Upload
 			e.printStackTrace();
 		}
+	}
+	
+	public void deleteFile(String path) throws S3ServiceException {
+		this.s3Service.deleteObject(this.currentBucket, path);
 	}
 }
