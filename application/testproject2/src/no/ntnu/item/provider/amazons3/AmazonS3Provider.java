@@ -17,7 +17,7 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
-public class AmazonS3Provider implements CloudProvider {
+public class AmazonS3Provider{
 	
 	private AWSCredentials awsCredentials;
 	private S3Service s3Service;
@@ -37,7 +37,6 @@ public class AmazonS3Provider implements CloudProvider {
 			// Fail to connect
 			e.printStackTrace();
 		}
-		this.testFolders();
 		
 	}
 
@@ -48,39 +47,22 @@ public class AmazonS3Provider implements CloudProvider {
 	public void setCurrentBucket(S3Bucket currentBucket) {
 		this.currentBucket = currentBucket;
 	}
-
+	
+	public S3Bucket getCurrentBucket() {
+		return this.currentBucket;
+	}
+	
 	public S3Service getS3Service() {
 		return s3Service;
 	}
 	
-	
-	public boolean fileExists(String filename) {
-		try {
-			this.s3Service.getObjectDetails(this.currentBucket, filename);
-		} catch (S3ServiceException e) {
-			return false;
-		}
+	@SuppressWarnings("deprecation")
+	public boolean fileExists(String filename) throws S3ServiceException {
+		this.s3Service.getObjectDetails(this.currentBucket, filename);
 		return true;
+
 	}
 
-	@Override
-	public List<String>[] getFilesInRootDir() {
-		return null;
-	}
-
-	@Override
-	public List<String>[] getFilesInDirectory(String directory) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getAbsolutePath(File file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String downloadFile(String absolutePath) {
 		try {
 			S3Object object = this.s3Service.getObject(this.currentBucket, absolutePath);
@@ -104,13 +86,7 @@ public class AmazonS3Provider implements CloudProvider {
 		return null;
 	}
 
-	@Override
-	public File downloadFile(File file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
+
 	public void uploadFile(String filename, String Data) {
 		S3Object object;
 		try {
@@ -128,7 +104,6 @@ public class AmazonS3Provider implements CloudProvider {
 		}
 	}
 
-	@Override
 	public void uploadFile(File file) {
 		try {
 			S3Object object = new S3Object(file);
@@ -144,46 +119,4 @@ public class AmazonS3Provider implements CloudProvider {
 			e.printStackTrace();
 		}
 	}
-	
-	private void testCreation() {
-		// TODO: DELETE ME
-		// Create an empty object with a key/name, and print the object's details.
-		S3Object object = new S3Object("object");
-		System.out.println("S3Object before upload: " + object);
-
-		// Upload the object to our test bucket in S3.
-		try {
-			object = s3Service.putObject(this.currentBucket, object);
-		} catch (S3ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// Print the details about the uploaded object, which contains more information.
-		System.out.println("S3Object after upload: " + object);
-		
-	}
-	
-	public void testFolders() {
-		// TODO: DELETE ME
-		String foo = "Hello world";
-		String name = "foobar.txt";
-		try {
-			S3Object object = new S3Object(name, foo);
-			this.s3Service.putObject(this.currentBucket,object);
-		} catch (S3ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-
-
-
 }
