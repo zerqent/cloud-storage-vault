@@ -60,7 +60,6 @@ public class AmazonS3Provider{
 	public boolean fileExists(String filename) throws S3ServiceException {
 		this.s3Service.getObjectDetails(this.currentBucket, filename);
 		return true;
-
 	}
 
 	public String downloadFile(String absolutePath) {
@@ -85,7 +84,6 @@ public class AmazonS3Provider{
 		}
 		return null;
 	}
-
 
 	public void uploadFile(String filename, String Data) {
 		S3Object object;
