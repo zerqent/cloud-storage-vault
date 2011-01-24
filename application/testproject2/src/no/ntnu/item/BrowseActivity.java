@@ -20,10 +20,10 @@ import android.widget.ListView;
 
 public class BrowseActivity extends ListActivity{
 
-	public static List<String> files = new ArrayList<String>();
-	public String eState;
-	public static Stack<String> location = new Stack<String>();
-	public final FilenameFilter filter = new FilenameFilter(){
+	public static List<String> files = new ArrayList<String>(); // Static list containing all files in the current directory.
+	public String eState; 										// State of external device.
+	public static Stack<String> location = new Stack<String>(); // Keeps track of the current directory.
+	public final FilenameFilter filter = new FilenameFilter(){ 	// File filter to disable browsing of hidden files.
 			public boolean accept(File dir, String name) {
 				return !name.startsWith(".");
 			}
@@ -31,43 +31,41 @@ public class BrowseActivity extends ListActivity{
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		files.clear();
-		// mounting external storage
-		eState = Environment.getExternalStorageState();
-		
-		if(!eState.equals(Environment.MEDIA_MOUNTED)){
-			// can give different error messages from states explained in http://developer.android.com/reference/android/os/Environment.html
-			System.out.println("ERROR: Could not mount SD card.");
-		}else{
-			System.out.println("Mounted SD card.");
-			File sd = Environment.getExternalStorageDirectory();
-			files.addAll(Arrays.asList(sd.list(filter)));
-			
-			location.push(sd.getAbsolutePath());
-			setListAdapter(new ArrayAdapter<String>(this, android.R.layout.test_list_item, files));
-			ListView lv = getListView();
-			lv.setTextFilterEnabled(true);
-			
-			lv.setOnItemClickListener(new OnItemClickListener(){
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					File clicked = new File(getCurrentDirectory()+files.get(position));
-					location.push(files.get(position));
-					System.out.println("Top of stack: "+location.lastElement());
-					System.out.println("In directory: "+clicked.getAbsolutePath());
-					uploadFile(clicked);
-				}
-			});
-		}
-		
+		initializeBrowsing();
 	}
-	// opens a chosen directory or uploads a chosen file
+	
+	// Mount and display storage devices.
+	public void initializeBrowsing(){
+		files.clear();
+		files.add("Internal storage");
+		
+		// Mounting external storage.
+		eState = Environment.getExternalStorageState();
+		if(eState.equals(Environment.MEDIA_MOUNTED))
+			files.add("External storage");
+		
+		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.test_list_item, files));
+		ListView lv = getListView();
+		lv.setTextFilterEnabled(true);
+		
+		lv.setOnItemClickListener(new OnItemClickListener(){
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				File clicked;
+				switch (position){
+					case 1: clicked = Environment.getExternalStorageDirectory(); break;
+					default: clicked = new File("/system"); break;
+				}
+				location.push(clicked.getAbsolutePath());
+				uploadFile(clicked);
+			}
+		});
+	}
+	
+	// Open "file" if it is a directory. Upload "file" if it is not a directory.
 	public void uploadFile(File file){
 		files.clear();
 		if(file.isDirectory()){
-			// disabling ".." at mount point
-			if(!file.getPath().equals("/mnt/sdcard"))
-				files.add("..");
-			
+			files.add("..");
 			files.addAll(Arrays.asList(file.list(filter)));
 			setListAdapter(new ArrayAdapter<String>(this, android.R.layout.test_list_item, files));
 			ListView lv = getListView();
@@ -75,25 +73,31 @@ public class BrowseActivity extends ListActivity{
 			
 			lv.setOnItemClickListener(new OnItemClickListener(){
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					// checking direction of browsing
+					// Check direction of browsing, to correctly update the location stack.
 					if(files.get(position).equals(".."))
 						location.pop();
 					else
 						location.push(files.get(position));
+					
 					File clicked = new File(getCurrentDirectory());
-					uploadFile(clicked);
+					
+					// If browsing out of storage device, return to show storage devices.
+					if (location.size() == 0)
+						initializeBrowsing();
+					else
+						uploadFile(clicked);
 				}
 			});
 		}else{
 			Intent intent = new Intent();
-			intent.putExtra("FILEPATH", file.getAbsolutePath());
 			intent.putExtra("ACTION", "UPLOAD");
+			intent.putExtra("FILEPATH", file.getAbsolutePath());
 			setResult(RESULT_OK, intent);
 			location.clear();
 			finish();
 		}
 	}
-	// obtain the current directory path
+	// Obtain the current directory path.
 	public String getCurrentDirectory() {
 		String path = "";
 		for (Iterator<String> iterator = location.iterator(); iterator.hasNext();) {

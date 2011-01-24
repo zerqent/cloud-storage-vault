@@ -18,11 +18,11 @@ public class TestActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        // capture viewed buttons
+        // Capture viewed buttons.
         bDownload = (Button)findViewById(R.id.download);
         bUpload = (Button)findViewById(R.id.upload);
         
-        // add button listeners
+        // Add button listeners.
         bDownload.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
@@ -46,12 +46,17 @@ public class TestActivity extends Activity
 	public void onActivityResult(int requestCode,int resultCode,Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		System.out.println(resultCode);
+		
 		if(resultCode == RESULT_OK){
 			if(data.getStringExtra("ACTION").equals("UPLOAD")){
 				String srcfilepath = data.getStringExtra("FILEPATH");
 				
 				System.out.println("File: "+srcfilepath+" is now uploading");
+				
+				//Choose upload directory at Amazon S3
+				
+				//Upload chosen file to chosen directory
+				
 			}
 		}
 	}
