@@ -63,24 +63,20 @@ public class AmazonS3Provider implements CloudProvider {
 		return true;
 	}
 
-	@Override
 	public List<String>[] getFilesInRootDir() {
 		return null;
 	}
 
-	@Override
 	public List<String>[] getFilesInDirectory(String directory) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getAbsolutePath(File file) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String downloadFile(String absolutePath) {
 		try {
 			S3Object object = this.s3Service.getObject(this.currentBucket, absolutePath);
@@ -104,13 +100,11 @@ public class AmazonS3Provider implements CloudProvider {
 		return null;
 	}
 
-	@Override
 	public File downloadFile(File file) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	@Override
 	public void uploadFile(String filename, String Data) {
 		S3Object object;
 		try {
@@ -128,7 +122,6 @@ public class AmazonS3Provider implements CloudProvider {
 		}
 	}
 
-	@Override
 	public void uploadFile(File file) {
 		try {
 			S3Object object = new S3Object(file);
