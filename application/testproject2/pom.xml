@@ -9,7 +9,15 @@
     <packaging>apk</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>Testproject 2</name>
-        
+    
+    <repositories>
+      <repository>
+        <name>jets3t</name>
+        <id>jets3t</id>
+        <url>http://jets3t.s3.amazonaws.com/maven2</url>
+      </repository>
+    </repositories>
+    
     <dependencies>
         <dependency>
             <groupId>com.google.android</groupId>
@@ -17,7 +25,19 @@
             <version>1.6_r2</version>
            <scope>provided</scope>
         </dependency>
-    </dependencies>
+        <dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>4.8.2</version>
+		</dependency>
+        <dependency>
+            <!-- S3 Library -->
+      		<groupId>net.java.dev.jets3t</groupId>
+      		<artifactId>jets3t</artifactId>
+      		<version>0.8.0</version>
+        </dependency>
+
+   </dependencies>
 
   <build>
     <sourceDirectory>src</sourceDirectory>

@@ -1,0 +1,6 @@
+Official Amazon s3 android api - 0.1.0 Beta release, not tested
+Official Amazon s3 api - depends on javax* not in Android
+Typica - Does not support S3, but pretty much all other amazon services.
+
+
+JetS3t - We have a winner, work, and is in maven

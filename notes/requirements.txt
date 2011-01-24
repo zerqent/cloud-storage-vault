@@ -1,0 +1,32 @@
+- Mobile device specific
+    - Should be able to upload files to Cloud Provider
+        - Should be able to browse internal/external storage for files
+        - Should be able to decide placement in cloud?
+    - Should be able to download files from Cloud Provider
+        - Should be able to browse data stored in the Cloud
+        - Files should only be stored in Memory
+            (Android: Is this possible? Does intents allow this?)
+            (What about Swap?)
+
+- Files uploaded should be 'secure' from Cloud Provider
+    - Data should be encrypted
+    - It should be possible to verify that a file has not changed 'ilegally'
+
+- Actions should be logged
+    - Access of files should be logged (Who, when)
+        - Hard/Impossible without Server side application
+    - Write of files should be logged (Who, when, ?what?)
+        - Hard/Impossible without Server side application
+
+
+- Users must authenticate them selves to be able to use the application
+    - (Authenticate against what?)
+        - Cloud Provider (AWS keys?)
+        - Server Side Intelligence?
+
+- (OPT)It should be possible to share files with other users
+    - Share 'before' upload
+    - Share 'after' upload
+    - It should be possible to revoke this right(?)
+
+- (OPT) It should be possible to specify access rights to files (RO/RW)
