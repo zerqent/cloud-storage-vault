@@ -130,7 +130,6 @@ public class AmazonS3FileManager implements CloudFileManager {
 		this.provider.uploadFile(file, this.getCwd());
 	}
 
-	@Override
 	public void delete(String path) throws FileNotFoundException,
 			CloudServiceException {
 		if (!isFile(path)) {

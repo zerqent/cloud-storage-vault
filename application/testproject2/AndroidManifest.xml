@@ -16,6 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:label="@string/UploadActivity" android:name="UploadActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:label="@string/BrowseActivity" android:name="BrowseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

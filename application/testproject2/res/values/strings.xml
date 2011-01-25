@@ -3,4 +3,5 @@
     <string name="TestActivity">Menu</string>
     <string name="DownloadActivity">Choose File to Download</string>
     <string name="BrowseActivity">Choose File to Upload</string>
+    <string name="UploadActivity">Upload a File</string>
 </resources>

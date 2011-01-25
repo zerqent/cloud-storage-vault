@@ -23,13 +23,13 @@ public class AmazonS3Provider{
 	
 	private AWSCredentials awsCredentials;
 	private S3Service s3Service;
-	private String defaultBucket = "testvault2"; // TODO: should user care about buckets?
+	private String defaultBucket = "tileivind"; // TODO: should user care about buckets?
 	private S3Bucket currentBucket;
 	
 	public AmazonS3Provider() throws CloudServiceException {
 		// TODO: Should store these in a separate file, which should not go on github
-		String awsAccessKey = "";
-		String awsSecretKey = "";
+		String awsAccessKey = "AKIAIN6BVRXCIMPQ3DDA";
+		String awsSecretKey = "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";
 		this.awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
 		try {
 			this.s3Service = new RestS3Service(awsCredentials);
