@@ -23,8 +23,8 @@ public class AmazonS3Provider{
 	
 	public AmazonS3Provider() throws S3ServiceException {
 		// TODO: Should store these in a separate file, which should not go on github
-		String awsAccessKey = "";
-		String awsSecretKey = "";
+		String awsAccessKey = "AKIAJKAJR6MO5AMNM3IQ";
+		String awsSecretKey = "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";
 		this.awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
 		this.s3Service = new RestS3Service(awsCredentials);
 		this.currentBucket = s3Service.getBucket(this.defaultBucket);	

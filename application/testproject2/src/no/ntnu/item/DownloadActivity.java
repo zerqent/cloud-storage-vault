@@ -1,5 +1,8 @@
 package no.ntnu.item;
 
+import no.ntnu.item.exception.CloudServiceException;
+import no.ntnu.item.exception.FileNotFoundException;
+import no.ntnu.item.file.FileContainer;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,9 +25,18 @@ public class DownloadActivity extends ListActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if(resultCode == RESULT_OK){
-			System.out.println("Download and open "+data.getStringExtra("DOWNLOADFILE"));
+			System.out.println("Download and open "+data.getStringExtra("DOWNLOADFILE").substring(1));
 		}
 		// TODO: DOWNLOAD FILE HERE!
+		try {
+			FileContainer fc = TestActivity.fm.download(data.getStringExtra("DOWNLOADFILE").substring(1));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CloudServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		finish();
 	}
