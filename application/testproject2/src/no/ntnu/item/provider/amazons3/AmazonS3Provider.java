@@ -26,7 +26,7 @@ public class AmazonS3Provider{
 	private String defaultBucket = "tileivind"; // TODO: should user care about buckets?
 	private S3Bucket currentBucket;
 	
-	public AmazonS3Provider() throws CloudServiceException {
+	public AmazonS3Provider() {
 		// TODO: Should store these in a separate file, which should not go on github
 		String awsAccessKey = "AKIAIN6BVRXCIMPQ3DDA";
 		String awsSecretKey = "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";
@@ -35,7 +35,8 @@ public class AmazonS3Provider{
 			this.s3Service = new RestS3Service(awsCredentials);
 			this.currentBucket = s3Service.getBucket(this.defaultBucket);
 		} catch (S3ServiceException e) {
-			throw new CloudServiceException("Unable to connect to Amazon S3");
+			//throw new CloudServiceException("Unable to connect to Amazon S3");
+			e.printStackTrace();
 		}
 		
 	}
@@ -97,6 +98,9 @@ public class AmazonS3Provider{
 				if (!placement.endsWith("/") && placement.length() > 1) {
 					placement += "/";
 				}	
+			}
+			if(placement.startsWith("/")) {
+				placement = placement.substring(1);
 			}
 			
 			object.setKey(placement + file.getName());

@@ -2,6 +2,9 @@ package no.ntnu.item;
 
 import java.io.File;
 
+import no.ntnu.item.exception.CloudServiceException;
+import no.ntnu.item.exception.FileNotFoundException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -60,8 +63,16 @@ public class UploadActivity extends Activity {
 			public void onClick(View v) {
 				// TODO: UPLOAD FILE HERE!
 				File file = new File(displaySrcFile.getText().toString());
-				TestActivity.provider.uploadFile(file, displayDstDir.getText().toString().substring(1));
-				System.out.println("Uploaded "+displaySrcFile.getText().toString()+" to placement "+displayDstDir.getText().toString().substring(1));
+				try {
+					TestActivity.fm.upload(file, displayDstDir.getText().toString());
+					System.out.println("Uploaded "+displaySrcFile.getText().toString()+" to placement "+displayDstDir.getText().toString().substring(1));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CloudServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				finish();
 			}
 		});

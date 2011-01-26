@@ -10,7 +10,6 @@ import java.util.Stack;
 
 import no.ntnu.item.exception.CloudServiceException;
 import no.ntnu.item.exception.DirDoesNotExistException;
-import no.ntnu.item.provider.amazons3.AmazonS3FileManager;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ public class BrowseActivity extends ListActivity{
 	
 	public Intent browseIntent;			// Intent containing purpose with this browsing (download or upload file) 
 										// and where to browse (remote or locally).
-	public AmazonS3FileManager fm;		// File manager enabling remote browsing in Amazon S3
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -118,15 +116,14 @@ public class BrowseActivity extends ListActivity{
 	
 	// Get provider and initialize a file manager before remote browsing
 	public void initializeRemoteBrowsing() throws CloudServiceException{
-		fm = new AmazonS3FileManager(TestActivity.provider);
 		browseRemote();
 	}
 	
 	public void browseRemote() throws CloudServiceException{
 		files.clear();
-		if(!fm.getCwd().equals("/"))
+		if(!TestActivity.fm.getCwd().equals("/"))
 			files.add("..");
-		files.addAll(fm.ls());
+		files.addAll(TestActivity.fm.ls());
 		
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.test_list_item, files));
 		ListView lv = getListView();
@@ -135,12 +132,12 @@ public class BrowseActivity extends ListActivity{
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				try {
-					if(files.get(position).equals("..") || fm.isDirectory(files.get(position))){
-						fm.chDir(files.get(position));
+					if(files.get(position).equals("..") || TestActivity.fm.isDirectory(files.get(position))){
+						TestActivity.fm.chDir(files.get(position));
 						browseRemote();
-					}else if (fm.isFile(files.get(position)) && browseIntent.getStringExtra("purpose").equals("download")){
+					}else if (TestActivity.fm.isFile(files.get(position)) && browseIntent.getStringExtra("purpose").equals("download")){
 						Intent intent = new Intent();
-						intent.putExtra("DOWNLOADFILE", fm.getCwd()+files.get(position));
+						intent.putExtra("DOWNLOADFILE", TestActivity.fm.getCwd()+files.get(position));
 						setResult(RESULT_OK, intent);
 						finish();
 					}
@@ -158,9 +155,9 @@ public class BrowseActivity extends ListActivity{
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				try {
-					if(fm.isDirectory(files.get(position)) && browseIntent.getStringExtra("purpose").equals("upload")){
+					if(TestActivity.fm.isDirectory(files.get(position)) && browseIntent.getStringExtra("purpose").equals("upload")){
 						Intent intent = new Intent();
-						intent.putExtra("DIRPATH", fm.getCwd()+files.get(position));
+						intent.putExtra("DIRPATH", TestActivity.fm.getCwd()+files.get(position));
 						setResult(RESULT_OK, intent);
 						finish();
 					}

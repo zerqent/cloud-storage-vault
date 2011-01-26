@@ -6,6 +6,7 @@ import java.util.List;
 
 import no.ntnu.item.exception.CloudServiceException;
 import no.ntnu.item.exception.DirDoesNotExistException;
+import no.ntnu.item.provider.CloudFileManager;
 import no.ntnu.item.provider.amazons3.AmazonS3FileManager;
 import no.ntnu.item.provider.amazons3.AmazonS3Provider;
 
@@ -19,13 +20,13 @@ public class AmazonS3FileManagerTests {
 	
 	private AmazonS3Provider provider;
 	private String testbucket = "unittestbucket";
-	private AmazonS3FileManager fm;
+	private CloudFileManager fm;
 	
 	@Before
 	public void setUp() throws Exception {
 		this.provider = new AmazonS3Provider();
 		this.provider.setCurrentBucket(this.provider.getS3Service().getBucket(this.testbucket));
-		this.fm = new AmazonS3FileManager(this.provider);
+		this.fm = AmazonS3FileManager.getFileManager();
 	}
 
 	@After

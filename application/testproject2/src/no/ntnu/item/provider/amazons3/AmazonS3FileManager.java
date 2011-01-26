@@ -21,8 +21,16 @@ public class AmazonS3FileManager implements CloudFileManager {
 	private Stack<String> location;
 	private final String defaultStart = "/";
 	private AmazonS3Provider provider;
+	private static CloudFileManager self = null;
 	
-	public AmazonS3FileManager(AmazonS3Provider provider) {
+	public static CloudFileManager getFileManager() {
+		if (AmazonS3FileManager.self == null) {
+			self = new AmazonS3FileManager(new AmazonS3Provider());
+		}
+		return self;
+	}
+	
+	private AmazonS3FileManager(AmazonS3Provider provider) {
 		this.provider = provider;
 		this.location = new Stack<String>();
 		//this.location.push(this.defaultStart);
@@ -126,8 +134,7 @@ public class AmazonS3FileManager implements CloudFileManager {
 
 	public void upload(File file, String destination) throws FileNotFoundException,
 			CloudServiceException {
-		String abspath = this.getAbsPath(destination);
-		this.provider.uploadFile(file, this.getCwd());
+		this.provider.uploadFile(file, destination);
 	}
 
 	public void delete(String path) throws FileNotFoundException,

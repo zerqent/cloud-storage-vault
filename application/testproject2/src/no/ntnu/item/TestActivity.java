@@ -1,7 +1,7 @@
 package no.ntnu.item;
 
-import no.ntnu.item.exception.CloudServiceException;
-import no.ntnu.item.provider.amazons3.AmazonS3Provider;
+import no.ntnu.item.provider.CloudFileManager;
+import no.ntnu.item.provider.amazons3.AmazonS3FileManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,20 +13,16 @@ public class TestActivity extends Activity
 	private Button bDownload;
 	private Button bUpload;
 	private Button bShare;
-	public static AmazonS3Provider provider;
-	
+	public static CloudFileManager fm;		// File manager enabling remote browsing in cloud
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        try {
-			provider = new AmazonS3Provider();
-		} catch (CloudServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        
+        fm = AmazonS3FileManager.getFileManager();
+		
         // Capture viewed buttons.
         bDownload = (Button)findViewById(R.id.menu_download);
         bUpload = (Button)findViewById(R.id.menu_upload);
