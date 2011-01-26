@@ -42,8 +42,12 @@ public class BrowseActivity extends ListActivity{
 			initializeLocalBrowsing();
 		}else{
 			try {
+				TestActivity.fm.chDir("/");
 				browseRemote();
 			} catch (CloudServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DirDoesNotExistException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
