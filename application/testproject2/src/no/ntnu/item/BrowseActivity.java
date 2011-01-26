@@ -42,7 +42,7 @@ public class BrowseActivity extends ListActivity{
 			initializeLocalBrowsing();
 		}else{
 			try {
-				initializeRemoteBrowsing();
+				browseRemote();
 			} catch (CloudServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -112,11 +112,6 @@ public class BrowseActivity extends ListActivity{
 			location.clear();
 			finish();
 		}
-	}
-	
-	// Get provider and initialize a file manager before remote browsing
-	public void initializeRemoteBrowsing() throws CloudServiceException{
-		browseRemote();
 	}
 	
 	public void browseRemote() throws CloudServiceException{

@@ -3,7 +3,6 @@ package no.ntnu.item;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 
 public class DownloadActivity extends ListActivity {
 	

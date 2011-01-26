@@ -1,15 +1,10 @@
 package no.ntnu.item.provider.amazons3;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
-import no.ntnu.item.exception.CloudServiceException;
 import no.ntnu.item.file.FileContainer;
-import no.ntnu.item.provider.CloudProvider;
 
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -28,8 +23,8 @@ public class AmazonS3Provider{
 	
 	public AmazonS3Provider() {
 		// TODO: Should store these in a separate file, which should not go on github
-		String awsAccessKey = "AKIAIN6BVRXCIMPQ3DDA";
-		String awsSecretKey = "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";
+		String awsAccessKey = "";
+		String awsSecretKey = "";
 		this.awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
 		try {
 			this.s3Service = new RestS3Service(awsCredentials);
