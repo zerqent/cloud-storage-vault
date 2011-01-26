@@ -3,6 +3,7 @@ package no.ntnu.item.provider.amazons3;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 
 import no.ntnu.item.file.FileContainer;
 
@@ -22,9 +23,15 @@ public class AmazonS3Provider{
 	private S3Bucket currentBucket;
 	
 	public AmazonS3Provider() throws S3ServiceException {
-		// TODO: Should store these in a separate file, which should not go on github
-		String awsAccessKey = "";
-		String awsSecretKey = "";
+		Properties configFile = new Properties();
+		try {
+			configFile.load(this.getClass().getClassLoader().getResourceAsStream("resources/secret.properties"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String awsAccessKey = configFile.getProperty("AWS_KEYID");
+		String awsSecretKey = configFile.getProperty("AWS_KEYAC");
 		this.awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
 		this.s3Service = new RestS3Service(awsCredentials);
 		this.currentBucket = s3Service.getBucket(this.defaultBucket);	
@@ -49,7 +56,6 @@ public class AmazonS3Provider{
 	@SuppressWarnings("deprecation")
 	public boolean fileExists(String filename) {
 		filename = fixPath(filename, false);
-		System.out.println(filename);
 		try {
 			this.s3Service.getObjectDetails(this.currentBucket, filename);
 			return true;

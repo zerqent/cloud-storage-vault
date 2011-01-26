@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.is;
 
 import java.util.List;
 
-import no.ntnu.item.Configuration;
 import no.ntnu.item.exception.CloudServiceException;
 import no.ntnu.item.exception.DirDoesNotExistException;
 import no.ntnu.item.provider.CloudFileManager;
