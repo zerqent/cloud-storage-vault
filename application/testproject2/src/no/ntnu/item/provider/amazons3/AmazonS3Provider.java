@@ -23,8 +23,8 @@ public class AmazonS3Provider{
 	
 	public AmazonS3Provider() {
 		// TODO: Should store these in a separate file, which should not go on github
-		String awsAccessKey = "AKIAJKAJR6MO5AMNM3IQ";
-		String awsSecretKey = "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";
+		String awsAccessKey = "";
+		String awsSecretKey = "";
 		this.awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
 		try {
 			this.s3Service = new RestS3Service(awsCredentials);
