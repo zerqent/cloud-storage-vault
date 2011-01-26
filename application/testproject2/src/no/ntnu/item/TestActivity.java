@@ -21,7 +21,7 @@ public class TestActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        fm = AmazonS3FileManager.getFileManager();
+        fm = Configuration.getConfiguration().cloudFileManager;
 		
         // Capture viewed buttons.
         bDownload = (Button)findViewById(R.id.menu_download);

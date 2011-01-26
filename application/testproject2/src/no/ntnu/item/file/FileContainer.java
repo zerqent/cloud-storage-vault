@@ -15,8 +15,8 @@ public class FileContainer {
 	private long contentLength;
 	private Byte[] data;
 	private String encoding;
-	private String name; // TODO
-	private String path; // TODO
+//	private String name; // TODO
+//	private String path; // TODO
 	
 	public FileContainer(byte[] data, String contentType) {
 		this.contentType = contentType;
@@ -134,6 +134,7 @@ public class FileContainer {
 			return convertToHex(hash);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
+			// Should not Happen
 			e.printStackTrace();
 			return null;
 		}
