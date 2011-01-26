@@ -1,5 +1,7 @@
 package no.ntnu.item;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,13 +11,14 @@ import android.widget.TextView;
 
 public class UploadActivity extends Activity {
     
-	public Button bSrcFile;
-	public Button bDst;
-	public Button bUpload;
-	public TextView displaySrcFile;
-	public TextView displayDstDir;
-	public final static int LOCAL = 1;
-	public final static int REMOTE = 2;
+	private Button bSrcFile;
+	private Button bDst;
+	private Button bUpload;
+	private TextView displaySrcFile;
+	private TextView displayDstDir;
+	// Constants indicating whether an activity result comes from local or remote browsing
+	private final static int LOCAL = 1;
+	private final static int REMOTE = 2;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -55,7 +58,11 @@ public class UploadActivity extends Activity {
         
         bUpload.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				// Start uploading here!
+				// TODO: UPLOAD FILE HERE!
+				File file = new File(displaySrcFile.getText().toString());
+				TestActivity.provider.uploadFile(file, displayDstDir.getText().toString().substring(1));
+				System.out.println("Uploaded "+displaySrcFile.getText().toString()+" to placement "+displayDstDir.getText().toString().substring(1));
+				finish();
 			}
 		});
     }
@@ -68,12 +75,10 @@ public class UploadActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if(resultCode == RESULT_OK){
-			if(requestCode == LOCAL){
-				displaySrcFile.setText(data.getStringExtra("FILEPATH"));
-			}
-			if(requestCode == REMOTE){
-				displayDstDir.setText(data.getStringExtra("DIRPATH"));
-			}
+			switch (requestCode){
+				case LOCAL:		displaySrcFile.setText(data.getStringExtra("FILEPATH")); break;
+				case REMOTE:	displayDstDir.setText(data.getStringExtra("DIRPATH")); break;
+			}		
 		}
 	}
 }

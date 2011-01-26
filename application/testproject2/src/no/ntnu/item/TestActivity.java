@@ -1,5 +1,7 @@
 package no.ntnu.item;
 
+import no.ntnu.item.exception.CloudServiceException;
+import no.ntnu.item.provider.amazons3.AmazonS3Provider;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ public class TestActivity extends Activity
 	private Button bDownload;
 	private Button bUpload;
 	private Button bShare;
+	public static AmazonS3Provider provider;
 	
     /** Called when the activity is first created. */
     @Override
@@ -18,7 +21,12 @@ public class TestActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+        try {
+			provider = new AmazonS3Provider();
+		} catch (CloudServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         // Capture viewed buttons.
         bDownload = (Button)findViewById(R.id.menu_download);
         bUpload = (Button)findViewById(R.id.menu_upload);

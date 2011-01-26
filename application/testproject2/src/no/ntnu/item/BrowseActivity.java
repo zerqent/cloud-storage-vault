@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Stack;
 
 import no.ntnu.item.exception.CloudServiceException;
+import no.ntnu.item.exception.DirDoesNotExistException;
 import no.ntnu.item.provider.amazons3.AmazonS3FileManager;
-import no.ntnu.item.provider.amazons3.AmazonS3Provider;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,7 +32,10 @@ public class BrowseActivity extends ListActivity{
 				return !name.startsWith(".");
 			}
 	};
-	public Intent browseIntent;
+	
+	public Intent browseIntent;			// Intent containing purpose with this browsing (download or upload file) 
+										// and where to browse (remote or locally).
+	public AmazonS3FileManager fm;		// File manager enabling remote browsing in Amazon S3
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -42,7 +44,6 @@ public class BrowseActivity extends ListActivity{
 			initializeLocalBrowsing();
 		}else{
 			try {
-				System.out.println("Starting remote browsing for "+browseIntent.getStringExtra("purpose"));
 				initializeRemoteBrowsing();
 			} catch (CloudServiceException e) {
 				// TODO Auto-generated catch block
@@ -51,7 +52,7 @@ public class BrowseActivity extends ListActivity{
 		}
 	}
 	
-	// Mount and display storage devices.
+	// Mount and display storage devices before browsing locally.
 	public void initializeLocalBrowsing(){
 		files.clear();
 		files.add("Internal storage");
@@ -73,14 +74,14 @@ public class BrowseActivity extends ListActivity{
 					default: clicked = new File("/system"); break;
 				}
 				location.push(clicked.getAbsolutePath());
-				uploadLocalFile(clicked);
+				browseLocal(clicked);
 			}
 		});
 	}
 	
-	// Open "file" if it is a directory. Upload "file" if it is not a directory.
-	public void uploadLocalFile(File file){
+	public void browseLocal(File file){
 		files.clear();
+		// Open "file" if it is a directory.
 		if(file.isDirectory()){
 			files.add("..");
 			files.addAll(Arrays.asList(file.list(filter)));
@@ -102,9 +103,10 @@ public class BrowseActivity extends ListActivity{
 					if (location.size() == 0)
 						initializeLocalBrowsing();
 					else
-						uploadLocalFile(clicked);
+						browseLocal(clicked);
 				}
 			});
+		// Upload "file" if it is not a directory.
 		}else{
 			Intent intent = new Intent();
 			intent.putExtra("FILEPATH", file.getAbsolutePath());
@@ -114,14 +116,16 @@ public class BrowseActivity extends ListActivity{
 		}
 	}
 	
-	// Start browsing for destination directory in cloud
+	// Get provider and initialize a file manager before remote browsing
 	public void initializeRemoteBrowsing() throws CloudServiceException{
+		fm = new AmazonS3FileManager(TestActivity.provider);
+		browseRemote();
+	}
+	
+	public void browseRemote() throws CloudServiceException{
 		files.clear();
-		location.clear(); // Kan fjernes når updatefunksjonen er ferdig
-		AmazonS3Provider provider = new AmazonS3Provider();
-		AmazonS3FileManager fm = new AmazonS3FileManager(provider);
-		
-		location.push(provider.getDefaultBucket());
+		if(!fm.getCwd().equals("/"))
+			files.add("..");
 		files.addAll(fm.ls());
 		
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.test_list_item, files));
@@ -130,26 +134,45 @@ public class BrowseActivity extends ListActivity{
 		
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//				File clicked;
-//				switch (position){
-//					case 1: clicked = Environment.getExternalStorageDirectory(); break;
-//					default: clicked = new File("/system"); break;
-//				}
-//				location.push(clicked.getAbsolutePath());
-//				uploadLocalFile(clicked);
-				System.out.println("clicked on file");
+				try {
+					if(files.get(position).equals("..") || fm.isDirectory(files.get(position))){
+						fm.chDir(files.get(position));
+						browseRemote();
+					}else if (fm.isFile(files.get(position)) && browseIntent.getStringExtra("purpose").equals("download")){
+						Intent intent = new Intent();
+						intent.putExtra("DOWNLOADFILE", fm.getCwd()+files.get(position));
+						setResult(RESULT_OK, intent);
+						finish();
+					}
+				} catch (CloudServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (DirDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		lv.setOnItemLongClickListener(new OnItemLongClickListener(){
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				System.out.println("LONG CLICK!");
+				try {
+					if(fm.isDirectory(files.get(position)) && browseIntent.getStringExtra("purpose").equals("upload")){
+						Intent intent = new Intent();
+						intent.putExtra("DIRPATH", fm.getCwd()+files.get(position));
+						setResult(RESULT_OK, intent);
+						finish();
+					}
+				} catch (CloudServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return false;
 			}
 			
 		});
 	}
-	
 	
 	
 	// Obtain the current directory path.
