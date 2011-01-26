@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 import java.util.List;
 
+import no.ntnu.item.Configuration;
 import no.ntnu.item.exception.CloudServiceException;
 import no.ntnu.item.exception.DirDoesNotExistException;
 import no.ntnu.item.provider.CloudFileManager;
@@ -26,7 +27,7 @@ public class AmazonS3FileManagerTests {
 	public void setUp() throws Exception {
 		this.provider = new AmazonS3Provider();
 		this.provider.setCurrentBucket(this.provider.getS3Service().getBucket(this.testbucket));
-		this.fm = AmazonS3FileManager.getFileManager();
+		this.fm = new AmazonS3FileManager(this.provider);
 	}
 
 	@After

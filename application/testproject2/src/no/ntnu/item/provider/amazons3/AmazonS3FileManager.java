@@ -19,21 +19,20 @@ import org.jets3t.service.model.S3Object;
 public class AmazonS3FileManager implements CloudFileManager {
 	
 	private Stack<String> location;
-	private final String defaultStart = "/";
 	private AmazonS3Provider provider;
-	private static CloudFileManager self = null;
 	
-	public static CloudFileManager getFileManager() {
-		if (AmazonS3FileManager.self == null) {
-			self = new AmazonS3FileManager(new AmazonS3Provider());
+	public AmazonS3FileManager() throws CloudServiceException {
+		try {
+			this.provider = new AmazonS3Provider();
+		} catch (S3ServiceException e) {
+			throw new CloudServiceException("Unable to connect to Amazon S3");
 		}
-		return self;
+		this.location = new Stack<String>();
 	}
 	
-	private AmazonS3FileManager(AmazonS3Provider provider) {
+	public AmazonS3FileManager(AmazonS3Provider provider) {
 		this.provider = provider;
 		this.location = new Stack<String>();
-		//this.location.push(this.defaultStart);
 	}
 	
 	public String getCwd() {
@@ -54,11 +53,8 @@ public class AmazonS3FileManager implements CloudFileManager {
 		} else if(dir.equals(".")) {
 			return;
 		}
-		
-		
-		String tmp = this.getAbsPath(dir);
-		if (!this.isDirectory(dir)) {
-			System.out.println("Not directory");
+
+		if (!this.isDirectory(getAbsPath(dir))) {
 			throw new DirDoesNotExistException(null);
 		}
 		
@@ -73,6 +69,7 @@ public class AmazonS3FileManager implements CloudFileManager {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public List<String> ls() throws CloudServiceException{
 		String cwd = this.getCwd();
 		cwd = cwd.substring(1);
@@ -111,16 +108,14 @@ public class AmazonS3FileManager implements CloudFileManager {
 		if(path.endsWith("/") || abspath.endsWith("/")) {
 			return false;
 		}
-		return this.provider.fileExists(abspath.substring(1));
+		return this.provider.fileExists(abspath);
 			
 	}
 
 	public boolean isDirectory(String path) throws CloudServiceException {
 		String abspath = this.getAbsPath(path);
-		if (!abspath.endsWith("/")) {
-			abspath += "/";
-		}
-		return this.provider.fileExists(abspath.substring(1));
+		//return this.provider.fileExists(abspath);
+		return this.provider.dirExists(abspath);
 	}
 
 	public FileContainer download(String path) throws FileNotFoundException,
@@ -150,6 +145,5 @@ public class AmazonS3FileManager implements CloudFileManager {
 		}
 		
 	}
-
 	
 }
