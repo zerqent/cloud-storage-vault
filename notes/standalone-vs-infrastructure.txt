@@ -1,0 +1,38 @@
+| Common
+    + Encryption without leaking key to supplier should be possible
+    + Integrety check is possible
+
+
+| Standalone
+    + No need of infrastructure, just app
+    - Logging pretty much useless
+        - Anyone can obtain accesskeys to AWS, and thereby circumvent the app
+    - Authentication only possible against AWS
+        (Since any other scheme on top could be circumvented)
+    - Revoking of rights pretty much impossible
+    - Any user can (pretty much) cause havoc on all files!
+        - Delete/Change ACLs etc
+
+
+| Infrastructure (Untrusted node)
+    | Limited what it can do on its own, e.g. has not got encryption keys
+    + Possible with logging
+        + The real files can be hidden from users, only provide an api
+            - Real (encrypted) files can not be hidden from supplier (since they can simply
+              read the disk) + reverse engineer some of the app to put pieces
+              together
+    + Own authentication scheme
+    - Not really possible to revoke access rights to a file
+        - Possible in the Server but the user still has the encryption key
+            + Important Point: Once a person has had access to that information
+            that information will never be secure from that user again! (Is
+            there a term for this?)
+        - Possible by downloading file/files and reuploading with new key
+            - If files(s) is shared with multiple users this will hinder the
+              other users as well 
+
+
+| Infrastructure (Trusted node)
+    - - - Really ugly way of circumventing the real problem
+    + Can store encryption keys
+    + Possible to revoke access to something, and have never leaked key  

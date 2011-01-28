@@ -1,0 +1,44 @@
+# Document possible schemes to use
+
+Sym = Symmetric Key
+Pub = Public Key
+Pri = Private Key
+
+
+Encryption of files
+    - Alice:
+        - E_f = Sym_1(File)
+        - E_SA = Pub_A(Sym)
+        - Uploads E_f and E_SA
+
+    - Alice wants to share file with BOB
+        - Alice downloads E_SA
+        - Sym = Pri_A(File)
+        - E_SB = Pub_B(Sym)
+        - Uploads E_SB
+
+    - Alice wants to revoce BOBs access
+        - Alice deletes E_SB
+            - Bob can stil know Sym
+                + But cannot access file (blocket by application)
+                +/- Leakage, but at the same time, bob already knows the contents
+                  of the file
+                - Problem is different if we assume files can actually change
+                  on server
+                    - E.g. Change does not happen by downloading, changing,
+                      then uploading (encrypting with new SYM) and then giving
+                      new keys to everyone
+
+
+Read/Write access
+    - Is there another solution but explicitly stating read or write
+      permission?
+        - Dependant of encryption scheme
+            - E.g. Read/Write capabilities in Tahoe-LAFS
+
+
+Authentication
+    + PKI/Certificates/PGP combined with Encryption scheme stated above
+
+
+Key distribution
