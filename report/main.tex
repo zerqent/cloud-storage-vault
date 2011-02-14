@@ -132,6 +132,8 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \addcontentsline{toc}{chapter}{Acronyms}
 
 \begin{acronym}
+\acro{AES}{Advanced Encryption Standard}
+\acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SHA}{Secure Hash Algorithm}
 \end{acronym}
 
@@ -154,20 +156,75 @@ software used.
 %**************************************%
 \chapter{Background}
 %**************************************%
--sym vs asym crypto
-    -AES
-    -RSA
--hashing
-    -SHA-256
--certificates
--PKI
--PGP
--SSL
--PBKDF2
--Tahoe
+%-sym vs asym crypto
+%    -AES
+%    -RSA
+%-hashing
+%    -SHA-256
+%-certificates
+%-PKI
+%-PGP
+%-SSL
+%-PBKDF2
+%-Tahoe
 
-\chapter{Delete me}
-Just delete this\cite{s_nistround2}, at some point \ac{SHA}.
+%- MITM
+%- Brute Force
+\section{Security Concepts}
+This section briefly explains certain security concepts that is used in this
+thesis.
+
+\subsection{Confidentiality}
+Confidentiality is the art of keeping something secret from unauthorized
+receivers. A normal approach to this challenge is the use of encryption. 
+
+\subsection{Integrity}
+Integrity in a security perspective deals with detecting or preventing an
+unauthorized user from changing a message. 
+
+\subsection{Authentication}
+
+\section{Cryptographic Primitives}
+This section explains the low level security primitives used in this thesis.
+
+\subsection{Encryption}
+Encryption is the process of transforming some information into an unreadable
+form. Encryption is primarily used to enforce Confidentially, but can also be
+used for other purposes such as authentication. In a very basic form an
+encryption scheme consist of an algorithm, the cipher, a key and a message, the
+plaintext, that is all used to create an encrypted message, a ciphertext. If
+a good cipher is used, knowledge of the cipher, plaintext and ciphertext should
+not be enough to obtain the key.
+
+\paragraph{Block-cipher and Stream-cipher} are classifications on how a cipher
+treats data. With a block-cipher data will be encrypted in blocks of specific
+sizes. If the data length is not a multiple of the block size, the data will be
+padded. A stream cipher on the other hand will encrypt the message bit by bit.
+
+\paragraph{Symmetric encryption} is an encryption scheme where the same key is
+used for both encryption and decryption. \ac{AES} is a block cipher and is the
+current standard for symmetric encryption. \ac{AES} works on a block of 128-bit
+and support keys of 128, 192 and 256-bit. 
+
+\paragraph{Asymmetric encryption} is an encryption scheme where a different key
+is used for encryption than decryption. An assymetric encryption scheme is
+often called a public-key encryption scheme, because it is possible to encrypt
+a message for a user using one of the keys which can only be decrypted with his
+other key. The other key is then called the private or secret key. The probably
+most well known assymmetric crypto scheme is \ac{RSA}.
+
+\section{Cryptographic hash functions}
+A cryptographic hash function is a deterministic mathematical procedure which
+takes an arbitrary block of data and outputs a fixed-size bit string. The output
+is referred to as the hash value, message digest or simply digest.
+Another property of a cryptographic hash function is that the smallest change in
+the input data (e.g. one bit) should completely change the output of the hash
+function. In other words it should be infeasible to find the reverse of a
+cryptographic hash function \cite[p. 335]{stallings}. It should also be infeasible to
+find two blocks of data which produce the same hash value (a \emph{collision}).
+
+The standard for cryptographic hash functions today are \ac{SHA}-1 and the
+\ac{SHA}-2 family.
 
 
 %**************************************%
