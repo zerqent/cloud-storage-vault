@@ -155,7 +155,7 @@ software used.
 \chapter{Background}
 %**************************************%
 -sym vs asym crypto
-    -AES
+    -AES, modes
     -RSA
 -hashing
     -SHA-256
@@ -163,21 +163,47 @@ software used.
 -PKI
 -PGP
 -SSL
+-PBKDF2
 -Tahoe
 
 \chapter{Delete me}
 Just delete this\cite{s_nistround2}, at some point \ac{SHA}.
 
+%**************************************%
+\chapter{Architectural Solution}
+%**************************************%
+-Chapter intro
+
+-Intro
+	 -Concept of application
+
+-Download/upload file
+	-filesystem
+-Share files
+	-filesystem
+-File access
+
 
 %**************************************%
-\chapter{}
+\chapter{Cryptographic Solution}
 %**************************************%
--use cases
--different solutions
+-Chapter intro
 
-%**************************************%
-\chapter{Architecture, Solution}
-%**************************************%
+-Intro
+	- What and why?
+
+
+{
+-Confidentiality: AES-CBC, RSA
+
+-Integrity: SHA-256
+
+-Authentication: RSA PrK signature
+
+-Key hierarchy
+
+-Key distribution
+}
 
 %**************************************%
 \chapter{Implementation}
