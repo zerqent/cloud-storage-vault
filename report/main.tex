@@ -183,6 +183,13 @@ Integrity in a security perspective deals with detecting or preventing an
 unauthorized user from changing a message. 
 
 \subsection{Authentication}
+Authentication is the challenge of a user to prove that he is who he claims to
+be. In a real world setting this might be accomplished by the use of an ID-card
+or a passport, in a digitial world this is usually solved by the user
+knowing, having or beeing something or a combination. What a user knows might
+be a password, what he has may be his cellphone number and being might be his
+fingerprints.
+% FIXME: Må også reflektere at det han autentiserer mot må kunne verifisere
 
 \section{Cryptographic Primitives}
 This section explains the low level security primitives used in this thesis.
@@ -213,7 +220,7 @@ a message for a user using one of the keys which can only be decrypted with his
 other key. The other key is then called the private or secret key. The probably
 most well known assymmetric crypto scheme is \ac{RSA}.
 
-\section{Cryptographic hash functions}
+\subsection{Cryptographic hash functions}
 A cryptographic hash function is a deterministic mathematical procedure which
 takes an arbitrary block of data and outputs a fixed-size bit string. The output
 is referred to as the hash value, message digest or simply digest.
@@ -225,6 +232,23 @@ find two blocks of data which produce the same hash value (a \emph{collision}).
 
 The standard for cryptographic hash functions today are \ac{SHA}-1 and the
 \ac{SHA}-2 family.
+
+\section{Applications of cryptographic primitives}
+
+\section{Digital Signatures}
+A digital signature is the digital equivalent of a normal signature, it
+verifies that an entity aprooves with or has written something. An easy example
+is that a party has written a message he sends it through a cryptographic hash
+function and encrypts it with his private key. A receiving party can then hash
+the same message and decrypt the signature using the users public key and
+verify that the two hashes match. With this scheme we have obtained
+authentication, integrity and non-repudiation for the message, given that we
+already know that the public key for the sending user is held by the person we
+believe the message originates from.
+
+\section{Digital Certificates and PKI}
+A digital certificate is the pairing of a digital signature and a public key. 
+
 
 %**************************************%
 \chapter{Architectural Solution}
