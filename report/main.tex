@@ -255,6 +255,8 @@ A digital certificate is the pairing of a digital signature and a public key.
 %**************************************%
 \chapter{Architectural Solution}
 %**************************************%
+\label{chap:AS}
+-Chapter intro
 
 The architectural solution of a secure cloud file sharing system has to convince
 its users that the functions indeed are secure, and that the concepts are easy
@@ -287,19 +289,87 @@ to understand and accept.
 
 
 %**************************************%
-\chapter{Cryptographical Solutions}
+\chapter{Cryptographic Solutions}
 %**************************************%
-This chapter will elaborate on the cryptographical solutions applied to the
-architectural scheme in chapter \ref{chap:AS}. We will take a closer look at
+\label{chap:CS}
+This chapter will elaborate on the cryptographic solutions applied to the
+architectural scheme in Chapter \ref{chap:AS}. We will take a closer look at
 how confidentiality, integrity, authentication and access control can be 
-integrated into the proposed architecture.\\
+integrated into the proposed architecture.
 
 A fundamental scheme for key distribution is needed to realize the desired
 security features, hence an appropriate solution for key distribution will
 also be given.
 
--Intro - What and why?
+In the first section, we will give a brief introduction explaining the basic security
+scheme used in the application. We will further look at each file operation 
+exhibited in Chapter \ref{chap:AS} and describe our corresponding cryptographic
+solution. The following section will give a detailed overview of the
+cryptographic keys used in the mentioned file operations. The chapter will end with an 
+explanation of the chosen scheme for key distribution.
 
+\section{Basic Security Scheme}
+The basic security concept of our application is to keep a users remote storage
+confidential to a third-party storage provider. To solve this, we will
+create an application that encrypt files locally at the users terminal before
+they are uploaded to the third-party storage provider. To further access files, the user will have
+to decrypt files locally when downloading them. To enable this simple
+encryption scheme, the user is required to possess at least one cryptographic key.
+
+By initially knowing that files are encrypted on a remote server and that the local user
+possess one or more cryptographic keys, we can continue with a more comprehensive
+description of the complete cryptographic solution. The details of the complete
+solution will be explained in the manner of 3 different file operations, namely
+upload, download and share file.
+
+\section{Upload File}
+The process of uploading a file onto a network server was illustrated in Figure
+\ref{fig:U}. This section will provide a more detailed description of the
+process and specify the functionality of the Upload operation at the user
+terminal.
+
+The upload process can be broken into the following 5 steps:
+
+\begin{enumerate}
+\item Download and decrypt parent directory to target file
+\item Generate file keys and capabilities
+\item Write file meta data to parent directory
+\item Encrypt and upload directory
+\item Encrypt and upload file
+\end{enumerate}
+
+Each step is described below.
+
+\subsection{Download and Decrypt Directory}
+When uploading a file to the remote file structure described in \#\#, two
+operations are needed. First of all, it is important to add the desired file's
+meta data into the remote parent directory. This meta data will serve as a link
+to the uploaded file. The second operation is to upload the desired file.
+
+To insert the file's meta data into the remote directory, it is necessary to
+download and decrypt the chosen directory. We will combine the download and
+decrypt procedures into the term ``open directory''. The procedure of opening a
+directory is illustrated in Figure \ref{fig:OD} and described as follows.
+
+%\begin{figure}[h!]
+%    \centering
+%    \includegraphics[width=\columnwidth]{ArchitectureUpload.pdf}
+%    \caption{Scenario: Uploading of files}
+%    \label{fig:arch:upload}
+%\end{figure}
+
+
+\subsection{Generating Keys and Capabilities}
+
+\subsection{Write File to Folder}
+
+\subsection{Encrypt and Upload Folder}
+
+\subsection{Encrypt and Upload File}
+
+\section{Download File}
+
+\section{Share File}
 {
 -Confidentiality: AES-CBC, RSA
 

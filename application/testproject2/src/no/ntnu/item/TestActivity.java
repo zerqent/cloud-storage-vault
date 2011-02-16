@@ -1,7 +1,6 @@
 package no.ntnu.item;
 
 import no.ntnu.item.provider.CloudFileManager;
-import no.ntnu.item.provider.amazons3.AmazonS3FileManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
