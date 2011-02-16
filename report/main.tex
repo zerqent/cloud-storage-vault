@@ -136,6 +136,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{CA}{Certification authority}
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
+\acro{LAFS}{Least Authorithy File System}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
 \acro{PKI}{Public Key Infrastructure}
 \acro{PGP}{Pretty Good Privacy}
@@ -288,6 +289,29 @@ be memorable to a person, but what is memorable to a person might be a to short
 phrase to withstand a brute force attack. What \ac{PBKDF2} does is make the
 process of deriving the key from the password an expensive process in terms of
 computational power, to make it more resistant to brute force attacks.
+
+\section{Existing Solutions}
+There are a number of existing storage solutions for storing data in the cloud,
+with more or less of the functionality required to fulfill the problem
+description for this thesis. The section highlights some of them.
+
+\subsection{Dropbox}
+Dropbox\footnote{\url{http://www.dropbox.com}} is a commercial application for
+storing data in the cloud, more specific using Amazons S3 storage service. It
+claims that files are stored encrypted with \ac{AES}-256 which can only be
+decrypted with the users username and password, and that Dropbox employees are
+not able to access the files of the user. However Dropbox also has a Forgot
+password feature which means that Dropbox can read the users files if they
+really want to. Their \ac{FAQ} does however say that some people have been
+successfull in putting truecrypt containers in Dropbox to prevent this.
+
+\subsection{Tahoe-LAFS}
+Tahoe-\ac{LAFS}\footnote{http://www.tahoe-lafs.org} is an open source
+cloud storage file system which does fulfill the requirements set by our
+problem description in regards to security. In Tahoe-\ac{LAFS} files are
+exclusivly encrypted client-side, before beeing uploaded into the cloud.
+Tahoe-\ac{LAFS} also uses erasure-coding to obtain redundancy across multiple
+storage servers.  
 
 %**************************************%
 \chapter{Architectural Solution}
