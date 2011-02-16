@@ -221,6 +221,9 @@ used for both encryption and decryption\cite[p. 32]{stallings}. \ac{AES} is a
 block cipher and is the current standard for symmetric encryption. \ac{AES}
 works on a block of 128-bit and support keys of 128, 192 and 256-bit. 
 
+\paragraph{The mode of operation} used for a symmetric encryption scheme
+enables subsequent safe use of the same key.
+%TODO: Vi kan ikke nevne alle her, vi nevner de som er nødvendige. CBC?
 
 \paragraph{Asymmetric encryption} is an encryption scheme where a different key
 is used for encryption than decryption\cite[p. 259]{stallings}. An asymmetric
@@ -314,6 +317,9 @@ problem description in regards to security. In Tahoe-\ac{LAFS} files are
 exclusivly encrypted client-side, before beeing uploaded into the cloud.
 Tahoe-\ac{LAFS} also uses erasure-coding to obtain redundancy across multiple
 storage servers.  
+
+%TODO: kilde, enten paperet vi brukte i prosjektet, muligens
+% http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/about.html
 
 %**************************************%
 \chapter{Architectural Solution}
