@@ -170,26 +170,29 @@ software used.
 
 %- MITM
 %- Brute Force
-\section{Security Concepts}
-This section briefly explains certain security concepts that is used in this
+\section{Security Services}
+This section briefly explains certain security services used in this
 thesis.
 
 \subsection{Confidentiality}
-Confidentiality is the art of keeping something secret from unauthorized
-receivers. A normal approach to this challenge is the use of encryption. 
+Confidentiality is the art of keeping a message secret from unauthorized
+parties\cite[p. 18]{stallings}. This can typically be done by either preventing other parties access
+to the message at all, or making the contents unreadable for instance by the
+use of encryption. 
 
 \subsection{Integrity}
-Integrity in a security perspective deals with detecting or preventing an
-unauthorized user from changing a message. 
+Integrity in a security perspective deals with detecting, preventing or
+recovering a message from being changes by an unauthorized party \cite[p.
+18]{stallings}.
 
 \subsection{Authentication}
-Authentication is the challenge of a user to prove that he is who he claims to
-be. In a real world setting this might be accomplished by the use of an ID-card
-or a passport, in a digitial world this is usually solved by the user
-knowing, having or beeing something or a combination. What a user knows might
-be a password, what he has may be his cellphone number and being might be his
-fingerprints.
-% FIXME: Må også reflektere at det han autentiserer mot må kunne verifisere
+Authentication is the act for a user, service or similar to prove that he is
+what he claims to be\cite[p. 18]{stallings}. 
+
+\subsection{Nonrepudiation}
+Nonrepudiation prevents either sender or receiver of a message from denying a
+transmitted message, in other words one party can proove the other partys
+involvement\cite[p. 19]{stallings}.
 
 \section{Cryptographic Primitives}
 This section explains the low level security primitives used in this thesis.
@@ -237,14 +240,13 @@ The standard for cryptographic hash functions today are \ac{SHA}-1 and the
 
 \section{Digital Signatures}
 A digital signature is the digital equivalent of a normal signature, it
-verifies that an entity aprooves with or has written something. An easy example
-is that a party has written a message he sends it through a cryptographic hash
-function and encrypts it with his private key. A receiving party can then hash
-the same message and decrypt the signature using the users public key and
-verify that the two hashes match. With this scheme we have obtained
-authentication, integrity and non-repudiation for the message, given that we
-already know that the public key for the sending user is held by the person we
-believe the message originates from.
+verifies that an entity aproves with or has written a message. An easy example
+is to send a message through a cryptographic hash function and encrypts it with
+a private key. A receiving party can then hash the same message and decrypt the
+signature using the users public key and verify that the two hashes match. With
+this scheme we have obtained authentication, integrity and non-repudiation for
+the message, given that we already know that the public key for the sending
+user is held by the person we believe the message originates from.
 
 \section{Digital Certificates and PKI}
 A digital certificate is the pairing of a digital signature and a public key. 
