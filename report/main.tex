@@ -132,6 +132,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \addcontentsline{toc}{chapter}{Acronyms}
 
 \begin{acronym}
+\acro{ACL}{Access Control List}
 \acro{AES}{Advanced Encryption Standard}
 \acro{CA}{Certification authority}
 \acro{DSA}{Digital Signature Algorithm}
@@ -139,8 +140,8 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{FAQ}{Frequently Asked Questions}
 \acro{LAFS}{Least Authorithy File System}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
-\acro{PKI}{Public Key Infrastructure}
 \acro{PGP}{Pretty Good Privacy}
+\acro{PKI}{Public Key Infrastructure}
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SSL}{Secure Socket Layer}
@@ -173,6 +174,10 @@ software used.
 
 %- MITM
 %- Brute Force
+
+% Other concepts:
+%------------------
+% Cloud (computing)
 \section{Security Services}
 This section briefly explains certain security services used in this
 thesis. A security service is any processing or communication service that
@@ -324,18 +329,46 @@ its users that the functions indeed are secure, and that the concepts are easy
 to understand and accept.
 
 \section{Introduction}
-% Concepts introduced by the system
+% FIXME: This needs to be moved somewhere:
+A capability is a short text string containing all information needed to find,
+get, and read a file or folder. This includes cryptographic keys.
 
 % Picture: "Architecture: Overview"
 
+% TODO:
+% - Write another intro text when we figure out what to include in this chapter
+
 \section{File Storage}
 
-- Structure
-- Various File access modes
+The solution proposed in this thesis, is that only a simple key-value store is
+needed on the server side. This may be extended with an \ac{ACL} layer to
+support user access and other features.
+
+To types of files exist: immutable and mutable files. The mutable files are used
+as directories, in the sense that they contain the information needed to access
+other directories or files.
+
+In principle, the only operations the key-value store need to support are
+\textbf{PUT}, \textbf{GET} and \textbf{UPDATE}. The latter one is required to
+make changes to the ``directory'' files.
+
+% Picture: "Architecture: Directory tree"
+
+% TODO:
+% - Various File access modes
 
 \section{User scenarios}
 
+The various user scenarios the software has to support, provides a logic way to
+describe the external properties of the system. The fundamental operations are
+\emph{uploading}, \emph{downloading} and \emph{sharing} of files.
+
 \subsection{Upload Files}
+
+When a user wishes to upload a file, all that is needed is the password to
+unlock the local keyring on the user terminal, as depicted in Figure
+\ref{fig:arch:upload}. The only information the receiving server in the cloud
+receives, are identifiers and encrypted containers.
 
 \begin{figure}[h!]
     \centering
@@ -386,6 +419,8 @@ also be given.
 %**************************************%
 \chapter{Discussion}
 %**************************************%
+
+- Cascading deletes? Loops.
 
 %**************************************%
 \chapter{Conclusion and Future Work}
