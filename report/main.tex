@@ -296,15 +296,16 @@ There are a number of existing storage solutions for storing data in the cloud,
 with more or less of the functionality required to fulfill the problem
 description for this thesis. The section highlights some of them.
 
-\subsection{Dropbox}
-Dropbox\footnote{\url{http://www.dropbox.com}} is a commercial application for
-storing data in the cloud, more specific using Amazons S3 storage service. It
-claims that files are stored encrypted with \ac{AES}-256 which can only be
-decrypted with the users username and password, and that Dropbox employees are
-not able to access the files of the user. However Dropbox also has a Forgot
-password feature which means that Dropbox can read the users files if they
-really want to. Their \ac{FAQ} does however say that some people have been
-successfull in putting truecrypt containers in Dropbox to prevent this.
+\subsection{Dropbox} Dropbox\footnote{\url{http://www.dropbox.com}} is a
+commercial application for storing data in the cloud, more specific using
+Amazons S3 storage service. It claims that files are stored encrypted with
+\ac{AES}-256 which can only be decrypted with the users username and password,
+and that Dropbox employees are not able to access the files of the
+user\footnote{\url{http://www.dropbox.com/help/27}}. However Dropbox also has a
+Forgot password feature which means that Dropbox can read the users files if
+they really want to. Their \ac{FAQ} does however say that some people have been
+successfull in putting truecrypt containers in Dropbox which effectivly makes
+dropbox secure\footnote{\url{http://www.dropbox.com/help/179}}.
 
 \subsection{Tahoe-LAFS}
 Tahoe-\ac{LAFS}\footnote{http://www.tahoe-lafs.org} is an open source
