@@ -133,8 +133,16 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 
 \begin{acronym}
 \acro{AES}{Advanced Encryption Standard}
+\acro{CA}{Certification authority}
+\acro{DSA}{Digital Signature Algorithm}
+\acro{DSS}{Digital Signature Scheme}
+\acro{PBKDF2}{Password-Based Key Derivation Function version 2}
+\acro{PKI}{Public Key Infrastructure}
+\acro{PGP}{Pretty Good Privacy}
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SHA}{Secure Hash Algorithm}
+\acro{SSL}{Secure Socket Layer}
+\acro{TLS}{Transport Layer Security}
 \end{acronym}
 
 %**************************************%
@@ -159,26 +167,20 @@ software used.
 %-sym vs asym crypto
 %    -AES, modes
 %    -RSA
-%-hashing
-%    -SHA-256
-%-certificates
-%-PKI
-%-PGP
-%-SSL
-%-PBKDF2
 %-Tahoe
 
 %- MITM
 %- Brute Force
 \section{Security Services}
 This section briefly explains certain security services used in this
-thesis.
+thesis. A security service is any processing or communication service that
+enhances the security of the data processing systems and the information
+transfers of any organization\cite[p. 12]{stallings}.
 
-\subsection{Confidentiality}
-Confidentiality is the art of keeping a message secret from unauthorized
-parties\cite[p. 18]{stallings}. This can typically be done by either preventing other parties access
-to the message at all, or making the contents unreadable for instance by the
-use of encryption. 
+\subsection{Confidentiality} Confidentiality is the art of keeping a message
+secret from unauthorized parties\cite[p. 18]{stallings}. This can typically be
+done by either preventing other parties access to the message at all, or making
+the contents unreadable for instance by the use of encryption. 
 
 \subsection{Integrity}
 Integrity in a security perspective deals with detecting, preventing or
@@ -191,7 +193,7 @@ what he claims to be\cite[p. 18]{stallings}.
 
 \subsection{Nonrepudiation}
 Nonrepudiation prevents either sender or receiver of a message from denying a
-transmitted message, in other words one party can proove the other partys
+transmitted message, in other words one party can prove the other parties
 involvement\cite[p. 19]{stallings}.
 
 \section{Cryptographic Primitives}
@@ -207,21 +209,25 @@ a good cipher is used, knowledge of the cipher, plaintext and ciphertext should
 not be enough to obtain the key.
 
 \paragraph{Block-cipher and Stream-cipher} are classifications on how a cipher
-treats data. With a block-cipher data will be encrypted in blocks of specific
-sizes. If the data length is not a multiple of the block size, the data will be
-padded. A stream cipher on the other hand will encrypt the message bit by bit.
+treats data\cite[p. 32]{stallings}. With a block-cipher data will be encrypted
+in blocks of specific sizes. If the data length is not a multiple of the block
+size, the data will be padded. A stream cipher on the other hand will encrypt
+the message co.
 
 \paragraph{Symmetric encryption} is an encryption scheme where the same key is
-used for both encryption and decryption. \ac{AES} is a block cipher and is the
-current standard for symmetric encryption. \ac{AES} works on a block of 128-bit
-and support keys of 128, 192 and 256-bit. 
+used for both encryption and decryption\cite[p. 32]{stallings}. \ac{AES} is a
+block cipher and is the current standard for symmetric encryption. \ac{AES}
+works on a block of 128-bit and support keys of 128, 192 and 256-bit. 
+
 
 \paragraph{Asymmetric encryption} is an encryption scheme where a different key
-is used for encryption than decryption. An assymetric encryption scheme is
-often called a public-key encryption scheme, because it is possible to encrypt
-a message for a user using one of the keys which can only be decrypted with his
-other key. The other key is then called the private or secret key. The probably
-most well known assymmetric crypto scheme is \ac{RSA}.
+is used for encryption than decryption\cite[p. 259]{stallings}. An asymmetric
+encryption scheme is often called a public-key encryption scheme, where one key
+is defined as private and the other as public. The public key is shared to
+allow other parties to encrypt messages for the owner of the private key. The
+downside of asymmetric encryption compared to symmetric is that it requires a
+larger key and has a larger computational overhead to obtain the same level of
+confidentiality. The probably best known asymmetric cipher is \ac{RSA}.
 
 \subsection{Cryptographic hash functions}
 A cryptographic hash function is a deterministic mathematical procedure which
@@ -238,19 +244,50 @@ The standard for cryptographic hash functions today are \ac{SHA}-1 and the
 
 \section{Applications of cryptographic primitives}
 
-\section{Digital Signatures}
+\subsection{Digital Signatures}
 A digital signature is the digital equivalent of a normal signature, it
-verifies that an entity aproves with or has written a message. An easy example
-is to send a message through a cryptographic hash function and encrypts it with
-a private key. A receiving party can then hash the same message and decrypt the
-signature using the users public key and verify that the two hashes match. With
-this scheme we have obtained authentication, integrity and non-repudiation for
-the message, given that we already know that the public key for the sending
-user is held by the person we believe the message originates from.
+verifies that an entity approves with or has written a message, the date the
+signature was made and it should be verifiable by a third party \cite[p.
+379]{schneier}. It should logically not be possible or at least unfeasible to
+fake a digital signature. It is possible to create digital signatures with
+\ac{RSA} there is also a standard for digital signatures called \ac{DSS} which
+uses \ac{DSA} as the actual algorithm.
 
-\section{Digital Certificates and PKI}
-A digital certificate is the pairing of a digital signature and a public key. 
+\subsection{Digital Certificates and PKI}
+A digital certificate is the pairing of a digital signature and a public key.
+By this scheme the services confidentiality, authentication and nonrepudiation
+can be achieved.  Basically a person or other entity has a certificate with
+some clues about the identity in it, e.g. the e-mail, together with a public
+key. This certificate can then be signed using digital signatures to verify
+that some other entity trusts this certificate. In practise the entity which
+signs certificates is the \ac{CA} which all clients have the public key
+information for, and trusts. The \ac{CA} will also contain information about
+which certificates has been revoked, i.e. should not be trusted in use. Such a
+scheme is usually referred
+to as a \ac{PKI}.
 
+\subsubsection{PGP}
+\ac{PGP} is a scheme similar to \ac{PKI} but with no \ac{CA} that all users
+trusts. Instead trust is made between users by somehow verifying their public
+key, for instance by meeting face to face. A user can then sign another users
+key, set a trust level for the user and publish this information to a
+keyserver. Another user can then calculate a trust to an unknown person based
+on the trust set by peoples that he trusts. 
+
+\subsection{SSL/TLS}
+\ac{TLS} and its predecessor \ac{SSL} are techniques for obtaining
+confidentiality, integrity for transfer of files over a
+network\cite{stallings}. It does so by a combination of different algorithms
+and primitives, but a digital certificate is required for authentication. 
+
+\subsection{PBKDF2}
+%TODO: See if we actually use this.
+\ac{PBKDF2} is a key derivation function to create an encryption key based on
+a password. The point of this is that a password is often something that should
+be memorable to a person, but what is memorable to a person might be a to short
+phrase to withstand a brute force attack. What \ac{PBKDF2} does is make the
+process of deriving the key from the password an expensive process in terms of
+computational power, to make it more resistant to brute force attacks.
 
 %**************************************%
 \chapter{Architectural Solution}
