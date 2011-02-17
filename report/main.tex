@@ -139,6 +139,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{DSS}{Digital Signature Scheme}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{LAFS}{Least Authorithy File System}
+\acro{MITM}{Man-in-the-middle}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
@@ -167,11 +168,6 @@ software used.
 %**************************************%
 \chapter{Background}
 %**************************************%
-%- MITM
-%- Brute Force
-
-% Other concepts:
-%------------------
 % Cloud (computing)
 \section{Security Services}
 This section briefly explains certain security services used in this
@@ -316,6 +312,10 @@ parties.
 \paragraph{Denial of Service} is an active attack where the attacker seeks to
 make resources unavailable for legit users, i.e. by overloading an application
 by sending it lots of traffic.
+
+\paragraph{\acl{MITM}} is an attack where an attacker intercepts messages
+between the communicating parties and then either relay or substitute the
+intercepted message.
 
 \subsection{Attacks on cryptographic primitives}
 Even though cryptographic primitives are designed to be secure, they might have
