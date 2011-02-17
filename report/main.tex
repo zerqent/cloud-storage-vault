@@ -366,10 +366,6 @@ its users that the functions indeed are secure, and that the concepts are easy
 to understand and accept.
 
 \section{Introduction}
-% FIXME: This needs to be moved somewhere:
-A capability is a short text string containing all information needed to find,
-get, and read a file or folder. This includes cryptographic keys.
-
 % Picture: "Architecture: Overview"
 
 % TODO:
@@ -383,7 +379,11 @@ support user access and other features.
 
 To types of files exist: immutable and mutable files. The mutable files are used
 as directories, in the sense that they contain the information needed to access
-other directories or files.
+other directories or files in the form of capabilities.
+
+A capability is a short alphanumeric string containing all information needed
+to find, get, and read a file or folder. This includes an identifier and
+cryptographic keys.
 
 In principle, the only operations the key-value store need to support are
 \textbf{PUT}, \textbf{GET} and \textbf{UPDATE}. The latter one is required to
@@ -392,7 +392,7 @@ make changes to the ``directory'' files.
 % Picture: "Architecture: Directory tree"
 
 % TODO:
-% - Various File access modes
+% - Various File access modes (RO/RW)
 
 \section{User scenarios}
 
@@ -405,7 +405,11 @@ describe the external properties of the system. The fundamental operations are
 When a user wishes to upload a file, all that is needed is the password to
 unlock the local keyring on the user terminal, as depicted in Figure
 \ref{fig:arch:upload}. The only information the receiving server in the cloud
-receives, are identifiers and encrypted containers.
+receives, are identifiers and encrypted containers. If the user chooses to, she
+can transfer the resulting identifiers and capabilities to other users.
+
+The cryptographic details of the Upload Operation can be found in Section
+\ref{sec:CS:UF}.
 
 \begin{figure}[h!]
     \centering
@@ -454,6 +458,7 @@ solution will be explained in the manner of 3 different file operations, namely
 upload, download and share file.
 
 \section{Upload File}
+\label{sec:CS:UF}
 The process of uploading a file onto a network server was illustrated in Figure
 \ref{fig:U}. This section will provide a more detailed description of the
 process and specify the functionality of the Upload operation at the user
