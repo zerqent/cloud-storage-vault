@@ -138,15 +138,20 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
 \acro{FAQ}{Frequently Asked Questions}
-\acro{LAFS}{Least Authorithy File System}
+\acro{IaaS}{Infrastructure as a Service}
+\acro{LAFS}{Least Authority File System}
 \acro{MITM}{Man-in-the-middle}
+\acro{NIST}{National Institute of Standards and Technology}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
+\acro{PaaS}{Platform as a Service}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{RSA}{Rivest, Shamir and Adleman}
+\acro{SaaS}{Software as a Service}
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SSL}{Secure Socket Layer}
 \acro{TLS}{Transport Layer Security}
+\acro{VM}{Virtual Machine}
 \end{acronym}
 
 %**************************************%
@@ -327,6 +332,53 @@ or to deduce the key being used in a ciphertext.
 \paragraph{Brute-force attack} is an attack where you try to obtain a secret by
 testing the algorithm with up to all possible inputs. The secret might be an
 encryption key or the data fed into a cryptographic hash function.
+
+\section{Cloud Computing} 
+In a draft\cite{cloud_nistdef} \ac{NIST} defines cloud computing as:
+\begin{quote} 
+Cloud computing is a model for enabling ubiquitous, convenient,
+on-demand network access to a shared pool of configurable computing resources
+(e.g., networks, servers, storage, applications, and services) that can be
+rapidly provisioned and released with minimal management effort or service
+provider interaction.  
+\end{quote}
+
+\subsection{Service Models}
+\ac{NIST} also defines three service models which deals with what kind of
+service the consumer is able to rent from a provider.
+
+\paragraph{\ac{SaaS}} is the capability for a consumer to run the provider's
+application running on cloud infrastructure, using a thin-client, browser or
+similar. Gmail\footnote{\url{http://www.gmail.com}} can be seen as an example
+of this.
+
+\paragraph{\ac{PaaS}} is the capability for a consumer to deploy software onto
+the cloud, but without actually controlling the underlying platform, operating
+system etc.
+
+\paragraph{\ac{IaaS}} is the capability provided to the consumer to provision
+processing, storage, networks and other fundamental computing resources where
+he can run arbitrary software, including operating systems and applications. An
+example is hiring a \ac{VM}.
+
+\subsection{Deployment Models}
+The \ac{NIST} draft also lists several Deployment Models which deals with how
+the cloud is organized in terms of where it is hosted and who has access to it.
+
+\paragraph{Private Cloud} is a cloud infrastructure operated solely for an
+organization. Which party manages the cloud and where it is located is not
+given.
+
+\paragraph{Community Cloud} is a cloud infrastructure is shared by several
+organizations to serve a common concern. Where it is located and who manages it
+is not given.
+
+\paragraph{Public Cloud} is a cloud infrastructure where basically everyone or
+at least a large group can have access, and is owned by a external provider of
+cloud services.
+
+\paragraph{Hybrid Cloud} is a cloud infrastructure composed of two or more
+clouds of any other model. 
 
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,
