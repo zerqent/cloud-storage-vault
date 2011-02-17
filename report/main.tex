@@ -138,14 +138,20 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
 \acro{FAQ}{Frequently Asked Questions}
-\acro{LAFS}{Least Authorithy File System}
+\acro{IaaS}{Infrastructure as a Service}
+\acro{LAFS}{Least Authority File System}
+\acro{MITM}{Man-in-the-middle}
+\acro{NIST}{National Institute of Standards and Technology}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
+\acro{PaaS}{Platform as a Service}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{RSA}{Rivest, Shamir and Adleman}
+\acro{SaaS}{Software as a Service}
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SSL}{Secure Socket Layer}
 \acro{TLS}{Transport Layer Security}
+\acro{VM}{Virtual Machine}
 \end{acronym}
 
 %**************************************%
@@ -167,16 +173,6 @@ software used.
 %**************************************%
 \chapter{Background}
 %**************************************%
-%-sym vs asym crypto
-%    -AES, modes
-%    -RSA
-%-Tahoe
-
-%- MITM
-%- Brute Force
-
-% Other concepts:
-%------------------
 % Cloud (computing)
 \section{Security Services}
 This section briefly explains certain security services used in this
@@ -184,24 +180,21 @@ thesis. A security service is any processing or communication service that
 enhances the security of the data processing systems and the information
 transfers of any organization\cite[p. 12]{stallings}.
 
-\subsection{Confidentiality} Confidentiality is the art of keeping a message
-secret from unauthorized parties\cite[p. 18]{stallings}. This can typically be
-done by either preventing other parties access to the message at all, or making
-the contents unreadable for instance by the use of encryption. 
+\paragraph{Confidentiality} is the art of keeping a message secret from
+unauthorized parties\cite[p. 18]{stallings}. This can typically be done by
+either preventing other parties access to the message at all, or making the
+contents unreadable for instance by the use of encryption. 
 
-\subsection{Integrity}
-Integrity in a security perspective deals with detecting, preventing or
-recovering a message from being changes by an unauthorized party \cite[p.
-18]{stallings}.
+\paragraph{Integrity} in a security perspective deals with detecting,
+preventing or recovering a message from being changes by an unauthorized party
+\cite{stallings}.
 
-\subsection{Authentication}
-Authentication is the act for a user, service or similar to prove that he is
-what he claims to be\cite[p. 18]{stallings}. 
+\paragraph{Authentication} is the act for a user, service or similar to prove
+that he is what he claims to be\cite{stallings}. 
 
-\subsection{Nonrepudiation}
-Nonrepudiation prevents either sender or receiver of a message from denying a
-transmitted message, in other words one party can prove the other parties
-involvement\cite[p. 19]{stallings}.
+\subsection{Nonrepudiation} prevents either sender or receiver of a message
+from denying a transmitted message, in other words one party can prove the
+other parties involvement\cite{stallings}.
 
 \section{Cryptographic Primitives}
 This section explains the low level security primitives used in this thesis.
@@ -226,6 +219,9 @@ used for both encryption and decryption\cite[p. 32]{stallings}. \ac{AES} is a
 block cipher and is the current standard for symmetric encryption. \ac{AES}
 works on a block of 128-bit and support keys of 128, 192 and 256-bit. 
 
+\paragraph{The mode of operation} used for a symmetric encryption scheme
+enables subsequent safe use of the same key.
+%TODO: Vi kan ikke nevne alle her, vi nevner de som er nødvendige. CBC?
 
 \paragraph{Asymmetric encryption} is an encryption scheme where a different key
 is used for encryption than decryption\cite[p. 259]{stallings}. An asymmetric
@@ -255,31 +251,29 @@ The standard for cryptographic hash functions today are \ac{SHA}-1 and the
 A digital signature is the digital equivalent of a normal signature, it
 verifies that an entity approves with or has written a message, the date the
 signature was made and it should be verifiable by a third party \cite[p.
-379]{schneier}. It should logically not be possible or at least unfeasible to
+379]{stallings}. It should logically not be possible or at least unfeasible to
 fake a digital signature. It is possible to create digital signatures with
 \ac{RSA} there is also a standard for digital signatures called \ac{DSS} which
 uses \ac{DSA} as the actual algorithm.
 
-\subsection{Digital Certificates and PKI}
-A digital certificate is the pairing of a digital signature and a public key.
-By this scheme the services confidentiality, authentication and nonrepudiation
-can be achieved.  Basically a person or other entity has a certificate with
-some clues about the identity in it, e.g. the e-mail, together with a public
-key. This certificate can then be signed using digital signatures to verify
-that some other entity trusts this certificate. In practise the entity which
-signs certificates is the \ac{CA} which all clients have the public key
-information for, and trusts. The \ac{CA} will also contain information about
-which certificates has been revoked, i.e. should not be trusted in use. Such a
-scheme is usually referred
+\subsection{Digital Certificates and PKI} A digital certificate is the pairing
+of a digital signature and a public key\cite{stallings}.  By this scheme the
+services confidentiality, authentication and nonrepudiation can be achieved.
+Basically a person or other entity has a certificate with some clues about the
+identity in it, e.g. the e-mail, together with a public key. This certificate
+can then be signed using digital signatures to verify that some other entity
+trusts this certificate. In practise the entity which signs certificates is the
+\ac{CA} which all clients have the public key information for, and trusts. The
+\ac{CA} will also contain information about which certificates has been
+revoked, i.e. should not be trusted in use. Such a scheme is usually referred
 to as a \ac{PKI}.
 
-\subsubsection{PGP}
-\ac{PGP} is a scheme similar to \ac{PKI} but with no \ac{CA} that all users
-trusts. Instead trust is made between users by somehow verifying their public
-key, for instance by meeting face to face. A user can then sign another users
-key, set a trust level for the user and publish this information to a
-keyserver. Another user can then calculate a trust to an unknown person based
-on the trust set by peoples that he trusts. 
+\subsubsection{PGP} \ac{PGP} is a scheme similar to \ac{PKI} but with no
+\ac{CA} that all users trusts\cite{stallings}. Instead trust is made between
+users by somehow verifying their public key, for instance by meeting face to
+face. A user can then sign another users key, set a trust level for the user
+and publish this information to a keyserver. Another user can then calculate a
+trust to an unknown person based on the trust set by peoples that he trusts. 
 
 \subsection{SSL/TLS}
 \ac{TLS} and its predecessor \ac{SSL} are techniques for obtaining
@@ -295,6 +289,109 @@ be memorable to a person, but what is memorable to a person might be a to short
 phrase to withstand a brute force attack. What \ac{PBKDF2} does is make the
 process of deriving the key from the password an expensive process in terms of
 computational power, to make it more resistant to brute force attacks.
+
+\section{Security Attacks}
+This section briefly list security attacks relevant to this thesis, as defined
+by \citeauthor{stallings}.
+%TODO: Mulig man skal bruke en annen måte å refere kilden på her
+
+\paragraph{Active and passive attacks} are classifications of security attacks,
+where a passive attack attempts to learn or make use of information from the
+system but does not affect system resources. An active attack attempts to alter
+system resources or affect their operation.
+
+\paragraph{Traffic analysis} is the art of capturing communication sent between
+two parties. This information might contain secrets or might for instance leak
+enough information about an encryption key to make it breakable. 
+
+\paragraph{Masquerade} is an active attack where the attacker pretends to be
+one of the legit parties.
+
+\paragraph{Replay} is an active attack where the attacker capture some data in
+a communication session and subsequently retransmit that information.
+
+\paragraph{Modification of messages} is an active attack where the attacker
+alters some of the contents of a message sent between two communicating
+parties.
+
+\paragraph{Denial of Service} is an active attack where the attacker seeks to
+make resources unavailable for legit users, i.e. by overloading an application
+by sending it lots of traffic.
+
+\paragraph{\acl{MITM}} is an attack where an attacker intercepts messages
+between the communicating parties and then either relay or substitute the
+intercepted message.
+
+\subsection{Attacks on cryptographic primitives}
+Even though cryptographic primitives are designed to be secure, they might have
+both flaws and be used in an incorrect fashion. 
+
+\paragraph{Cryptanalysis attack} is an attempt to deduce a specific plaintext
+or to deduce the key being used in a ciphertext.
+
+\paragraph{Brute-force attack} is an attack where you try to obtain a secret by
+testing the algorithm with up to all possible inputs. The secret might be an
+encryption key or the data fed into a cryptographic hash function.
+
+\section{Cloud Computing} 
+In a draft\cite{cloud_nistdef} \ac{NIST} defines cloud computing as:
+\begin{quote} 
+Cloud computing is a model for enabling ubiquitous, convenient,
+on-demand network access to a shared pool of configurable computing resources
+(e.g., networks, servers, storage, applications, and services) that can be
+rapidly provisioned and released with minimal management effort or service
+provider interaction.  
+\end{quote}
+
+\subsection{Service Models}
+\ac{NIST} also defines three service models which deals with what kind of
+service the consumer is able to rent from a provider.
+
+\paragraph{\ac{SaaS}} is the capability for a consumer to run the provider's
+application running on cloud infrastructure, using a thin-client, browser or
+similar. Gmail\footnote{\url{http://www.gmail.com}} can be seen as an example
+of this.
+
+\paragraph{\ac{PaaS}} is the capability for a consumer to deploy software onto
+the cloud, but without actually controlling the underlying platform, operating
+system etc.
+
+\paragraph{\ac{IaaS}} is the capability provided to the consumer to provision
+processing, storage, networks and other fundamental computing resources where
+he can run arbitrary software, including operating systems and applications. An
+example is hiring a \ac{VM}.
+
+\subsection{Deployment Models}
+The \ac{NIST} draft also lists several Deployment Models which deals with how
+the cloud is organized in terms of where it is hosted and who has access to it.
+
+\paragraph{Private Cloud} is a cloud infrastructure operated solely for an
+organization. Which party manages the cloud and where it is located is not
+given.
+
+\paragraph{Community Cloud} is a cloud infrastructure is shared by several
+organizations to serve a common concern. Where it is located and who manages it
+is not given.
+
+\paragraph{Public Cloud} is a cloud infrastructure where basically everyone or
+at least a large group can have access, and is owned by a external provider of
+cloud services.
+
+\paragraph{Hybrid Cloud} is a cloud infrastructure composed of two or more
+clouds of any other model. 
+
+\subsection{Security considerations} 
+There are some considerations when using cloud services from an external provider 
+as opposed to self controlled hardware, software and plattforms. Most notably
+is that you loose the control of selecting the people which will have physical
+and digital access to the infrastructure. In essence this means that the
+provider can read every data sent to and from the cloud as well as the data
+saved in the cloud.
+
+Another risk is that information might be leaked to other users of the same
+cloud. For instance it might be able possible for a \ac{VM} to leak information
+to other \ac{VM}s on the same host. 
+%TODO: kilde
 
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,
@@ -320,35 +417,50 @@ exclusivly encrypted client-side, before beeing uploaded into the cloud.
 Tahoe-\ac{LAFS} also uses erasure-coding to obtain redundancy across multiple
 storage servers.  
 
+%TODO: kilde, enten paperet vi brukte i prosjektet, muligens
+% http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/about.html
+
 %**************************************%
 \chapter{Architectural Solution}
 %**************************************%
 \label{chap:AS}
--Chapter intro
 
 The architectural solution of a secure cloud file sharing system has to convince
 its users that the functions indeed are secure, and that the concepts are easy
 to understand and accept.
 
 \section{Introduction}
-% FIXME: This needs to be moved somewhere:
-A capability is a short text string containing all information needed to find,
-get, and read a file or folder. This includes cryptographic keys.
+% FIXME: Can we just drop this section and include its contents in the chapter
+% intro?
 
-% Picture: "Architecture: Overview"
+The architecture has to support various user functionality. Figure
+\ref{fig:arch:overview} exhibits Alice uploading files to the cloud, and
+thereafter transferring the necessary information to Bob so that he also can
+gain access to the files.
 
-% TODO:
-% - Write another intro text when we figure out what to include in this chapter
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{ArchitectureOverview.pdf}
+    \caption{Overview of user functionality}
+    \label{fig:arch:overview}
+\end{figure}
+
+In the following sections, we will describe how the file storage is organized,
+and take a closer look at how the different functionality are solved.
 
 \section{File Storage}
+\label{sec:AS:FS}
 
 The solution proposed in this thesis, is that only a simple key-value store is
 needed on the server side. This may be extended with an \ac{ACL} layer to
 support user access and other features.
 
-To types of files exist: immutable and mutable files. The mutable files are used
+Two types of files exist: immutable and mutable files. The mutable files are used
 as directories, in the sense that they contain the information needed to access
-other directories or files.
+other directories or files in the form of capabilities.
+A capability is a short alphanumeric string containing all information needed
+to find, get, read and write a file or folder. This includes an identifier and
+cryptographic keys.
 
 In principle, the only operations the key-value store need to support are
 \textbf{PUT}, \textbf{GET} and \textbf{UPDATE}. The latter one is required to
@@ -357,20 +469,43 @@ make changes to the ``directory'' files.
 % Picture: "Architecture: Directory tree"
 
 % TODO:
-% - Various File access modes
+% - Various File access modes (RO/RW)
 
 \section{User scenarios}
 
 The various user scenarios the software has to support, provides a logic way to
 describe the external properties of the system. The fundamental operations are
-\emph{uploading}, \emph{downloading} and \emph{sharing} of files.
+\emph{downloading}, \emph{uploading} and \emph{sharing} of files.
+
+\subsection{Download file}
+
+When a user wishes to download a file or directory, all that is needed is the
+password to unlock the local keyring on the user terminal, as depicted in Figure
+\ref{fig:arch:download}. The client sends a GET request with the identifier in
+question, and the server responds with the encrypted folder. This contains the
+capabilities needed to locate and decrypt the underlying files and folders.
+After decrypting the contents, the client again queries the server with the
+identifier of the wanted file, and there after decrypts it, before displaying it
+to the user.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{ArchitectureDownload.pdf}
+    \caption{Scenario: Downloading of files}
+    \label{fig:arch:download}
+\end{figure}
 
 \subsection{Upload Files}
 
-When a user wishes to upload a file, all that is needed is the password to
-unlock the local keyring on the user terminal, as depicted in Figure
-\ref{fig:arch:upload}. The only information the receiving server in the cloud
-receives, are identifiers and encrypted containers.
+Figure \ref{fig:arch:upload} shows the process of uploading a new file. The only
+information the server in the cloud receives, are identifiers and encrypted
+containers. The user is also given the opportunity to transfer the corresponding
+identifiers and capabilities to users.
+
+Before uploading, the client has to download and decrypt the directory the
+files are to be placed in. This process was described in the previous section.
+The cryptographic details of the Upload Operation can be found in Section
+\ref{sec:CS:UF}.
 
 \begin{figure}[h!]
     \centering
@@ -378,8 +513,6 @@ receives, are identifiers and encrypted containers.
     \caption{Scenario: Uploading of files}
     \label{fig:arch:upload}
 \end{figure}
-
-\subsection{Download file}
 
 \subsection{Share files}
 
@@ -419,6 +552,7 @@ solution will be explained in the manner of 3 different file operations, namely
 upload, download and share file.
 
 \section{Upload File}
+\label{sec:CS:UF}
 The process of uploading a file onto a remote server was illustrated in Figure
 \ref{fig:AS:U}. This section will provide a more detailed description of the
 process and specify the functionality of the Upload operation at the user
