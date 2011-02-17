@@ -380,6 +380,19 @@ cloud services.
 \paragraph{Hybrid Cloud} is a cloud infrastructure composed of two or more
 clouds of any other model. 
 
+\subsection{Security considerations} 
+There are some considerations when using cloud services from an external provider 
+as opposed to self controlled hardware, software and plattforms. Most notably
+is that you loose the control of selecting the people which will have physical
+and digital access to the infrastructure. In essence this means that the
+provider can read every data sent to and from the cloud as well as the data
+saved in the cloud.
+
+Another risk is that information might be leaked to other users of the same
+cloud. For instance it might be able possible for a \ac{VM} to leak information
+to other \ac{VM}s on the same host. 
+%TODO: kilde
+
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,
 with more or less of the functionality required to fulfill the problem
