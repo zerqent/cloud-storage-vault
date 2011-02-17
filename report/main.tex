@@ -167,11 +167,6 @@ software used.
 %**************************************%
 \chapter{Background}
 %**************************************%
-%-sym vs asym crypto
-%    -AES, modes
-%    -RSA
-%-Tahoe
-
 %- MITM
 %- Brute Force
 
@@ -184,24 +179,21 @@ thesis. A security service is any processing or communication service that
 enhances the security of the data processing systems and the information
 transfers of any organization\cite[p. 12]{stallings}.
 
-\subsection{Confidentiality} Confidentiality is the art of keeping a message
-secret from unauthorized parties\cite[p. 18]{stallings}. This can typically be
-done by either preventing other parties access to the message at all, or making
-the contents unreadable for instance by the use of encryption. 
+\paragraph{Confidentiality} is the art of keeping a message secret from
+unauthorized parties\cite[p. 18]{stallings}. This can typically be done by
+either preventing other parties access to the message at all, or making the
+contents unreadable for instance by the use of encryption. 
 
-\subsection{Integrity}
-Integrity in a security perspective deals with detecting, preventing or
-recovering a message from being changes by an unauthorized party \cite[p.
-18]{stallings}.
+\paragraph{Integrity} in a security perspective deals with detecting,
+preventing or recovering a message from being changes by an unauthorized party
+\cite{stallings}.
 
-\subsection{Authentication}
-Authentication is the act for a user, service or similar to prove that he is
-what he claims to be\cite[p. 18]{stallings}. 
+\paragraph{Authentication} is the act for a user, service or similar to prove
+that he is what he claims to be\cite{stallings}. 
 
-\subsection{Nonrepudiation}
-Nonrepudiation prevents either sender or receiver of a message from denying a
-transmitted message, in other words one party can prove the other parties
-involvement\cite[p. 19]{stallings}.
+\subsection{Nonrepudiation} prevents either sender or receiver of a message
+from denying a transmitted message, in other words one party can prove the
+other parties involvement\cite{stallings}.
 
 \section{Cryptographic Primitives}
 This section explains the low level security primitives used in this thesis.
@@ -258,31 +250,29 @@ The standard for cryptographic hash functions today are \ac{SHA}-1 and the
 A digital signature is the digital equivalent of a normal signature, it
 verifies that an entity approves with or has written a message, the date the
 signature was made and it should be verifiable by a third party \cite[p.
-379]{schneier}. It should logically not be possible or at least unfeasible to
+379]{stallings}. It should logically not be possible or at least unfeasible to
 fake a digital signature. It is possible to create digital signatures with
 \ac{RSA} there is also a standard for digital signatures called \ac{DSS} which
 uses \ac{DSA} as the actual algorithm.
 
-\subsection{Digital Certificates and PKI}
-A digital certificate is the pairing of a digital signature and a public key.
-By this scheme the services confidentiality, authentication and nonrepudiation
-can be achieved.  Basically a person or other entity has a certificate with
-some clues about the identity in it, e.g. the e-mail, together with a public
-key. This certificate can then be signed using digital signatures to verify
-that some other entity trusts this certificate. In practise the entity which
-signs certificates is the \ac{CA} which all clients have the public key
-information for, and trusts. The \ac{CA} will also contain information about
-which certificates has been revoked, i.e. should not be trusted in use. Such a
-scheme is usually referred
+\subsection{Digital Certificates and PKI} A digital certificate is the pairing
+of a digital signature and a public key\cite{stallings}.  By this scheme the
+services confidentiality, authentication and nonrepudiation can be achieved.
+Basically a person or other entity has a certificate with some clues about the
+identity in it, e.g. the e-mail, together with a public key. This certificate
+can then be signed using digital signatures to verify that some other entity
+trusts this certificate. In practise the entity which signs certificates is the
+\ac{CA} which all clients have the public key information for, and trusts. The
+\ac{CA} will also contain information about which certificates has been
+revoked, i.e. should not be trusted in use. Such a scheme is usually referred
 to as a \ac{PKI}.
 
-\subsubsection{PGP}
-\ac{PGP} is a scheme similar to \ac{PKI} but with no \ac{CA} that all users
-trusts. Instead trust is made between users by somehow verifying their public
-key, for instance by meeting face to face. A user can then sign another users
-key, set a trust level for the user and publish this information to a
-keyserver. Another user can then calculate a trust to an unknown person based
-on the trust set by peoples that he trusts. 
+\subsubsection{PGP} \ac{PGP} is a scheme similar to \ac{PKI} but with no
+\ac{CA} that all users trusts\cite{stallings}. Instead trust is made between
+users by somehow verifying their public key, for instance by meeting face to
+face. A user can then sign another users key, set a trust level for the user
+and publish this information to a keyserver. Another user can then calculate a
+trust to an unknown person based on the trust set by peoples that he trusts. 
 
 \subsection{SSL/TLS}
 \ac{TLS} and its predecessor \ac{SSL} are techniques for obtaining
@@ -298,6 +288,45 @@ be memorable to a person, but what is memorable to a person might be a to short
 phrase to withstand a brute force attack. What \ac{PBKDF2} does is make the
 process of deriving the key from the password an expensive process in terms of
 computational power, to make it more resistant to brute force attacks.
+
+\section{Security Attacks}
+This section briefly list security attacks relevant to this thesis, as defined
+by \citeauthor{stallings}.
+%TODO: Mulig man skal bruke en annen måte å refere kilden på her
+
+\paragraph{Active and passive attacks} are classifications of security attacks,
+where a passive attack attempts to learn or make use of information from the
+system but does not affect system resources. An active attack attempts to alter
+system resources or affect their operation.
+
+\paragraph{Traffic analysis} is the art of capturing communication sent between
+two parties. This information might contain secrets or might for instance leak
+enough information about an encryption key to make it breakable. 
+
+\paragraph{Masquerade} is an active attack where the attacker pretends to be
+one of the legit parties.
+
+\paragraph{Replay} is an active attack where the attacker capture some data in
+a communication session and subsequently retransmit that information.
+
+\paragraph{Modification of messages} is an active attack where the attacker
+alters some of the contents of a message sent between two communicating
+parties.
+
+\paragraph{Denial of Service} is an active attack where the attacker seeks to
+make resources unavailable for legit users, i.e. by overloading an application
+by sending it lots of traffic.
+
+\subsection{Attacks on cryptographic primitives}
+Even though cryptographic primitives are designed to be secure, they might have
+both flaws and be used in an incorrect fashion. 
+
+\paragraph{Cryptanalysis attack} is an attempt to deduce a specific plaintext
+or to deduce the key being used in a ciphertext.
+
+\paragraph{Brute-force attack} is an attack where you try to obtain a secret by
+testing the algorithm with up to all possible inputs. The secret might be an
+encryption key or the data fed into a cryptographic hash function.
 
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,
