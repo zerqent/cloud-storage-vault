@@ -25,11 +25,15 @@ public class DownloadActivity extends ListActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if(resultCode == RESULT_OK){
-			System.out.println("Download and open "+data.getStringExtra("DOWNLOADFILE").substring(1));
+			System.out.println("Download and open "+data.getStringExtra("DOWNLOADFILE"));
 		}
 		// TODO: DOWNLOAD FILE HERE!
 		try {
-			FileContainer fc = TestActivity.fm.download(data.getStringExtra("DOWNLOADFILE").substring(1));
+			FileContainer fc = TestActivity.fm.download(data.getStringExtra("DOWNLOADFILE"));
+			byte[] bytes = fc.getPrimitiveByte();
+			Intent intent = new Intent(Intent.ACTION_RUN);
+			intent.putExtra("file", bytes);
+			startActivity(intent);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

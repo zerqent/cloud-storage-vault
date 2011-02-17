@@ -80,7 +80,7 @@ public class BrowseActivity extends ListActivity{
 			}
 		});
 	}
-	
+
 	public void browseLocal(File file){
 		files.clear();
 		// Open "file" if it is a directory.
