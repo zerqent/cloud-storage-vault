@@ -424,30 +424,42 @@ storage servers.
 \chapter{Architectural Solution}
 %**************************************%
 \label{chap:AS}
--Chapter intro
 
 The architectural solution of a secure cloud file sharing system has to convince
 its users that the functions indeed are secure, and that the concepts are easy
 to understand and accept.
 
 \section{Introduction}
-% Picture: "Architecture: Overview"
+% FIXME: Can we just drop this section and include its contents in the chapter
+% intro?
 
-% TODO:
-% - Write another intro text when we figure out what to include in this chapter
+The architecture has to support various user functionality. Figure
+\ref{fig:arch:overview} exhibits Alice uploading files to the cloud, and
+thereafter transferring the necessary information to Bob so that he also can
+gain access to the files.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{ArchitectureOverview.pdf}
+    \caption{Overview of user functionality}
+    \label{fig:arch:overview}
+\end{figure}
+
+In the following sections, we will describe how the file storage is organized,
+and take a closer look at how the different functionality are solved.
 
 \section{File Storage}
+\label{sec:AS:FS}
 
 The solution proposed in this thesis, is that only a simple key-value store is
 needed on the server side. This may be extended with an \ac{ACL} layer to
 support user access and other features.
 
-To types of files exist: immutable and mutable files. The mutable files are used
+Two types of files exist: immutable and mutable files. The mutable files are used
 as directories, in the sense that they contain the information needed to access
 other directories or files in the form of capabilities.
-
 A capability is a short alphanumeric string containing all information needed
-to find, get, and read a file or folder. This includes an identifier and
+to find, get, read and write a file or folder. This includes an identifier and
 cryptographic keys.
 
 In principle, the only operations the key-value store need to support are
@@ -463,16 +475,35 @@ make changes to the ``directory'' files.
 
 The various user scenarios the software has to support, provides a logic way to
 describe the external properties of the system. The fundamental operations are
-\emph{uploading}, \emph{downloading} and \emph{sharing} of files.
+\emph{downloading}, \emph{uploading} and \emph{sharing} of files.
+
+\subsection{Download file}
+
+When a user wishes to download a file or directory, all that is needed is the
+password to unlock the local keyring on the user terminal, as depicted in Figure
+\ref{fig:arch:download}. The client sends a GET request with the identifier in
+question, and the server responds with the encrypted folder. This contains the
+capabilities needed to locate and decrypt the underlying files and folders.
+After decrypting the contents, the client again queries the server with the
+identifier of the wanted file, and there after decrypts it, before displaying it
+to the user.
+
+\begin{figure}[h!]
+    \centering
+    %\includegraphics[width=\columnwidth]{ArchitectureDownload.pdf}
+    \caption{Scenario: Downloading of files}
+    \label{fig:arch:download}
+\end{figure}
 
 \subsection{Upload Files}
 
-When a user wishes to upload a file, all that is needed is the password to
-unlock the local keyring on the user terminal, as depicted in Figure
-\ref{fig:arch:upload}. The only information the receiving server in the cloud
-receives, are identifiers and encrypted containers. If the user chooses to, she
-can transfer the resulting identifiers and capabilities to other users.
+Figure \ref{fig:arch:upload} shows the process of uploading a new file. The only
+information the server in the cloud receives, are identifiers and encrypted
+containers. The user is also given the opportunity to transfer the corresponding
+identifiers and capabilities to users.
 
+Before uploading, the client has to download and decrypt the directory the
+files are to be placed in. This process was described in the previous section.
 The cryptographic details of the Upload Operation can be found in Section
 \ref{sec:CS:UF}.
 
@@ -482,8 +513,6 @@ The cryptographic details of the Upload Operation can be found in Section
     \caption{Scenario: Uploading of files}
     \label{fig:arch:upload}
 \end{figure}
-
-\subsection{Download file}
 
 \subsection{Share files}
 
