@@ -404,7 +404,7 @@ solution. The following section will give a detailed overview of the
 cryptographic keys used in the mentioned file operations. The chapter will end with an 
 explanation of the chosen scheme for key distribution.
 
-\section{Basic Security Scheme}
+\section{Basic Security}
 The basic security concept of our application is to keep a users remote storage
 confidential to a third-party storage provider. To solve this, we will
 create an application that encrypt files locally at the users terminal before
@@ -419,12 +419,17 @@ solution will be explained in the manner of 3 different file operations, namely
 upload, download and share file.
 
 \section{Upload File}
-The process of uploading a file onto a network server was illustrated in Figure
-\ref{fig:U}. This section will provide a more detailed description of the
+The process of uploading a file onto a remote server was illustrated in Figure
+\ref{fig:AS:U}. This section will provide a more detailed description of the
 process and specify the functionality of the Upload operation at the user
 terminal.
 
-The upload process can be broken into the following 5 steps:
+When uploading a file to the remote file structure, described in Section \ref{sec:AS:FS}, two
+operations are needed. First of all, it is important to add the desired file's
+meta data into the remote parent directory. This meta data will serve as a link
+to the uploaded file. The second operation is to upload the desired file.
+
+These two operations can be broken into the following five steps:
 
 \begin{enumerate}
 \item Download and decrypt parent directory to target file
@@ -437,15 +442,11 @@ The upload process can be broken into the following 5 steps:
 Each step is described below.
 
 \subsection{Download and Decrypt Directory}
-When uploading a file to the remote file structure described in \#\#, two
-operations are needed. First of all, it is important to add the desired file's
-meta data into the remote parent directory. This meta data will serve as a link
-to the uploaded file. The second operation is to upload the desired file.
 
 To insert the file's meta data into the remote directory, it is necessary to
 download and decrypt the chosen directory. We will combine the download and
 decrypt procedures into the term ``open directory''. The procedure of opening a
-directory is illustrated in Figure \ref{fig:OD} and described as follows.
+directory is illustrated in Figure \ref{fig:CS:OD} and described as follows.
 
 %\begin{figure}[h!]
 %    \centering
@@ -454,6 +455,35 @@ directory is illustrated in Figure \ref{fig:OD} and described as follows.
 %    \label{fig:arch:upload}
 %\end{figure}
 
+To download and open the desired parent directory, the user must be in
+possession of a read key specific to the directory. The read key is created from 
+a hash value of the directory's write key. How keys are obtained by the 
+user will be described in Section \ref{sec:CS:KS}. The distribution of keys will be
+exhibited in Section \ref{sec:CS:KD}.
+
+The directory specific read key is used for two purposes. The first
+purpose is to identify and localize the corresponding directory on the remote
+server. This is done by hashing the read key to create a ``Folder Identifier''
+value. This value is used to localize which directory the user should download. The
+structure of a remote directory is depicted in Figure \ref{fig:CS:OD}. The second
+purpose of the read key is to decrypt the encrypted content in the directory. An
+Initialization Value (IV) is used together with the read key to carry out the decryption
+procedure. The IV is easily fetched from the localized directory prior to
+decryption.
+
+After decryption, the user has to obtain a signing key that is specific to the
+directory. The signing key is an RSA private key corresponding to the
+directory's public key. It is needed by the user to later modify the directory.
+A modified directory must contain a valid signature to proof that it has been
+modified by a user with write permissions. The signature consists of an encrypted 
+hash value of the directory content. The hash value is encrypted with the
+signing key.
+
+The signing key is located within a directory and is encrypted with AES in CBC
+mode. The directory's write key is used to encrypt the signing key.
+
+The user simply downloads the encrypted signing key and decrypts it with the
+write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
 \subsection{Generating Keys and Capabilities}
 
@@ -466,6 +496,14 @@ directory is illustrated in Figure \ref{fig:OD} and described as follows.
 \section{Download File}
 
 \section{Share File}
+
+\section{Key Structure}
+\label{sec:KS}
+-Describe the different keys
+-Describe where the keys come from
+
+\section{Key Distribution}
+\label{sec:KD}
 {
 -Confidentiality: AES-CBC, RSA
 
