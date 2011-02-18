@@ -30,6 +30,9 @@ presentation.pdf: presentation.tex
 
 all: main.pdf presentation.pdf
 
+snapshot: main.pdf
+	cp main.pdf snapshots/report-snapshot-`date +%Y-%m-%d`.pdf
+
 clean:
 	rm -rf *.aux *.log *.toc *.out *.lof *.lot *.bbl *.blg *.dvi *.pdf *.lol
 
