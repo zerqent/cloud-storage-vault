@@ -434,7 +434,7 @@ to understand and accept.
 % intro?
 
 The architecture has to support various user functionality. Figure
-\ref{fig:arch:overview} exhibits Alice uploading files to the cloud, and
+\ref{fig:AS:overview} exhibits Alice uploading files to the cloud, and
 thereafter transferring the necessary information to Bob so that he also can
 gain access to the files.
 
@@ -442,7 +442,7 @@ gain access to the files.
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureOverview.pdf}
     \caption{Overview of user functionality}
-    \label{fig:arch:overview}
+    \label{fig:AS:overview}
 \end{figure}
 
 In the following sections, we will describe how the file storage is organized,
@@ -470,6 +470,7 @@ make changes to the ``directory'' files.
 
 % TODO:
 % - Various File access modes (RO/RW)
+% - Multiple clients, different entries to root folder
 
 \section{User scenarios}
 
@@ -481,7 +482,7 @@ describe the external properties of the system. The fundamental operations are
 
 When a user wishes to download a file or directory, all that is needed is the
 password to unlock the local keyring on the user terminal, as depicted in Figure
-\ref{fig:arch:download}. The client sends a GET request with the identifier in
+\ref{fig:AS:download}. The client sends a GET request with the identifier in
 question, and the server responds with the encrypted folder. This contains the
 capabilities needed to locate and decrypt the underlying files and folders.
 After decrypting the contents, the client again queries the server with the
@@ -492,30 +493,53 @@ to the user.
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureDownload.pdf}
     \caption{Scenario: Downloading of files}
-    \label{fig:arch:download}
+    \label{fig:AS:download}
 \end{figure}
 
 \subsection{Upload Files}
 
-Figure \ref{fig:arch:upload} shows the process of uploading a new file. The only
+Figure \ref{fig:AS:upload} shows the process of uploading new files. The only
 information the server in the cloud receives, are identifiers and encrypted
 containers. The user is also given the opportunity to transfer the corresponding
-identifiers and capabilities to users.
-
-Before uploading, the client has to download and decrypt the directory the
-files are to be placed in. This process was described in the previous section.
-The cryptographic details of the Upload Operation can be found in Section
-\ref{sec:CS:UF}.
+identifiers and capabilities to other users.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureUpload.pdf}
     \caption{Scenario: Uploading of files}
-    \label{fig:arch:upload}
+    \label{fig:AS:upload}
 \end{figure}
+
+Before uploading, the client has to find, download and decrypt the directory the
+files are to be placed in. This process was described in the previous section.
+The cryptographic details of the Upload Operation can be found in Section
+\ref{sec:CS:UF}.
 
 \subsection{Share files}
 
+As shown in Figure \ref{fig:AS:sharing}, for Alice to be able to share files
+with Bob, she first has to create a new directory. After the capabilities to
+this directory has been shared with Bob, this directory is going to be the
+secure channel where they can share folders and files. Before transferring the
+capabilities to Bob, Alice links the shared directory to a parent directory, so
+she can easily find it again at a later time. She can also link files to the
+shared directory.
+
+\begin{figure}[h!]
+    \centering
+%    \includegraphics[width=\columnwidth]{ArchitectureShare.pdf}
+    \caption{Scenario: Sharing files}
+    \label{fig:AS:sharing}
+\end{figure}
+
+The capability distribution is a key design issue, and has to be performed in a
+secure manner. This can be solved in a variety of ways, and the solutions
+proposed in this thesis will be described in Chapter TODO.
+
+After receiving the capabilities for the shared folder from Alice, Bob requests
+and receives the encrypted shared directory, in addition to linking it with a
+parent directory for future usage. He can then download shared files as if they
+where his own.
 
 %**************************************%
 \chapter{Cryptographic Solutions}
