@@ -526,62 +526,38 @@ architectural scheme in Chapter \ref{chap:AS}. We will take a closer look at
 how confidentiality, integrity, authentication and access control can be 
 integrated into the proposed architecture.
 
-A fundamental scheme for key distribution is needed to realize the desired
-security features, hence an appropriate solution for key distribution will
-also be given.
+%A fundamental scheme for key distribution is needed to realize the desired
+%security features, hence an appropriate solution for key distribution will
+%also be given.
 
-In the first section, we will give a brief introduction explaining the basic security
-scheme used in the application. We will further look at each file operation 
-exhibited in Chapter \ref{chap:AS} and describe our corresponding cryptographic
-solution. The following section will give a detailed overview of the
-cryptographic keys used in the mentioned file operations. The chapter will end with an 
-explanation of the chosen scheme for key distribution.
+The first section is a brief introduction explaining the basic
+security concept used by the application. Following is a detailed description of
+the cryptographic solutions adapted. The cryptographic solutions are revealed
+in terms of file and directory operations performed by the application. The
+chapter ends with a detailed overview of cryptographic keys and capabilities.
 
-\section{Basic Security}
-The basic security concept of our application is to keep a users remote storage
-confidential to a third-party storage provider. To solve this, we will
-create an application that encrypt files locally at the users terminal before
-they are uploaded to the third-party storage provider. To further access files, the user will have
-to decrypt files locally when downloading them. To enable this simple
-encryption scheme, the user is required to possess at least one cryptographic key.
+\section{Security Concept}
+The basic security concept of the application is to keep a users remote storage
+confidential to a third-party storage provider. To solve this, the application
+encrypt files locally at the users terminal before uploading them to the
+third-party storage provider. To further access files, the application
+decrypt files locally after download. To enable this simple
+encryption scheme, the user terminal is required to possess at least one cryptographic key.
 
 By initially knowing that files are encrypted on a remote server and that the local user
 possess one or more cryptographic keys, we can continue with a more comprehensive
 description of the complete cryptographic solution. The details of the complete
-solution will be explained in the manner of 3 different file operations, namely
-upload, download and share file.
+solution are explained in terms of the following directory and file operations.
 
-\section{Upload File}
-\label{sec:CS:UF}
-The process of uploading a file onto a remote server was illustrated in Figure
-\ref{fig:AS:U}. This section will provide a more detailed description of the
-process and specify the functionality of the Upload operation at the user
-terminal.
+\section{Directory operations}
+\label{sec:CS:DO}
 
-When uploading a file to the remote file structure, described in Section \ref{sec:AS:FS}, two
-operations are needed. First of all, it is important to add the desired file's
-meta data into the remote parent directory. This meta data will serve as a link
-to the uploaded file. The second operation is to upload the desired file.
+\subsection{Open Directory}
 
-These two operations can be broken into the following five steps:
-
-\begin{enumerate}
-\item Download and decrypt parent directory to target file
-\item Create file keys and capabilities
-\item Write file meta data to parent directory
-\item Encrypt and upload directory
-\item Encrypt and upload file
-\end{enumerate}
-
-Each step is described below.
-
-\subsection{Download and Decrypt Directory}
-
-To insert the file's meta data into the remote directory, it is necessary to
-download and decrypt the chosen directory. We will start by describing the
-initial download procedure and further continue with the subsequent phase of
-decryption. The initial download procedure is illustrated in Figure
-\ref{fig:CS:VOD} and described as follows.
+This section describes the procedure for opening a directory. Opening a
+directory involves both downloading, verifying and decrypting the directory. The
+download and verify procedure is illustrated in Figure \ref{fig:CS:VOD} and
+described below. A description of the subsequent decryption procedure follows.
 
 \begin{figure}[h!]
     \centering
@@ -590,16 +566,16 @@ decryption. The initial download procedure is illustrated in Figure
     \label{fig:CS:VOD}
 \end{figure}
 
-First of all, to download and open the desired parent directory, the user must be in
-possession of a read key specific to the directory. The read key is created from 
+First of all, to download a desired directory, the user must be in
+possession of a read key specific to that directory. The read key is created from 
 a hash value of the directory's write key. How keys are obtained by the 
-user will be described in Section \ref{sec:CS:KAC}. The distribution of keys will be
-exhibited in Section \ref{sec:CS:KD}.
+user is described in Section \ref{sec:CS:KAC}. The distribution of keys is
+exhibited in Section \ref{sec:}.
 
 The directory specific read key is used to create a ``Folder Identifier''value.
 The folder identifier is a simple hash value of the read key. It is used to
 localize the specific directory on the remote server. The directory is further
-downloaded to the users terminal. 
+downloaded to the users terminal.
 
 When the correct directory is downloaded, it will further exhibit a verification
 procedure prior to decryption. The verification procedure is illustrated in
@@ -612,10 +588,10 @@ be decrypted.
 
 The first check verifies the correctness of the public key stored within the 
 downloaded directory. The key must be checked to ensure that it belongs to the signing
-key used to sign the directory content. If it does, it indicates that an
-authorized user has signed the directory content. The check is carried out by
-hashing the directory's public key and comparing it with a verification
-capability. The deduction of capabilities is explained in Section \ref{sec:CS:KAC}.
+key. If it does, it indicates that an authorized user has signed the directory
+content. The check is carried out by hashing the directory's public key and
+comparing it with a verification capability. The deduction of capabilities is
+explained in Section \ref{sec:CS:KAC}.
 
 If the directory passes the first check, it will further be checked for content
 integrity. The integrity check ensures that the directory content has not been
@@ -623,7 +599,7 @@ tampered with. It is carried out by decrypting a stored encrypted hash value in 
 directory and comparing it against the hash value of the encrypted directory
 content. The encrypted hash value stored in the directory is decrypted using the
 previously verified public key. The integrity check is depicted as a part of Figure
-\ref{fig:CS:OD}.
+\ref{fig:CS:VOD}.
 
 If the directory passes the verification procedure, the user will decrypt the
 directory content using the directory specific read key. The decryption procedure
@@ -653,37 +629,45 @@ mode. The directory's write key is used to encrypt the signing key.
 The user simply downloads the encrypted signing key and decrypts it with the
 write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
+\subsection{Upload Directory}
 
-\subsection{Create File Keys and Capabilities}
+\subsection{Share Directory}
 
-\subsection{Write File to Folder}
+\section{File Operations}
 
-\subsection{Encrypt and Upload Folder}
+\subsection{Download File}
 
-\subsection{Encrypt and Upload File}
+\subsection{Upload File}
 
-\section{Download File}
+The process of uploading a file onto a remote server was illustrated in Figure
+\ref{fig:AS:upload}. This section will provide a more detailed description of the
+process and specify the functionality of the Upload operation at the user
+terminal.
 
-\section{Share File}
+When uploading a file to the remote file structure, described in Section \ref{sec:AS:FS}, two
+operations are needed. First of all, it is important to add the desired file's
+meta data into the remote parent directory. This meta data will serve as a link
+to the uploaded file. The second operation is to upload the desired file.
+
+These two operations can be broken into the following five steps:
+
+\begin{enumerate}
+\item Download and decrypt parent directory to target file
+\item Create file keys and capabilities
+\item Write file meta data to parent directory
+\item Encrypt and upload directory
+\item Encrypt and upload file
+\end{enumerate}
+
+Each step is described below.
+
+\subsection{Share File}
 
 \section{Keys and Capabilities}
 \label{sec:CS:KAC}
 -Describe the different keys
 -Describe where the keys come from
 
-\section{Key Distribution}
-\label{sec:CS:KD}
-{
--Confidentiality: AES-CBC, RSA
-
--Integrity: SHA-256
-
--Authentication: RSA PrK signature
-
--Key hierarchy
-
--Key distribution
-}
 
 %**************************************%
 \chapter{Implementation}
