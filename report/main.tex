@@ -567,7 +567,7 @@ These two operations can be broken into the following five steps:
 
 \begin{enumerate}
 \item Download and decrypt parent directory to target file
-\item Generate file keys and capabilities
+\item Create file keys and capabilities
 \item Write file meta data to parent directory
 \item Encrypt and upload directory
 \item Encrypt and upload file
@@ -578,32 +578,66 @@ Each step is described below.
 \subsection{Download and Decrypt Directory}
 
 To insert the file's meta data into the remote directory, it is necessary to
-download and decrypt the chosen directory. We will combine the download and
-decrypt procedures into the term ``open directory''. The procedure of opening a
-directory is illustrated in Figure \ref{fig:CS:OD} and described as follows.
+download and decrypt the chosen directory. We will start by describing the
+initial download procedure and further continue with the subsequent phase of
+decryption. The initial download procedure is illustrated in Figure
+\ref{fig:CS:VOD} and described as follows.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{VerifyOpenFolder.pdf}
+    \caption{Downloading and verifying a remote directory.}
+    \label{fig:CS:VOD}
+\end{figure}
+
+First of all, to download and open the desired parent directory, the user must be in
+possession of a read key specific to the directory. The read key is created from 
+a hash value of the directory's write key. How keys are obtained by the 
+user will be described in Section \ref{sec:CS:KAC}. The distribution of keys will be
+exhibited in Section \ref{sec:CS:KD}.
+
+The directory specific read key is used to create a ``Folder Identifier''value.
+The folder identifier is a simple hash value of the read key. It is used to
+localize the specific directory on the remote server. The directory is further
+downloaded to the users terminal. 
+
+When the correct directory is downloaded, it will further exhibit a verification
+procedure prior to decryption. The verification procedure is illustrated in
+Figure \ref{fig:CS:VOD}.
+
+The purpose of the verification procedure is to check the integrity of the
+content and to verify that it has been written by an authorized user. 
+If one or neither of these checks are verified, the directory content will not
+be decrypted.
+
+The first check verifies the correctness of the public key stored within the 
+downloaded directory. The key must be checked to ensure that it belongs to the signing
+key used to sign the directory content. If it does, it indicates that an
+authorized user has signed the directory content. The check is carried out by
+hashing the directory's public key and comparing it with a verification
+capability. The deduction of capabilities is explained in Section \ref{sec:CS:KAC}.
+
+If the directory passes the first check, it will further be checked for content
+integrity. The integrity check ensures that the directory content has not been
+tampered with. It is carried out by decrypting a stored encrypted hash value in the
+directory and comparing it against the hash value of the encrypted directory
+content. The encrypted hash value stored in the directory is decrypted using the
+previously verified public key. The integrity check is depicted as a part of Figure
+\ref{fig:CS:OD}.
+
+If the directory passes the verification procedure, the user will decrypt the
+directory content using the directory specific read key. The decryption procedure
+is illustrated as a part of Figure \ref{fig:CS:OD}. An Initialization Value (IV) is
+additionally used with the read key to carry out the decryption procedure. The
+IV is easily fetched from the directory prior to decryption.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{OpenFolder.pdf}
-    \caption{Opening a remote directory.}
-    \label{fig:CS:U}
+    \caption{Decrypting a remote directory: Decrypting directory content and
+    obtaining the signature key.}
+    \label{fig:CS:OD}
 \end{figure}
-
-To download and open the desired parent directory, the user must be in
-possession of a read key specific to the directory. The read key is created from 
-a hash value of the directory's write key. How keys are obtained by the 
-user will be described in Section \ref{sec:CS:KS}. The distribution of keys will be
-exhibited in Section \ref{sec:CS:KD}.
-
-The directory specific read key is used for two purposes. The first
-purpose is to identify and localize the corresponding directory on the remote
-server. This is done by hashing the read key to create a ``Folder Identifier''
-value. This value is used to localize which directory the user should download. The
-structure of a remote directory is depicted in Figure \ref{fig:CS:OD}. The second
-purpose of the read key is to decrypt the encrypted content in the directory. An
-Initialization Value (IV) is used together with the read key to carry out the decryption
-procedure. The IV is easily fetched from the localized directory prior to
-decryption.
 
 After decryption, the user has to obtain a signing key that is specific to the
 directory. The signing key is an RSA private key corresponding to the
@@ -619,7 +653,8 @@ mode. The directory's write key is used to encrypt the signing key.
 The user simply downloads the encrypted signing key and decrypts it with the
 write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
-\subsection{Generating Keys and Capabilities}
+
+\subsection{Create File Keys and Capabilities}
 
 \subsection{Write File to Folder}
 
@@ -631,13 +666,13 @@ write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
 \section{Share File}
 
-\section{Key Structure}
-\label{sec:KS}
+\section{Keys and Capabilities}
+\label{sec:CS:KAC}
 -Describe the different keys
 -Describe where the keys come from
 
 \section{Key Distribution}
-\label{sec:KD}
+\label{sec:CS:KD}
 {
 -Confidentiality: AES-CBC, RSA
 
