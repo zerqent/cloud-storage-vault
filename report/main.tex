@@ -467,6 +467,8 @@ In principle, the only operations the key-value store need to support are
 \textbf{PUT}, \textbf{GET} and \textbf{UPDATE}. The latter one is required to
 make changes to the ``directory'' files.
 
+\subsection{Directory Structure}
+
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureFileSystem.pdf}
@@ -475,19 +477,14 @@ make changes to the ``directory'' files.
 \end{figure}
 
 The file and directory structure can be seen as a directed graph, as illustrated
-in Figure \ref{fig:AS:filesystem}, and users can
-link in folders and files as wanted. This provides a flexible and
-space-conservative structure that is easily extendible.
+in Figure \ref{fig:AS:filesystem}, and users can link in folders and files as
+wanted. This provides a flexible and space-conservative structure that is easily
+extendible.
 
-Each client keeps a local copy of the write capability and the identity to the
-users root folder in a password protected keyring. In the event of loss of
-one of the clients, a user can change encryption keys (and identifier) for the
-root folder.
-
-The challenge with using services from 
-% TODO:
-% - Various File access modes (RO/RW)
-% - Multiple clients, different entries to root folder
+Each client\footnote{I.e. the different user terminals.} keeps a local copy of
+the identity and write capability to the users root folder in a password
+protected keyring. In the event of loss of one of the clients, a user can change
+encryption keys (and identifier) for the root folder.
 
 \section{ACL/Authentication Layer}
 There should be some layer present on the application which enforces \ac{ACL}s and
