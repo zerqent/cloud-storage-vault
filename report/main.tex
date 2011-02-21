@@ -467,7 +467,22 @@ In principle, the only operations the key-value store need to support are
 \textbf{PUT}, \textbf{GET} and \textbf{UPDATE}. The latter one is required to
 make changes to the ``directory'' files.
 
-% Picture: "Architecture: Directory tree"
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{ArchitectureFileSystem.pdf}
+    \caption{File System Structure}
+    \label{fig:AS:filesystem}
+\end{figure}
+
+The file and directory structure can be seen as a directed graph, as illustrated
+in Figure \ref{fig:AS:filesystem}, and users can
+link in folders and files as wanted. This provides a flexible and
+space-conservative structure that is easily extendible.
+
+Each client keeps a local copy of the write capability and the identity to the
+users root folder in a password protected keyring. In the event of loss of
+one of the clients, a user can change encryption keys (and identifier) for the
+root folder.
 
 The challenge with using services from 
 % TODO:
@@ -566,10 +581,11 @@ The cryptographic details of the Upload Operation can be found in Section
 As shown in Figure \ref{fig:AS:sharing}, for Alice to be able to share files
 with Bob, she first has to create a new directory. After the capabilities to
 this directory has been shared with Bob, this directory is going to be the
-secure channel where they can share folders and files. Before transferring the
-capabilities to Bob, Alice links the shared directory to a parent directory, so
-she can easily find it again at a later time. She can also link files to the
-shared directory.
+secure channel where they can share folders and files.
+
+Before transferring the capabilities to Bob, Alice links the shared directory to
+a parent directory, so she can easily find it again at a later time. She can
+also link files to the shared directory.
 
 \begin{figure}[h!]
     \centering
@@ -586,6 +602,22 @@ After receiving the capabilities for the shared folder from Alice, Bob requests
 and receives the encrypted shared directory, in addition to linking it with a
 parent directory for future usage. He can then download shared files as if they
 where his own.
+
+\paragraph{Read-Only shares.}
+
+If Alice wants to share a directory in Read Only Mode with Bob, she can simply
+not include the write capability in the parent directory. This will work as
+intended until Alice wants to write to the folder, thus the write capability has to
+be stored another place. We will implement this as a special folder under the
+root folder, and link in all such folders and files the ``normal'' way here.
+This process is illustrated in Figure \ref{fig:AS:readonly}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{ArchitectureShareReadOnlyFolder.pdf}
+    \caption{Sharing write-protected folders}
+    \label{fig:AS:readonly}
+\end{figure}
 
 %**************************************%
 \chapter{Cryptographic Solutions}
