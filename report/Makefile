@@ -11,7 +11,7 @@ PDFLATEX = pdflatex
 ###############################################################################
 
 #main.pdf: main.tex *.bib ;tables/*.tex listings/*.*
-main.pdf: main.tex *.bib
+main.pdf: main.tex *.bib tables/*.tex
 	pdflatex main.tex
 	bibtex main
 	pdflatex main.tex
