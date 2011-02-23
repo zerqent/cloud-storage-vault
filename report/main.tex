@@ -832,15 +832,45 @@ These two operations can be broken into the following five steps:
 \section{Security}
 % Hvordan angripe?
 % ACL lag bare ekstra sikkerhet, man kan ikke cracke noe uten keyen!
+This thesis is written with the basis that we are hiring storage from an
+untrusted provider, and the security of the application should primarily
+reflect that. With this starting point we can assume that all data stored on
+the server is obtainable by the provider. 
 
-\section{Passive attacks}
+\subsection{Passive attacks}
 % Avhengig av cryptographic primitives
 % Confidentiality den største utfordringen
 % Her trengs det gode kilder
+The provider will have access to all data on the server, and also know what
+data stored is part of files and what is part of folders. The confidentiality
+of both files and folders relies primarily on the symmetric cipher used to
+encrypt the data. But for folders one can obtain this key if one manages to
+obtain the asymmetric private key belonging to the folder. In other words a
+folder is attackable both trough the asymmetric and the symmetric cipher used.
+If the confidentiality of a folder is breached this will also lead to the
+attacker being able to decrypt and subfolders or filer, in contrast the breach
+of confidentiality of a file will only compromise that specific file. It is
+also important to note that users will use a root folder which any other file
+or folder relies on, if the confidentiality of this folder is breached, all
+files are effectively compromised.
 
-\section{Active attacks}
+\subsubsection{Brute Force attacks}
+
+\subsubsection{RSA attacks}
+
+\subsubsection{AES attacks}
+
+\subsection{Active attacks}
 % MITM - Dersom vi f.eks. skrur av SSL-laget
 % Innside attacker - hos Amazon
+
+
+\subsection{Terminal security}
+% What happens if someone steals a terminal
+% OR install some backdoor/torjan etc?
+Given enough users, at some point there will be a users who looses his
+terminal, for instance a mobile phone, a terminal might also be broken into
+without the users knowledge. 
 
 \section{Performance}
 % 1 mappe med 100 filer i, tar ikke mye lenger tid å åpne enn en mappe med 3
