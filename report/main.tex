@@ -650,6 +650,57 @@ solution are explained in terms of the following directory and file operations.
 
 \section{Directory operations}
 \label{sec:CS:DO}
+The following subsections describes the cryptographic solutions integrated into
+the application's directory operations.
+
+\subsection{Create Directory}
+A directory contains two types of data. It contains meta data about it
+self and meta data about its children. With a directory's children we mean
+its files and/or subdirectories. 
+
+The meta data describing the directory can be listed as follows:
+\begin{itemize}
+\item Folder Identifier
+\item Public Key
+\item Initialization Vector (IV)
+\item Write Enabler
+\item Encrypted Signing Key
+\item Signature
+\end{itemize}
+The \emph{public key} is a public RSA-key that corresponds to the directory's
+own private signature key. The \emph{folder identifier} is a unique hash value
+from a directory's read key and serves as an identifier for the specific
+directory. An \emph{IV} is used when encrypting the directory content to prevent
+predictable ciphertext. The \emph{write enabler} is an HMAC-SHA-2 value created
+from the directory's write key and a static chosen text value. It is used by the
+ASL layer on the server side to check that the user has write permission to
+upload the directory. The upload procedure on the server side is shown in \#\#,
+and is explained later in this section. The \emph{encrypted signing key} is
+stored inside the directory to enable users with write permissions to download
+and change the directory content with a valid signature. The last value in the
+directory's meta data is the signature. The \emph{signature} is an encrypted
+hash value of the meta data describing the directory's children. The hash value
+is encrypted with the directory's private signing key. 
+
+In addition to its own meta data, a directory contains meta data describing its
+children. We will call this meta data for the entries within a directory. The
+structure of the entries within a directory is shown in Table \ref{tbl:folder:contents}.
+
+\input{tables/folder_metadata}
+
+blablabla...
+
+The procedure of creating and uploading a new directory is illustrated in Figure
+\ref{fig:CS:CD}.
+
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=\columnwidth]{CryptoCreateFolder.pdf}
+	    \caption{Creating and uploading a directory.}
+    \label{fig:CS:CD}
+\end{figure}
+
+blablablabla...
 
 \subsection{Open Directory}
 
@@ -728,53 +779,6 @@ mode. The directory's write key is used to encrypt the signing key.
 The user simply downloads the encrypted signing key and decrypts it with the
 write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
-\subsection{Create Directory}
-A directory contains two types of data. First, it contains meta data about it
-self. Second, it contains meta data about its children. With a
-directory's children we mean its files and/or subdirectories. The meta data
-describing the directory can be listed as follows:
-\begin{itemize}
-\item Folder Identifier
-\item Public Key
-\item Initialization Vector (IV)
-\item Write Enabler
-\item Encrypted Signing Key
-\item Signature
-\end{itemize}
-All these values was shown as a part of the directories in Figure
-\ref{fig:CS:VOD} and \ref{fig:CS:OD}. The folder identifier is a unique hash value
-from a directory's read key and serves as an identifier for the specific
-directory. The public key is a public RSA-key that corresponds to the
-directory's own private signature key. An IV is used when
-encrypting the directory content to prevent predictable ciphertext. The write
-enabler is an HMAC-SHA-2 value created from the directory's write key and a
-static chosen text value. It is used by the ASL layer on the server side to
-check that the user has write permission to upload the directory. The upload
-procedure on the server side is shown in \#\#, and is explained later in this
-section. The directory's signing key is encrypted and stored inside the
-directory to enable users with write permissions to download and change the
-directory content with a valid signature. The last value in the directory's meta data
-is the signature. The signature is an encrypted hash value of the meta data describing its
-children. The hash value is encrypted with the directory's private signing key. 
-
-In addition to its own meta data, the directory contains meta data describing its
-children. We will call this meta data for the directory's content. The values
-stored within the directory's content is shown in Table \ref{tbl:folder:contents}.
-
-%\input{"tables/folder\textunderscore metadata.tex"}
-
-blablabla...
-
-The procedure of creating and uploading a new directory is illustrated in Figure
-\ref{fig:CS:CD}.
-
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=\columnwidth]{CreateFolder.pdf}
-	    \caption{Creating and uploading a directory.}
-    \label{fig:CS:CD}
-\end{figure}
-blablablabla...
 
 \section{File Operations}
 
