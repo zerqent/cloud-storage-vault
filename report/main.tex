@@ -667,30 +667,33 @@ in terms of file and directory operations performed by the application. The
 chapter ends with a description of a users keyring.
 
 \section{Security Concept}
-The basic security concept of the application is to keep a users remote storage
+
+The basic security concept of the application is to keep a user's remote storage
 confidential to a third-party storage provider. To solve this, the application
 encrypt files locally at the users terminal before uploading them to the
-third-party storage provider. To further access files, the application
-decrypt files locally after download. To enable this simple
-encryption scheme, the user terminal is required to possess at least one
+third-party storage provider. When accessing a file, the application first
+download the encrypted file and further decrypt it locally. To enable this
+simple encryption scheme, the user terminal is required to possess at least one
 cryptographic key. Cryptographic keys are stored in a single keyring at the user
 terminal.
 
-By initially knowing that files are encrypted on a remote server and that the local user
-possess one or more cryptographic keys, we can continue with a more comprehensive
-description of the complete cryptographic solution. The details of the complete
-solution are explained in terms of the following directory and file operations.
+By initially knowing that files are placed encrypted on a remote server and that
+the local user possess one or more cryptographic keys, we can continue with a
+more comprehensive description of the complete cryptographic solution. The
+details are explained in terms of the following directory and file operations.
 
 \section{Directory operations}
 \label{sec:CS:DO}
+
 This section presents the two basic directory operations used by the
-application. The ``create directory'' and ``open directory'' operations are explained as
-follows.
+application. The ``create directory'' and ``open directory'' operations are
+explained as follows.
 
 \subsection{Create Directory}
-The create directory operation is divided into two subsequent parts. First,
-the directory must be created locally at the user's terminal. Second, the directory must
-further be uploaded to the remote server. Uploading a file or directory is
+
+The create directory operation is divided into two subsequent parts. First, the
+directory must be created locally at the user's terminal. Second, the directory
+must further be uploaded to the remote server.  Uploading a file or directory is
 possible only if the user is authenticated.
 
 Creating and uploading a directory from the user terminal is illustrated in
@@ -707,18 +710,19 @@ Before creating a new directory it is necessary to generate an RSA key-pair. The
 key-pair is specific to the new directory and consists of a public and private
 signing key. The signing key is further used to derive a write and a read key
 for the corresponding directory. The read key is a hashed value of the write
-key, while the write key equals the hashed value of the signing  key. 
+key, while the write key equals the hashed value of the signing  key.
 %How keys are generated and derived is explained in Section \ref{sec:CS:KAC}.
 
+% TODO: Will we use counter IV?
 After key generation, the public key is directly added to the new directory. The
-directory's storage index is further added as a hash value of the directory's
-read key. The next value added to the directory is the initialization vector
-\ac{IV}. The IV is generated from a counter value stored at the user terminal. It
-is used to prevent predictable ciphertext, when the directory entries are encrypted. 
-The next value added to the directory is the write enabler. The write enabler is
-an HMAC-SHA-2 value created from the directory's write key and a static chosen
-text value. It is used by the \ac{ACL} layer on the server side to check that a
-user has write permission to upload the directory.
+directory's \emph{storage index} is further added as a hash value of the directory's
+read key. The next value added to the directory is the \emph{\ac{IV}}. The \ac{IV} is
+generated from a counter value stored at the user terminal. It is used to
+prevent predictable cipher text, when the directory entries are encrypted.  The
+next value added to the directory is the \emph{write enabler}. The write enabler is an
+HMAC-SHA-2 value created from the directory's write key and a static chosen text
+value. It is used by the ACL layer on the server side to check that a user has
+write permission to upload the directory.
 
 After adding the write enabler, the user must add the directory's private
 signing key. The signing key should only be available for users with write
@@ -732,7 +736,7 @@ last value added to the directory is a signed hash value of the encrypted
 entries. The hash value is encrypted with the signing key using \ac{RSA}.
 
 After creating a new directory, the directory is further uploaded to the remote
-server. 
+server.
 
 It is important to notice that none of the values contained within the
 directory or any of the cryptographic keys are kept locally by the user. The
