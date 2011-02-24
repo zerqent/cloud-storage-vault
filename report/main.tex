@@ -177,33 +177,37 @@ software used.
 %**************************************%
 \chapter{Background}
 %**************************************%
-% Cloud (computing)
+
 \section{Security Services}
-This section briefly explains certain security services used in this
-thesis. A security service is any processing or communication service that
-enhances the security of the data processing systems and the information
-transfers of any organization\cite[p. 12]{stallings}.
+
+This section explains certain security services used in this thesis. A security
+service is any processing or communication service that enhances the security of
+the data processing systems and the information transfers of any organization
+\cite[p. 12]{stallings}.
 
 \paragraph{Confidentiality} is the art of keeping a message secret from
-unauthorized parties\cite[p. 18]{stallings}. This can typically be done by
+unauthorized parties \cite[p. 18]{stallings}. This can typically be done by
 either preventing other parties access to the message at all, or making the
-contents unreadable for instance by the use of encryption.
+contents unreadable, for instance by the use of encryption.
 
 \paragraph{Integrity} in a security perspective deals with detecting,
-preventing or recovering a message from being changes by an unauthorized party
+preventing or recovering a message being changed by an unauthorized party
 \cite{stallings}.
 
 \paragraph{Authentication} is the act for a user, service or similar to prove
-that he is what he claims to be\cite{stallings}.
+that he is what he claims to be \cite{stallings}.
 
-\subsection{Nonrepudiation} prevents either sender or receiver of a message
+\paragraph{Nonrepudiation} prevents both sender and receiver of a message
 from denying a transmitted message, in other words one party can prove the
-other parties involvement\cite{stallings}.
+other parties involvement \cite{stallings}.
 
 \section{Cryptographic Primitives}
+
 This section explains the low level security primitives used in this thesis.
 
-\subsection{Encryption} Encryption is the process of transforming some
+\subsection{Encryption}
+
+Encryption is the process of transforming some
 information into an unreadable form. Encryption is primarily used to enforce
 Confidentially, but can also be used for other purposes such as authentication.
 In a very basic form an encryption scheme consist of an encryption algorithm,
@@ -663,30 +667,33 @@ in terms of file and directory operations performed by the application. The
 chapter ends with a description of a users keyring.
 
 \section{Security Concept}
-The basic security concept of the application is to keep a users remote storage
+
+The basic security concept of the application is to keep a user's remote storage
 confidential to a third-party storage provider. To solve this, the application
 encrypt files locally at the users terminal before uploading them to the
-third-party storage provider. To further access files, the application
-decrypt files locally after download. To enable this simple
-encryption scheme, the user terminal is required to possess at least one
+third-party storage provider. When accessing a file, the application first
+download the encrypted file and further decrypt it locally. To enable this
+simple encryption scheme, the user terminal is required to possess at least one
 cryptographic key. Cryptographic keys are stored in a single keyring at the user
 terminal.
 
-By initially knowing that files are encrypted on a remote server and that the local user
-possess one or more cryptographic keys, we can continue with a more comprehensive
-description of the complete cryptographic solution. The details of the complete
-solution are explained in terms of the following directory and file operations.
+By initially knowing that files are placed encrypted on a remote server and that
+the local user possess one or more cryptographic keys, we can continue with a
+more comprehensive description of the complete cryptographic solution. The
+details are explained in terms of the following directory and file operations.
 
 \section{Directory operations}
 \label{sec:CS:DO}
+
 This section presents the two basic directory operations used by the
-application. The ``create directory'' and ``open directory'' operations are explained as
-follows.
+application. The ``create directory'' and ``open directory'' operations are
+explained as follows.
 
 \subsection{Create Directory}
-The create directory operation is divided into two subsequent parts. First,
-the directory must be created locally at the user's terminal. Second, the directory must
-further be uploaded to the remote server. Uploading a file or directory is
+
+The create directory operation is divided into two subsequent parts. First, the
+directory must be created locally at the user's terminal. Second, the directory
+must further be uploaded to the remote server.  Uploading a file or directory is
 possible only if the user is authenticated.
 
 Creating and uploading a directory from the user terminal is illustrated in
@@ -705,6 +712,7 @@ signing key. The signing key is further used to derive a write and a read key
 for the corresponding directory. The read key is a hashed value of the write
 key, while the write key equals the hashed value of the signing  key. 
 
+% TODO: Will we use counter IV?
 After key generation, the public key is directly added to the new directory. The
 directory's storage index is further added as a hash value of the directory's
 read key. The next value added to the directory is the initialization vector
@@ -732,7 +740,7 @@ signature is needed for other users to know that the directory was created from
 an authorized user.
 
 After creating a new directory, the directory is further uploaded to the remote
-server. 
+server.
 
 It is important to notice that none of the values contained within the
 directory or any of the cryptographic keys are kept locally by the user. The
