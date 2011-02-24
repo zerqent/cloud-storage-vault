@@ -136,10 +136,13 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ACL}{Access Control List}
 \acro{AES}{Advanced Encryption Standard}
 \acro{CA}{Certification authority}
+\acro{CBC}{Cipher Block Chaining}
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
+\acro{ECB}{Electronic Codeboo}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{IaaS}{Infrastructure as a Service}
+\acro{IV}{Initialization Vector}
 \acro{LAFS}{Least Authority File System}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
@@ -200,29 +203,38 @@ other parties involvement\cite{stallings}.
 \section{Cryptographic Primitives}
 This section explains the low level security primitives used in this thesis.
 
-\subsection{Encryption}
-Encryption is the process of transforming some information into an unreadable
-form. Encryption is primarily used to enforce Confidentially, but can also be
-used for other purposes such as authentication. In a very basic form an
-encryption scheme consist of an algorithm, the cipher, a key and a message, the
-plaintext, that is all used to create an encrypted message, a ciphertext. If
-a good cipher is used, knowledge of the cipher, plaintext and ciphertext should
-not be enough to obtain the key.
+\subsection{Encryption} Encryption is the process of transforming some
+information into an unreadable form. Encryption is primarily used to enforce
+Confidentially, but can also be used for other purposes such as authentication.
+In a very basic form an encryption scheme consist of an encryption algorithm,
+the \emph{cipher}, a key and a message, the \emph{plaintext}, that is all used
+to create an encrypted message, the \emph{ciphertext}. If a good cipher is
+used, knowledge of the cipher, plaintext and ciphertext should not be enough to
+obtain the key.
+% TODO: Kilde: schneier?
 
 \paragraph{Block-cipher and Stream-cipher} are classifications on how a cipher
-treats data\cite[p. 32]{stallings}. With a block-cipher data will be encrypted
-in blocks of specific sizes. If the data length is not a multiple of the block
-size, the data will be padded. A stream cipher on the other hand will encrypt
-the message co.
+treats data\cite[p. 32]{stallings}. A block cipher will encrypt a block of data
+of a specific size. If the data is larger than the block size used by the
+application a \emph{mode of operation} is needed. In a stream cipher the
+plaintext will usually be combined with a pseudorandom key stream to generate
+the plaintext.
 
 \paragraph{Symmetric encryption} is an encryption scheme where the same key is
 used for both encryption and decryption\cite[p. 32]{stallings}. \ac{AES} is a
 block cipher and is the current standard for symmetric encryption. \ac{AES}
 works on a block of 128-bit and support keys of 128, 192 and 256-bit. 
 
-\paragraph{The mode of operation} used for a symmetric encryption scheme
-enables subsequent safe use of the same key.
-%TODO: Vi kan ikke nevne alle her, vi nevner de som er nødvendige. CBC?
+\paragraph{The mode of operation} used for a symmetric encryption enables
+subsequent safe use of the same key. In a simple scenario this could be to
+encrypt the normal data block-by-block with pure \ac{AES}, which is called the
+\ac{ECB} mode of operation. The problem with this is that some information of
+the ciphertext will leak, i.e. the same plaintext will always be the same
+ciphertext. A more usefull way is \emph{\ac{CBC}}. In \ac{CBC} you will need an
+\ac{IV} which should be non-predictable, and not reused. The \ac{IV} is XORed
+with the first block of plaintext, which again is encrypted with \ac{AES}. The
+resulting ciphertext is used as an \ac{IV} for the next block.
+%TODO: kilde: scheiner?
 
 \paragraph{Asymmetric encryption} is an encryption scheme where a different key
 is used for encryption than decryption\cite[p. 259]{stallings}. An asymmetric
@@ -662,7 +674,7 @@ This process is illustrated in Figure \ref{fig:AS:readonly}.
 \end{figure}
 
 %**************************************%
-\chapter{Cryptographic Details
+\chapter{Cryptographic Details}
 %**************************************%
 \label{chap:CS}
 This chapter will elaborate on the cryptographic solutions applied to the
