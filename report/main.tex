@@ -494,24 +494,25 @@ wanted. This provides a flexible and space-conservative structure that is easily
 extendible.
 
 Each client\footnote{I.e. the different user terminals.} keeps a local copy of
-the identity and write capability to the users root folder in a password
+the identity and write key to the users root folder in a password
 protected keyring. In the event of loss of one of the clients, a user can change
 encryption keys (and identifier) for the root folder.
 
-%%The structure of a directory must be written here!
-%
-%A directory contains two types of data. It contains meta data about it
-%self and data in form of entries.
-%
-%The meta data describing the directory can be listed as follows:
-%\begin{itemize}
-%\item Public Key
-%\item Storage Index
-%\item Initialization Vector (IV)
-%\item Write Enabler
-%\item Encrypted Signing Key
-%\item Signature
-%\end{itemize}
+A directory contains two types of data. It contains meta data about it
+self and data in form of entries, as per described in Table
+\ref{tbl:folder:contents}.
+
+\input{tables/folder_entries}
+
+The meta data describing the directory can be listed as follows:
+\begin{itemize}
+    \item Public Key
+    \item Storage Index
+    \item Initialization Vector (IV)
+    \item Write Enabler
+    \item Encrypted Signing Key
+    \item Signature
+\end{itemize}
 %The \emph{public key} is a public RSA-key that corresponds to the directory's
 %own private signature key. The \emph{storage index} is a unique hash value
 %from a directory's read key and serves as an identifier for the specific
@@ -534,7 +535,6 @@ encryption keys (and identifier) for the root folder.
 %
 %The structure of an entry is shown in Table \ref{tbl:folder:contents}.
 %
-%\input{tables/folder_metadata}
 %
 %The \emph{Alias} field is the name of a specific child. The \emph{storage
 %index} is the look-up value of the corresponding child. The three remaining
