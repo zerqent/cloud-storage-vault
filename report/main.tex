@@ -662,13 +662,13 @@ This process is illustrated in Figure \ref{fig:AS:readonly}.
 \end{figure}
 
 %**************************************%
-\chapter{Cryptographic Details
+\chapter{Cryptographic Architecture}
 %**************************************%
 \label{chap:CS}
 This chapter will elaborate on the cryptographic solutions applied to the
 architectural scheme in Chapter \ref{chap:AS}. We will take a closer look at
-how confidentiality, integrity, authentication and access control can be 
-integrated into the proposed architecture.
+how confidentiality, integrity and authentication can be integrated into the
+proposed architecture.
 
 %A fundamental scheme for key distribution is needed to realize the desired
 %security features, hence an appropriate solution for key distribution will
@@ -678,7 +678,7 @@ The first section is a brief introduction explaining the basic
 security concept used by the application. Following is a detailed description of
 the cryptographic solutions adapted. The cryptographic solutions are revealed
 in terms of file and directory operations performed by the application. The
-chapter ends with a detailed overview of cryptographic keys and capabilities.
+chapter ends with a description of a users keyring.
 
 \section{Security Concept}
 The basic security concept of the application is to keep a users remote storage
@@ -686,7 +686,9 @@ confidential to a third-party storage provider. To solve this, the application
 encrypt files locally at the users terminal before uploading them to the
 third-party storage provider. To further access files, the application
 decrypt files locally after download. To enable this simple
-encryption scheme, the user terminal is required to possess at least one cryptographic key.
+encryption scheme, the user terminal is required to possess at least one
+cryptographic key. Cryptographic keys are stored in a single keyring at the user
+terminal.
 
 By initially knowing that files are encrypted on a remote server and that the local user
 possess one or more cryptographic keys, we can continue with a more comprehensive
@@ -701,10 +703,12 @@ follows.
 
 \subsection{Create Directory}
 The create directory operation is divided into two subsequent parts. First,
-the directory must be created locally and uploaded from the user terminal. Second, the directory must
-further be accepted on the server side. Both parts are described below. Creating
-an uploading a directory from the user terminal is illustrated in Figure
-\ref{fig:CS:CD}.
+the directory must be created locally at the user's terminal. Second, the directory must
+further be uploaded to the remote server. Uploading a file or directory is
+possible only if the user is authenticated.
+
+Creating and uploading a directory from the user terminal is illustrated in
+Figure \ref{fig:CS:CD}.
 
 \begin{figure}[h!]
     \centering
@@ -713,39 +717,45 @@ an uploading a directory from the user terminal is illustrated in Figure
     \label{fig:CS:CD}
 \end{figure}
 
-Before creating a new directory it is necessary to generate a cryptographic
-key-pair. This key-pair is specific to the new directory and consists of a
-public and private signing key. The signing key is further used to derive
-a write and read key for its corresponding directory. How keys are generated and
-derived is explained in Section \ref{sec:CS:KAC}.
+Before creating a new directory it is necessary to generate an RSA key-pair. The
+key-pair is specific to the new directory and consists of a public and private
+signing key. The signing key is further used to derive a write and a read key
+for the corresponding directory. The read key is a hashed value of the write
+key, while the write key equals the hashed value of the signing  key. 
+%How keys are generated and derived is explained in Section \ref{sec:CS:KAC}.
 
 After key generation, the public key is directly added to the new directory. The
 directory's storage index is further added as a hash value of the directory's
 read key. The next value added to the directory is the initialization vector
-(IV). The IV is generated from a counter value stored at the user terminal. It
+\ac{IV}. The IV is generated from a counter value stored at the user terminal. It
 is used to prevent predictable ciphertext, when the directory entries are encrypted. 
 The next value added to the directory is the write enabler. The write enabler is
 an HMAC-SHA-2 value created from the directory's write key and a static chosen
-text value. It is used by the ACL layer on the server side to check that a
-user has write permission to upload the directory. Accepting an upload on the
-server side is shown in Figure \ref{fig:}.
+text value. It is used by the \ac{ACL} layer on the server side to check that a
+user has write permission to upload the directory.
 
 After adding the write enabler, the user must add the directory's private
 signing key. The signing key should only be available for users with write
-permission. It is therefore encrypted with the directory's write key before it
-is added to the directory. The signing key is encrypted using AES in CBC mode.
-The next value added is the directory's entries. The entries of a
+permission to the directory. It is therefore encrypted with the directory's
+write key before it is added to the directory. The signing key is encrypted using \ac{AES} in
+\ac{CBC} mode.The next value added is the directory's entries. The entries of a
 directory should only be visible to users with read permissions to
-the directory. They are therefore encrypted with the directory's IV and read
-key before they are added to the directory. The entries are encrypted using AES
-in CBC mode. The last value added to the directory is a signed hash value of
-encrypted entries. The hash value is encrypted with the signing key using RSA.
+the directory. They are therefore encrypted with the directory's \ac{IV} and read
+key prior to insertion. The entries are encrypted using \ac{AES} in \ac{CBC} mode. The
+last value added to the directory is a signed hash value of the encrypted
+entries. The hash value is encrypted with the signing key using \ac{RSA}.
 
 After creating a new directory, the directory is further uploaded to the remote
-server and checked for acceptance.
+server. 
 
-Accepting a directory on the server side is illustrated in Figure \ref{fig:}.
-
+It is important to notice that none of the values contained within the
+directory or any of the cryptographic keys are kept locally by the user. The
+user can only achieve the public and private keys through the remote directory.
+The directory's read and write keys can only be achieved through capabilities stored
+in the remote directory's parent directory. This is true for all directories
+stored on the server except for the user's root directory. The keys to the
+root directory are stored in the user's local keyring. The keyring is explained
+in Section \ref{KEYRING}.
 
 \subsection{Open Directory}
 
@@ -762,15 +772,15 @@ described below. A description of the subsequent decryption procedure follows.
 \end{figure}
 
 First of all, to download a desired directory, the user must be in
-possession of a read key specific to that directory. The read key is created from 
-a hash value of the directory's write key. How keys are obtained by the 
-user is described in Section \ref{sec:CS:KAC}. The distribution of keys is
-exhibited in Section \ref{sec:}.
+possession of a read key specific to that directory. The read key is either
+created from a hash value of the directory's write key, or obtained from a read
+capability stored in the parent directory.
 
-The directory specific read key is used to create a ``Folder Identifier''value.
-The folder identifier is a simple hash value of the read key. It is used to
-localize the specific directory on the remote server. The directory is further
-downloaded to the users terminal.
+The directory's storage index is further obtained. It is either created from the
+obtained read key, or obtained from the read capability stored in the parent
+directory. The storage index is a simple hash value of the read key. It is used to
+localize the specific directory on the remote server. The localized directory is
+further downloaded to the user's terminal.
 
 When the correct directory is downloaded, it will further exhibit a verification
 procedure prior to decryption. The verification procedure is illustrated in
@@ -785,22 +795,21 @@ The first check verifies the correctness of the public key stored within the
 downloaded directory. The key must be checked to ensure that it belongs to the signing
 key. If it does, it indicates that an authorized user has signed the directory
 content. The check is carried out by hashing the directory's public key and
-comparing it with a verification capability. The deduction of capabilities is
-explained in Section \ref{sec:CS:KAC}.
+comparing it with a verification capability.
 
 If the directory passes the first check, it will further be checked for content
-integrity. The integrity check ensures that the directory content has not been
-tampered with. It is carried out by decrypting a stored encrypted hash value in the
-directory and comparing it against the hash value of the encrypted directory
-content. The encrypted hash value stored in the directory is decrypted using the
-previously verified public key. The integrity check is depicted as a part of Figure
-\ref{fig:CS:VOD}.
+integrity. The integrity check ensures that the directory content, in form of
+entries, has not been tampered with. It is carried out by decrypting a stored
+encrypted hash value in the directory and comparing it against the hash value of
+the directory's encrypted entries. The encrypted hash value stored in the
+directory is decrypted using the previously verified public key. The integrity
+check is depicted as a part of Figure \ref{fig:CS:VOD}.
 
-If the directory pass the verification procedure, the user will decrypt the
-directory content using the directory specific read key. The decryption procedure
-is illustrated as a part of Figure \ref{fig:CS:OD}. An Initialization Value (IV) is
-additionally used with the read key to carry out the decryption procedure. The
-IV is easily fetched from the directory prior to decryption.
+If the directory passes the verification procedure, the user will decrypt the
+directory's encrypted entries using the directory specific read key. The decryption procedure
+is illustrated as a part of Figure \ref{fig:CS:OD}. An \ac{IV} is additionally
+used with the read key to carry out the decryption procedure. The \ac{IV} is easily
+fetched from the directory prior to decryption.
 
 \begin{figure}[h!]
     \centering
@@ -810,18 +819,12 @@ IV is easily fetched from the directory prior to decryption.
     \label{fig:CS:OD}
 \end{figure}
 
-After decryption, the user has to obtain a signing key that is specific to the
-directory. The signing key is an RSA private key corresponding to the
-directory's public key. It is needed by the user to later modify the directory.
-A modified directory must contain a valid signature to prove that it has been
-modified by a user with write permissions. The signature consists of an encrypted 
-hash value of the directory content. The hash value is encrypted with the
-signing key.
+To modify a downloaded directory after the decryption procedure, the user has to
+obtain the directory's signing key. Recall that a directory must contain a valid signature to prove that it has been
+modified by a user with write permissions. The signature consists of an encrypted hash value of the
+directory's encrypted entries. The hash value is encrypted with the signing key.
 
-The signing key is located within a directory and is encrypted with AES in CBC
-mode. The directory's write key is used to encrypt the signing key.
-
-The user simply downloads the encrypted signing key and decrypts it with the
+The user fetches the encrypted signing key and decrypts it with the
 write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
 
@@ -842,12 +845,6 @@ meta data into the remote parent directory. This meta data will serve as a link
 to the uploaded file. The second operation is to upload the desired file.
 
 These two operations can be broken into the following five steps:
-
-\section{Keys and Capabilities}
-\label{sec:CS:KAC}
--Describe the different keys
--Describe where the keys come from
-
 
 %**************************************%
 \chapter{Implementation}
