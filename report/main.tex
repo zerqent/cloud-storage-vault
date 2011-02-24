@@ -187,14 +187,14 @@ transfers of any organization\cite[p. 12]{stallings}.
 \paragraph{Confidentiality} is the art of keeping a message secret from
 unauthorized parties\cite[p. 18]{stallings}. This can typically be done by
 either preventing other parties access to the message at all, or making the
-contents unreadable for instance by the use of encryption. 
+contents unreadable for instance by the use of encryption.
 
 \paragraph{Integrity} in a security perspective deals with detecting,
 preventing or recovering a message from being changes by an unauthorized party
 \cite{stallings}.
 
 \paragraph{Authentication} is the act for a user, service or similar to prove
-that he is what he claims to be\cite{stallings}. 
+that he is what he claims to be\cite{stallings}.
 
 \subsection{Nonrepudiation} prevents either sender or receiver of a message
 from denying a transmitted message, in other words one party can prove the
@@ -223,7 +223,7 @@ the plaintext.
 \paragraph{Symmetric encryption} is an encryption scheme where the same key is
 used for both encryption and decryption\cite[p. 32]{stallings}. \ac{AES} is a
 block cipher and is the current standard for symmetric encryption. \ac{AES}
-works on a block of 128-bit and support keys of 128, 192 and 256-bit. 
+works on a block of 128-bit and support keys of 128, 192 and 256-bit.
 
 \paragraph{The mode of operation} used for a symmetric encryption enables
 subsequent safe use of the same key. In a simple scenario this could be to
@@ -286,13 +286,13 @@ to as a \ac{PKI}.
 users by somehow verifying their public key, for instance by meeting face to
 face. A user can then sign another users key, set a trust level for the user
 and publish this information to a keyserver. Another user can then calculate a
-trust to an unknown person based on the trust set by peoples that he trusts. 
+trust to an unknown person based on the trust set by peoples that he trusts.
 
 \subsection{SSL/TLS}
 \ac{TLS} and its predecessor \ac{SSL} are techniques for obtaining
 confidentiality, integrity for transfer of files over a
 network\cite{stallings}. It does so by a combination of different algorithms
-and primitives, but a digital certificate is required for authentication. 
+and primitives, but a digital certificate is required for authentication.
 
 \subsection{PBKDF2}
 %TODO: See if we actually use this.
@@ -315,7 +315,7 @@ system resources or affect their operation.
 
 \paragraph{Traffic analysis} is the art of capturing communication sent between
 two parties. This information might contain secrets or might for instance leak
-enough information about an encryption key to make it breakable. 
+enough information about an encryption key to make it breakable.
 
 \paragraph{Masquerade} is an active attack where the attacker pretends to be
 one of the legit parties.
@@ -337,7 +337,7 @@ intercepted message.
 
 \subsection{Attacks on cryptographic primitives}
 Even though cryptographic primitives are designed to be secure, they might have
-both flaws and be used in an incorrect fashion. 
+both flaws and be used in an incorrect fashion.
 
 \paragraph{Cryptanalysis attack} is an attempt to deduce a specific plaintext
 or to deduce the key being used in a ciphertext.
@@ -346,14 +346,14 @@ or to deduce the key being used in a ciphertext.
 testing the algorithm with up to all possible inputs. The secret might be an
 encryption key or the data fed into a cryptographic hash function.
 
-\section{Cloud Computing} 
+\section{Cloud Computing}
 In a draft\cite{cloud_nistdef} \ac{NIST} defines cloud computing as:
-\begin{quote} 
+\begin{quote}
 Cloud computing is a model for enabling ubiquitous, convenient,
 on-demand network access to a shared pool of configurable computing resources
 (e.g., networks, servers, storage, applications, and services) that can be
 rapidly provisioned and released with minimal management effort or service
-provider interaction.  
+provider interaction.
 \end{quote}
 
 \subsection{Service Models}
@@ -391,10 +391,10 @@ at least a large group can have access, and is owned by a external provider of
 cloud services.
 
 \paragraph{Hybrid Cloud} is a cloud infrastructure composed of two or more
-clouds of any other model. 
+clouds of any other model.
 
-\subsection{Security considerations} 
-There are some considerations when using cloud services from an external provider 
+\subsection{Security considerations}
+There are some considerations when using cloud services from an external provider
 as opposed to self controlled hardware, software and plattforms. Most notably
 is that you loose the control of selecting the people which will have physical
 and digital access to the infrastructure. In essence this means that the
@@ -403,7 +403,7 @@ saved in the cloud.
 
 Another risk is that information might be leaked to other users of the same
 cloud. For instance it might be able possible for a \ac{VM} to leak information
-to other \ac{VM}s on the same host. 
+to other \ac{VM}s on the same host.
 %TODO: kilde
 
 \section{Existing Solutions}
@@ -428,7 +428,7 @@ cloud storage file system which does fulfill the requirements set by our
 problem description in regards to security. In Tahoe-\ac{LAFS} files are
 exclusivly encrypted client-side, before beeing uploaded into the cloud.
 Tahoe-\ac{LAFS} also uses erasure-coding to obtain redundancy across multiple
-storage servers.  
+storage servers.
 
 %TODO: kilde, enten paperet vi brukte i prosjektet, muligens
 % http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/about.html
@@ -515,7 +515,7 @@ security purposes, and are described furter in Chapter \ref{chap:CS}.
 
 \section{ACL/Authentication Layer}
 There should be some layer present on the application which enforces \ac{ACL}s and
-authenticates users which should have access to the stored files. From a security 
+authenticates users which should have access to the stored files. From a security
 standpoint this is not necessarily required. An attacker would have to be able
 to guess the storage index(key) and the corresponding encryption key for that
 index to be able to get any information out of the system. But there are however
@@ -649,7 +649,7 @@ This process is illustrated in Figure \ref{fig:AS:readonly}.
 \label{chap:CS}
 This chapter will elaborate on the cryptographic solutions applied to the
 architectural scheme in Chapter \ref{chap:AS}. We will take a closer look at
-how confidentiality, integrity, authentication and access control can be 
+how confidentiality, integrity, authentication and access control can be
 integrated into the proposed architecture.
 
 %A fundamental scheme for key distribution is needed to realize the desired
@@ -705,7 +705,7 @@ After key generation, the public key is directly added to the new directory. The
 directory's storage index is further added as a hash value of the directory's
 read key. The next value added to the directory is the initialization vector
 (IV). The IV is generated from a counter value stored at the user terminal. It
-is used to prevent predictable ciphertext, when the directory entries are encrypted. 
+is used to prevent predictable ciphertext, when the directory entries are encrypted.
 The next value added to the directory is the write enabler. The write enabler is
 an HMAC-SHA-2 value created from the directory's write key and a static chosen
 text value. It is used by the ACL layer on the server side to check that a
@@ -744,8 +744,8 @@ described below. A description of the subsequent decryption procedure follows.
 \end{figure}
 
 First of all, to download a desired directory, the user must be in
-possession of a read key specific to that directory. The read key is created from 
-a hash value of the directory's write key. How keys are obtained by the 
+possession of a read key specific to that directory. The read key is created from
+a hash value of the directory's write key. How keys are obtained by the
 user is described in Section \ref{sec:CS:KAC}. The distribution of keys is
 exhibited in Section \ref{sec:}.
 
@@ -759,11 +759,11 @@ procedure prior to decryption. The verification procedure is illustrated in
 Figure \ref{fig:CS:VOD}.
 
 The purpose of the verification procedure is to check the integrity of the
-content and to verify that it has been written by an authorized user. 
+content and to verify that it has been written by an authorized user.
 If one or neither of these checks are verified, the directory content will not
 be decrypted.
 
-The first check verifies the correctness of the public key stored within the 
+The first check verifies the correctness of the public key stored within the
 downloaded directory. The key must be checked to ensure that it belongs to the signing
 key. If it does, it indicates that an authorized user has signed the directory
 content. The check is carried out by hashing the directory's public key and
@@ -796,7 +796,7 @@ After decryption, the user has to obtain a signing key that is specific to the
 directory. The signing key is an RSA private key corresponding to the
 directory's public key. It is needed by the user to later modify the directory.
 A modified directory must contain a valid signature to prove that it has been
-modified by a user with write permissions. The signature consists of an encrypted 
+modified by a user with write permissions. The signature consists of an encrypted
 hash value of the directory content. The hash value is encrypted with the
 signing key.
 
@@ -862,7 +862,7 @@ These two operations can be broken into the following five steps:
 This thesis is written with the basis that we are hiring storage from an
 untrusted provider, and the security of the application should primarily
 reflect that. With this starting point we can assume that all data stored on
-the server is obtainable by the provider. 
+the server is obtainable by the provider.
 
 \subsection{Passive attacks}
 % Avhengig av cryptographic primitives
@@ -897,7 +897,7 @@ files are effectively compromised.
 % OR install some backdoor/torjan etc?
 Given enough users, at some point there will be a users who looses his
 terminal, for instance a mobile phone, a terminal might also be broken into
-without the users knowledge. 
+without the users knowledge.
 
 \section{Performance}
 % 1 mappe med 100 filer i, tar ikke mye lenger tid å åpne enn en mappe med 3
