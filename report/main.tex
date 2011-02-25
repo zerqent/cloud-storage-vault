@@ -834,10 +834,35 @@ write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
 
 \section{File Operations}
-s section will describe the elementary file operations supported by the 
+This section describes the elementary file operations supported by the 
 application. The ``create file'' and ``open file'' operations are considered.
 
 \subsection{Create File}
+In the create file operation, a file must be created locally on the user's terminal
+prior to upload. The operation is depicted in Figure \ref{fig:CS:CF} and
+described as follows.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{CryptoCreateFile.pdf}
+    \caption{Creating and uploading a file. }
+    \label{fig:CS:CF}
+\end{figure}
+
+The user chooses a local file to upload. This file is depicted as the
+``content'' value in Figure \ref{fig:CS:CF}. A cryptographic write key, specific
+for the new file, is further generated. The key generation algorithm is
+explained in Section \ref{KEYGEN}. The write key is further hashed to create a
+file specific storage index. The storage index is stored in the new file. A
+file's storage index has the same property as a directory's storage index. The
+\ac{IV} is the next value that is inserted into the new file. It is
+generated from a counter stored at the user's terminal.
+
+The previously chosen file content is further encrypted with the write key and
+file IV. The encrypted file content is then inserted to the new file. The last
+value added to the new file is an encrypted hash value of the encrypted content.
+The hash value is encrypted using the file's write key. Both the file content
+and hash value are encrypted using AES in CBC mode.
 
 \subsection{Open File}
 
