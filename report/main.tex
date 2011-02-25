@@ -177,33 +177,37 @@ software used.
 %**************************************%
 \chapter{Background}
 %**************************************%
-% Cloud (computing)
+
 \section{Security Services}
-This section briefly explains certain security services used in this
-thesis. A security service is any processing or communication service that
-enhances the security of the data processing systems and the information
-transfers of any organization\cite[p. 12]{stallings}.
+
+This section explains certain security services used in this thesis. A security
+service is any processing or communication service that enhances the security of
+the data processing systems and the information transfers of any organization
+\cite[p. 12]{stallings}.
 
 \paragraph{Confidentiality} is the art of keeping a message secret from
-unauthorized parties\cite[p. 18]{stallings}. This can typically be done by
+unauthorized parties \cite[p. 18]{stallings}. This can typically be done by
 either preventing other parties access to the message at all, or making the
-contents unreadable for instance by the use of encryption.
+contents unreadable, for instance by the use of encryption.
 
 \paragraph{Integrity} in a security perspective deals with detecting,
-preventing or recovering a message from being changes by an unauthorized party
+preventing or recovering a message being changed by an unauthorized party
 \cite{stallings}.
 
 \paragraph{Authentication} is the act for a user, service or similar to prove
-that he is what he claims to be\cite{stallings}.
+that he is what he claims to be \cite{stallings}.
 
-\subsection{Nonrepudiation} prevents either sender or receiver of a message
+\paragraph{Nonrepudiation} prevents both sender and receiver of a message
 from denying a transmitted message, in other words one party can prove the
-other parties involvement\cite{stallings}.
+other parties involvement \cite{stallings}.
 
 \section{Cryptographic Primitives}
+
 This section explains the low level security primitives used in this thesis.
 
-\subsection{Encryption} Encryption is the process of transforming some
+\subsection{Encryption}
+
+Encryption is the process of transforming some
 information into an unreadable form. Encryption is primarily used to enforce
 Confidentially, but can also be used for other purposes such as authentication.
 In a very basic form an encryption scheme consist of an encryption algorithm,
@@ -663,30 +667,33 @@ in terms of file and directory operations performed by the application. The
 chapter ends with a description of a users keyring.
 
 \section{Security Concept}
-The basic security concept of the application is to keep a users remote storage
+
+The basic security concept of the application is to keep a user's remote storage
 confidential to a third-party storage provider. To solve this, the application
 encrypt files locally at the users terminal before uploading them to the
-third-party storage provider. To further access files, the application
-decrypt files locally after download. To enable this simple
-encryption scheme, the user terminal is required to possess at least one
+third-party storage provider. When accessing a file, the application first
+download the encrypted file and further decrypt it locally. To enable this
+simple encryption scheme, the user terminal is required to possess at least one
 cryptographic key. Cryptographic keys are stored in a single keyring at the user
 terminal.
 
-By initially knowing that files are encrypted on a remote server and that the local user
-possess one or more cryptographic keys, we can continue with a more comprehensive
-description of the complete cryptographic solution. The details of the complete
-solution are explained in terms of the following directory and file operations.
+By initially knowing that files are placed encrypted on a remote server and that
+the local user possess one or more cryptographic keys, we can continue with a
+more comprehensive description of the complete cryptographic solution. The
+details are explained in terms of the following directory and file operations.
 
 \section{Directory operations}
 \label{sec:CS:DO}
+
 This section presents the two basic directory operations used by the
-application. The ``create directory'' and ``open directory'' operations are explained as
-follows.
+application. The ``create directory'' and ``open directory'' operations are
+explained as follows.
 
 \subsection{Create Directory}
-The create directory operation is divided into two subsequent parts. First,
-the directory must be created locally at the user's terminal. Second, the directory must
-further be uploaded to the remote server. Uploading a file or directory is
+
+The create directory operation is divided into two subsequent parts. First, the
+directory must be created locally at the user's terminal. Second, the directory
+must further be uploaded to the remote server.  Uploading a file or directory is
 possible only if the user is authenticated.
 
 Creating and uploading a directory from the user terminal is illustrated in
@@ -704,31 +711,36 @@ key-pair is specific to the new directory and consists of a public and private
 signing key. The signing key is further used to derive a write and a read key
 for the corresponding directory. The read key is a hashed value of the write
 key, while the write key equals the hashed value of the signing  key. 
-%How keys are generated and derived is explained in Section \ref{sec:CS:KAC}.
 
+% TODO: Will we use counter IV?
 After key generation, the public key is directly added to the new directory. The
 directory's storage index is further added as a hash value of the directory's
 read key. The next value added to the directory is the initialization vector
 \ac{IV}. The IV is generated from a counter value stored at the user terminal. It
-is used to prevent predictable ciphertext, when the directory entries are encrypted. 
+is used to prevent predictable ciphertext, when the directory's entries are encrypted.
+
 The next value added to the directory is the write enabler. The write enabler is
 an HMAC-SHA-2 value created from the directory's write key and a static chosen
-text value. It is used by the \ac{ACL} layer on the server side to check that a
-user has write permission to upload the directory.
+text value. It is uploaded as a part of the directory, but can never be
+downloaded from the server. The write enabler is used by the server to enable
+users, that possess the directory's write key, to modify the directory. This
+ensures that only authorized users can modify a directory.
 
 After adding the write enabler, the user must add the directory's private
 signing key. The signing key should only be available for users with write
 permission to the directory. It is therefore encrypted with the directory's
 write key before it is added to the directory. The signing key is encrypted using \ac{AES} in
-\ac{CBC} mode.The next value added is the directory's entries. The entries of a
+\ac{CBC} mode. The next value added is the directory's entries. The entries of a
 directory should only be visible to users with read permissions to
 the directory. They are therefore encrypted with the directory's \ac{IV} and read
 key prior to insertion. The entries are encrypted using \ac{AES} in \ac{CBC} mode. The
 last value added to the directory is a signed hash value of the encrypted
-entries. The hash value is encrypted with the signing key using \ac{RSA}.
+entries. The hash value is encrypted with the signing key using \ac{RSA}. A
+signature is needed for other users to know that the directory was created from
+an authorized user.
 
 After creating a new directory, the directory is further uploaded to the remote
-server. 
+server.
 
 It is important to notice that none of the values contained within the
 directory or any of the cryptographic keys are kept locally by the user. The
@@ -801,32 +813,36 @@ fetched from the directory prior to decryption.
     \label{fig:CS:OD}
 \end{figure}
 
-To modify a downloaded directory after the decryption procedure, the user has to
-obtain the directory's signing key. Recall that a directory must contain a valid signature to prove that it has been
-modified by a user with write permissions. The signature consists of an encrypted hash value of the
-directory's encrypted entries. The hash value is encrypted with the signing key.
+\subsection{Modify directory}
+In addition to read the content of a directory, the user might want to write to it as well. 
+To be able to modify a downloaded directory, the user must be in possession of
+the directory's write key. The write key is needed to obtain the directory's
+signing key and write enabler. 
+
+The signing key is needed by the user to correctly sign the
+modified directory. Remember that a directory can only be read by users if it
+contains a valid signature. Obtaining the signing key from a downloaded
+directory is shown as a part of Figure \ref{fig:CS:OD}.
+
+The write enabler is generated as a HMAC-SHA-2 value from the write key and a
+static known text value. It is used to prove the user's write permissions to the
+receiving ACL layer at the remote server. This ensures that the directory has
+been modified by an authorized user.
 
 The user fetches the encrypted signing key and decrypts it with the
 write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
 
 \section{File Operations}
-
-\subsection{Open File}
+s section will describe the elementary file operations supported by the 
+application. The ``create file'' and ``open file'' operations are considered.
 
 \subsection{Create File}
 
-The process of uploading a file onto a remote server was illustrated in Figure
-\ref{fig:AS:upload}. This section will provide a more detailed description of the
-process and specify the functionality of the Upload operation at the user
-terminal.
+\subsection{Open File}
 
-When uploading a file to the remote file structure, described in Section \ref{sec:AS:FS}, two
-operations are needed. First of all, it is important to add the desired file's
-meta data into the remote parent directory. This meta data will serve as a link
-to the uploaded file. The second operation is to upload the desired file.
 
-These two operations can be broken into the following five steps:
+\section{Keyring}
 
 
 \section{Choice of cryptographic primitives}
