@@ -859,10 +859,10 @@ file's storage index has the same property as a directory's storage index. The
 generated from a counter stored at the user's terminal.
 
 The previously chosen file content is further encrypted with the write key and
-file IV. The encrypted file content is then inserted to the new file. The last
+file \ac{IV}. The encrypted file content is then inserted to the new file. The last
 value added to the new file is an encrypted hash value of the encrypted content.
 The hash value is encrypted using the file's write key. Both the file content
-and hash value are encrypted using AES in CBC mode.
+and hash value are encrypted using \ac{AES} in \ac{CBC} mode.
 
 \subsection{Open File} 
 \begin{figure}[h!]
