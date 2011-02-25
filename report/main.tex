@@ -864,10 +864,44 @@ value added to the new file is an encrypted hash value of the encrypted content.
 The hash value is encrypted using the file's write key. Both the file content
 and hash value are encrypted using AES in CBC mode.
 
-\subsection{Open File}
+\subsection{Open File} 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{CryptoOpenFile.pdf}
+    \caption{Downloading a file from the server}
+    \label{fig:CS:OF}
+\end{figure}
 
+The process of retrieving a file is illustrated in figure \ref{fig:CS:OF}.A
+file is located by hashing the write key, which in turn is obtained either by
+knowledge by the user or client or from a parent folder. The ciphertext, the
+\ac{IV} and the encrypted hash of the ciphertext is downloaded from the server.
+The ciphertext is hashed client side and the encrypted hash from the server is
+decrypted with the write key, if these two outputs match the ciphertext has not
+been tampered with. The ciphertext is then decrypted using the write key and
+\ac{IV} to obtain the file contents.
 
 \section{Keyring}
+
+
+\section{Choice of cryptographic primitives}
+The scheme which has been described in this section requires three primitives;
+a cryptographic hash function, a symmetric cipher and an asymmetric cipher
+which can be used for digital signatures. The choices should reflect the
+following security demands of our application, all with the assumption that the
+possible attacker has access to vast quantities of computing power.
+
+% TODO: Sikkerhetskrav bør vi definere tidligere
+\begin{enumerate}
+    \item It should be infeasible to break confidentiality for any file or folder
+    \item It should be infeasible to break integrity for any file or folder
+\end{enumerate}
+
+\subsection{Symmetric Cipher}
+For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is
+a standard, has been around for a long time, and does not have any serious
+security issues as long as it is used correctly.
+% Kilder kilder TODO
 
 %**************************************%
 \chapter{Implementation}
