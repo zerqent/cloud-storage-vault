@@ -828,6 +828,26 @@ to the uploaded file. The second operation is to upload the desired file.
 
 These two operations can be broken into the following five steps:
 
+
+\section{Choice of cryptographic primitives}
+The scheme which has been described in this section requires three primitives;
+a cryptographic hash function, a symmetric cipher and an asymmetric cipher
+which can be used for digital signatures. The choices should reflect the
+following security demands of our application, all with the assumption that the
+possible attacker has access to vast quantities of computing power.
+
+% TODO: Sikkerhetskrav bør vi definere tidligere
+\begin{enumerate}
+    \item It should be infeasible to break confidentiality for any file or folder
+    \item It should be infeasible to break integrity for any file or folder
+\end{enumerate}
+
+\subsection{Symmetric Cipher}
+For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is
+a standard, has been around for a long time, and does not have any serious
+security issues as long as it is used correctly.
+% Kilder kilder TODO
+
 %**************************************%
 \chapter{Implementation}
 %**************************************%
