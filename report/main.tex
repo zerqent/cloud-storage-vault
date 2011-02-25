@@ -499,8 +499,9 @@ extendible.
 
 Each client\footnote{I.e. the different user terminals.} keeps a local copy of
 the identity and write key to the users root folder in a password
-protected keyring. In the event of loss of one of the clients, a user can change
-encryption keys (and identifier) for the root folder.
+protected keychain. In the event of loss of one of the clients, a user can change
+encryption keys (and identifier) for the root folder, and hence effectively
+block out the compromised clients.
 
 \input{tables/folder_entries}
 
@@ -513,7 +514,7 @@ corresponding child.
 The meta data are described in Table \ref{tbl:folder:meta}. The \emph{Storage
 Index} is a unique value derived from a directory's read key and serves as an
 identifier for the directory in question. The other elements are used for
-security purposes, and are described furter in Chapter \ref{chap:CS}.
+security purposes, and are described further in Chapter \ref{chap:CS}.
 
 \input{tables/folder_meta}
 
@@ -570,7 +571,7 @@ describe the external properties of the system. The fundamental operations are
 \subsection{Download file}
 
 When a user wishes to download a file or directory, all that is needed is the
-password to unlock the local keyring on the user terminal, as depicted in Figure
+password to unlock the local keychain on the user terminal, as depicted in Figure
 \ref{fig:AS:download}. The client sends a GET request with the identifier in
 question, and the server responds with the encrypted folder. This contains the
 capabilities needed to locate and decrypt the underlying files and folders.
@@ -664,7 +665,7 @@ The first section is a brief introduction explaining the basic
 security concept used by the application. Following is a detailed description of
 the cryptographic solutions adapted. The cryptographic solutions are revealed
 in terms of file and directory operations performed by the application. The
-chapter ends with a description of a users keyring.
+chapter ends with a description of a users keychain.
 
 \section{Security Concept}
 
@@ -674,7 +675,7 @@ encrypt files locally at the users terminal before uploading them to the
 third-party storage provider. When accessing a file, the application first
 download the encrypted file and further decrypt it locally. To enable this
 simple encryption scheme, the user terminal is required to possess at least one
-cryptographic key. Cryptographic keys are stored in a single keyring at the user
+cryptographic key. Cryptographic keys are stored in a single keychain at the user
 terminal.
 
 By initially knowing that files are placed encrypted on a remote server and that
@@ -748,7 +749,7 @@ user can only achieve the public and private keys through the remote directory.
 The directory's read and write keys can only be achieved through capabilities stored
 in the remote directory's parent directory. This is true for all directories
 stored on the server except for the user's root directory. The keys to the
-root directory are stored in the user's local keyring. The keyring is explained
+root directory are stored in the user's local keychain. The keyring is explained
 in Section \ref{KEYRING}.
 
 \subsection{Open Directory}
@@ -881,7 +882,24 @@ decrypted with the write key, if these two outputs match the ciphertext has not
 been tampered with. The ciphertext is then decrypted using the write key and
 \ac{IV} to obtain the file contents.
 
-\section{Keyring}
+\section{Keychain}
+
+As stated, each client keeps a local copy of the identity and write key to the
+personal root folder in a password protected keychain. This is done to be able
+to encrypt the root folder with a key that is not based on a password, but
+completely randomly generated. In addition, this means that no special scheme is
+needed for the root folder, as we can use the same procedures as for ``normal''
+folders as defined in the previous sections.
+
+The strength of a password is related to its length and its randomness
+properties. Passwords shorter than 10 characters are usually considered to be
+weak \cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
+keychain, a potential attacker can use fast password cracking attacks to try to
+compromise the root folder keys. As an precaution for this, we will use
+\ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a salt
+value to create additional computational work for the process of unlocking the
+keychain. This method is known as key stretching \cite{keystretch}.
+
 
 
 \section{Choice of cryptographic primitives}
