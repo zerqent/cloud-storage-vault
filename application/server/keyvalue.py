@@ -1,9 +1,15 @@
 # coding: utf-8
+import os
+import sys
+path = os.path.dirname(__file__)
+if path not in sys.path:
+    sys.path.append(path)
+
 from pyroutes import application
 from pyroutes import route
 from pyroutes.http.response import Response
 
-from filesystem import check_write_enabler
+from filesystem import save_file
 
 @route('/')
 def index(request):
@@ -21,20 +27,27 @@ def get_file(request):
 
 @route('/put')
 def put_file(request):
-    if 'uploaded_file' in request.FILES:
+    if 'encrypted_file' in request.FILES:
         storage_index = request.FILES['uploaded_file'][0]
         if storage_index is not None:
-            write_enabler = request.POST.get('we', None)
-            if write_enabler is not None:
-                if check_write_enabler(storage_index, write_enabler):
-                    data = request.FILES['uploaded_file'][1].read()
-                    response = write_file(storage_index, data)
-                    return Response('PUT OK: %s' % storage_index)
-                else:
-                    return Response('Wrong write enabler',
-                                    status_code='403 Forbidden')
+            write_enabler = request.POST.get('write_enabler', None)
+            fileobj = request.FILES['encrypted_file'][1].read()
+            save_status = put_file(storage_index, fileobj, write_enabler)
+
+    return Response('No file/filename given')
+
+@route('/test')
+def test_ops(request):
+    response = 'POST:<br>'
+    response += ''.join(['%s: %s, ' % (key, value) for key, value in request.POST.items()])
+    response += '<br>GET:<br>'
+    response += ''.join(['%s: %s, ' % (key, value) for key, value in request.GET.items()])
+    response += '<br>FILES:<br>'
+    if 'encrypted_file' in request.FILES:
+        response += 'Name: %s' % request.FILES['encrypted_file'][0]
     else:
-        return Response('No file given')
+        response += 'No file with id encrypted_file given'
+    return Response(response)
 
 if __name__ == '__main__':
     from pyroutes import utils
