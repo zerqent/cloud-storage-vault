@@ -11,11 +11,9 @@ import pyroutes.settings
 
 from filesystem import save_file, FileSystemException
 
-pyroutes.settings.DEBUG = True
-
 @route('/')
 def index(request):
-    return Response('Hello cock')
+    return Response('Secure Cloud Storage Vault')
 
 @route('/get')
 def get_file(request):
