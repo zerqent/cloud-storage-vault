@@ -9,7 +9,7 @@ from pyroutes import application, route
 from pyroutes.http.response import Response
 import pyroutes.settings
 
-from filesystem import save_file
+from filesystem import save_file, FileSystemException
 
 pyroutes.settings.DEBUG = True
 
@@ -19,22 +19,30 @@ def index(request):
 
 @route('/get')
 def get_file(request):
+    '''IANA manages a registry of media types,
+    http://www.iana.org/assignments/media-types/
+
+    '''
+
     storage_index = request.GET.get('si', None)
     if storage_index is not None:
         #open file to buffer
         buffer = ''
-        return Response(buffer, [('Content-Type', 'application/encryptedfile')],
+        return Response(buffer, [('Content-Type', 'application/x-encrypted')],
                         default_content_header=False)
     return Response('GET:')
 
 @route('/put')
 def put_file(request):
     if 'encrypted_file' in request.FILES:
-        storage_index = request.FILES['uploaded_file'][0]
+        storage_index = request.FILES['encrypted_file'][0]
         if storage_index is not None:
             write_enabler = request.POST.get('write_enabler', None)
             fileobj = request.FILES['encrypted_file'][1].read()
-            save_status = put_file(storage_index, fileobj, write_enabler)
+            try:
+                save_status = put_file(storage_index, fileobj, write_enabler)
+            except FileSystemException, e:
+                return Response(e.text, status_code=e.code)
 
     return Response('No file/filename given')
 

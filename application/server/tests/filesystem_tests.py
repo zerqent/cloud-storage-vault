@@ -4,20 +4,33 @@ import random
 import string
 import os
 
-from filesystem import FileSystemException, file_exists, save_file, FILE_STORE
+from filesystem import FileSystemException, save_file, FILE_STORE
 
 class TestFileOperationPrimitives(unittest.TestCase):
     def setUp(self):
-        self.si = ''.join(random.sample(string.letters+string.digits, 12))
-        fp = open(os.path.join(FILE_STORE, self.si), 'w')
-        fp.write('TESTING')
+        pass
 
+    def test_save_new_file(self):
+        si = ''.join(random.sample(string.letters+string.digits, 12))
+        return_code = save_file(si, 'TESTING')
+
+        fp = open(os.path.join(FILE_STORE, si), 'r')
+        result = fp.read()
         fp.close()
 
-    def test_save_file_with_existing_si_but_no_we_should_fail(self):
-        self.assertRaises(FileSystemException, save_file, self.si, 'kjdfkj')
+        self.assertTrue(return_code)
+        self.assertEqual(result, 'TESTING')
 
-        fp = open(os.path.join(FILE_STORE, self.si), 'r')
+    def test_save_file_with_existing_si_but_no_we_should_fail(self):
+        print 'her'
+        si = ''.join(random.sample(string.letters+string.digits, 12))
+        fp = open(os.path.join(FILE_STORE, si), 'w')
+        fp.write('TESTING')
+        fp.close()
+
+        self.assertRaises(FileSystemException, save_file, si, 'kjdfkj')
+
+        fp = open(os.path.join(FILE_STORE, si), 'r')
         result = fp.read()
         fp.close()
 
