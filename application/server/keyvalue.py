@@ -1,6 +1,8 @@
 # coding: utf-8
+from wsgiref.util import FileWrapper
 import os
 import sys
+
 path = os.path.dirname(__file__)
 if path not in sys.path:
     sys.path.append(path)
@@ -9,7 +11,7 @@ from pyroutes import application, route
 from pyroutes.http.response import Response
 import pyroutes.settings
 
-from filesystem import save_file, FileSystemException
+from filesystem import retrieve_file, save_file, FileSystemException
 
 @route('/')
 def index(request):
@@ -21,14 +23,18 @@ def get_file(request):
     http://www.iana.org/assignments/media-types/
 
     '''
-
-    storage_index = request.GET.get('si', None)
+    storage_index = request.POST.get('storage_index', None)
     if storage_index is not None:
-        #open file to buffer
-        buffer = ''
-        return Response(buffer, [('Content-Type', 'application/x-encrypted')],
-                        default_content_header=False)
-    return Response('GET:')
+        try:
+            file_to_send, size = retrieve_file(storage_index)
+        except FileSystemException, e:
+            return Response(e.text, status_code=e.code)
+
+        headers = [('Content-Type', 'application/octet-stream'),
+                   ('Content-Length', str(size))]
+        return Response(file_to_send, headers)
+
+    return Response('Did not receive any storage index.', status_code=400)
 
 @route('/put')
 def put_file(request):
@@ -38,11 +44,13 @@ def put_file(request):
             write_enabler = request.POST.get('write_enabler', None)
             fileobj = request.FILES['encrypted_file'][1].read()
             try:
-                save_status = put_file(storage_index, fileobj, write_enabler)
+                save_status = save_file(storage_index, fileobj, write_enabler)
             except FileSystemException, e:
                 return Response(e.text, status_code=e.code)
 
-    return Response('No file/filename given')
+            return Response('File received')
+
+    return Response('No file/filename given', status_code=400)
 
 @route('/test')
 def test_ops(request):
