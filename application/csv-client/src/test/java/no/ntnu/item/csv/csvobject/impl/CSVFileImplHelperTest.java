@@ -1,5 +1,8 @@
 package no.ntnu.item.csv.csvobject.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -101,5 +104,19 @@ public class CSVFileImplHelperTest {
 		
 		Assert.assertEquals(md1.length, md2.length);
 		Assert.assertFalse(md1.toString().equals(md2.toString()));
+	}
+	
+	@Test
+	public void testEncryptandDecryptAFile() throws IOException {
+		File file = new File("src/test/resources/smallloremipsum.txt");
+		this.csvFile.setPlainText(file);
+		this.csvFile.encrypt();
+		
+		InputStream in = getClass().getResourceAsStream( "/smallloremipsum.txt" );
+		
+		byte[] plainText = CSVFileImplHelper.readDataBinary(in, (int)file.length());
+		CSVFileImplHelper newcsv = new CSVFileImplHelper(this.csvFile.getCapability(), this.csvFile.getCipherText());
+		newcsv.decrypt();
+		Assert.assertArrayEquals(plainText, newcsv.getPlainText());
 	}
 }

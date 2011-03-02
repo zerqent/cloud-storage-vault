@@ -1,6 +1,7 @@
 package no.ntnu.item.csv.csvobject.impl;
 
 import java.io.File;
+import java.io.IOException;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
@@ -50,7 +51,7 @@ public class CSVFileFacade implements CSVFile {
 	}
 
 	@Override
-	public void setPlainText(File f) {
+	public void setPlainText(File f) throws IOException {
 		this.helper.setPlainText(f);
 	}
 

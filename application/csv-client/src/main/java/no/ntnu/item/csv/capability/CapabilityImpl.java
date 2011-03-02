@@ -3,12 +3,13 @@ package no.ntnu.item.csv.capability;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.codec.binary.Base64;
+
 public class CapabilityImpl implements Capability {
 	
 	private byte[] storageIndex;
 	private CSVKey key;
 	private CapabilityType type;
-	
 	
 	public CapabilityImpl() {
 	}
@@ -54,8 +55,8 @@ public class CapabilityImpl implements Capability {
 	}
 	
 	@Override
-	public byte[] getStorageIndex() {
-		return this.storageIndex;
+	public String getStorageIndex() {
+		return Base64.encodeBase64String(this.storageIndex);
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class CapabilityImpl implements Capability {
 
 	@Override
 	public CapabilityType getType() {
-		return this.type;
+		return this.type;	
 	}
 
 }
