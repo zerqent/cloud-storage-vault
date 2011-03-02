@@ -33,7 +33,7 @@ public class CapabilityImplTest {
 	
 	@Test
 	public void testBase64() {
-		Assert.assertEquals(46, this.cap.getStorageIndex());
+		Assert.assertEquals(46, this.cap.getStorageIndex().length());
 		// TODO: Perhaps test some more, change size
 	}
 	
