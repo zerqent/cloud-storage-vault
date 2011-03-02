@@ -1,8 +1,10 @@
 package no.ntnu.item.csv.csvobject.impl;
 
 import java.io.File;
+import java.io.IOException;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.csvobject.CSVFile;
 
 public class CSVFileFacade implements CSVFile {
@@ -12,7 +14,6 @@ public class CSVFileFacade implements CSVFile {
 	public CSVFileFacade() {
 		this.helper = new CSVFileImplHelper();
 	}
-	
 	
 	@Override
 	public void encrypt() {
@@ -50,19 +51,18 @@ public class CSVFileFacade implements CSVFile {
 	}
 
 	@Override
-	public void setPlainText(File f) {
+	public void setPlainText(File f) throws IOException {
 		this.helper.setPlainText(f);
 	}
 
 	@Override
 	public Capability getCapability() {
-		return null;
+		return this.helper.getCapability();
 	}
 
 	@Override
 	public void setCapability(Capability capability) {
-		// TODO Auto-generated method stub
-		
+		this.helper.setCapability(capability);
 	}
 
 }
