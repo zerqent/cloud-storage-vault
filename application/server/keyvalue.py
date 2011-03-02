@@ -5,11 +5,13 @@ path = os.path.dirname(__file__)
 if path not in sys.path:
     sys.path.append(path)
 
-from pyroutes import application
-from pyroutes import route
+from pyroutes import application, route
 from pyroutes.http.response import Response
+import pyroutes.settings
 
 from filesystem import save_file
+
+pyroutes.settings.DEBUG = True
 
 @route('/')
 def index(request):
@@ -39,7 +41,7 @@ def put_file(request):
 @route('/test')
 def test_ops(request):
     response = 'POST:<br>'
-    response += ''.join(['%s: %s, ' % (key, value) for key, value in request.POST.items()])
+    response += ''.join(['%s: %s, ' % (str(key), str(value)) for key, value in request.POST.items()])
     response += '<br>GET:<br>'
     response += ''.join(['%s: %s, ' % (key, value) for key, value in request.GET.items()])
     response += '<br>FILES:<br>'
