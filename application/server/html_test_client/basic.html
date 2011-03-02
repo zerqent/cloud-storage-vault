@@ -4,17 +4,21 @@
   <title>File test page</title>
 </head>
 <body>
-  <form action="http://localhost/put/" method="post" enctype="multipart/form-data">
-    <input type="text" name="foo">
-    <input type="file" name="encrypted_file">
+  <section>
+    <h1>PUT</h1>
+    <form action="http://localhost/put/" method="post" enctype="multipart/form-data">
+      <p><input type="text" name="write_enabler"></p>
+      <p><input type="file" name="encrypted_file"></p>
 
-    <input type="submit">
-  </form>
-  <br>
-  <form action="http://localhost:8001/get/" method="post">
-    <input type="text" name="storage_index">
-
-    <input type="submit">
-  </form>
+      <input type="submit">
+    </form>
+  </section>
+  <section>
+    <h1>GET</h1>
+      <form action="http://localhost/get/" method="post">
+        <p><input type="text" name="storage_index"></p>
+        <p><input type="submit"></p>
+      </form>
+  </section>
 </body>
 </html>
