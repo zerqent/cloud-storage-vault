@@ -3,6 +3,7 @@ package no.ntnu.item.csv.csvobject.impl;
 import java.io.File;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.csvobject.CSVFile;
 
 public class CSVFileFacade implements CSVFile {
@@ -12,7 +13,6 @@ public class CSVFileFacade implements CSVFile {
 	public CSVFileFacade() {
 		this.helper = new CSVFileImplHelper();
 	}
-	
 	
 	@Override
 	public void encrypt() {
@@ -56,13 +56,12 @@ public class CSVFileFacade implements CSVFile {
 
 	@Override
 	public Capability getCapability() {
-		return null;
+		return this.helper.getCapability();
 	}
 
 	@Override
 	public void setCapability(Capability capability) {
-		// TODO Auto-generated method stub
-		
+		this.helper.setCapability(capability);
 	}
 
 }

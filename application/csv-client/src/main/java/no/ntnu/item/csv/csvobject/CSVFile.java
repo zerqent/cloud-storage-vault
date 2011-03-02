@@ -5,7 +5,6 @@ import java.io.File;
 public interface CSVFile extends CSVObject {
 	
 	public void setPlainText(File f);
-	
-	
+
 	
 }

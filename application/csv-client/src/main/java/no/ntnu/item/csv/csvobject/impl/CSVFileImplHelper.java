@@ -16,7 +16,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import no.ntnu.item.csv.capability.CSVKey;
+import no.ntnu.item.csv.capability.CSVKeyImpl;
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityImpl;
+import no.ntnu.item.csv.capability.CapabilityType;
+import no.ntnu.item.csv.capability.KeyType;
 
 
 public class CSVFileImplHelper {
@@ -43,10 +47,12 @@ public class CSVFileImplHelper {
 		this.iv = null;
 		try {
 			this.cipher = Cipher.getInstance(transformation);
-			//
 			KeyGenerator keygen = KeyGenerator.getInstance(cipherName);
 			keygen.init(keySize);
 			this.secretKey = keygen.generateKey();
+			this.csvkey = new CSVKeyImpl(KeyType.READ_KEY, this.secretKey.getEncoded());
+			this.capability = new CapabilityImpl(this.csvkey, CapabilityType.READ_ONLY);
+			this.setIV(this.csvkey.getNHash(2, 16));
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,6 +60,14 @@ public class CSVFileImplHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
+	}
+	
+	public CSVFileImplHelper(Capability capability, byte[] cipherText) {
+		this.capability = capability;
+		this.cipherText = cipherText;
+		this.csvkey = this.capability.getKey();
+		this.setSecretKey(this.csvkey.getKey());
+		this.setIV(this.csvkey.getNHash(2, 16));
 	}
 	
 	public boolean isPlainTextReady() {
@@ -69,9 +83,8 @@ public class CSVFileImplHelper {
 			return;
 		}
 		try {
-			this.cipher.init(Cipher.ENCRYPT_MODE, this.secretKey);
+			this.cipher.init(Cipher.ENCRYPT_MODE, this.secretKey, this.iv);
 			this.cipherText = this.cipher.doFinal(this.plainText);
-			this.iv = new IvParameterSpec(this.cipher.getIV());
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,6 +92,9 @@ public class CSVFileImplHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidAlgorithmParameterException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -133,7 +149,6 @@ public class CSVFileImplHelper {
 
 	public void setIV(byte[] iv) {
 		this.iv = new IvParameterSpec(iv);
-		
 	}
 
 	public void setSecretKey(byte[] sk) {
@@ -188,6 +203,17 @@ public class CSVFileImplHelper {
 	public void setPlainText(File f) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public Capability getCapability() {
+		return this.capability;
+	}
+	
+	public void setCapability(Capability capability) {
+		this.capability = capability;
+		this.setSecretKey(capability.getKey().getKey());
+		this.csvkey = capability.getKey();
+		this.setIV(this.csvkey.getNHash(2, 16));
 	}
 
 }
