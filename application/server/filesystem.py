@@ -1,8 +1,6 @@
 # coding: utf-8
 import os
 
-from http_status_codes import get_http_code
-
 FILE_STORE='/tmp/cloud'
 
 class FileSystemException(Exception):
@@ -26,8 +24,8 @@ def save_file(storage_index, data, write_enabler=None):
             if check_write_enabler(storage_index, write_enabler):
                 fp = open(os.path.join(FILE_STORE, storage_index), 'w')
             else:
-                raise FileSystemException('Wrong write-enabler',
-                                          get_http_code('401'))
+                raise FileSystemException('Wrong write-enabler', 401)
+
         fp.write(data)
         fp.close()
 

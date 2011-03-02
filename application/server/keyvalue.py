@@ -55,6 +55,8 @@ def test_ops(request):
     response += '<br>FILES:<br>'
     if 'encrypted_file' in request.FILES:
         response += 'Name: %s' % request.FILES['encrypted_file'][0]
+        fileobj = request.FILES['encrypted_file'][1].read()
+        response += '<br><br> %s' % fileobj
     else:
         response += 'No file with id encrypted_file given'
     return Response(response)

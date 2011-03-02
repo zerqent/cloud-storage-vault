@@ -22,7 +22,6 @@ class TestFileOperationPrimitives(unittest.TestCase):
         self.assertEqual(result, 'TESTING')
 
     def test_save_file_with_existing_si_but_no_we_should_fail(self):
-        print 'her'
         si = ''.join(random.sample(string.letters+string.digits, 12))
         fp = open(os.path.join(FILE_STORE, si), 'w')
         fp.write('TESTING')
