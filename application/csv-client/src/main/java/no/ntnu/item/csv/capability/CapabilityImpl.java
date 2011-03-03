@@ -28,13 +28,13 @@ public class CapabilityImpl implements Capability {
 		this.verification = verification;
 		
 		switch(this.type) {
-		case READ_WRITE:
+		case RW:
 			this.storageIndex = Cryptoutil.nHash(this.key, 2, 16);
 			break;
-		case READ_ONLY:
+		case RO:
 			this.storageIndex = Cryptoutil.nHash(this.key, 1, 16);
 			break;
-		case VERIFY:
+		case V:
 			break;
 		}
 
@@ -66,6 +66,27 @@ public class CapabilityImpl implements Capability {
 	@Override
 	public byte[] getVerificationKey() {
 		return this.verification;
+	}
+	
+	public String toString() {
+		String toString = "";
+		toString += this.type.name() + ":" + Base64.encodeBase64String(this.key);
+		if (this.verification != null) {
+			toString += ":" + Base64.encodeBase64String(this.verification);
+		}
+		return toString;
+	}
+	
+	public static Capability fromString(String capability) {
+		String[] content = capability.split(":");
+		CapabilityType type = CapabilityType.valueOf(content[0]);
+		byte[] key = Base64.decodeBase64(content[1]);
+		byte[] verify = null;
+		if (content.length>2) {
+			verify = Base64.decodeBase64(content[2]);
+		}
+		
+		return new CapabilityImpl(type, key, verify);
 	}
 
 }

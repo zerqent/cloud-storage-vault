@@ -6,20 +6,28 @@ import java.util.Map;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
+import no.ntnu.item.csv.csvobject.CSVFolder;
 
-public class CSVFolderImpl {
+public class CSVFolderImpl implements CSVFolder{
 	
 	private byte[] pubkey;
 	private byte[] privkey;
 		
 	private Map<CapabilityType, Capability> capabilities;
-//	private byte[] ciphertext;
-//	private Map<String, Capability> contents; 
+	private byte[] ciphertext;
+	//private Map<String, Capability> contents; 
 	
 	public CSVFolderImpl() {
 		this.capabilities = new HashMap<CapabilityType, Capability>();
 		generateKeys();
+	}
+	
+	public CSVFolderImpl(Capability capability, byte[] cipherText) {
+		this.capabilities = new HashMap<CapabilityType, Capability>();
+		this.capabilities.put(capability.getType(), capability);
+		this.ciphertext = cipherText;
 	}
 	
 	private void generateKeys() {
@@ -28,18 +36,85 @@ public class CSVFolderImpl {
 		this.pubkey = pair.getPublic().getEncoded();
 		this.privkey = pair.getPrivate().getEncoded();
 		
-		//CSVKey write_k = new CSVKeyImpl(KeyType.WRITE_KEY, Cryptoutil.hash(this.privkey, 16));
-		//CSVKey read_k = new CSVKeyImpl(KeyType.READ_KEY, Cryptoutil.nHash(this.privkey, 2, 16));
-		//CSVKey verify_k = new CSVKeyImpl(KeyType.VERIFY_KEY, Cryptoutil.hash(this.pubkey, 16));
+		byte[] write = Cryptoutil.hash(this.privkey, 16);
+		byte[] read = Cryptoutil.hash(write, 16);
+		byte[] verify = Cryptoutil.hash(this.pubkey, 16);
 		
-		//Capability write = new CapabilityImpl(write_k, CapabilityType.READ_WRITE);
-		//Capability read = new CapabilityImpl(read_k, CapabilityType.READ_ONLY);
-		//Capability verify = new CapabilityImpl(verify_k, CapabilityType.VERIFY);
+		Capability writecap = new CapabilityImpl(CapabilityType.RW, write, verify);
+		Capability readcap = new CapabilityImpl(CapabilityType.RO, read, verify);
+		Capability verifycap = new CapabilityImpl(CapabilityType.V, null, verify);
 		
-		//this.capabilities.put(write.getType(), write);
-		//this.capabilities.put(read.getType(), read);
-		//this.capabilities.put(verify.getType(), verify);
+		this.capabilities.put(writecap.getType(), writecap);
+		this.capabilities.put(readcap.getType(), readcap);
+		this.capabilities.put(verifycap.getType(), verifycap);
 		
 	}
 	
+	private void createPlainText() {
+		
+		
+	}
+	
+	@Override
+	public void encrypt() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void decrypt() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void verify() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPlainText(byte[] plainText) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setCipherText(byte[] cipherText) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public byte[] getPlainText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public byte[] getCipherText() {
+		return this.ciphertext;
+	}
+
+	@Override
+	public Capability getCapability() {
+		if (this.capabilities.containsKey(CapabilityType.RW)) {
+			return this.capabilities.get(CapabilityType.RW);
+		} else if(this.capabilities.containsKey(CapabilityType.RO)) {
+			return this.capabilities.get(CapabilityType.RO);
+		} else if(this.capabilities.containsKey(CapabilityType.V)) {
+			return this.capabilities.get(CapabilityType.V);
+		}
+		return null;
+	}
+
+	@Override
+	public void setCapability(Capability capability) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public Map<CapabilityType, Capability> getCapabilitites() {
+		return this.capabilities;
+	}
 }

@@ -10,4 +10,6 @@ public interface Capability {
 	
 	public CapabilityType getType();
 	
+	public String toString();
+	
 }

@@ -31,7 +31,7 @@ public class CSVFileImplHelper {
 	public CSVFileImplHelper() {
 		this.iv = null;
 		this.secretKey = Cryptoutil.generateSymmetricKey();
-		this.capability = new CapabilityImpl(CapabilityType.READ_ONLY, this.secretKey.getEncoded(),null);
+		this.capability = new CapabilityImpl(CapabilityType.RO, this.secretKey.getEncoded(),null);
 		this.setIV(Cryptoutil.nHash(this.secretKey.getEncoded(), 2, 16));
 	}
 
