@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import no.ntnu.item.csv.capability.Capability;
-import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.csvobject.CSVFile;
 
 public class CSVFileFacade implements CSVFile {

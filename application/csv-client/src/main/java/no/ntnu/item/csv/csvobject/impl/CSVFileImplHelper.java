@@ -4,20 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import no.ntnu.item.cryptoutil.Cryptoutil;
 import no.ntnu.item.csv.capability.CSVKey;
 import no.ntnu.item.csv.capability.CSVKeyImpl;
 import no.ntnu.item.csv.capability.Capability;
@@ -28,13 +20,7 @@ import no.ntnu.item.csv.capability.KeyType;
 
 public class CSVFileImplHelper {
 
-	private static final String transformation = "AES/CBC/PKCS5Padding";
-	private static final int keySize = 128;
-	private static final String cipherName = "AES";
-	private static final String digestName = "SHA-256";
-
 	private IvParameterSpec iv;
-	private Cipher cipher;
 	private SecretKey secretKey;
 
 	private CSVKey csvkey;
@@ -43,26 +29,15 @@ public class CSVFileImplHelper {
 	private byte[] plainText = null;
 	private byte[] cipherText = null;
 
-	private MessageDigest cipherTextDigest = null;
-	private MessageDigest plainTextDigest = null;
+	private byte[] cipherTextDigest = null;
+	private byte[] plainTextDigest = null;
 
 	public CSVFileImplHelper() {
 		this.iv = null;
-		try {
-			this.cipher = Cipher.getInstance(transformation);
-			KeyGenerator keygen = KeyGenerator.getInstance(cipherName);
-			keygen.init(keySize);
-			this.secretKey = keygen.generateKey();
-			this.csvkey = new CSVKeyImpl(KeyType.READ_KEY, this.secretKey.getEncoded());
-			this.capability = new CapabilityImpl(this.csvkey, CapabilityType.READ_ONLY);
-			this.setIV(this.csvkey.getNHash(2, 16));
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		this.secretKey = Cryptoutil.generateSymmetricKey();
+		this.csvkey = new CSVKeyImpl(KeyType.READ_KEY, this.secretKey.getEncoded());
+		this.capability = new CapabilityImpl(this.csvkey, CapabilityType.READ_ONLY);
+		this.setIV(Cryptoutil.nHash(this.csvkey.getKey(), 2, 16));
 	}
 
 	public CSVFileImplHelper(Capability capability, byte[] cipherText) {
@@ -70,16 +45,7 @@ public class CSVFileImplHelper {
 		this.cipherText = cipherText;
 		this.csvkey = this.capability.getKey();
 		this.setSecretKey(this.csvkey.getKey());
-		this.setIV(this.csvkey.getNHash(2, 16));
-		try {
-			this.cipher = Cipher.getInstance(transformation);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.setIV(Cryptoutil.nHash(this.csvkey.getKey(), 2, 16));
 	}
 
 	public boolean isPlainTextReady() {
@@ -91,54 +57,15 @@ public class CSVFileImplHelper {
 	}
 
 	public void encrypt() {
-		if(this.isCipherTextReady()) {
-			return;
-		}
-		try {
-			this.cipher.init(Cipher.ENCRYPT_MODE, this.secretKey, this.iv);
-			this.cipherText = this.cipher.doFinal(this.plainText);
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidAlgorithmParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		this.cipherText = Cryptoutil.symEncrypt(this.plainText, this.secretKey, this.iv);
 	}
 
 	public void decrypt() {
-		if(this.isPlainTextReady()) {
-			return;
-		}
-		try {
-			this.cipher.init(Cipher.DECRYPT_MODE, this.secretKey, this.iv);
-			this.plainText = this.cipher.doFinal(this.cipherText);
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidAlgorithmParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		this.plainText = Cryptoutil.symDecrypt(this.cipherText, this.secretKey, this.iv);
 	}
 
 	public void verify() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public byte[] getPlainText() {
@@ -164,7 +91,7 @@ public class CSVFileImplHelper {
 	}
 
 	public void setSecretKey(byte[] sk) {
-		SecretKeySpec sks = new SecretKeySpec(sk, CSVFileImplHelper.cipherName);
+		SecretKeySpec sks = new SecretKeySpec(sk, Cryptoutil.SYM_CIPHER);
 		this.secretKey = sks;
 	}
 
@@ -186,30 +113,18 @@ public class CSVFileImplHelper {
 		if(this.cipherTextDigest == null && !this.isCipherTextReady()) {
 			return null;
 		} else if (this.cipherTextDigest == null){
-			try {
-				this.cipherTextDigest = MessageDigest.getInstance(digestName);
-				this.cipherTextDigest.update(this.cipherText);
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.cipherTextDigest = Cryptoutil.hash(this.cipherText, -1);
 		}
-		return this.cipherTextDigest.digest();
+		return this.cipherTextDigest;
 	}
 
 	public byte[] getPlainTextDigest() {
 		if(this.plainTextDigest == null && !this.isPlainTextReady()) {
 			return null;
 		} else if (this.plainTextDigest == null){
-			try {
-				this.plainTextDigest = MessageDigest.getInstance(digestName);
-				this.plainTextDigest.update(this.plainText);
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.plainTextDigest = Cryptoutil.hash(this.plainText, -1);
 		}
-		return this.plainTextDigest.digest();
+		return this.plainTextDigest;
 	}
 
 	public void setPlainText(File file) throws IOException{
@@ -225,7 +140,7 @@ public class CSVFileImplHelper {
 		this.capability = capability;
 		this.setSecretKey(capability.getKey().getKey());
 		this.csvkey = capability.getKey();
-		this.setIV(this.csvkey.getNHash(2, 16));
+		this.setIV(Cryptoutil.nHash(this.csvkey.getKey(), 2, 16));
 	}
 
 	public static byte[] readDataBinary(InputStream in, int filelength) throws IOException {

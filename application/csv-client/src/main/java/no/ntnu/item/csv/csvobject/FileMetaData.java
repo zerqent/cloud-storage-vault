@@ -5,7 +5,7 @@ public class FileMetaData {
 	private String filename;
 	private String mimeType; // TODO;
 	private int size;
-	private byte[] digest;
+//	private byte[] digest;
 	
 	public FileMetaData(String filename, String mimeType, int size) {
 		this.filename = filename;
