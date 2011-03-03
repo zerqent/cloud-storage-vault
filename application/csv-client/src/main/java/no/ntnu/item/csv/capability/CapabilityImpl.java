@@ -7,28 +7,32 @@ import org.apache.commons.codec.binary.Base64;
 public class CapabilityImpl implements Capability {
 	
 	private byte[] storageIndex;
-	private CSVKey key;
+	private byte[] key;
+	private byte[] verification;
 	private CapabilityType type;
 	
 	public CapabilityImpl() {
 	}
 	
-	public CapabilityImpl(byte[] storageIndex, CSVKey key, CapabilityType type) {
+	public CapabilityImpl(CapabilityType type, byte[] storageIndex, byte[] key, byte[] verificationKey) {
 		this.storageIndex = storageIndex;
-		this.key = key;
 		this.type = type;
+		this.key = key;
+		this.verification = verificationKey;
+		
 	}
 	
-	public CapabilityImpl(CSVKey key, CapabilityType type) {
+	public CapabilityImpl(CapabilityType type, byte[] key, byte[] verification) {
 		this.type = type;
 		this.key = key;
+		this.verification = verification;
 		
 		switch(this.type) {
 		case READ_WRITE:
-			this.storageIndex = Cryptoutil.nHash(this.key.getKey(), 2, 16);
+			this.storageIndex = Cryptoutil.nHash(this.key, 2, 16);
 			break;
 		case READ_ONLY:
-			this.storageIndex = Cryptoutil.nHash(this.key.getKey(), 1, 16);
+			this.storageIndex = Cryptoutil.nHash(this.key, 1, 16);
 			break;
 		case VERIFY:
 			break;
@@ -42,7 +46,7 @@ public class CapabilityImpl implements Capability {
 	}
 
 	@Override
-	public CSVKey getKey() {
+	public byte[] getKey() {
 		return this.key;
 	}
 
@@ -57,6 +61,11 @@ public class CapabilityImpl implements Capability {
 	
 	public byte[] getStorageIndexByte() {
 		return this.storageIndex;
+	}
+
+	@Override
+	public byte[] getVerificationKey() {
+		return this.verification;
 	}
 
 }

@@ -2,11 +2,9 @@ package no.ntnu.item.csv.capability;
 
 import javax.crypto.KeyGenerator;
 
-import no.ntnu.item.csv.capability.CSVKey;
-import no.ntnu.item.csv.capability.CSVKeyImpl;
+import no.ntnu.item.cryptoutil.Cryptoutil;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
-import no.ntnu.item.csv.capability.KeyType;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -21,8 +19,7 @@ public class CapabilityImplTest {
 	public void setUp() throws Exception {
 		KeyGenerator keygen = KeyGenerator.getInstance("AES");
 		keygen.init(128);
-		CSVKey key = new CSVKeyImpl(KeyType.READ_KEY,keygen.generateKey().getEncoded());
-		this.cap = new CapabilityImpl(key, CapabilityType.READ_ONLY);
+		this.cap = new CapabilityImpl(CapabilityType.READ_ONLY, Cryptoutil.generateSymmetricKey().getEncoded(), null);
 	}
 	
 	@After

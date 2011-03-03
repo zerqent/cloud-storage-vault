@@ -4,7 +4,9 @@ public interface Capability {
 
 	public String getStorageIndex();
 	
-	public CSVKey getKey();
+	public byte[] getKey();
+	
+	public byte[] getVerificationKey();
 	
 	public CapabilityType getType();
 	
