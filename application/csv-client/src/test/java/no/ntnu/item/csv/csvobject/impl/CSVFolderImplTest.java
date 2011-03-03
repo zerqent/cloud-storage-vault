@@ -1,7 +1,6 @@
 package no.ntnu.item.csv.csvobject.impl;
 
 import junit.framework.Assert;
-import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityType;
 
 import org.junit.Before;
