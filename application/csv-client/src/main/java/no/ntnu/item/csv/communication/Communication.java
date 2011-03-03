@@ -26,12 +26,12 @@ public class Communication {
     public static int put(CSVObject object, String serv_addr) throws IOException
     {
     	if(object == null || serv_addr == null)
-    		return 400;
+    		return 600;
     	
     	
     	HttpClient client = new DefaultHttpClient();
     	HttpPost post = new HttpPost(serv_addr);
-    	
+    	// TODO Change byte array
     	ByteArrayBody file = new ByteArrayBody(object.getCipherText(), object.getCapability().getStorageIndex());
     	
     	MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
