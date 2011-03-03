@@ -1,7 +1,6 @@
 package no.ntnu.item.csv.capability;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import no.ntnu.item.cryptoutil.Cryptoutil;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -24,32 +23,15 @@ public class CapabilityImpl implements Capability {
 		this.type = type;
 		this.key = key;
 		
-		MessageDigest md;
-		byte[] tmp;
-		
-		try {
-			md = MessageDigest.getInstance("SHA-256");
-					
-			switch(type) {
-				case READ_WRITE:
-					md.update(key.getKey());
-					tmp = md.digest();
-					md = MessageDigest.getInstance("SHA-256");
-					md.update(tmp);
-					this.storageIndex = md.digest();
-					break;
-				case READ_ONLY:
-					md = MessageDigest.getInstance("SHA-256");
-					md.update(key.getKey());
-					this.storageIndex = md.digest();
-					break;
-				case VERIFY:
-					break;
-			}
-						
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		switch(this.type) {
+		case READ_WRITE:
+			this.storageIndex = Cryptoutil.nHash(this.key.getKey(), 2, 16);
+			break;
+		case READ_ONLY:
+			this.storageIndex = Cryptoutil.nHash(this.key.getKey(), 1, 16);
+			break;
+		case VERIFY:
+			break;
 		}
 
 	}
@@ -67,6 +49,14 @@ public class CapabilityImpl implements Capability {
 	@Override
 	public CapabilityType getType() {
 		return this.type;	
+	}
+	
+	public void setStorageIndex(byte[] storageIndex) {
+		this.storageIndex = storageIndex;
+	}
+	
+	public byte[] getStorageIndexByte() {
+		return this.storageIndex;
 	}
 
 }

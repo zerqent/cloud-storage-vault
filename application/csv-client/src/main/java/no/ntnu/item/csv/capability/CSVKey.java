@@ -6,7 +6,4 @@ public interface CSVKey {
 	
 	public byte[] getKey();
 	
-	public byte[] getNHash(int n, int truncate);
-	
-	
 }

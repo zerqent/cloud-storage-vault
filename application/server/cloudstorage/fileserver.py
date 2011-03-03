@@ -1,21 +1,15 @@
 # coding: utf-8
-import os
-import sys
-path = os.path.dirname(__file__)
-if path not in sys.path:
-    sys.path.append(path)
+from wsgiref.util import FileWrapper
 
-from pyroutes import application, route
+from pyroutes import route
 from pyroutes.http.response import Response
-import pyroutes.settings
 
-from filesystem import save_file, FileSystemException
-
-pyroutes.settings.DEBUG = True
+from cloudstorage.filesystem import (retrieve_file, save_file,
+                                     FileSystemException)
 
 @route('/')
 def index(request):
-    return Response('Hello cock')
+    return Response('Secure Cloud Storage Vault')
 
 @route('/get')
 def get_file(request):
@@ -23,14 +17,18 @@ def get_file(request):
     http://www.iana.org/assignments/media-types/
 
     '''
-
-    storage_index = request.GET.get('si', None)
+    storage_index = request.POST.get('storage_index', None)
     if storage_index is not None:
-        #open file to buffer
-        buffer = ''
-        return Response(buffer, [('Content-Type', 'application/x-encrypted')],
-                        default_content_header=False)
-    return Response('GET:')
+        try:
+            file_to_send, size = retrieve_file(storage_index)
+        except FileSystemException, e:
+            return Response(e.text, status_code=e.code)
+
+        headers = [('Content-Type', 'application/octet-stream'),
+                   ('Content-Length', str(size))]
+        return Response(file_to_send, headers)
+
+    return Response('Did not receive any storage index.', status_code=400)
 
 @route('/put')
 def put_file(request):
@@ -40,11 +38,13 @@ def put_file(request):
             write_enabler = request.POST.get('write_enabler', None)
             fileobj = request.FILES['encrypted_file'][1].read()
             try:
-                save_status = put_file(storage_index, fileobj, write_enabler)
+                save_status = save_file(storage_index, fileobj, write_enabler)
             except FileSystemException, e:
                 return Response(e.text, status_code=e.code)
 
-    return Response('No file/filename given')
+            return Response('File received')
+
+    return Response('No file/filename given', status_code=400)
 
 @route('/test')
 def test_ops(request):
@@ -60,8 +60,3 @@ def test_ops(request):
     else:
         response += 'No file with id encrypted_file given'
     return Response(response)
-
-if __name__ == '__main__':
-    from pyroutes import utils
-    route('/files')(utils.fileserver)
-    utils.devserver(application)
