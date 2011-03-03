@@ -1,17 +1,11 @@
 # coding: utf-8
 from wsgiref.util import FileWrapper
-import os
-import sys
 
-path = os.path.dirname(__file__)
-if path not in sys.path:
-    sys.path.append(path)
-
-from pyroutes import application, route
+from pyroutes import route
 from pyroutes.http.response import Response
-import pyroutes.settings
 
-from filesystem import retrieve_file, save_file, FileSystemException
+from cloudstorage.filesystem import (retrieve_file, save_file,
+                                     FileSystemException)
 
 @route('/')
 def index(request):
@@ -66,8 +60,3 @@ def test_ops(request):
     else:
         response += 'No file with id encrypted_file given'
     return Response(response)
-
-if __name__ == '__main__':
-    from pyroutes import utils
-    route('/files')(utils.fileserver)
-    utils.devserver(application)

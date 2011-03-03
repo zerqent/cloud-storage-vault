@@ -2,6 +2,7 @@
 import os
 from wsgiref.util import FileWrapper
 
+import cloudstorage.settings
 FILE_STORE='/tmp/cloud'
 
 class FileSystemException(Exception):
