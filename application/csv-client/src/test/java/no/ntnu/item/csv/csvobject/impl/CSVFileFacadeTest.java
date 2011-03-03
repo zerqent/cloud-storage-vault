@@ -46,8 +46,8 @@ public class CSVFileFacadeTest {
 	public void testCapability() {
 		testEncryption();
 		Capability cap = this.facade.getCapability();
-		Assert.assertEquals(CapabilityType.READ_ONLY, cap.getType());
-		Assert.assertEquals(16, cap.getKey().getKey().length);
+		Assert.assertEquals(CapabilityType.RO, cap.getType());
+		Assert.assertEquals(16, cap.getKey().length);
 	}
 	
 }

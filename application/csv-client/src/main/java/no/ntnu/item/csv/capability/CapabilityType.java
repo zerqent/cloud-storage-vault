@@ -2,20 +2,16 @@ package no.ntnu.item.csv.capability;
 
 public enum CapabilityType {
 
-	READ_ONLY("RO:"), READ_WRITE("RW:"), VERIFY("V:");
+	RO("READ_ONLY"), RW("READ_WRITE"), V("VERIFY");
 	
-	private String prefix;
+	private String humanreadable;
 	
-	private CapabilityType(String prefix) {
-		this.prefix = prefix;
+	private CapabilityType(String humanreadable) {
+		this.humanreadable = humanreadable;
 	}
 	
-	public String toString() {
-		return this.name();
-	}
-	
-	public String getPrefix() {
-		return this.prefix;
+	public String getHumanReadable() {
+		return this.humanreadable;
 	}
 	
 }

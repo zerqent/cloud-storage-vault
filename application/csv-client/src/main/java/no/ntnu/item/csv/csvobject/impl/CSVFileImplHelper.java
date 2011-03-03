@@ -10,12 +10,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
-import no.ntnu.item.csv.capability.CSVKey;
-import no.ntnu.item.csv.capability.CSVKeyImpl;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
-import no.ntnu.item.csv.capability.KeyType;
 
 
 public class CSVFileImplHelper {
@@ -23,7 +20,6 @@ public class CSVFileImplHelper {
 	private IvParameterSpec iv;
 	private SecretKey secretKey;
 
-	private CSVKey csvkey;
 	private Capability capability;
 
 	private byte[] plainText = null;
@@ -35,17 +31,15 @@ public class CSVFileImplHelper {
 	public CSVFileImplHelper() {
 		this.iv = null;
 		this.secretKey = Cryptoutil.generateSymmetricKey();
-		this.csvkey = new CSVKeyImpl(KeyType.READ_KEY, this.secretKey.getEncoded());
-		this.capability = new CapabilityImpl(this.csvkey, CapabilityType.READ_ONLY);
-		this.setIV(Cryptoutil.nHash(this.csvkey.getKey(), 2, 16));
+		this.capability = new CapabilityImpl(CapabilityType.RO, this.secretKey.getEncoded(),null);
+		this.setIV(Cryptoutil.nHash(this.secretKey.getEncoded(), 2, 16));
 	}
 
 	public CSVFileImplHelper(Capability capability, byte[] cipherText) {
 		this.capability = capability;
 		this.cipherText = cipherText;
-		this.csvkey = this.capability.getKey();
-		this.setSecretKey(this.csvkey.getKey());
-		this.setIV(Cryptoutil.nHash(this.csvkey.getKey(), 2, 16));
+		this.setSecretKey(this.capability.getKey());
+		this.setIV(Cryptoutil.nHash(this.capability.getKey(), 2, 16));
 	}
 
 	public boolean isPlainTextReady() {
@@ -138,9 +132,8 @@ public class CSVFileImplHelper {
 
 	public void setCapability(Capability capability) {
 		this.capability = capability;
-		this.setSecretKey(capability.getKey().getKey());
-		this.csvkey = capability.getKey();
-		this.setIV(Cryptoutil.nHash(this.csvkey.getKey(), 2, 16));
+		this.setSecretKey(capability.getKey());
+		this.setIV(Cryptoutil.nHash(this.capability.getKey(), 2, 16));
 	}
 
 	public static byte[] readDataBinary(InputStream in, int filelength) throws IOException {
