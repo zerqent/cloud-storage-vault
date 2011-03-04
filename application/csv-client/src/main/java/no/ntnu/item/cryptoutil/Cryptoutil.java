@@ -2,6 +2,7 @@ package no.ntnu.item.cryptoutil;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -10,6 +11,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -240,11 +244,12 @@ public class Cryptoutil {
 	//		return null;
 	//	}
 
-	public static byte[] signature(byte[] data, PrivateKey privateKey) {
+	public static byte[] signature(byte[] data, byte[] privateKey) {
 
 		try {
+			PrivateKey priv= KeyFactory.getInstance(ASYM_CIPHER).generatePrivate(new PKCS8EncodedKeySpec(privateKey));
 			Signature sign = Signature.getInstance(SIGN_ALG);
-			sign.initSign(privateKey);
+			sign.initSign(priv);
 			sign.update(data);
 			return sign.sign();
 		} catch (NoSuchAlgorithmException e) {
@@ -256,15 +261,19 @@ public class Cryptoutil {
 		} catch (SignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return null;
 	}
 
-	public static boolean signature_valid(byte[] signature, byte[] data, PublicKey pubKey) {
+	public static boolean signature_valid(byte[] signature, byte[] data, byte[] pubKey) {
 		try {
+			PublicKey pub= KeyFactory.getInstance(ASYM_CIPHER).generatePublic(new X509EncodedKeySpec(pubKey));
 			Signature sign = Signature.getInstance(SIGN_ALG);
-			sign.initVerify(pubKey);
+			sign.initVerify(pub);
 			sign.update(data);
 			return sign.verify(signature);
 		} catch (NoSuchAlgorithmException e) {
@@ -274,6 +283,9 @@ public class Cryptoutil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -1,11 +1,6 @@
 package no.ntnu.item.csv.csvobject.impl;
 
-import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -87,16 +82,12 @@ public class CSVFolderImpl implements CSVFolder{
 	
 	private void sign() {
 		byte[] hash = Cryptoutil.hash(this.ciphertext, -1);
-		try {
-			PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(new X509EncodedKeySpec(this.privkey));
-			this.signature = Cryptoutil.signature(hash, privateKey);
-		} catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.signature = Cryptoutil.signature(hash, this.privkey);
+	}
+	
+	public boolean hasValidSignature() {
+		byte[] hash = Cryptoutil.hash(this.ciphertext, -1);
+		return Cryptoutil.signature_valid(this.signature, hash, this.pubkey);
 	}
 	
 	@Override
@@ -110,20 +101,22 @@ public class CSVFolderImpl implements CSVFolder{
 		this.createPlainText();
 		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
 		this.ciphertext = Cryptoutil.symEncrypt(this.plainText, sks, new IvParameterSpec(Cryptoutil.generateIV()));
-		
+		sign();
 	}
 
 	@Override
 	public void decrypt() {
-		byte[] read;
-		if (this.capability.getType() == CapabilityType.RW) {
-			read = Cryptoutil.hash(this.capability.getKey(), 16);
-		} else {
-			read = this.capability.getKey();
+		if (this.hasValidSignature()) {
+			byte[] read;
+			if (this.capability.getType() == CapabilityType.RW) {
+				read = Cryptoutil.hash(this.capability.getKey(), 16);
+			} else {
+				read = this.capability.getKey();
+			}
+			SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
+			this.plainText = Cryptoutil.symDecrypt(this.ciphertext, sks, new IvParameterSpec(this.iv));
+			this.createContentsFromPlainText();
 		}
-		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
-		this.plainText = Cryptoutil.symDecrypt(this.ciphertext, sks, new IvParameterSpec(this.iv));
-		this.createContentsFromPlainText();
 	}
 
 	@Override
@@ -133,20 +126,17 @@ public class CSVFolderImpl implements CSVFolder{
 
 	@Override
 	public void setPlainText(byte[] plainText) {
-		// TODO Auto-generated method stub
-		
+		this.plainText = plainText;
 	}
 
 	@Override
 	public void setCipherText(byte[] cipherText) {
 		this.ciphertext = cipherText;
-		
 	}
 
 	@Override
 	public byte[] getPlainText() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.plainText;
 	}
 
 	@Override
