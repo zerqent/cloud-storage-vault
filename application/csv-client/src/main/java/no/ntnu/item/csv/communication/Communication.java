@@ -1,11 +1,14 @@
 package no.ntnu.item.csv.communication;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import no.ntnu.item.csv.csvobject.CSVObject;
+import no.ntnu.item.csv.csvobject.impl.CSVFolderImpl;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,6 +26,9 @@ import org.apache.http.protocol.HTTP;
 
 public class Communication {
 
+	public static final String SERVER_PUT = "http://129.241.205.111/put";
+	public static final String SERVER_GET = "http://129.241.205.111/get";
+	
     public static int put(CSVObject object, String serv_addr) throws IOException
     {
     	if(object == null || serv_addr == null)
@@ -88,6 +94,16 @@ public class Communication {
     	for(int i = 0; i < bytes.length; i++)
     		bytes[i] = tmp.get(i);
 
+//    	//Trying to convert received byte array to CSV object
+//    	ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+//    	ObjectInputStream ois = new ObjectInputStream(bais);
+//    	CSVObject folder = null;
+//    	try {
+//			folder = (CSVFolderImpl)ois.readObject();
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}
+		
     	return bytes;
     }
     
