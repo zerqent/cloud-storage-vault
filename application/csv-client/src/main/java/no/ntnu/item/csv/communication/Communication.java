@@ -1,14 +1,11 @@
 package no.ntnu.item.csv.communication;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import no.ntnu.item.csv.csvobject.CSVObject;
-import no.ntnu.item.csv.csvobject.impl.CSVFolderImpl;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -37,8 +34,8 @@ public class Communication {
     	
     	HttpClient client = new DefaultHttpClient();
     	HttpPost post = new HttpPost(serv_addr);
-    	// TODO Change byte array
-    	ByteArrayBody file = new ByteArrayBody(object.getCipherText(), object.getCapability().getStorageIndex());
+    	
+    	ByteArrayBody file = new ByteArrayBody(object.getTransferArray(), object.getCapability().getStorageIndex());
     	
     	MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
     	entity.addPart("encrypted_file", file);
