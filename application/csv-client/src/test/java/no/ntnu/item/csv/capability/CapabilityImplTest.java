@@ -12,27 +12,27 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CapabilityImplTest {
-	
+
 	private CapabilityImpl cap;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		KeyGenerator keygen = KeyGenerator.getInstance("AES");
 		keygen.init(128);
 		this.cap = new CapabilityImpl(CapabilityType.RO, Cryptoutil.generateSymmetricKey().getEncoded(), null);
 	}
-	
+
 	@After
 	public void teardown() {
-		
+
 	}
-	
+
 	@Test
 	public void testBase64() {
 		Assert.assertEquals(26, this.cap.getStorageIndex().length());
 		//System.out.println(this.cap.getStorageIndex());
 	}
-	
+
 	@Test
 	public void testEncodingAndDecoding() {
 		String encoded = this.cap.toString();
@@ -42,5 +42,5 @@ public class CapabilityImplTest {
 		Assert.assertEquals(this.cap.getStorageIndex(), decoded.getStorageIndex());
 		Assert.assertEquals(this.cap.getVerificationKey(), decoded.getVerificationKey());
 	}
-	
+
 }

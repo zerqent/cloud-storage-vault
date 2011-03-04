@@ -5,16 +5,16 @@ import org.junit.Test;
 
 public class CSVFolderImplTest extends CSVFolderImpl{
 
-	private CSVFolderImpl csvFolder;
-	
+	//private CSVFolderImpl csvFolder;
+
 	@Before
 	public void setUp() {
-		this.csvFolder = new CSVFolderImpl();
+		//this.csvFolder = new CSVFolderImpl();
 	}
-	
+
 	@Test
 	public void testCapabilityGeneration() {
-		
+
 	}
-		
+
 }

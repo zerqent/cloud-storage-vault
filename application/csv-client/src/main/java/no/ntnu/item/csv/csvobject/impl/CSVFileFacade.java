@@ -2,66 +2,56 @@ package no.ntnu.item.csv.csvobject.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.csvobject.CSVFile;
 
-public class CSVFileFacade implements CSVFile {
-	
-	private CSVFileImplHelper helper;
-	
-	public CSVFileFacade() {
-		this.helper = new CSVFileImplHelper();
+public abstract class CSVFileFacade implements CSVFile {
+
+	public CSVFileFacade(File f) throws IOException {
+		this.setPlainText(f);
 	}
-	
-	@Override
-	public void encrypt() {
-		this.helper.encrypt();
+
+	public CSVFileFacade(Capability cap, byte[] cipherText) {
+		this.setCapability(cap);
+		this.setCipherText(cipherText);
+	}
+
+	public static byte[] readDataBinary(InputStream in, int filelength) throws IOException {
+		//TODO: 32-bit warning right here..
+		byte[] bytes = new byte[filelength];
+		int offset = 0;
+		int numRead = 0;
+
+		while (offset < bytes.length && (numRead=in.read(bytes, offset, bytes.length-offset)) >= 0) {
+			offset += numRead;
+		}
+
+		if (offset < bytes.length) {
+			throw new IOException("Could not read entire file");
+		}
+		return bytes;
 	}
 
 	@Override
-	public void decrypt() {
-		this.helper.decrypt();
-	}
+	public abstract void encrypt();
 
 	@Override
-	public void verify() {
-		this.helper.verify();
-	}
+	public abstract void decrypt();
 
 	@Override
-	public void setPlainText(byte[] plainText) {
-		this.helper.setPlainText(plainText);
-	}
+	public abstract boolean isValid();
 
 	@Override
-	public void setCipherText(byte[] cipherText) {
-		this.helper.setCipherText(cipherText);
-	}
+	public abstract void setPlainText(File f) throws IOException;
 
 	@Override
-	public byte[] getPlainText() {
-		return this.helper.getPlainText();
-	}
+	public abstract Capability getCapability();
 
 	@Override
-	public byte[] getCipherText() {
-		return this.helper.getCipherText();
-	}
+	public abstract byte[] getCipherText();
 
-	@Override
-	public void setPlainText(File f) throws IOException {
-		this.helper.setPlainText(f);
-	}
-
-	@Override
-	public Capability getCapability() {
-		return this.helper.getCapability();
-	}
-
-	@Override
-	public void setCapability(Capability capability) {
-		this.helper.setCapability(capability);
-	}
+	protected abstract void setCipherText(byte[] cipherText);
 
 }
