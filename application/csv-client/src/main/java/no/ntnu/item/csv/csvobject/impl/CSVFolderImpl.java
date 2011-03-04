@@ -1,8 +1,17 @@
 package no.ntnu.item.csv.csvobject.impl;
 
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
 import no.ntnu.item.csv.capability.Capability;
@@ -15,19 +24,27 @@ public class CSVFolderImpl implements CSVFolder{
 	private byte[] pubkey;
 	private byte[] privkey;
 		
-	private Map<CapabilityType, Capability> capabilities;
+	//private Map<CapabilityType, Capability> capabilities;
+	private Capability capability;
+	private Map<String, Capability> contents; 
+	
 	private byte[] ciphertext;
-	//private Map<String, Capability> contents; 
+	private byte[] plainText;
+	private byte[] iv;
+	
+	private byte[] signature;
 	
 	public CSVFolderImpl() {
-		this.capabilities = new HashMap<CapabilityType, Capability>();
+		contents = new HashMap<String, Capability>();
 		generateKeys();
 	}
 	
-	public CSVFolderImpl(Capability capability, byte[] cipherText) {
-		this.capabilities = new HashMap<CapabilityType, Capability>();
-		this.capabilities.put(capability.getType(), capability);
+	public CSVFolderImpl(Capability capability, byte[] cipherText, byte[] iv, byte[] pubkey, byte[] signature) {
+		this.capability = capability;
 		this.ciphertext = cipherText;
+		this.iv = iv;
+		this.pubkey = pubkey;
+		this.signature = signature;
 	}
 	
 	private void generateKeys() {
@@ -37,39 +54,80 @@ public class CSVFolderImpl implements CSVFolder{
 		this.privkey = pair.getPrivate().getEncoded();
 		
 		byte[] write = Cryptoutil.hash(this.privkey, 16);
-		byte[] read = Cryptoutil.hash(write, 16);
+		//byte[] read = Cryptoutil.hash(write, 16);
 		byte[] verify = Cryptoutil.hash(this.pubkey, 16);
 		
-		Capability writecap = new CapabilityImpl(CapabilityType.RW, write, verify);
-		Capability readcap = new CapabilityImpl(CapabilityType.RO, read, verify);
-		Capability verifycap = new CapabilityImpl(CapabilityType.V, null, verify);
-		
-		this.capabilities.put(writecap.getType(), writecap);
-		this.capabilities.put(readcap.getType(), readcap);
-		this.capabilities.put(verifycap.getType(), verifycap);
-		
+		Capability writecap = new CapabilityImpl(CapabilityType.RW, write, verify);	
+		this.capability = writecap;	
 	}
 	
 	private void createPlainText() {
+		String plaintext = "";
+		for (Iterator<String> iterator = this.contents.keySet().iterator(); iterator.hasNext();) {
+			String key = iterator.next();
+			Capability cap = this.contents.get(key);
+			plaintext += key + ";" + cap.toString() + "\n";
+		}
+		this.plainText = plaintext.getBytes(); 
+	}
+	
+	private void createContentsFromPlainText() {
+		this.contents = new HashMap<String, Capability>();
+		String contents = new String(this.plainText);
+		String[] lines = contents.split("\n");
 		
+		for (int i = 0; i < lines.length; i++) {
+			String[] lineCont = lines[i].split(";");
+			Capability cap = CapabilityImpl.fromString(lineCont[1]);
+			String alias = lineCont[0];
+			this.contents.put(alias,cap);
+		}
 		
+	}
+	
+	private void sign() {
+		byte[] hash = Cryptoutil.hash(this.ciphertext, -1);
+		try {
+			PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(new X509EncodedKeySpec(this.privkey));
+			this.signature = Cryptoutil.signature(hash, privateKey);
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void encrypt() {
-		// TODO Auto-generated method stub
+		byte[] read;
+		if (this.capability.getType() == CapabilityType.RW) {
+			read = Cryptoutil.hash(this.capability.getKey(), 16);
+		} else {
+			read = this.capability.getKey();
+		}
+		this.createPlainText();
+		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
+		this.ciphertext = Cryptoutil.symEncrypt(this.plainText, sks, new IvParameterSpec(Cryptoutil.generateIV()));
 		
 	}
 
 	@Override
 	public void decrypt() {
-		// TODO Auto-generated method stub
-		
+		byte[] read;
+		if (this.capability.getType() == CapabilityType.RW) {
+			read = Cryptoutil.hash(this.capability.getKey(), 16);
+		} else {
+			read = this.capability.getKey();
+		}
+		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
+		this.plainText = Cryptoutil.symDecrypt(this.ciphertext, sks, new IvParameterSpec(this.iv));
+		this.createContentsFromPlainText();
 	}
 
 	@Override
 	public void verify() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -81,7 +139,7 @@ public class CSVFolderImpl implements CSVFolder{
 
 	@Override
 	public void setCipherText(byte[] cipherText) {
-		// TODO Auto-generated method stub
+		this.ciphertext = cipherText;
 		
 	}
 
@@ -98,23 +156,16 @@ public class CSVFolderImpl implements CSVFolder{
 
 	@Override
 	public Capability getCapability() {
-		if (this.capabilities.containsKey(CapabilityType.RW)) {
-			return this.capabilities.get(CapabilityType.RW);
-		} else if(this.capabilities.containsKey(CapabilityType.RO)) {
-			return this.capabilities.get(CapabilityType.RO);
-		} else if(this.capabilities.containsKey(CapabilityType.V)) {
-			return this.capabilities.get(CapabilityType.V);
-		}
-		return null;
+		return this.capability;
 	}
 
 	@Override
 	public void setCapability(Capability capability) {
-		// TODO Auto-generated method stub
-		
+		this.capability = capability;
 	}
-	
-	public Map<CapabilityType, Capability> getCapabilitites() {
-		return this.capabilities;
+
+	@Override
+	public Map<String, Capability> getContents() {
+		return this.contents;
 	}
 }
