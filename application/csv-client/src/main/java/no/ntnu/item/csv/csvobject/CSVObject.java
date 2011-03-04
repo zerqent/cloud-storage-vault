@@ -15,4 +15,7 @@ public interface CSVObject {
 	public Capability getCapability();
 
 	public void setCapability(Capability capability);
+	
+	public byte[] getTransferArray();
+	
 }

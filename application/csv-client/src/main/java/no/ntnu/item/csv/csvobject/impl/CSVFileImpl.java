@@ -85,4 +85,15 @@ public class CSVFileImpl extends CSVFileFacade{
 		return this.plainText;
 	}
 
+	@Override
+	public byte[] getTransferArray() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static CSVFileImpl createFromByteArray(byte[] input, Capability cap) {
+		// TODO Create
+		return null;
+	}
+
 }

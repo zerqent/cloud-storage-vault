@@ -31,8 +31,8 @@ public class Communication {
     	
     	HttpClient client = new DefaultHttpClient();
     	HttpPost post = new HttpPost(serv_addr);
-    	// TODO Change byte array
-    	ByteArrayBody file = new ByteArrayBody(object.getCipherText(), object.getCapability().getStorageIndex());
+    	
+    	ByteArrayBody file = new ByteArrayBody(object.getTransferArray(), object.getCapability().getStorageIndex());
     	
     	MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
     	entity.addPart("encrypted_file", file);
