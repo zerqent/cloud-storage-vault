@@ -17,14 +17,14 @@ class FileSystemException(Exception):
 def check_write_enabler(storage_index, write_enabler):
     db_connection = get_db_connection()
     cursor = db_connection.cursor()
-    cursor.execute('SELECT * FROM write_enablers WHERE storage_index = %s' % (
-                    storage_index))
+    cursor.execute('SELECT * FROM write_enablers WHERE storage_index = %s',
+                  (storage_index,))
     result = cursor.fetchone()
     if result is not None:
         return result == write_enabler
     else:
-        raise FileSystemException(u'File does not have storage index, is it an'
-                                  u'immutable file?', 403)
+        raise FileSystemException(u'File does not have storage index registered, '
+                                  u'is it an immutable file?', 403)
 
     return False
 

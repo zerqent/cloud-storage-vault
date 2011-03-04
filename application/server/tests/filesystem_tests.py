@@ -4,13 +4,13 @@ import random
 import string
 import os
 
-from filesystem import (FileSystemException, save_file, FILE_STORE,
-                        retrieve_file)
+from cloudstorage.filesystem import (FileSystemException, save_file, FILE_STORE,
+                                     retrieve_file)
 
 class TestFileOperationPrimitives(unittest.TestCase):
-    def __create_random_file(self, contents=None):
+    def __create_random_file(self, contents=None, path=FILE_STORE):
         si = ''.join(random.sample(string.letters+string.digits, 12))
-        fp = open(os.path.join(FILE_STORE, si), 'w')
+        fp = open(os.path.join(path, si), 'w')
         if contents is not None:
             fp.write(contents)
         else:
@@ -49,6 +49,18 @@ class TestFileOperationPrimitives(unittest.TestCase):
         fp.close()
 
         self.assertEqual(result, 'TESTING')
+
+    def test_save_new_file_with_we_should_return_true(self):
+        si = ''.join(random.sample(string.letters+string.digits, 12))
+        we = ''.join(random.sample(string.letters+string.digits, 12))
+        result = save_file(si, 'NEW_FILE_WITH_WE', we)
+
+        fp = open(os.path.join(FILE_STORE, si), 'r')
+        content = fp.read()
+        fp.close()
+
+        self.assertTrue(result)
+        self.assertEqual('NEW_FILE_WITH_WE', content)
 
 if __name__ == '__main__':
     unittest.main()
