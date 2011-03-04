@@ -7,5 +7,7 @@ import no.ntnu.item.csv.capability.Capability;
 public interface CSVFolder extends CSVObject {
 
 	public Map<String, Capability> getContents();
-	
+
+	public void addContent(String alias, Capability capability);
+
 }
