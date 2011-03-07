@@ -124,6 +124,21 @@ public class CSVFileManager {
 		}
 	}
 	
+//	public void mkdir(String alias) throws IOException{
+//		CSVFolderImpl folder = new CSVFolderImpl();
+//		folder.encrypt();
+//		
+//		//Upload folder
+//		switch (Communication.put(folder, Communication.SERVER_PUT)){
+//			case 200: System.out.println("Folder " + alias + " was successfully created.");break;
+//			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
+//			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
+//			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
+//			default: System.out.println("ERROR: An unexpected error occured.");return;
+//		}
+//		
+//	}
+	
 	public static void main(String[] args){
 		
 	}
