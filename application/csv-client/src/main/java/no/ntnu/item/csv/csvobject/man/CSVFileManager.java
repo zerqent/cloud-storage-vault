@@ -32,14 +32,22 @@ public class CSVFileManager {
 			return;
 		}
 		
-		//Create file content and check for duplicate filenames
-		File content = new File(filepath);
-		if(folder.getContents().containsKey(content.getName())){
+		//Check for illegal and duplicate filename
+		int ind = filepath.lastIndexOf("/");
+		String filename = filepath.substring(ind + 1);
+
+		if(filename.equals("..")){
+			System.out.println("ERROR: \"..\" is an illegal filename");
+			return;
+		}
+		
+		if(folder.getContents().containsKey(filename)){
 			System.out.println("ERROR: A file with the same name already exists. Please rename your file before uploading it.");
 			return;
 		}
 		
 		//Create file or folder object
+		File content = new File(filepath);
 		CSVObject file = null;
 		if(content.isDirectory()){
 			file = new CSVFolderImpl();
@@ -124,20 +132,48 @@ public class CSVFileManager {
 		}
 	}
 	
-//	public void mkdir(String alias) throws IOException{
-//		CSVFolderImpl folder = new CSVFolderImpl();
-//		folder.encrypt();
-//		
-//		//Upload folder
-//		switch (Communication.put(folder, Communication.SERVER_PUT)){
-//			case 200: System.out.println("Folder " + alias + " was successfully created.");break;
-//			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
-//			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
-//			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
-//			default: System.out.println("ERROR: An unexpected error occured.");return;
-//		}
-//		
-//	}
+	public void mkdir(String alias) throws IOException{
+		//Check write permissions
+		if(this.currentFolder.getCapability().getType() != CapabilityType.RW){
+			System.out.println("ERROR: You do not have permission to write to this directory.");
+			return;
+		}
+		//Check for duplicate filenames
+		if(this.currentFolder.getContents().containsKey(alias)){
+			System.out.println("ERROR: A file with the same name already exists. Please rename your folder before uploading it.");
+			return;
+		}
+		//Check for illegal directory name
+		if(alias.equals("..")){
+			System.out.println("ERROR: \"..\" is an illegal directory name");
+			return;
+		}
+		
+		CSVFolderImpl folder = new CSVFolderImpl();
+		folder.encrypt();
+		
+		//Upload folder
+		switch (Communication.put(folder, Communication.SERVER_PUT)){
+			case 200: System.out.println("Folder " + alias + " was successfully created.");break;
+			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
+			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
+			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
+			default: System.out.println("ERROR: An unexpected error occured.");return;
+		}
+		
+		//Insert folder capability and alias into parent directory and upload parent directory
+		this.currentFolder.getContents().put(alias, folder.getCapability());
+		this.currentFolder.encrypt();
+		
+		switch (Communication.put(this.currentFolder, Communication.SERVER_PUT)){
+			case 200: System.out.println("Parent Folder successfully changed.");break;
+			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
+			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
+			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
+			default: System.out.println("ERROR: An unexpected error occured.");return;
+		}
+		
+	}
 	
 	public static void main(String[] args){
 		
