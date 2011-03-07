@@ -152,6 +152,31 @@ public class Cryptoutil {
 
 		return null;
 	}
+	
+	public static byte[] symECBEncrypt(byte[] plainText, SecretKey key) {
+		try {
+			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+"ECB"+"/"+Cryptoutil.SYM_PADDING);
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+			return cipher.doFinal(plainText);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 
 	public static byte[] symDecrypt(byte[] plainText, SecretKey key, IvParameterSpec iv) {
 		try {
