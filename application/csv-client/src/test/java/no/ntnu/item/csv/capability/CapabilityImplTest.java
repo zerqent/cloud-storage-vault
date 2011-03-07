@@ -30,7 +30,7 @@ public class CapabilityImplTest {
 	@Test
 	public void testBase64() {
 		Assert.assertEquals(26, this.cap.getStorageIndex().length());
-		//System.out.println(this.cap.getStorageIndex());
+		System.out.println(this.cap.getStorageIndex());
 	}
 
 	@Test
@@ -43,4 +43,16 @@ public class CapabilityImplTest {
 		Assert.assertEquals(this.cap.getVerificationKey(), decoded.getVerificationKey());
 	}
 
+	@Test
+	public void testWriteEnablerGeneration() {
+		Assert.assertNull(this.cap.getWriteEnabler());
+		
+		CapabilityImpl capimpl = new CapabilityImpl(CapabilityType.RW, Cryptoutil.generateSymmetricKey().getEncoded(), null);
+		Assert.assertNotNull(capimpl.getWriteEnabler());
+		Assert.assertEquals(16, capimpl.getWriteEnabler().length);
+	}
+	
+	
+	
+	
 }
