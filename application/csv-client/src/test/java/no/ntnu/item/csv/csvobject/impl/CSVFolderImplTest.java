@@ -52,4 +52,6 @@ public class CSVFolderImplTest {
 		testEncryption();
 		Assert.assertTrue(this.newFolder.isValid());
 	}
+
+	
 }

@@ -1,8 +1,7 @@
 package no.ntnu.item.csv.capability;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
-
-import org.apache.commons.codec.binary.Base64;
+import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
 
 public class CapabilityImpl implements Capability {
 
@@ -42,7 +41,8 @@ public class CapabilityImpl implements Capability {
 
 	@Override
 	public String getStorageIndex() {
-		return Base64.encodeBase64String(this.storageIndex);
+		//return Base64.encodeBase64String(this.storageIndex);
+		return Base32.encode(this.storageIndex);
 	}
 
 	@Override
@@ -70,9 +70,11 @@ public class CapabilityImpl implements Capability {
 
 	public String toString() {
 		String toString = "";
-		toString += this.type.name() + ":" + Base64.encodeBase64String(this.key);
+		//toString += this.type.name() + ":" + Base64.encodeBase64String(this.key);
+		toString += this.type.name() + ":" + Base32.encode(this.key);
 		if (this.verification != null) {
-			toString += ":" + Base64.encodeBase64String(this.verification);
+			//toString += ":" + Base64.encodeBase64String(this.verification);
+			toString += ":" + Base32.encode(this.verification);
 		}
 		return toString;
 	}
@@ -80,10 +82,12 @@ public class CapabilityImpl implements Capability {
 	public static Capability fromString(String capability) {
 		String[] content = capability.split(":");
 		CapabilityType type = CapabilityType.valueOf(content[0]);
-		byte[] key = Base64.decodeBase64(content[1]);
+		//byte[] key = Base64.decodeBase64(content[1]);
+		byte[] key = Base32.decode(content[1]);
 		byte[] verify = null;
 		if (content.length>2) {
-			verify = Base64.decodeBase64(content[2]);
+			//verify = Base64.decodeBase64(content[2]);
+			verify = Base32.decode(content[2]);
 		}
 
 		return new CapabilityImpl(type, key, verify);
@@ -91,7 +95,7 @@ public class CapabilityImpl implements Capability {
 
 	@Override
 	public byte[] getWriteEnabler() {
-		// TODO: Figure out if the message is somhow important for security.
+		// TODO: Figure out if the message is somehow important for security.
 		byte[] taggedmsg = {'t','h','i','s','i','s','h','m','a','c','f','o','r'}; 
 		if (this.type == CapabilityType.RW) {
 			byte[] tmp = Cryptoutil.hmac(taggedmsg, this.key);
