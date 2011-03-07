@@ -9,7 +9,9 @@ public interface Capability {
 	public byte[] getVerificationKey();
 
 	public CapabilityType getType();
-
+	
+	public byte[] getWriteEnabler();
+	
 	public String toString();
 
 }
