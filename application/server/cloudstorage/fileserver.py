@@ -39,10 +39,14 @@ def put_file(request):
             fileobj = request.FILES['encrypted_file'][1].read()
             try:
                 save_status = save_file(storage_index, fileobj, write_enabler)
+                if save_status:
+                    return Response('File received')
+                else:
+                    # File Access Problems?
+                    return Response(status_code=500)
             except FileSystemException, e:
                 return Response(e.text, status_code=e.code)
 
-            return Response('File received')
 
     return Response('No file/filename given', status_code=400)
 
