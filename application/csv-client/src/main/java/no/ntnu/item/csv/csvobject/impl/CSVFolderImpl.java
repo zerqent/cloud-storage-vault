@@ -152,6 +152,7 @@ public class CSVFolderImpl extends CSVFolderFacade{
 		this.contents.put(alias, capability);
 
 	}
+
 	
 	protected byte[] getIV() {
 		return this.iv;
