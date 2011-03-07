@@ -89,4 +89,18 @@ public class CapabilityImpl implements Capability {
 		return new CapabilityImpl(type, key, verify);
 	}
 
+	@Override
+	public byte[] getWriteEnabler() {
+		// TODO: Figure out if the message is somhow important for security.
+		byte[] taggedmsg = {'t','h','i','s','i','s','h','m','a','c','f','o','r'}; 
+		if (this.type == CapabilityType.RW) {
+			byte[] tmp = Cryptoutil.hmac(taggedmsg, this.key);
+			byte[] tmp2 = new byte[16];
+			System.arraycopy(tmp, 0, tmp2, 0, tmp2.length);
+			return tmp2;
+		} else {
+			return null;
+		}
+	}
+
 }

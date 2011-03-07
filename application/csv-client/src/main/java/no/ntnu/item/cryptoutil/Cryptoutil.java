@@ -19,9 +19,11 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Cryptoutil {
 
@@ -42,6 +44,9 @@ public class Cryptoutil {
 
 	// Signatures
 	public static final String SIGN_ALG = "SHA256withRSA";
+	
+	//HMAC
+	public static final String HMAC_ALG = "HmacSHA256";
 
 	/**
 	 * Hash the input with the configured hash algorithm
@@ -194,56 +199,6 @@ public class Cryptoutil {
 		return null;
 	}
 
-	//	public static byte[] asymmEncrypt(byte[] plainText, PublicKey pubkey) {
-	//		// TODO: This isn't really safe
-	//		try {
-	//			Cipher cip = Cipher.getInstance(Cryptoutil.ASYM_CIPHER + "/" + Cryptoutil.ASYM_MODE + "/" + Cryptoutil.ASYM_PADDING);
-	//			cip.init(Cipher.ENCRYPT_MODE, pubkey);
-	//			return cip.doFinal();
-	//		} catch (NoSuchAlgorithmException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (NoSuchPaddingException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (InvalidKeyException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (IllegalBlockSizeException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (BadPaddingException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		}
-	//		return null;
-	//	}
-	//	
-	//	public static byte[] asymmDecrypt(byte[] cipherText, PrivateKey privkey) {
-	//		// TODO: This isn't really safe
-	//		try {
-	//			Cipher cip = Cipher.getInstance(Cryptoutil.ASYM_CIPHER + "/" + Cryptoutil.ASYM_MODE + "/" + Cryptoutil.ASYM_PADDING);
-	//			cip.init(Cipher.DECRYPT_MODE, privkey);
-	//			return cip.doFinal();
-	//		} catch (NoSuchAlgorithmException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (NoSuchPaddingException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (InvalidKeyException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (IllegalBlockSizeException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		} catch (BadPaddingException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		}
-	//		return null;
-	//	}
-
 	public static byte[] signature(byte[] data, byte[] privateKey) {
 
 		try {
@@ -290,5 +245,21 @@ public class Cryptoutil {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	public static byte[] hmac(byte[] msg, byte[] key) {
+		try {
+			Mac mac = Mac.getInstance(HMAC_ALG);
+			SecretKeySpec sks = new SecretKeySpec(key, Cryptoutil.SYM_CIPHER);
+			mac.init(sks);
+			return mac.doFinal(msg);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

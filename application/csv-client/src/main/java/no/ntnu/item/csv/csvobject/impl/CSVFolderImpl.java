@@ -1,6 +1,7 @@
 package no.ntnu.item.csv.csvobject.impl;
 
 import java.security.KeyPair;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.spec.IvParameterSpec;
@@ -28,6 +29,7 @@ public class CSVFolderImpl extends CSVFolderFacade{
 	public CSVFolderImpl() {
 		super();
 		generateKeys();
+		this.contents = new HashMap<String, Capability>();
 	}
 
 	public CSVFolderImpl(Capability capability, byte[] cipherText, byte[] pubkey, byte[] iv, byte[] signature) {
@@ -63,7 +65,8 @@ public class CSVFolderImpl extends CSVFolderFacade{
 		}
 		this.createPlainText();
 		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
-		this.ciphertext = Cryptoutil.symEncrypt(this.plainText, sks, new IvParameterSpec(Cryptoutil.generateIV()));
+		this.iv = Cryptoutil.generateIV();
+		this.ciphertext = Cryptoutil.symEncrypt(this.plainText, sks, new IvParameterSpec(this.iv));
 		sign();
 	}
 
@@ -147,5 +150,13 @@ public class CSVFolderImpl extends CSVFolderFacade{
 		this.contents.put(alias, capability);
 
 	}
-
+	
+	protected byte[] getIV() {
+		return this.iv;
+	}
+	
+	protected byte[] getPubKey() {
+		return this.pubkey;
+	}
+	
 }
