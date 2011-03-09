@@ -1,4 +1,5 @@
 # coding: utf-8
+import errno
 import os
 from wsgiref.util import FileWrapper
 
@@ -20,11 +21,13 @@ def check_write_enabler(storage_index, write_enabler):
     cursor.execute('SELECT * FROM write_enablers WHERE storage_index = %s',
                   (storage_index,))
     result = cursor.fetchone()
+    db_connection.close()
+
     if result is not None:
-        return result == write_enabler
+        return result[1] == write_enabler
     else:
-        raise FileSystemException(u'File does not have storage index registered, '
-                                  u'is it an immutable file?', 403)
+        raise FileSystemException(u'File does not have storage index registered'
+                                  u', is it an immutable file?', 403)
 
     return False
 
@@ -41,12 +44,24 @@ def save_file(storage_index, data, write_enabler=None):
             fd = os.open(os.path.join(FILE_STORE, storage_index),
                                       os.O_WRONLY | os.O_CREAT | os.O_EXCL)
             fp = os.fdopen(fd, 'w')
-        except OSError:
-            # The file already exist
-            if check_write_enabler(storage_index, write_enabler):
-                fp = open(os.path.join(FILE_STORE, storage_index), 'w')
-            else:
-                raise FileSystemException('Wrong write-enabler', 401)
+
+            if write_enabler is not None:
+                db_connection = get_db_connection()
+                cursor = db_connection.cursor()
+                cursor.execute('INSERT INTO write_enablers VALUES (%s, %s)',
+                              (storage_index, write_enabler))
+                db_connection.commit()
+                db_connection.close()
+        except OSError, e:
+            if e.errno == errno.EEXIST:
+                # The file already exist
+                if check_write_enabler(storage_index, write_enabler):
+                    fp = open(os.path.join(FILE_STORE, storage_index), 'w')
+                else:
+                    raise FileSystemException('Wrong write-enabler', 401)
+            elif e.errno == errno.EACCES:
+                # We have problems getting access to FILE_STORE
+                return False
 
         fp.write(data)
         fp.close()
