@@ -35,6 +35,7 @@ public class CSVFolderImpl extends CSVFolderFacade{
 
 	public CSVFolderImpl(Capability capability, byte[] cipherText, byte[] pubkey, byte[] iv, byte[] signature) {
 		super(capability, cipherText, pubkey, iv, signature);
+		this.decrypt();
 	}
 
 	private void generateKeys() {
@@ -48,7 +49,7 @@ public class CSVFolderImpl extends CSVFolderFacade{
 		byte[] verify = Cryptoutil.hash(this.pubkey, 16);
 
 		Capability writecap = new CapabilityImpl(CapabilityType.RW, write, verify);	
-		this.capability = writecap;	
+		this.capability = writecap;
 	}
 
 	private void sign() {
@@ -171,10 +172,10 @@ public class CSVFolderImpl extends CSVFolderFacade{
 		transfer[0] = 1;
 		// TODO: Make more generic
 		System.arraycopy(this.pubkey, 0, transfer, 1, this.pubkey.length);
-		System.arraycopy(this.signature, 0, transfer, this.pubkey.length, this.signature.length);
-		System.arraycopy(this.iv, 0, transfer, this.pubkey.length + this.signature.length , this.iv.length);
-		System.arraycopy(this.encPrivKey, 0, transfer, this.pubkey.length + this.signature.length + this.iv.length, this.encPrivKey.length);
-		System.arraycopy(this.ciphertext, 0, transfer, this.pubkey.length + this.signature.length + this.iv.length + this.encPrivKey.length, this.ciphertext.length);
+		System.arraycopy(this.signature, 0, transfer, 1+this.pubkey.length, this.signature.length);
+		System.arraycopy(this.iv, 0, transfer, 1+this.pubkey.length + this.signature.length , this.iv.length);
+		System.arraycopy(this.encPrivKey, 0, transfer, 1+this.pubkey.length + this.signature.length + this.iv.length, this.encPrivKey.length);
+		System.arraycopy(this.ciphertext, 0, transfer, 1+this.pubkey.length + this.signature.length + this.iv.length + this.encPrivKey.length, this.ciphertext.length);
 		return transfer;
 	}
 	
@@ -186,7 +187,7 @@ public class CSVFolderImpl extends CSVFolderFacade{
 		byte[] signature = new byte[256/8];
 		System.arraycopy(input, 1+pubkey.length, signature, 0, signature.length);
 		
-		byte[] iv = new byte[16/8];
+		byte[] iv = new byte[16];
 		System.arraycopy(input, 1+pubkey.length+signature.length, iv, 0, iv.length);
 		
 		byte[] encPrivKey = new byte[Cryptoutil.ASYM_SIZE/8];
@@ -196,6 +197,6 @@ public class CSVFolderImpl extends CSVFolderFacade{
 		System.arraycopy(input, 1+pubkey.length+signature.length+iv.length+encPrivKey.length, cipherText, 0, cipherText.length);
 		
 		return new CSVFolderImpl(cap, cipherText, pubkey, encPrivKey, signature);
-		
+				
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.CSVFile;
@@ -64,7 +65,6 @@ public class CSVFileManager {
 			case 200: System.out.println("File successfully uploaded.");break;
 			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
 			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
-			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty object.");return;
 			default: System.out.println("ERROR: An unexpected error occured.");return;
 		}
 		
@@ -76,7 +76,6 @@ public class CSVFileManager {
 			case 200: System.out.println("Parent Folder successfully changed.");break;
 			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
 			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
-			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
 			default: System.out.println("ERROR: An unexpected error occured.");return;
 		}
 		
@@ -107,7 +106,7 @@ public class CSVFileManager {
 	
 	public void ls(){
 		Map<String, Capability> content = this.currentFolder.getContents();
-		if(content.size() > 0){
+		if(!content.isEmpty()){
 			System.out.println("File name \tStorage index \t\t\t\tCapability type");
 			for(Map.Entry<String, Capability> entry : content.entrySet())
 				System.out.println(entry.getKey() + " " + entry.getValue().getStorageIndex() + " " + entry.getValue().getType());
@@ -123,16 +122,23 @@ public class CSVFileManager {
 			this.location.push(this.currentFolder.getCapability());
 			this.currentFolder = (CSVFolderImpl)folder;
 		}else{
+			if(this.location.size() <= 0)
+				return;
 			byte[] resp = Communication.get(this.location.lastElement().getStorageIndex(), Communication.SERVER_GET);
 			folder = CSVFolderImpl.createFromByteArray(resp, this.location.lastElement());
-			if(folder == null || folder instanceof CSVFile)
+			if(folder == null)
 				return;
+			folder.decrypt();
 			this.currentFolder = (CSVFolderImpl)folder;
 			this.location.pop();
 		}
 	}
 	
 	public void mkdir(String alias) throws IOException{
+		//Check that the user is within a directory
+		if(this.currentFolder == null){
+			return;
+		}
 		//Check write permissions
 		if(this.currentFolder.getCapability().getType() != CapabilityType.RW){
 			System.out.println("ERROR: You do not have permission to write to this directory.");
@@ -158,6 +164,7 @@ public class CSVFileManager {
 			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
 			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
 			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
+			case 700: System.out.println("ERROR: You do not have permission to write to this folder.");return;
 			default: System.out.println("ERROR: An unexpected error occured.");return;
 		}
 		
@@ -170,12 +177,28 @@ public class CSVFileManager {
 			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
 			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
 			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
+			case 700: System.out.println("ERROR: You do not have permission to write to this folder.");return;
 			default: System.out.println("ERROR: An unexpected error occured.");return;
 		}
 		
 	}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
+		//Creating a root directory
+//		CSVFolderImpl root = new CSVFolderImpl();
+//		root.encrypt();
+//		Communication.put(root, Communication.SERVER_PUT);
+//		System.out.println(root.getCapability().toString());
 		
+		//Getting the root directory
+		Capability root_cap = CapabilityImpl.fromString("RW:VDGMNVLSIOXNMQHI5BVDDNU6TU:BG4EDCYO5YL4JHEMQL2VQXSSEI");
+		byte[] resp = Communication.get(root_cap.getStorageIndex(), Communication.SERVER_GET);
+		CSVFolderImpl root = CSVFolderImpl.createFromByteArray(resp, root_cap);
+		
+		CSVFileManager fm = new CSVFileManager(root);
+		System.out.println("File manager created!");
+		fm.ls();
+//		fm.put("/home/melvold/Desktop/test.txt", fm.currentFolder);
+//		fm.ls();
 	}
 }

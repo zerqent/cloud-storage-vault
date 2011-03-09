@@ -18,7 +18,6 @@ public class CapabilityImpl implements Capability {
 		this.type = type;
 		this.key = key;
 		this.verification = verificationKey;
-
 	}
 
 	public CapabilityImpl(CapabilityType type, byte[] key, byte[] verification) {
