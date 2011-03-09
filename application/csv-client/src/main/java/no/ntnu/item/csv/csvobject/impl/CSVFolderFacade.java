@@ -51,6 +51,11 @@ public abstract class CSVFolderFacade implements CSVFolder {
 		String strCont = new String(this.getPlainText());
 		String[] lines = strCont.split("\n");
 
+		if (lines.length==1 && lines[0].isEmpty()) {
+			this.setContents(contents);
+			return;
+		}
+
 		for (int i = 0; i < lines.length; i++) {
 			String[] lineCont = lines[i].split(";");
 			Capability cap = CapabilityImpl.fromString(lineCont[1]);

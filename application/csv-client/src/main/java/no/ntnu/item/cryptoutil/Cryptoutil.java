@@ -1,5 +1,6 @@
 package no.ntnu.item.cryptoutil;
 
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -11,9 +12,11 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -44,7 +47,7 @@ public class Cryptoutil {
 
 	// Signatures
 	public static final String SIGN_ALG = "SHA256withRSA";
-	
+
 	//HMAC
 	public static final String HMAC_ALG = "HmacSHA256";
 
@@ -115,9 +118,22 @@ public class Cryptoutil {
 	public static KeyPair generateAsymmetricKeys() {
 		KeyPairGenerator keygen;
 		try {
-			keygen = KeyPairGenerator.getInstance(Cryptoutil.ASYM_CIPHER);
-			keygen.initialize(Cryptoutil.ASYM_SIZE);
-			return keygen.generateKeyPair();
+			boolean done = false;
+			KeyPair pair = null;
+
+			while(!done) {
+				// Private exponent is sometimes 129, we always want it to be 128
+				keygen = KeyPairGenerator.getInstance(Cryptoutil.ASYM_CIPHER);
+				keygen.initialize(Cryptoutil.ASYM_SIZE);
+				pair = keygen.generateKeyPair();
+				RSAPrivateKey priv = (RSAPrivateKey)pair.getPrivate();
+				if (priv.getPrivateExponent().toByteArray().length == 128) {
+					done = true;
+				}
+
+			}
+			return pair;
+			//return keygen.generateKeyPair();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -152,7 +168,7 @@ public class Cryptoutil {
 
 		return null;
 	}
-	
+
 	public static byte[] symECBEncrypt(byte[] plainText, SecretKey key) {
 		try {
 			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+"ECB"+"/"+Cryptoutil.SYM_PADDING);
@@ -178,11 +194,36 @@ public class Cryptoutil {
 		return null;
 	}
 
-	public static byte[] symDecrypt(byte[] plainText, SecretKey key, IvParameterSpec iv) {
+	public static byte[] symECBDecrypt(byte[] cipherText, SecretKey key) {
+		try {
+			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+"ECB"+"/"+Cryptoutil.SYM_PADDING);
+			cipher.init(Cipher.DECRYPT_MODE, key);
+			return cipher.doFinal(cipherText);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public static byte[] symDecrypt(byte[] cipherText, SecretKey key, IvParameterSpec iv) {
 		try {
 			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+Cryptoutil.SYM_MODE+"/"+Cryptoutil.SYM_PADDING);
 			cipher.init(Cipher.DECRYPT_MODE, key, iv);
-			return cipher.doFinal(plainText);
+			return cipher.doFinal(cipherText);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -224,12 +265,11 @@ public class Cryptoutil {
 		return null;
 	}
 
-	public static byte[] signature(byte[] data, byte[] privateKey) {
+	public static byte[] signature(byte[] data, PrivateKey privateKey) {
 
 		try {
-			PrivateKey priv= KeyFactory.getInstance(ASYM_CIPHER).generatePrivate(new PKCS8EncodedKeySpec(privateKey));
 			Signature sign = Signature.getInstance(SIGN_ALG);
-			sign.initSign(priv);
+			sign.initSign(privateKey);
 			sign.update(data);
 			return sign.sign();
 		} catch (NoSuchAlgorithmException e) {
@@ -241,19 +281,15 @@ public class Cryptoutil {
 		} catch (SignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 
 		return null;
 	}
 
-	public static boolean signature_valid(byte[] signature, byte[] data, byte[] pubKey) {
+	public static boolean signature_valid(byte[] signature, byte[] data, PublicKey pubKey) {
 		try {
-			PublicKey pub= KeyFactory.getInstance(ASYM_CIPHER).generatePublic(new X509EncodedKeySpec(pubKey));
 			Signature sign = Signature.getInstance(SIGN_ALG);
-			sign.initVerify(pub);
+			sign.initVerify(pubKey);
 			sign.update(data);
 			return sign.verify(signature);
 		} catch (NoSuchAlgorithmException e) {
@@ -265,13 +301,10 @@ public class Cryptoutil {
 		} catch (SignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		return false;
 	}
-	
+
 	public static byte[] hmac(byte[] msg, byte[] key) {
 		try {
 			Mac mac = Mac.getInstance(HMAC_ALG);
@@ -282,6 +315,72 @@ public class Cryptoutil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static byte[] serializePublicKey(RSAPublicKey pubKey) {
+		byte[] mod = pubKey.getModulus().toByteArray();
+		byte[] pubexp = pubKey.getPublicExponent().toByteArray();
+		byte[] all = new byte[mod.length + pubexp.length];
+		System.arraycopy(mod, 0, all, 0, mod.length);
+		System.arraycopy(pubexp, 0, all, mod.length, pubexp.length);
+		return all;
+	}
+
+	public static PublicKey createRSAPublicKey(byte key[]) {
+		// First comes modulus (129), then comes public exponent (3)
+		try {
+			KeyFactory fact = KeyFactory.getInstance("RSA");
+			byte[] mod = new byte[129];
+			byte[] publicK = new byte[3];
+			System.arraycopy(key, 0, mod, 0, mod.length);
+			System.arraycopy(key, mod.length, publicK, 0, publicK.length);
+
+			BigInteger modulus = new BigInteger(1,mod); 
+			BigInteger publicExponent = new BigInteger(1,publicK);
+
+			RSAPublicKeySpec pubks = new RSAPublicKeySpec(modulus, publicExponent);
+			return fact.generatePublic(pubks);
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static byte[] serializePrivateKey(RSAPrivateKey privKey) {
+		byte[] mod = privKey.getModulus().toByteArray();
+		byte[] pubexp = privKey.getPrivateExponent().toByteArray();
+		byte[] all = new byte[mod.length + pubexp.length];
+		System.arraycopy(mod, 0, all, 0, mod.length);
+		System.arraycopy(pubexp, 0, all, mod.length, pubexp.length);
+		return all;
+	}
+
+	public static PrivateKey createRSAPrivateKey(byte key[]) {
+		// First comes modulus (129), then comes public exponent (3)
+		try {
+			KeyFactory fact = KeyFactory.getInstance("RSA");
+			byte[] mod = new byte[129];
+			byte[] privateK = new byte[128];
+			System.arraycopy(key, 0, mod, 0, mod.length);
+			System.arraycopy(key, mod.length, privateK, 0, privateK.length);
+
+			BigInteger modulus = new BigInteger(1,mod); 
+			BigInteger privateExponent = new BigInteger(1,privateK);
+
+			RSAPrivateKeySpec privKs = new RSAPrivateKeySpec(modulus, privateExponent);
+			return fact.generatePrivate(privKs);
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
