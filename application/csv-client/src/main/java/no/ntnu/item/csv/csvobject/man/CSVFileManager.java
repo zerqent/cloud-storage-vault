@@ -21,9 +21,14 @@ public class CSVFileManager {
 	private Stack<Capability> location;		//Stack storing capabilities of parent directories
 	private CSVFolderImpl currentFolder;	//The current folder object visited
 	
-	public CSVFileManager(CSVFolderImpl root){
+	public CSVFileManager(Capability root_cap){
+		byte[] resp = Communication.get(root_cap.getStorageIndex(), Communication.SERVER_GET);
+		
+		if(resp == null)
+			return;
+		
 		this.location = new Stack<Capability>();
-		this.currentFolder = root;
+		this.currentFolder = CSVFolderImpl.createFromByteArray(resp, root_cap);
 	}
 	
 	public void put(String filepath, CSVFolderImpl folder) throws IOException{
@@ -97,14 +102,15 @@ public class CSVFileManager {
 		byte[] resp = Communication.get(cap.getStorageIndex(), Communication.SERVER_GET);
 		CSVObject file;
 		switch(resp[0]){
-			case 0: file = CSVFolderImpl.createFromByteArray(resp, cap);break;
-			case 1: file = CSVFileImpl.createFromByteArray(resp, cap);break;
+			case 1: file = CSVFolderImpl.createFromByteArray(resp, cap);break;
+			case 0: file = CSVFileImpl.createFromByteArray(resp, cap);break;
 			default: file = null;
 		}
 		return file;
 	}
 	
 	public void ls(){
+		this.currentFolder.decrypt();
 		Map<String, Capability> content = this.currentFolder.getContents();
 		if(!content.isEmpty()){
 			System.out.println("File name \tStorage index \t\t\t\tCapability type");
@@ -190,15 +196,12 @@ public class CSVFileManager {
 //		Communication.put(root, Communication.SERVER_PUT);
 //		System.out.println(root.getCapability().toString());
 		
-		//Getting the root directory
-		Capability root_cap = CapabilityImpl.fromString("RW:VDGMNVLSIOXNMQHI5BVDDNU6TU:BG4EDCYO5YL4JHEMQL2VQXSSEI");
-		byte[] resp = Communication.get(root_cap.getStorageIndex(), Communication.SERVER_GET);
-		CSVFolderImpl root = CSVFolderImpl.createFromByteArray(resp, root_cap);
-		
-		CSVFileManager fm = new CSVFileManager(root);
+
+		Capability root_cap = CapabilityImpl.fromString("RW:LZHVSKQANLK2T44L2RVFCMIA7Q:PNHUTWRSM4ADV327DORPJXLB64");
+		CSVFileManager fm = new CSVFileManager(root_cap);
 		System.out.println("File manager created!");
-		fm.ls();
-//		fm.put("/home/melvold/Desktop/test.txt", fm.currentFolder);
+//		fm.ls();
+		fm.put("/home/melvold/Desktop/test.txt", fm.currentFolder);
 //		fm.ls();
 	}
 }
