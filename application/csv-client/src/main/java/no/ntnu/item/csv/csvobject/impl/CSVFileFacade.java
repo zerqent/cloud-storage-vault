@@ -1,6 +1,9 @@
 package no.ntnu.item.csv.csvobject.impl;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,6 +35,19 @@ public abstract class CSVFileFacade implements CSVFile {
 			throw new IOException("Could not read entire file");
 		}
 		return bytes;
+	}
+	
+	public void writeFileToDisk(String path) {
+		try {
+			DataOutputStream os = new DataOutputStream(new FileOutputStream(path));
+			os.write(this.getPlainText());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

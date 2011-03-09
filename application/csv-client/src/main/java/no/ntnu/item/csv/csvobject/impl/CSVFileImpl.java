@@ -37,7 +37,11 @@ public class CSVFileImpl extends CSVFileFacade{
 	}
 
 	public void encrypt() {
+		long before = System.currentTimeMillis();
 		this.cipherText = Cryptoutil.symEncrypt(this.plainText, this.secretKey, this.iv);
+		long after = System.currentTimeMillis();
+		long tot = after - before;
+		System.out.println(tot);
 	}
 
 	public void decrypt() {

@@ -3,6 +3,7 @@ package no.ntnu.item.csv.csvobject.man;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Stack;
 
 import no.ntnu.item.csv.capability.Capability;
@@ -11,6 +12,7 @@ import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.csvobject.CSVObject;
+import no.ntnu.item.csv.csvobject.impl.CSVFileFacade;
 import no.ntnu.item.csv.csvobject.impl.CSVFileImpl;
 import no.ntnu.item.csv.csvobject.impl.CSVFolderImpl;
 
@@ -94,6 +96,8 @@ public class CSVFileManager {
 
 	public CSVObject get(String alias) throws ClientProtocolException, IOException{
 		Capability cap;
+		boolean bar = this.currentFolder.getContents().containsKey(alias);
+		
 		if((cap = this.currentFolder.getContents().get(alias)) == null){
 			System.out.println("ERROR: File " + alias + " does not exist.");
 			return null;
@@ -200,8 +204,47 @@ public class CSVFileManager {
 		Capability root_cap = CapabilityImpl.fromString("RW:LZHVSKQANLK2T44L2RVFCMIA7Q:PNHUTWRSM4ADV327DORPJXLB64");
 		CSVFileManager fm = new CSVFileManager(root_cap);
 		System.out.println("File manager created!");
+		//fm.cd("Desktop");
+		//fm.ls();
+//		fm.put("/home/melvold/Desktop", fm.currentFolder);
 //		fm.ls();
-		fm.put("/home/melvold/Desktop/test.txt", fm.currentFolder);
-//		fm.ls();
+		while(true) {
+			Scanner sc = new Scanner(System.in);
+			String input = sc.nextLine();
+			
+			if(input.toLowerCase().equals("ls")) {
+				fm.ls();
+			} else if(input.startsWith("cd")) {
+				String tmp = input.substring(3);
+				fm.cd(tmp);
+			} else if(input.startsWith("put")) {
+				String tmp = input.substring(4);
+				fm.put(tmp, fm.currentFolder);
+			} else if(input.startsWith("cat")) {
+				String tmp = input.substring(4);
+				CSVFile foo = (CSVFile)fm.get(tmp);
+				foo.decrypt();
+				String bar = new String(foo.getPlainText());
+				System.out.println(bar);
+			} else if(input.startsWith("get")) {
+				String[] tmp = input.substring(4).split(" ");
+				String alias = tmp[0];
+				String save_path = tmp[1];
+				CSVFile foo = (CSVFile)fm.get(alias);
+				foo.decrypt();
+				CSVFileFacade foobar = (CSVFileFacade)foo;
+				foobar.writeFileToDisk(save_path);
+				System.out.println("Wrote file to disk");
+			} else if (input.startsWith("mkdir")) {
+				String tmp = input.substring("mkdir".length()+1);
+				fm.mkdir(tmp);
+			} else if (input.toLowerCase().equals("exit")) {
+				System.exit(0);
+			} else {
+				System.out.println("You SUCK");
+			}
+			
+		}
+		
 	}
 }
