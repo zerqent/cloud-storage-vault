@@ -438,7 +438,7 @@ storage servers.
 % http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/about.html
 
 %**************************************%
-\chapter{Architectural Solution}
+\chapter{Architectural Overview}
 %**************************************%
 \label{chap:AS}
 
@@ -924,6 +924,57 @@ security issues as long as it is used correctly.
 %**************************************%
 \chapter{Implementation}
 %**************************************%
+This chapter describes the implementation of our proof-of-concept client and
+server.
+
+\section{Server}
+% Tech: Apache/WSGI/Python/Pyroutes
+
+\subsection{Communication with Client}
+% HTTP/SSL/RESTfull
+
+\subsection{Upload/Download Functionality}
+
+\subsection{ACL functionality}
+
+
+\section{Client}
+% Java/Android/Dalvik/JCE/Commons HTTPClient
+% Security vs. Usability - Rationale for GUI
+% MVC? V=Android GUI
+%
+
+\subsection{Structure}
+% Package Structure, some nice UML (?)
+% Which qualities do we wish to achive? Security, Performance, Usability
+
+\subsection{Communication with Server}
+% Do not repeat what is said in Server equivalent section
+% Apache commons, Serialization of objects
+
+\subsection{Cryptography}
+% Do not repeat previous chapter, but specific of implementation
+% JCE, Code organization, Capabilities
+% Classes, which functionality we get from them
+
+\subsection{Sharing}
+% Sequence Diagram - How we use the cryptographic solutions (and which ones) to
+% achieve sharing, securely
+
+\subsection{Adding a new client}
+% Same as sharing rationale.
+
+\subsection{User Interface}
+% goal: As easy as possible!
+
+% First start: Generate new cap/import an old one (Adding a new client section)
+% Browsing remote file(s)/folders
+% Sharing a file - first/following times - Key Distribution
+% Uploading/Downloading file
+
+\subsection{Secure storage of files on Client}
+% Can we view files without them leaving traces on filesystem?
+% Optional/Possible?
 
 %**************************************%
 \chapter{Results}
