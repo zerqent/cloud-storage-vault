@@ -1005,7 +1005,14 @@ lives in {\bf java.security.Signature}. How we use these can be seen in Listing
 Java using \ac{RSA}]
 {listings/keygen_example.java}
 
-\subsubsection{Hashing}
+\subsubsection{Hashing} For cryptographic hashing the \ac{JCA} is similar to
+other cryptographic operations, and the factory lives in {\bf
+java.security.MessageDigest}. However, we need double \ac{SHA}-256, which is
+not an option. The implementation we use for double \ac{SHA}-256 is shown in
+Listing 
+
+\lstinputlisting[label=lst:hashingexample, caption= Double \ac{SHA}-256 in Java]
+{listings/hashing_example.java}
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
