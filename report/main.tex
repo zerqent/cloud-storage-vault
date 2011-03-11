@@ -137,6 +137,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{AES}{Advanced Encryption Standard}
 \acro{CA}{Certification authority}
 \acro{CBC}{Cipher Block Chaining}
+\acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
 \acro{ECB}{Electronic Codeboo}
@@ -152,6 +153,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{NIST}{National Institute of Standards and Technology}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
 \acro{PaaS}{Platform as a Service}
+\acro{PEP}{Python Enhancement Proposal}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{RSA}{Rivest, Shamir and Adleman}
@@ -159,7 +161,9 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SSL}{Secure Socket Layer}
 \acro{TLS}{Transport Layer Security}
+\acro{URL}{Uniform Resource Locator}
 \acro{VM}{Virtual Machine}
+\acro{WSGI}{Web Server Gateway Interface}
 \end{acronym}
 
 %**************************************%
@@ -484,8 +488,7 @@ to find, get, read and write a file or folder. This includes an identifier and
 cryptographic keys.
 
 In principle, the only operations the key-value store need to support are
-\textbf{PUT}, \textbf{GET} and \textbf{UPDATE}. The latter one is required to
-make changes to the ``directory'' files.
+\textbf{PUT}, \textbf{GET}.
 
 \subsection{Directory Structure}
 
@@ -932,7 +935,64 @@ This chapter describes the implementation of our proof-of-concept client and
 server.
 
 \section{Server}
+
+The server, in the most basic form, has to support two operations -- upload
+({\verb PUT }) and download ({\verb GET }). In addition, an \ac{ACL} layer is
+needed to support user management and the deletion of files.
+
+The Python programming language was chosen as development platform, together
+with a set of applications, interfaces and micro frameworks. The rationale for
+each of these follows.
+
+% FIXME: Can someone with English skills correct this sentence? :-)
+\paragraph{Python} Python is a high-level general-purpose programming language.
+It was chosen to program in due to previous knowledge and experience by the
+authors, in addition to its simplicity.
+
+\paragraph{Apache} The Apache HTTP Server is a well tested and used web
+server. According to \citet{netcraft}, Apache is by far the most used web server
+software, and has been so since 1996.
+
+\paragraph{\acs{WSGI}} The Python \ac{WSGI} is, as the name suggests, an
+interface between a web server and a Python application. It is defined in
+\ac{PEP} 3333\footnote{\url{http://www.python.org/dev/peps/pep-3333/}}, and
+specifies both sides of the interface -- the \emph{application} and the
+\emph{server}.  The server side is implemented in the form of an Apache 
+module, namely {\verb mod_wsgi }, and the application is where we put our
+code.
+
+For each of the requests the server (i.e. {\verb mod_wsgi }) receives, a call to
+the application function is made with two arguments -- a data structure
+containing the environment variables, and a callback function for which the
+application uses to return data to the requesting user.
+
+\paragraph{Pyroutes} To adhere to the \ac{DRY} principles, we chose to make use
+of a micro framework around \ac{WSGI} called Pyroutes. It provides shortcuts for
+the most frequently used functionality when developing web services, as that of
+\ac{URL} handling and processing of submitted user data in the form
+of {\verb GET } and {\verb POST } requests.
+
 % Tech: Apache/WSGI/Python/Pyroutes
+%
+\begin{figure}[h!]
+    \centering
+\begin{verbatim}
+|-- cloudstorage
+|   |-- __init__.py
+|   |-- db.py
+|   |-- fileserver.py
+|   |-- filesystem.py
+|   |-- settings.py
+|   `-- sql
+|       `-- write_enablers.sql
+|-- handler.py
+|-- pyroutes_settings.py
+`-- tests
+    `-- filesystem_tests.py
+\end{verbatim}
+    \caption{Server module structure}
+    \label{fig:I:server}
+\end{figure}
 
 \subsection{Communication with Client}
 % HTTP/SSL/RESTfull
