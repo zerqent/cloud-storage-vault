@@ -143,6 +143,10 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{FAQ}{Frequently Asked Questions}
 \acro{IaaS}{Infrastructure as a Service}
 \acro{IV}{Initialization Vector}
+\acro{JCA}{Java Cryptography Architecture}
+\acro{JCE}{Java Cryptographic Extensions}
+\acro{JDK}{Java Development Kit}
+\acro{JRE}{Java Runtime Environment}
 \acro{LAFS}{Least Authority File System}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
@@ -956,6 +960,44 @@ server.
 % Do not repeat previous chapter, but specific of implementation
 % JCE, Code organization, Capabilities
 % Classes, which functionality we get from them
+
+To get access to cryptographic functions in Java we need to call on what is
+known as the \ac{JCE}. Basically the \ac{JCE} was earlier an extension which
+was not part of the official Java \ac{JDK}, but has since been embedded in what
+is called the \ac{JCA}\cite{jca}.
+Basically the \ac{JCA} provides factories for accessing implementations of
+cryptographic functions from different Providers. In essence what this mean is
+that there may be more than one implementation of for instance \ac{AES}. It is
+possible to specify which provider to use, but it is also possible to make the
+\ac{JRE} choose whatever provider it sees most fit. 
+
+\subsubsection{Encryption} 
+
+The {\bf javax.crypto.cipher} class in the \ac{JCA} deal with encryption and
+decryption of both asymmetric and symmetric ciphers.  It also handles the mode
+of operation and padding scheme to be used. Which scheme is used for all three
+choices depend on the String sent to the factory in the Class. A Basic example
+of how we use encryption can be seen in Listing \ref{lst:cipherexample}. It is
+also possible to specify the \ac{IV} through the {\bf init} call, if not the
+\ac{IV} is automatically generated.
+
+\lstinputlisting[label=lst:cipherexample, caption=\ac{AES}
+encryption in Java]
+{listings/cipher_example.java}
+
+\subsubsection{Key Generation}
+Key Generation is accomplished in a similar way as Encryption, but through {\bf
+javax.crypto.KeyGenerator} and {\bf javax.crypto.KeyPairGenerator} for
+symmetric and asymmetric keys respectively. Listing \ref{lst:keygenexample}
+shows how we generate these keys.
+
+\lstinputlisting[label=lst:keygenexample, caption= \ac{AES} and
+\ac{RSA} key generation in Java]
+{listings/keygen_example.java}
+
+\subsubsection{Digital Signatures}
+
+\subsubsection{Hashing}
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
