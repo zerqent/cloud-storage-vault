@@ -14,8 +14,7 @@ import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
 
-
-public class CSVFileImpl extends CSVFileFacade{
+public class CSVFileImpl extends CSVFileFacade {
 
 	private IvParameterSpec iv;
 	private SecretKey secretKey;
@@ -28,24 +27,26 @@ public class CSVFileImpl extends CSVFileFacade{
 	public CSVFileImpl(File f) throws IOException {
 		super(f);
 		this.secretKey = Cryptoutil.generateSymmetricKey();
-		this.capability = new CapabilityImpl(CapabilityType.RO, this.secretKey.getEncoded(),null);
-		this.iv = new IvParameterSpec(Cryptoutil.nHash(this.secretKey.getEncoded(), 2, 16));
+		this.capability = new CapabilityImpl(CapabilityType.RO,
+				this.secretKey.getEncoded(), null);
+		this.iv = new IvParameterSpec(Cryptoutil.nHash(
+				this.secretKey.getEncoded(), 2, 16));
 	}
 
 	public CSVFileImpl(Capability capability, byte[] cipherText) {
 		super(capability, cipherText);
 	}
 
+	@Override
 	public void encrypt() {
-		long before = System.currentTimeMillis();
-		this.cipherText = Cryptoutil.symEncrypt(this.plainText, this.secretKey, this.iv);
-		long after = System.currentTimeMillis();
-		long tot = after - before;
-		System.out.println(tot);
+		this.cipherText = Cryptoutil.symEncrypt(this.plainText, this.secretKey,
+				this.iv);
 	}
 
+	@Override
 	public void decrypt() {
-		this.plainText = Cryptoutil.symDecrypt(this.cipherText, this.secretKey, this.iv);
+		this.plainText = Cryptoutil.symDecrypt(this.cipherText, this.secretKey,
+				this.iv);
 	}
 
 	private void setSecretKey(byte[] sk) {
@@ -53,19 +54,23 @@ public class CSVFileImpl extends CSVFileFacade{
 		this.secretKey = sks;
 	}
 
-	public void setPlainText(File file) throws IOException{
+	@Override
+	public void setPlainText(File file) throws IOException {
 		InputStream in = new FileInputStream(file);
-		this.plainText = CSVFileFacade.readDataBinary(in, (int)file.length());
+		this.plainText = CSVFileFacade.readDataBinary(in, (int) file.length());
 	}
 
+	@Override
 	public Capability getCapability() {
 		return this.capability;
 	}
 
+	@Override
 	public void setCapability(Capability capability) {
 		this.capability = capability;
 		this.setSecretKey(capability.getKey());
-		this.iv = new IvParameterSpec(Cryptoutil.nHash(this.capability.getKey(), 2, 16));
+		this.iv = new IvParameterSpec(Cryptoutil.nHash(
+				this.capability.getKey(), 2, 16));
 	}
 
 	@Override
@@ -93,17 +98,18 @@ public class CSVFileImpl extends CSVFileFacade{
 	public byte[] getTransferArray() {
 		byte[] transfer = new byte[1 + this.cipherText.length];
 		transfer[0] = 0;
-		System.arraycopy(this.cipherText, 0, transfer, 1, this.cipherText.length);
+		System.arraycopy(this.cipherText, 0, transfer, 1,
+				this.cipherText.length);
 		return transfer;
 	}
-	
+
 	public static CSVFileImpl createFromByteArray(byte[] input, Capability cap) {
-		
-		byte[] cipherText = new byte[input.length -1];
+
+		byte[] cipherText = new byte[input.length - 1];
 		System.arraycopy(input, 1, cipherText, 0, cipherText.length);
 		CSVFileImpl foo = new CSVFileImpl(cap, cipherText);
 		return foo;
-		
+
 	}
 
 }
