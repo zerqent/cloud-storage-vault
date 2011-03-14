@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 public class CSVActivity extends Activity {
 	/** Called when the activity is first created. */
+
+	public String myString = "foobar";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
