@@ -148,6 +148,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{NIST}{National Institute of Standards and Technology}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
 \acro{PaaS}{Platform as a Service}
+\acro{PasS}{Privacy as a Service}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{RSA}{Rivest, Shamir and Adleman}
@@ -155,6 +156,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SSL}{Secure Socket Layer}
 \acro{TLS}{Transport Layer Security}
+\acro{TTP}{Trusted Third Party}
 \acro{VM}{Virtual Machine}
 \end{acronym}
 
@@ -409,6 +411,63 @@ Another risk is that information might be leaked to other users of the same
 cloud. For instance it might be able possible for a \ac{VM} to leak information
 to other \ac{VM}s on the same host.
 %TODO: kilde
+
+%**************************************%
+\chapter{Related Work}
+%**************************************%
+
+\section{Research}
+This section will elaborate on previous research concerning privacy within cloud
+computing. Previous research can be divided into proactive solutions that
+either reduce or prevent the risk of leaking privacy related information. The
+latter type of solutions are discussed.
+
+\subsection{Privacy as a Service}
+A concept entitled \ac{PasS} was suggested in 2009
+\cite{PasS}. PasS is a set of security protocols ensuring privacy of customer
+data in cloud computing architectures. The main design goal with PasS is to
+maximize the user's control over his/her sensitive data both processed and stored
+within a cloud.
+
+To be operational, PasS is dependent on a fundamental system and trust model. The
+system model consists of 3 communicating parties, namely a cloud provider, a
+cloud customer and a \ac{TTP}. The PasS system model is shown
+in Figure \ref{fig:RW:PasS}. 
+
+It is important to notice that the PasS system model is dependent on
+pre-installed cryptographic coprocessors in the cloud. A cryptographic
+coprocessor is a small hardware card, including a processor, RAM, ROM, backup
+battery, persistent storage and an Ethernet network card. A coprocessor interfaces
+with a server in the cloud and provides a safe environment for processing of
+a customer's sensitive/private data. The cryptographic coprocessors are used in the
+cloud because they are tamper-proof against physical attacks. The coprocessors
+are pre-configured by the TTP before they are installed in the cloud. In this
+way, the TTP provides a safe computational environment for the cloud customer,
+which is kept secret from the cloud provider.
+
+The main task of the TTP is to compute a set of public/private key pairs, load
+them into the co-processor's persistent storage in the cloud, and
+further send them to the customer. The TTP also loads its own secret key into
+the coprocessor. This key distribution ensures secure communication between the
+TTP, coprocessors and the cloud customer. The customer's key pair is sent through a
+secure communication channel.
+
+With cryptographic coprocessors in the cloud and a secure communication, the
+cloud customer can choose between 3 different levels of privacy towards the
+cloud provider. The customer can choose between no privacy, privacy with trusted
+provider and privacy with none-trusted provider.
+
+No privacy equals storing data as clear text in the cloud. Privacy with trusted
+provider involves storing encrypted data in the cloud. This data is encrypted by
+the cloud provider and only achievable by the customer or cloud provider.
+In the case of privacy with non-trusted provider, the customer encrypts the
+private data before uploading it to the cloud provider. The key used for
+encryption is shared with the cryptographic co-processor, through an
+authenticated version of the Diffie-Hellman key management protocol. The
+co-processor can further process the encrypted data and store it in the cloud
+facility. The stored data is encrypted and unknown to the cloud provider.
+
+
 
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,
