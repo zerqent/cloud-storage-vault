@@ -137,18 +137,24 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{AES}{Advanced Encryption Standard}
 \acro{CA}{Certification authority}
 \acro{CBC}{Cipher Block Chaining}
+\acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
 \acro{ECB}{Electronic Codeboo}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{IaaS}{Infrastructure as a Service}
 \acro{IV}{Initialization Vector}
+\acro{JCA}{Java Cryptography Architecture}
+\acro{JCE}{Java Cryptographic Extensions}
+\acro{JDK}{Java Development Kit}
+\acro{JRE}{Java Runtime Environment}
 \acro{LAFS}{Least Authority File System}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
 \acro{PaaS}{Platform as a Service}
 \acro{PasS}{Privacy as a Service}
+\acro{PEP}{Python Enhancement Proposal}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{RSA}{Rivest, Shamir and Adleman}
@@ -157,7 +163,9 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{SSL}{Secure Socket Layer}
 \acro{TLS}{Transport Layer Security}
 \acro{TTP}{Trusted Third Party}
+\acro{URL}{Uniform Resource Locator}
 \acro{VM}{Virtual Machine}
+\acro{WSGI}{Web Server Gateway Interface}
 \end{acronym}
 
 %**************************************%
@@ -497,7 +505,7 @@ storage servers.
 % http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/about.html
 
 %**************************************%
-\chapter{Architectural Solution}
+\chapter{Architectural Overview}
 %**************************************%
 \label{chap:AS}
 
@@ -539,8 +547,7 @@ to find, get, read and write a file or folder. This includes an identifier and
 cryptographic keys.
 
 In principle, the only operations the key-value store need to support are
-\textbf{PUT}, \textbf{GET} and \textbf{UPDATE}. The latter one is required to
-make changes to the ``directory'' files.
+\textbf{PUT}, \textbf{GET}.
 
 \subsection{Directory Structure}
 
@@ -983,6 +990,167 @@ security issues as long as it is used correctly.
 %**************************************%
 \chapter{Implementation}
 %**************************************%
+This chapter describes the implementation of our proof-of-concept client and
+server.
+
+\section{Server}
+
+The server, in the most basic form, has to support two operations -- upload
+({\verb PUT }) and download ({\verb GET }). In addition, an \ac{ACL} layer is
+needed to support user management and the deletion of files.
+
+The Python programming language was chosen as development platform, together
+with a set of applications, interfaces and micro frameworks. The rationale for
+each of these follows.
+
+% FIXME: Can someone with English skills correct this sentence? :-)
+\paragraph{Python} Python is a high-level general-purpose programming language.
+It was chosen to program in due to previous knowledge and experience by the
+authors, in addition to its simplicity.
+
+\paragraph{Apache} The Apache HTTP Server is a well tested and used web
+server. According to \citet{netcraft}, Apache is by far the most used web server
+software, and has been so since 1996.
+
+\paragraph{\acs{WSGI}} The Python \ac{WSGI} is, as the name suggests, an
+interface between a web server and a Python application. It is defined in
+\ac{PEP} 3333\footnote{\url{http://www.python.org/dev/peps/pep-3333/}}, and
+specifies both sides of the interface -- the \emph{application} and the
+\emph{server}.  The server side is implemented in the form of an Apache 
+module, namely {\verb mod_wsgi }, and the application is where we put our
+code.
+
+For each of the requests the server (i.e. {\verb mod_wsgi }) receives, a call to
+the application function is made with two arguments -- a data structure
+containing the environment variables, and a callback function for which the
+application uses to return data to the requesting user.
+
+\paragraph{Pyroutes} To adhere to the \ac{DRY} principles, we chose to make use
+of a micro framework around \ac{WSGI} called Pyroutes. It provides shortcuts for
+the most frequently used functionality when developing web services, as that of
+\ac{URL} handling and processing of submitted user data in the form
+of {\verb GET } and {\verb POST } requests.
+
+% Tech: Apache/WSGI/Python/Pyroutes
+%
+\begin{figure}[h!]
+    \centering
+\begin{verbatim}
+|-- cloudstorage
+|   |-- __init__.py
+|   |-- db.py
+|   |-- fileserver.py
+|   |-- filesystem.py
+|   |-- settings.py
+|   `-- sql
+|       `-- write_enablers.sql
+|-- handler.py
+|-- pyroutes_settings.py
+`-- tests
+    `-- filesystem_tests.py
+\end{verbatim}
+    \caption{Server module structure}
+    \label{fig:I:server}
+\end{figure}
+
+\subsection{Communication with Client}
+% HTTP/SSL/RESTfull
+
+\subsection{Upload/Download Functionality}
+
+\subsection{ACL functionality}
+
+
+\section{Client}
+% Java/Android/Dalvik/JCE/Commons HTTPClient
+% Security vs. Usability - Rationale for GUI
+% MVC? V=Android GUI
+%
+
+\subsection{Structure}
+% Package Structure, some nice UML (?)
+% Which qualities do we wish to achive? Security, Performance, Usability
+
+\subsection{Communication with Server}
+% Do not repeat what is said in Server equivalent section
+% Apache commons, Serialization of objects
+
+\subsection{Cryptography}
+% Do not repeat previous chapter, but specific of implementation
+% JCE, Code organization, Capabilities
+% Classes, which functionality we get from them
+
+To get access to cryptographic functions in Java we need to call on what is
+known as the \ac{JCE}. Basically the \ac{JCE} was earlier an extension which
+was not part of the official Java \ac{JDK}, but has since been embedded in what
+is called the \ac{JCA}\cite{jca}.
+Basically the \ac{JCA} provides factories for accessing implementations of
+cryptographic functions from different Providers. In essence what this mean is
+that there may be more than one implementation of for instance \ac{AES}. It is
+possible to specify which provider to use, but it is also possible to make the
+\ac{JRE} choose whatever provider it sees most fit. 
+
+\subsubsection{Encryption} 
+
+The {\bf javax.crypto.cipher} class in the \ac{JCA} deal with encryption and
+decryption of both asymmetric and symmetric ciphers.  It also handles the mode
+of operation and padding scheme to be used. Which scheme is used for all three
+choices depend on the String sent to the factory in the Class. A Basic example
+of how we use encryption can be seen in Listing \ref{lst:cipherexample}. It is
+also possible to specify the \ac{IV} through the {\bf init} call, if not the
+\ac{IV} is automatically generated.
+
+\lstinputlisting[label=lst:cipherexample, caption=\ac{AES}
+encryption in Java]
+{listings/cipher_example.java}
+
+\subsubsection{Key Generation}
+Key Generation is accomplished in a similar way as Encryption, but through {\bf
+javax.crypto.KeyGenerator} and {\bf javax.crypto.KeyPairGenerator} for
+symmetric and asymmetric keys respectively. Listing \ref{lst:keygenexample}
+shows how we generate these keys.
+
+\lstinputlisting[label=lst:keygenexample, caption= \ac{AES} and
+\ac{RSA} key generation in Java]
+{listings/keygen_example.java}
+
+\subsubsection{Digital Signatures}
+Digital Signatures can be accomplished with the help of a \ac{RSA}-keypair. The
+factory used for creation of signatures as well as validation of signatures
+lives in {\bf java.security.Signature}. How we use these can be seen in Listing 
+\ref{lst:signatureexample}.
+
+\lstinputlisting[label=lst:signatureexample, caption= Digital signatures in
+Java using \ac{RSA}]
+{listings/keygen_example.java}
+
+\subsubsection{Hashing} For cryptographic hashing the \ac{JCA} is similar to
+other cryptographic operations, and the factory lives in {\bf
+java.security.MessageDigest}. However, we need double \ac{SHA}-256, which is
+not an option. The implementation we use for double \ac{SHA}-256 is shown in
+Listing 
+
+\lstinputlisting[label=lst:hashingexample, caption= Double \ac{SHA}-256 in Java]
+{listings/hashing_example.java}
+
+\subsection{Sharing}
+% Sequence Diagram - How we use the cryptographic solutions (and which ones) to
+% achieve sharing, securely
+
+\subsection{Adding a new client}
+% Same as sharing rationale.
+
+\subsection{User Interface}
+% goal: As easy as possible!
+
+% First start: Generate new cap/import an old one (Adding a new client section)
+% Browsing remote file(s)/folders
+% Sharing a file - first/following times - Key Distribution
+% Uploading/Downloading file
+
+\subsection{Secure storage of files on Client}
+% Can we view files without them leaving traces on filesystem?
+% Optional/Possible?
 
 %**************************************%
 \chapter{Results}

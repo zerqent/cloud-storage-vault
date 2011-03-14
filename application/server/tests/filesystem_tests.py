@@ -4,8 +4,9 @@ import random
 import string
 import unittest
 
-from cloudstorage.filesystem import (FileSystemException, save_file, FILE_STORE,
+from cloudstorage.filesystem import (FileSystemException, save_file,
                                      retrieve_file)
+from cloudstorage.settings import FILE_STORE
 
 class TestFileOperationPrimitives(unittest.TestCase):
     def __create_random_file(self, contents=None, path=FILE_STORE):

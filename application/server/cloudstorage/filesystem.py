@@ -3,10 +3,8 @@ import errno
 import os
 from wsgiref.util import FileWrapper
 
-import cloudstorage.settings
+from cloudstorage.settings import FILE_STORE
 from cloudstorage.db import get_db_connection
-
-FILE_STORE='/tmp/cloud'
 
 class FileSystemException(Exception):
     def __init__(self, text, code=500):
