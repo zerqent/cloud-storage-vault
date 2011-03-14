@@ -157,6 +157,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PEP}{Python Enhancement Proposal}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
+\acro{REST}{Representational State Transfer}
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SaaS}{Software as a Service}
 \acro{SHA}{Secure Hash Algorithm}
@@ -996,8 +997,14 @@ server.
 \section{Server}
 
 The server, in the most basic form, has to support two operations -- upload
-({\verb PUT }) and download ({\verb GET }). In addition, an \ac{ACL} layer is
+(\texttt{POST}) and download (\texttt{GET}). In addition, an \ac{ACL} layer is
 needed to support user management and the deletion of files.
+
+\subsection{Architecture}
+
+The 
+
+\subsection{Environment}
 
 The Python programming language in a Linux environment was chosen as development
 platform, together with a set of applications, interfaces and micro frameworks.
@@ -1017,11 +1024,11 @@ interface between a web server and a Python application. It is defined in
 \ac{PEP} 3333\footnote{\url{http://www.python.org/dev/peps/pep-3333/}}, and
 specifies both sides of the interface -- the \emph{application} and the
 \emph{server}. The server side is implemented in the form of an Apache 
-module, namely {\verb mod_wsgi }, and the application is where we put our
+module, namely \texttt{mod\_wsgi}, and the application is where we put our
 code.
 
-For each of the requests the server (i.e. {\verb mod_wsgi }) receives, a call to
-the application function is made with two arguments -- a data structure
+For each of the requests the server (i.e. \texttt{mod\_wsgi}) receives, a call
+to the application function is made with two arguments -- a data structure
 containing the environment variables, and a callback function for which the
 application uses to return data to the requesting user via the server.
 
@@ -1029,7 +1036,7 @@ application uses to return data to the requesting user via the server.
 of a micro framework around \ac{WSGI} called Pyroutes. It provides shortcuts for
 the most frequently used functionality when developing web services, as that of
 \ac{URL} handling and processing of submitted user data in the form
-of {\verb GET } and {\verb POST } requests.
+of \texttt{GET} and \texttt{POST} requests.
 
 \begin{figure}[h!]
     \centering
