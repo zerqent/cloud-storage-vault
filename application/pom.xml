@@ -20,5 +20,14 @@
                 <module>CSVAndroid</module>
             </modules>
         </profile>
+        <profile>
+            <id>instrumentation</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>CSVAndroid-instrumentation</module>
+            </modules>
+        </profile>
     </profiles>
 </project>
