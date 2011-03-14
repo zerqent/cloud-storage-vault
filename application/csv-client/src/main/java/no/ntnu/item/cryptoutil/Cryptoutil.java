@@ -35,24 +35,25 @@ public class Cryptoutil {
 
 	// Symmetric Cipher
 	public static final String SYM_CIPHER = "AES";
-	public static final String SYM_PADDING = "PKCS5Padding"; //TODO
+	public static final String SYM_PADDING = "PKCS5Padding"; // TODO
 	public static final String SYM_MODE = "CBC";
 	public static final int SYM_SIZE = 128;
 
 	// Asymmetric Cipher
 	public static final String ASYM_CIPHER = "RSA";
-	public static final String ASYM_PADDING = "PKCS1Padding"; //TODO
-	public static final String ASYM_MODE = "ECB";
+	// public static final String ASYM_PADDING = "PKCS1Padding"; // TODO
+	// public static final String ASYM_MODE = "ECB";
 	public static final int ASYM_SIZE = 1024;
 
 	// Signatures
 	public static final String SIGN_ALG = "SHA256withRSA";
 
-	//HMAC
+	// HMAC
 	public static final String HMAC_ALG = "HmacSHA256";
 
 	/**
 	 * Hash the input with the configured hash algorithm
+	 * 
 	 * @param input
 	 * @param truncate_to
 	 * @return
@@ -61,8 +62,12 @@ public class Cryptoutil {
 		byte result[] = null;
 
 		try {
-			MessageDigest md = MessageDigest.getInstance(Cryptoutil.HASH_ALGORITHM);
+			MessageDigest md = MessageDigest
+					.getInstance(Cryptoutil.HASH_ALGORITHM);
 			md.update(input);
+			result = md.digest();
+			md.reset();
+			md.update(result);
 			result = md.digest();
 		} catch (NoSuchAlgorithmException e) {
 			// Should already be tested
@@ -78,13 +83,14 @@ public class Cryptoutil {
 
 	/**
 	 * Hash the input n number of times, output is truncated on each iteration
+	 * 
 	 * @param input
 	 * @param n
 	 * @param truncate_to
 	 * @return
 	 */
 	public static byte[] nHash(byte[] input, int n, int truncate_to) {
-		if (n<1) {
+		if (n < 1) {
 			return null;
 		}
 		byte[] result = input;
@@ -97,11 +103,13 @@ public class Cryptoutil {
 
 	/**
 	 * Generate a Symmetric key used for encryption
+	 * 
 	 * @return
 	 */
 	public static SecretKey generateSymmetricKey() {
 		try {
-			KeyGenerator keygen = KeyGenerator.getInstance(Cryptoutil.SYM_CIPHER);
+			KeyGenerator keygen = KeyGenerator
+					.getInstance(Cryptoutil.SYM_CIPHER);
 			keygen.init(Cryptoutil.SYM_SIZE);
 			return keygen.generateKey();
 		} catch (NoSuchAlgorithmException e) {
@@ -113,6 +121,7 @@ public class Cryptoutil {
 
 	/**
 	 * Generate a asymmetric key pair.
+	 * 
 	 * @return
 	 */
 	public static KeyPair generateAsymmetricKeys() {
@@ -121,19 +130,20 @@ public class Cryptoutil {
 			boolean done = false;
 			KeyPair pair = null;
 
-			while(!done) {
-				// Private exponent is sometimes 129, we always want it to be 128
+			while (!done) {
+				// Private exponent is sometimes 129, we always want it to be
+				// 128
 				keygen = KeyPairGenerator.getInstance(Cryptoutil.ASYM_CIPHER);
 				keygen.initialize(Cryptoutil.ASYM_SIZE);
 				pair = keygen.generateKeyPair();
-				RSAPrivateKey priv = (RSAPrivateKey)pair.getPrivate();
+				RSAPrivateKey priv = (RSAPrivateKey) pair.getPrivate();
 				if (priv.getPrivateExponent().toByteArray().length == 128) {
 					done = true;
 				}
 
 			}
 			return pair;
-			//return keygen.generateKeyPair();
+			// return keygen.generateKeyPair();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,9 +151,11 @@ public class Cryptoutil {
 		return null;
 	}
 
-	public static byte[] symEncrypt(byte[] plainText, SecretKey key, IvParameterSpec iv) {
+	public static byte[] symEncrypt(byte[] plainText, SecretKey key,
+			IvParameterSpec iv) {
 		try {
-			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+Cryptoutil.SYM_MODE+"/"+Cryptoutil.SYM_PADDING);
+			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER + "/"
+					+ Cryptoutil.SYM_MODE + "/" + Cryptoutil.SYM_PADDING);
 			cipher.init(Cipher.ENCRYPT_MODE, key, iv);
 			return cipher.doFinal(plainText);
 		} catch (NoSuchAlgorithmException e) {
@@ -171,7 +183,8 @@ public class Cryptoutil {
 
 	public static byte[] symECBEncrypt(byte[] plainText, SecretKey key) {
 		try {
-			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+"ECB"+"/"+Cryptoutil.SYM_PADDING);
+			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER + "/"
+					+ "ECB" + "/" + Cryptoutil.SYM_PADDING);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return cipher.doFinal(plainText);
 		} catch (NoSuchAlgorithmException e) {
@@ -196,7 +209,8 @@ public class Cryptoutil {
 
 	public static byte[] symECBDecrypt(byte[] cipherText, SecretKey key) {
 		try {
-			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+"ECB"+"/"+Cryptoutil.SYM_PADDING);
+			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER + "/"
+					+ "ECB" + "/" + Cryptoutil.SYM_PADDING);
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			return cipher.doFinal(cipherText);
 		} catch (NoSuchAlgorithmException e) {
@@ -219,9 +233,11 @@ public class Cryptoutil {
 		return null;
 	}
 
-	public static byte[] symDecrypt(byte[] cipherText, SecretKey key, IvParameterSpec iv) {
+	public static byte[] symDecrypt(byte[] cipherText, SecretKey key,
+			IvParameterSpec iv) {
 		try {
-			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+Cryptoutil.SYM_MODE+"/"+Cryptoutil.SYM_PADDING);
+			Cipher cipher = Cipher.getInstance(Cryptoutil.SYM_CIPHER + "/"
+					+ Cryptoutil.SYM_MODE + "/" + Cryptoutil.SYM_PADDING);
 			cipher.init(Cipher.DECRYPT_MODE, key, iv);
 			return cipher.doFinal(cipherText);
 		} catch (NoSuchAlgorithmException e) {
@@ -249,7 +265,8 @@ public class Cryptoutil {
 
 	public static byte[] generateIV() {
 		try {
-			Cipher cip = Cipher.getInstance(Cryptoutil.SYM_CIPHER+"/"+Cryptoutil.SYM_MODE+"/"+Cryptoutil.SYM_PADDING);
+			Cipher cip = Cipher.getInstance(Cryptoutil.SYM_CIPHER + "/"
+					+ Cryptoutil.SYM_MODE + "/" + Cryptoutil.SYM_PADDING);
 			cip.init(Cipher.ENCRYPT_MODE, generateSymmetricKey());
 			return cip.getIV();
 		} catch (NoSuchAlgorithmException e) {
@@ -281,12 +298,13 @@ public class Cryptoutil {
 		} catch (SignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 
 		return null;
 	}
 
-	public static boolean signature_valid(byte[] signature, byte[] data, PublicKey pubKey) {
+	public static boolean signature_valid(byte[] signature, byte[] data,
+			PublicKey pubKey) {
 		try {
 			Signature sign = Signature.getInstance(SIGN_ALG);
 			sign.initVerify(pubKey);
@@ -301,7 +319,7 @@ public class Cryptoutil {
 		} catch (SignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 		return false;
 	}
 
@@ -339,10 +357,11 @@ public class Cryptoutil {
 			System.arraycopy(key, 0, mod, 0, mod.length);
 			System.arraycopy(key, mod.length, publicK, 0, publicK.length);
 
-			BigInteger modulus = new BigInteger(1,mod); 
-			BigInteger publicExponent = new BigInteger(1,publicK);
+			BigInteger modulus = new BigInteger(1, mod);
+			BigInteger publicExponent = new BigInteger(1, publicK);
 
-			RSAPublicKeySpec pubks = new RSAPublicKeySpec(modulus, publicExponent);
+			RSAPublicKeySpec pubks = new RSAPublicKeySpec(modulus,
+					publicExponent);
 			return fact.generatePublic(pubks);
 		} catch (InvalidKeySpecException e) {
 			// TODO Auto-generated catch block
@@ -352,6 +371,7 @@ public class Cryptoutil {
 			e.printStackTrace();
 		}
 		return null;
+
 	}
 
 	public static byte[] serializePrivateKey(RSAPrivateKey privKey) {
@@ -372,10 +392,11 @@ public class Cryptoutil {
 			System.arraycopy(key, 0, mod, 0, mod.length);
 			System.arraycopy(key, mod.length, privateK, 0, privateK.length);
 
-			BigInteger modulus = new BigInteger(1,mod); 
-			BigInteger privateExponent = new BigInteger(1,privateK);
+			BigInteger modulus = new BigInteger(1, mod);
+			BigInteger privateExponent = new BigInteger(1, privateK);
 
-			RSAPrivateKeySpec privKs = new RSAPrivateKeySpec(modulus, privateExponent);
+			RSAPrivateKeySpec privKs = new RSAPrivateKeySpec(modulus,
+					privateExponent);
 			return fact.generatePrivate(privKs);
 		} catch (InvalidKeySpecException e) {
 			// TODO Auto-generated catch block
