@@ -36,7 +36,7 @@ def get_path(storage_index):
     else:
         return None
 
-def save_file(storage_index, data, write_enabler=None):
+def save_file(storage_index, data, data_length, write_enabler=None):
     if storage_index is not None:
         try:
             fd = os.open(os.path.join(FILE_STORE, storage_index),
@@ -61,7 +61,8 @@ def save_file(storage_index, data, write_enabler=None):
                 # We have problems getting access to FILE_STORE
                 return False
 
-        fp.write(data)
+        #FIXME: Probably want some sort of loop to read chunks at the time.
+        fp.write(data.read(int(data_length)))
         fp.close()
 
         return True

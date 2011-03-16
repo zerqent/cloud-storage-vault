@@ -31,14 +31,17 @@ def get_file(request):
     return Response('Did not receive any storage index.', status_code=400)
 
 @route('/put')
-def put_file(request):
-    if 'encrypted_file' in request.FILES:
-        storage_index = request.FILES['encrypted_file'][0]
-        if storage_index is not None:
-            write_enabler = request.POST.get('write_enabler', None)
-            fileobj = request.FILES['encrypted_file'][1].read()
+def put_file(request, storage_index=None, write_enabler=None):
+    content_length = request.ENV['CONTENT_LENGTH']
+    print content_length
+    print "si: %s, we: %s" % (storage_index, write_enabler)
+    #TODO: Verify that if no write_enabler given, nothings get to DB
+    if storage_index is not None:
+        if request.PUT is not None:
             try:
-                save_status = save_file(storage_index, fileobj, write_enabler)
+                content_length = request.ENV['CONTENT_LENGTH']
+                save_status = save_file(storage_index, request.PUT,
+                                        content_length, write_enabler)
                 if save_status:
                     return Response('File received')
                 else:
@@ -47,8 +50,7 @@ def put_file(request):
             except FileSystemException, e:
                 return Response(e.text, status_code=e.code)
 
-
-    return Response('No file/filename given', status_code=400)
+    return Response('No file given', status_code=400)
 
 @route('/test')
 def test_ops(request):
