@@ -14,7 +14,8 @@ public abstract class CSVFolderFacade implements CSVFolder {
 
 	}
 
-	public CSVFolderFacade(Capability cap, byte[] ciperText, byte[] publicKey, byte[] IV, byte[] signature) {
+	public CSVFolderFacade(Capability cap, byte[] ciperText, byte[] publicKey,
+			byte[] IV, byte[] signature) {
 		this.setCipherText(ciperText);
 		this.setCapability(cap);
 		this.setPubKey(publicKey);
@@ -34,16 +35,17 @@ public abstract class CSVFolderFacade implements CSVFolder {
 
 	protected abstract void setContents(Map<String, Capability> contents);
 
-	protected abstract void setSignature(byte [] signature);
+	protected abstract void setSignature(byte[] signature);
 
 	protected void createPlainText() {
 		String plaintext = "";
-		for (Iterator<String> iterator = this.getContents().keySet().iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.getContents().keySet().iterator(); iterator
+				.hasNext();) {
 			String key = iterator.next();
 			Capability cap = this.getContents().get(key);
 			plaintext += key + ";" + cap.toString() + "\n";
 		}
-		this.setPlainText(plaintext.getBytes()); 
+		this.setPlainText(plaintext.getBytes());
 	}
 
 	protected void createContentsFromPlainText() {
@@ -51,7 +53,7 @@ public abstract class CSVFolderFacade implements CSVFolder {
 		String strCont = new String(this.getPlainText());
 		String[] lines = strCont.split("\n");
 
-		if (lines.length==1 && lines[0].isEmpty()) {
+		if (lines.length == 1 && lines[0].length() < 1) {
 			this.setContents(contents);
 			return;
 		}
@@ -60,7 +62,7 @@ public abstract class CSVFolderFacade implements CSVFolder {
 			String[] lineCont = lines[i].split(";");
 			Capability cap = CapabilityImpl.fromString(lineCont[1]);
 			String alias = lineCont[0];
-			contents.put(alias,cap);
+			contents.put(alias, cap);
 		}
 		this.setContents(contents);
 	}

@@ -18,7 +18,8 @@ public class CSVActivityTest extends
 		this.mActivity = getActivity();
 	}
 
-	public void testPreConditions() {
+	public void testPreConditions() throws Exception {
+		assertTrue(mActivity.myString.equals("foobar"));
 		assertTrue(mActivity.myString.equals("foobar"));
 	}
 

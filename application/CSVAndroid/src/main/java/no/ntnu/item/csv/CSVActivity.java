@@ -15,6 +15,7 @@ public class CSVActivity extends Activity {
 		setContentView(R.layout.main);
 
 		System.out.println(Cryptoutil.ASYM_CIPHER);
+		System.out.println(Cryptoutil.ASYM_CIPHER);
 
 	}
 }
