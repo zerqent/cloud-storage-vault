@@ -162,7 +162,9 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{SaaS}{Software as a Service}
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SSL}{Secure Socket Layer}
+\acro{TCG}{Trusted Computing Group}
 \acro{TLS}{Transport Layer Security}
+\acro{TPM}{Trusted Platform Module}
 \acro{TTP}{Trusted Third Party}
 \acro{URL}{Uniform Resource Locator}
 \acro{VM}{Virtual Machine}
@@ -476,7 +478,47 @@ authenticated version of the Diffie-Hellman key management protocol. The
 co-processor can further process the encrypted data and store it in the cloud
 facility. The stored data is encrypted and unknown to the cloud provider.
 
+\subsection{Privacy Manager}
+In 2009, HP Labs proposed a way to manage and control a user's private data stored and
+processed in a cloud facility \cite{privacymanager}. Their solution was partially implemented
+as a software program called a privacy manager.
 
+The privacy manager uses a feature/method called obfuscation, which is quiet similar to
+encryption. However, the obfuscation method is different from encryption, in the
+sense that the obfuscated data can be processed in the cloud, without the cloud
+provider knowing the encryption key or the original data. \cite{privacymanager} mention the following
+obfuscation methods:
+\begin{itemize}
+\item Yao's protocol for secure two-party computation \cite{yao}
+\item Gentry's homomorphic encryption scheme \cite{gentry}
+\item Narayanan and Schmatikov's obfuscation method \cite{obfuscationmethod}
+\end{itemize}
+Due to better efficiency, the privacy manager uses the latter alternative. However,
+Narayanan and Schmatikov's obfuscation method does not provide complete
+confidentiality to the cloud provider \cite{obfuscationmethod}.
+
+In addition to installing a privacy manager at the user's terminal, HP Labs suggests
+the use of trusted computing solutions to address the lower-level protection of
+data. The \ac{TCG} is an example of an organization
+developing and providing trusted computing solutions \cite{tcg}. HP Labs
+suggests using a tamper-proof piece of hardware called a \ac{TPM}, which is
+designed by TCG. The TPM is installed in the machine running the
+privacy manager to ensure that processes carried out by the privacy manager can be
+fully trusted.
+
+The privacy manager is suggested to work in 3 different use cases. It can be
+implemented to support a single client, the use of hybrid clouds and/or the use of an
+infomediary within the cloud.
+
+%Regarding applications in the cloud where users have to upload unobfuscated
+%private data, the privacy manager includes two additional features called
+%preferences and personae. Both features are dependent on a trustworthy service
+%and cloud provider, and are therefore irrelevant to our development.
+
+\subsection{Trusted Cloud Computing Platform}
+
+
+\subsection{Cryptographic cloud storage}
 
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,
@@ -491,8 +533,8 @@ and that Dropbox employees are not able to access the files of the
 user\footnote{\url{http://www.dropbox.com/help/27}}. However Dropbox also has a
 Forgot password feature which means that Dropbox can read the users files if
 they really want to. Their \ac{FAQ} does however say that some people have been
-successfull in putting truecrypt containers in Dropbox which effectivly makes
-dropbox secure\footnote{\url{http://www.dropbox.com/help/179}}.
+successfull in putting truecrypt containers in Dropbox which efficiently makes
+Dropbox secure\footnote{\url{http://www.dropbox.com/help/179}}.
 
 \subsection{Tahoe-LAFS}
 Tahoe-\ac{LAFS}\footnote{http://www.tahoe-lafs.org} is an open source
