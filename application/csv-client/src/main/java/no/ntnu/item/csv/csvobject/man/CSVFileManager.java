@@ -20,231 +20,312 @@ import org.apache.http.client.ClientProtocolException;
 
 public class CSVFileManager {
 
-	private Stack<Capability> location;		//Stack storing capabilities of parent directories
-	private CSVFolderImpl currentFolder;	//The current folder object visited
-	
-	public CSVFileManager(Capability root_cap){
-		byte[] resp = Communication.get(root_cap.getStorageIndex(), Communication.SERVER_GET);
-		
-		if(resp == null)
+	private Stack<Capability> location; // Stack storing capabilities of parent
+										// directories
+	private CSVFolderImpl currentFolder; // The current folder object visited
+
+	public CSVFileManager(Capability root_cap) {
+		byte[] resp = Communication.get(root_cap.getStorageIndex(),
+				Communication.SERVER_GET);
+
+		if (resp == null)
 			return;
-		
+
 		this.location = new Stack<Capability>();
 		this.currentFolder = CSVFolderImpl.createFromByteArray(resp, root_cap);
 	}
-	
-	public void put(String filepath, CSVFolderImpl folder) throws IOException{
-		//Check write permissions
-		if(folder.getCapability().getType() != CapabilityType.RW){
-			System.out.println("ERROR: You do not have permission to write to this directory.");
+
+	public void put(String filepath, CSVFolderImpl folder) throws IOException {
+		// Check write permissions
+		if (folder == null) {
+			folder = this.currentFolder;
+		}
+
+		if (folder.getCapability().getType() != CapabilityType.RW) {
+			System.out
+					.println("ERROR: You do not have permission to write to this directory.");
 			return;
 		}
-		
-		//Check for illegal and duplicate filename
+
+		// Check for illegal and duplicate filename
 		int ind = filepath.lastIndexOf("/");
 		String filename = filepath.substring(ind + 1);
 
-		if(filename.equals("..")){
+		if (filename.equals("..")) {
 			System.out.println("ERROR: \"..\" is an illegal filename");
 			return;
 		}
-		
-		if(folder.getContents().containsKey(filename)){
-			System.out.println("ERROR: A file with the same name already exists. Please rename your file before uploading it.");
+
+		if (folder.getContents().containsKey(filename)) {
+			System.out
+					.println("ERROR: A file with the same name already exists. Please rename your file before uploading it.");
 			return;
 		}
-		
-		//Create file or folder object
+
+		// Create file or folder object
 		File content = new File(filepath);
 		CSVObject file = null;
-		if(content.isDirectory()){
+		if (content.isDirectory()) {
 			file = new CSVFolderImpl();
-		}else if(content.isFile()){
+		} else if (content.isFile()) {
 			file = new CSVFileImpl(content);
-		}else{
+		} else {
 			System.out.println("ERROR: Can not upload a non-existing file.");
 			return;
 		}
 		file.encrypt();
-		
-		//Upload file
-		switch (Communication.put(file, Communication.SERVER_PUT)){
-			case 200: System.out.println("File successfully uploaded.");break;
-			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
-			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
-			default: System.out.println("ERROR: An unexpected error occured.");return;
+
+		// Upload file
+		switch (Communication.put(file, Communication.SERVER_PUT)) {
+		case 200:
+			System.out.println("File successfully uploaded.");
+			break;
+		case 400:
+			System.out.println("ERROR: 400 - Bad Request.");
+			return;
+		case 500:
+			System.out.println("ERROR: 500 - Internal server error.");
+			return;
+		default:
+			System.out.println("ERROR: An unexpected error occured.");
+			return;
 		}
-		
-		//Insert file capability and alias into parent directory and upload parent directory
+
+		// Insert file capability and alias into parent directory and upload
+		// parent directory
 		folder.getContents().put(content.getName(), file.getCapability());
 		folder.encrypt();
-		
-		switch (Communication.put(folder, Communication.SERVER_PUT)){
-			case 200: System.out.println("Parent Folder successfully changed.");break;
-			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
-			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
-			default: System.out.println("ERROR: An unexpected error occured.");return;
+
+		switch (Communication.put(folder, Communication.SERVER_PUT)) {
+		case 200:
+			System.out.println("Parent Folder successfully changed.");
+			break;
+		case 400:
+			System.out.println("ERROR: 400 - Bad Request.");
+			return;
+		case 500:
+			System.out.println("ERROR: 500 - Internal server error.");
+			return;
+		default:
+			System.out.println("ERROR: An unexpected error occured.");
+			return;
 		}
-		
-		//If content of uploaded File is a folder: put all sub files and sub folders!
-		if(content.isDirectory() && file instanceof CSVFolderImpl){
+
+		// If content of uploaded File is a folder: put all sub files and sub
+		// folders!
+		if (content.isDirectory() && file instanceof CSVFolderImpl) {
 			String[] subfiles = content.list();
-			for(int i = 0; i < subfiles.length; i++)
-				this.put(content.getAbsolutePath() + "/" + subfiles[i], (CSVFolderImpl)file);
+			for (int i = 0; i < subfiles.length; i++)
+				this.put(content.getAbsolutePath() + "/" + subfiles[i],
+						(CSVFolderImpl) file);
 		}
 	}
 
-	public CSVObject get(String alias) throws ClientProtocolException, IOException{
+	public CSVObject get(String alias) throws ClientProtocolException,
+			IOException {
 		Capability cap;
 		boolean bar = this.currentFolder.getContents().containsKey(alias);
-		
-		if((cap = this.currentFolder.getContents().get(alias)) == null){
+
+		if ((cap = this.currentFolder.getContents().get(alias)) == null) {
 			System.out.println("ERROR: File " + alias + " does not exist.");
 			return null;
 		}
-		
-		byte[] resp = Communication.get(cap.getStorageIndex(), Communication.SERVER_GET);
+
+		byte[] resp = Communication.get(cap.getStorageIndex(),
+				Communication.SERVER_GET);
 		CSVObject file;
-		switch(resp[0]){
-			case 1: file = CSVFolderImpl.createFromByteArray(resp, cap);break;
-			case 0: file = CSVFileImpl.createFromByteArray(resp, cap);break;
-			default: file = null;
+		switch (resp[0]) {
+		case 1:
+			file = CSVFolderImpl.createFromByteArray(resp, cap);
+			break;
+		case 0:
+			file = CSVFileImpl.createFromByteArray(resp, cap);
+			break;
+		default:
+			file = null;
 		}
 		return file;
 	}
-	
-	public void ls(){
+
+	public Map<String, Capability> ls() {
 		this.currentFolder.decrypt();
-		Map<String, Capability> content = this.currentFolder.getContents();
-		if(!content.isEmpty()){
-			System.out.println("File name \tStorage index \t\t\t\tCapability type");
-			for(Map.Entry<String, Capability> entry : content.entrySet())
-				System.out.println(entry.getKey() + " " + entry.getValue().getStorageIndex() + " " + entry.getValue().getType());
-		}
+		return this.currentFolder.getContents();
+		// if (!content.isEmpty()) {
+		// // System.out
+		// // .println("File name \tStorage index \t\t\t\tCapability type");
+		// // for (Map.Entry<String, Capability> entry : content.entrySet())
+		// // System.out.println(entry.getKey() + " "
+		// // + entry.getValue().getStorageIndex() + " "
+		// // + entry.getValue().getType());
+		// }
 	}
-	
-	public void cd(String folderAlias) throws ClientProtocolException, IOException{
+
+	public void cd(String folderAlias) throws ClientProtocolException,
+			IOException {
 		CSVObject folder;
-		if(!folderAlias.equals("..")){
+		if (!folderAlias.equals("..")) {
 			folder = this.get(folderAlias);
-			if(folder == null || folder instanceof CSVFile)
+			if (folder == null || folder instanceof CSVFile)
 				return;
 			this.location.push(this.currentFolder.getCapability());
-			this.currentFolder = (CSVFolderImpl)folder;
-		}else{
-			if(this.location.size() <= 0)
+			this.currentFolder = (CSVFolderImpl) folder;
+		} else {
+			if (this.location.size() <= 0)
 				return;
-			byte[] resp = Communication.get(this.location.lastElement().getStorageIndex(), Communication.SERVER_GET);
-			folder = CSVFolderImpl.createFromByteArray(resp, this.location.lastElement());
-			if(folder == null)
+			byte[] resp = Communication.get(this.location.lastElement()
+					.getStorageIndex(), Communication.SERVER_GET);
+			folder = CSVFolderImpl.createFromByteArray(resp,
+					this.location.lastElement());
+			if (folder == null)
 				return;
 			folder.decrypt();
-			this.currentFolder = (CSVFolderImpl)folder;
+			this.currentFolder = (CSVFolderImpl) folder;
 			this.location.pop();
 		}
 	}
-	
-	public void mkdir(String alias) throws IOException{
-		//Check that the user is within a directory
-		if(this.currentFolder == null){
+
+	public void mkdir(String alias) throws IOException {
+		// Check that the user is within a directory
+		if (this.currentFolder == null) {
 			return;
 		}
-		//Check write permissions
-		if(this.currentFolder.getCapability().getType() != CapabilityType.RW){
-			System.out.println("ERROR: You do not have permission to write to this directory.");
+		// Check write permissions
+		if (this.currentFolder.getCapability().getType() != CapabilityType.RW) {
+			System.out
+					.println("ERROR: You do not have permission to write to this directory.");
 			return;
 		}
-		//Check for duplicate filenames
-		if(this.currentFolder.getContents().containsKey(alias)){
-			System.out.println("ERROR: A file with the same name already exists. Please rename your folder before uploading it.");
+		// Check for duplicate filenames
+		if (this.currentFolder.getContents().containsKey(alias)) {
+			System.out
+					.println("ERROR: A file with the same name already exists. Please rename your folder before uploading it.");
 			return;
 		}
-		//Check for illegal directory name
-		if(alias.equals("..")){
+		// Check for illegal directory name
+		if (alias.equals("..")) {
 			System.out.println("ERROR: \"..\" is an illegal directory name");
 			return;
 		}
-		
+
 		CSVFolderImpl folder = new CSVFolderImpl();
 		folder.encrypt();
-		
-		//Upload folder
-		switch (Communication.put(folder, Communication.SERVER_PUT)){
-			case 200: System.out.println("Folder " + alias + " was successfully created.");break;
-			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
-			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
-			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
-			case 700: System.out.println("ERROR: You do not have permission to write to this folder.");return;
-			default: System.out.println("ERROR: An unexpected error occured.");return;
+
+		// Upload folder
+		switch (Communication.put(folder, Communication.SERVER_PUT)) {
+		case 200:
+			System.out
+					.println("Folder " + alias + " was successfully created.");
+			break;
+		case 400:
+			System.out.println("ERROR: 400 - Bad Request.");
+			return;
+		case 500:
+			System.out.println("ERROR: 500 - Internal server error.");
+			return;
+		case 600:
+			System.out
+					.println("ERROR: Missing server address, or Trying to upload an empty folder.");
+			return;
+		case 700:
+			System.out
+					.println("ERROR: You do not have permission to write to this folder.");
+			return;
+		default:
+			System.out.println("ERROR: An unexpected error occured.");
+			return;
 		}
-		
-		//Insert folder capability and alias into parent directory and upload parent directory
+
+		// Insert folder capability and alias into parent directory and upload
+		// parent directory
 		this.currentFolder.getContents().put(alias, folder.getCapability());
 		this.currentFolder.encrypt();
-		
-		switch (Communication.put(this.currentFolder, Communication.SERVER_PUT)){
-			case 200: System.out.println("Parent Folder successfully changed.");break;
-			case 400: System.out.println("ERROR: 400 - Bad Request.");return;
-			case 500: System.out.println("ERROR: 500 - Internal server error.");return;
-			case 600: System.out.println("ERROR: Missing server address, or Trying to upload an empty folder.");return;
-			case 700: System.out.println("ERROR: You do not have permission to write to this folder.");return;
-			default: System.out.println("ERROR: An unexpected error occured.");return;
-		}
-		
-	}
-	
-	public static void main(String[] args) throws IOException{
-		//Creating a root directory
-//		CSVFolderImpl root = new CSVFolderImpl();
-//		root.encrypt();
-//		Communication.put(root, Communication.SERVER_PUT);
-//		System.out.println(root.getCapability().toString());
-		
 
-		Capability root_cap = CapabilityImpl.fromString("RW:LZHVSKQANLK2T44L2RVFCMIA7Q:PNHUTWRSM4ADV327DORPJXLB64");
+		switch (Communication.put(this.currentFolder, Communication.SERVER_PUT)) {
+		case 200:
+			System.out.println("Parent Folder successfully changed.");
+			break;
+		case 400:
+			System.out.println("ERROR: 400 - Bad Request.");
+			return;
+		case 500:
+			System.out.println("ERROR: 500 - Internal server error.");
+			return;
+		case 600:
+			System.out
+					.println("ERROR: Missing server address, or Trying to upload an empty folder.");
+			return;
+		case 700:
+			System.out
+					.println("ERROR: You do not have permission to write to this folder.");
+			return;
+		default:
+			System.out.println("ERROR: An unexpected error occured.");
+			return;
+		}
+
+	}
+
+	public static void main(String[] args) throws IOException {
+		// Creating a root directory
+		// CSVFolderImpl root = new CSVFolderImpl();
+		// root.encrypt();
+		// Communication.put(root, Communication.SERVER_PUT);
+		// System.out.println(root.getCapability().toString());
+
+		Capability root_cap = CapabilityImpl
+				.fromString("RW:GY6DLOF7KQ34MDZLVADUHEOCYM:ODLYUTOLAK4FCEJ4G47WNMGKFA");
 		CSVFileManager fm = new CSVFileManager(root_cap);
 		System.out.println("File manager created!");
-		//fm.cd("Desktop");
-		//fm.ls();
-//		fm.put("/home/melvold/Desktop", fm.currentFolder);
-//		fm.ls();
-		while(true) {
+		// fm.cd("Desktop");
+		// fm.ls();
+		// fm.put("/home/melvold/Desktop", fm.currentFolder);
+		// fm.ls();
+		while (true) {
 			Scanner sc = new Scanner(System.in);
 			String input = sc.nextLine();
-			
-			if(input.toLowerCase().equals("ls")) {
-				fm.ls();
-			} else if(input.startsWith("cd")) {
+
+			if (input.toLowerCase().equals("ls")) {
+				Map<String, Capability> content = fm.ls();
+				if (!content.isEmpty()) {
+					System.out
+							.println("File name \tStorage index \t\t\t\tCapability type");
+					for (Map.Entry<String, Capability> entry : content
+							.entrySet())
+						System.out.println(entry.getKey() + " "
+								+ entry.getValue().getStorageIndex() + " "
+								+ entry.getValue().getType());
+				}
+			} else if (input.startsWith("cd")) {
 				String tmp = input.substring(3);
 				fm.cd(tmp);
-			} else if(input.startsWith("put")) {
+			} else if (input.startsWith("put")) {
 				String tmp = input.substring(4);
 				fm.put(tmp, fm.currentFolder);
-			} else if(input.startsWith("cat")) {
+			} else if (input.startsWith("cat")) {
 				String tmp = input.substring(4);
-				CSVFile foo = (CSVFile)fm.get(tmp);
+				CSVFile foo = (CSVFile) fm.get(tmp);
 				foo.decrypt();
 				String bar = new String(foo.getPlainText());
 				System.out.println(bar);
-			} else if(input.startsWith("get")) {
+			} else if (input.startsWith("get")) {
 				String[] tmp = input.substring(4).split(" ");
 				String alias = tmp[0];
 				String save_path = tmp[1];
-				CSVFile foo = (CSVFile)fm.get(alias);
+				CSVFile foo = (CSVFile) fm.get(alias);
 				foo.decrypt();
-				CSVFileFacade foobar = (CSVFileFacade)foo;
+				CSVFileFacade foobar = (CSVFileFacade) foo;
 				foobar.writeFileToDisk(save_path);
 				System.out.println("Wrote file to disk");
 			} else if (input.startsWith("mkdir")) {
-				String tmp = input.substring("mkdir".length()+1);
+				String tmp = input.substring("mkdir".length() + 1);
 				fm.mkdir(tmp);
 			} else if (input.toLowerCase().equals("exit")) {
 				System.exit(0);
 			} else {
 				System.out.println("You SUCK");
 			}
-			
+
 		}
-		
+
 	}
 }
