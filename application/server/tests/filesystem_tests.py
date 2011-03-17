@@ -4,6 +4,11 @@ import random
 import string
 import unittest
 
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
+
 from cloudstorage.filesystem import (FileSystemException, save_file,
                                      retrieve_file)
 from cloudstorage.settings import FILE_STORE
@@ -31,7 +36,7 @@ class TestFileOperationPrimitives(unittest.TestCase):
 
     def test_save_new_file_should_return_true(self):
         si = ''.join(random.sample(string.letters+string.digits, 12))
-        return_code = save_file(si, 'TESTING')
+        return_code = save_file(si, StringIO.StringIO('TESTING'), 20)
 
         fp = open(os.path.join(FILE_STORE, si), 'r')
         result = fp.read()
@@ -42,8 +47,8 @@ class TestFileOperationPrimitives(unittest.TestCase):
 
     def test_save_file_with_existing_si_but_no_we_should_fail(self):
         si = self.__create_random_file()
-
-        self.assertRaises(FileSystemException, save_file, si, 'kjdfkj')
+        file_obj = StringIO.StringIO('SOMETHINGDIFFERENT')
+        self.assertRaises(FileSystemException, save_file, si, 20, file_obj)
 
         fp = open(os.path.join(FILE_STORE, si), 'r')
         result = fp.read()
@@ -55,8 +60,8 @@ class TestFileOperationPrimitives(unittest.TestCase):
         si = ''.join(random.sample(string.letters+string.digits, 12))
         we = ''.join(random.sample(string.letters+string.digits, 12))
 
-        result = save_file(si, 'NEW_FILE_WITH_WE', we)
-        updated = save_file(si, 'UPDATED_FILE', we)
+        result = save_file(si, StringIO.StringIO('NEW_FILE_WITH_WE'), 20, we)
+        updated = save_file(si, StringIO.StringIO('UPDATED_FILE'), 20, we)
 
         fp = open(os.path.join(FILE_STORE, si), 'r')
         content = fp.read()
@@ -71,8 +76,10 @@ class TestFileOperationPrimitives(unittest.TestCase):
         we = ''.join(random.sample(string.letters+string.digits, 12))
         wrong_we = ''.join(random.sample(string.letters+string.digits, 12))
 
-        result = save_file(si, 'NEW_FILE_WITH_WE', we)
-        self.assertRaises(FileSystemException, save_file, si, 'ERROR', wrong_we)
+        result = save_file(si, StringIO.StringIO('NEW_FILE_WITH_WE'), 20, we)
+        file_obj = StringIO.StringIO('ERROR')
+        self.assertRaises(FileSystemException, save_file, si, file_obj, 20,
+                          wrong_we)
 
         fp = open(os.path.join(FILE_STORE, si), 'r')
         content = fp.read()
@@ -84,7 +91,7 @@ class TestFileOperationPrimitives(unittest.TestCase):
     def test_save_new_file_with_correct_we_should_return_true(self):
         si = ''.join(random.sample(string.letters+string.digits, 12))
         we = ''.join(random.sample(string.letters+string.digits, 12))
-        result = save_file(si, 'NEW_FILE_WITH_WE', we)
+        result = save_file(si, StringIO.StringIO('NEW_FILE_WITH_WE'), 20, we)
 
         fp = open(os.path.join(FILE_STORE, si), 'r')
         content = fp.read()
