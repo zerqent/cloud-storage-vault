@@ -24,8 +24,8 @@ def check_write_enabler(storage_index, write_enabler):
     if result is not None:
         return result[1] == write_enabler
     else:
-        raise FileSystemException(u'File does not have storage index registered'
-                                  u', is it an immutable file?', 403)
+        raise FileSystemException('File does not have storage index registered'
+                                  ', is it an immutable file?', 403)
 
     return False
 
