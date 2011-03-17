@@ -1,0 +1,30 @@
+Using CURL:
+----------------------------------------------
+start = time.time()
+length = int(env.get('CONTENT_LENGTH', 0))
+a = env['wsgi.input'].read(length)
+print "Value: %s" % a
+elapsed = (time.time() - start)
+print elapsed
+
+> 0.999881982803
+
+----------------------------------------------
+
+start = time.time() 
+_data = cgi.FieldStorage(
+    fp=environment['wsgi.input'],
+    environ=env,
+    keep_blank_values=False
+)
+print "Value %s" % _data.value
+elapsed = (time.time() - start)
+print elapsed
+
+> 0.999972105026
+
+----------------------------------------------
+
+POST/Multipart:
+
+1.00081181526

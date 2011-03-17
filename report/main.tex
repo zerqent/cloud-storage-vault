@@ -137,10 +137,12 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{AES}{Advanced Encryption Standard}
 \acro{CA}{Certification authority}
 \acro{CBC}{Cipher Block Chaining}
+\acro{CM}{Cloud Manager}
 \acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
 \acro{ECB}{Electronic Codeboo}
+\acro{ETE}{External Trusted Entity}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{HTTP}{Hypertext Transfer Protocol}
 \acro{IaaS}{Infrastructure as a Service}
@@ -163,12 +165,16 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{SaaS}{Software as a Service}
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SSL}{Secure Socket Layer}
+\acro{TC}{Trusted Coordinator}
+\acro{TCCP}{Trusted Cloud Computing Platform}
 \acro{TCG}{Trusted Computing Group}
 \acro{TLS}{Transport Layer Security}
 \acro{TPM}{Trusted Platform Module}
 \acro{TTP}{Trusted Third Party}
+\acro{TVMM}{Trusted Virtual Machine Monitor}
 \acro{URL}{Uniform Resource Locator}
 \acro{VM}{Virtual Machine}
+\acro{VMM}{Virtual Machine Monitor}
 \acro{WSGI}{Web Server Gateway Interface}
 \end{acronym}
 
@@ -480,6 +486,7 @@ co-processor can further process the encrypted data and store it in the cloud
 facility. The stored data is encrypted and unknown to the cloud provider.
 
 \subsection{Privacy Manager}
+\
 In 2009, HP Labs proposed a way to manage and control a user's private data stored and
 processed in a cloud facility \cite{privacymanager}. Their solution was partially implemented
 as a software program called a privacy manager.
@@ -517,9 +524,49 @@ infomediary within the cloud.
 %and cloud provider, and are therefore irrelevant to our development.
 
 \subsection{Trusted Cloud Computing Platform}
+Equal to PasS and the privacy manager, \ac{TCCP} was proposed as a solution to
+provide secure computations (and storage) within a non-trusted cloud provider
+\cite{tccp}. As opposed to the previous solutions, TCCP is directed against secure
+execution of guest VMs outsourced to IaaS providers. 
 
+The original IaaS structure, before adding TCCP, is assumed to consist of a
+\ac{CM}, which manages a cluster of nodes running one or more VMs. Among
+multiple tasks, the CM is responsible for loading VM images into its own nodes.
+Each node has a \ac{VMM} which will further launch and monitor VMs from the
+received VM images.
 
-\subsection{Cryptographic cloud storage}
+TCCP is based upon the fundamental TPM chip designed by the TCG. The TPM
+contains a private/public key pair that uniquely identifies the TPM. The public
+key is additionally signed by the manufacturer to guarantee correctness of
+the TPM chip. With this in mind, TCCP is based upon a remote attestation scheme.
+The remote attestation scheme enables a network entity to verify whether another
+remote entity runs a TPM or not. A detailed description of the remote
+attestation scheme is given in \cite{tccp}.
+
+The TCCP system architecture is illustrated in Figure \ref{fig:RW:TCCP}. The
+trusted computing base of TCCP includes a \ac{TC} and a \ac{TVMM}. The TC
+manages the trusted nodes within a cluster. To be trusted, a node must be
+located within a security perimeter and run a TVMM. The TC maintains a record of
+the nodes located in the security perimeter and use remote attestation to ensure
+nodes are trusted. Each trusted node in a cluster contains a TPM and a
+corresponding TVMM. The main task of a TVMM is to enforce a local closed box
+protection of a client's running VM. Details about the TVMM design are given in
+\cite{tvmm}. 
+
+Each TVMM cooperates with a TC to protect the transmission of VMs between
+trusted nodes and to ensure that VMs are executed by trusted nodes. In this
+context, the TCCP specifies several protocols for both launching and migrating
+VMs inside the cloud. These protocols are described in \cite{tccp}.
+
+The TC is installed in an \ac{ETE}, maintained by a trusted third party, to prevent illegal tampering
+from the IaaS provider. A client can further use remote attestation to the TC to
+verify that the IaaS provider secures its computation.
+
+With TCCP the client interacts with the IaaS provider as usual. The difference
+is that the trusted nodes and their TC communicates to ensure a secure environment for executing
+the client's VM.
+
+\subsection{Cryptographic Cloud Storage}
 
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,

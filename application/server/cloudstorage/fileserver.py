@@ -32,10 +32,12 @@ def get_file(request):
 
 @route('/put')
 def put_file(request, storage_index=None, write_enabler=None):
-    content_length = request.ENV['CONTENT_LENGTH']
-    print content_length
-    print "si: %s, we: %s" % (storage_index, write_enabler)
-    #TODO: Verify that if no write_enabler given, nothings get to DB
+    if write_enabler is not None and write_enabler == "":
+        # The doc of pyroutes states that "variables not available from the URL
+        # is passed to your method as an empty string or your defined default in
+        # the method declaration." But apparently not.
+        write_enabler = None
+
     if storage_index is not None:
         if request.PUT is not None:
             try:
