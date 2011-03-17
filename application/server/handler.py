@@ -1,11 +1,11 @@
 import os
 import sys
 
-from pyroutes import application
-
 path = os.path.dirname(__file__)
 if path not in sys.path:
     sys.path.append(path)
+
+from pyroutes import application
 
 import cloudstorage.fileserver
 
