@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.CSVObject;
-import no.ntnu.item.csv.csvobject.impl.CSVFolderImpl;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -41,7 +41,7 @@ public class Communication {
     	ByteArrayBody file = new ByteArrayBody(object.getTransferArray(), object.getCapability().getStorageIndex());
     	entity.addPart("encrypted_file", file);
     	
-    	if(object instanceof CSVFolderImpl){
+    	if(object instanceof CSVFolder){
     		StringBody we;
 			try {
 				we = new StringBody(Base32.encode(object.getCapability().getWriteEnabler()));

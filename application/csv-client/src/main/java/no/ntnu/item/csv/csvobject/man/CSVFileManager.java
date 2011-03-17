@@ -11,10 +11,9 @@ import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.CSVFile;
+import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.CSVObject;
-import no.ntnu.item.csv.csvobject.impl.CSVFileFacade;
-import no.ntnu.item.csv.csvobject.impl.CSVFileImpl;
-import no.ntnu.item.csv.csvobject.impl.CSVFolderImpl;
+import no.ntnu.item.csv.fileutils.FileUtils;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -22,7 +21,7 @@ public class CSVFileManager {
 
 	private Stack<Capability> location; // Stack storing capabilities of parent
 										// directories
-	private CSVFolderImpl currentFolder; // The current folder object visited
+	private CSVFolder currentFolder; // The current folder object visited
 
 	public CSVFileManager(Capability root_cap) {
 		byte[] resp = Communication.get(root_cap.getStorageIndex(),
@@ -32,10 +31,10 @@ public class CSVFileManager {
 			return;
 
 		this.location = new Stack<Capability>();
-		this.currentFolder = CSVFolderImpl.createFromByteArray(resp, root_cap);
+		this.currentFolder = CSVFolder.createFromByteArray(resp, root_cap);
 	}
 
-	public void put(String filepath, CSVFolderImpl folder) throws IOException {
+	public void put(String filepath, CSVFolder folder) throws IOException {
 		// Check write permissions
 		if (folder == null) {
 			folder = this.currentFolder;
@@ -66,9 +65,9 @@ public class CSVFileManager {
 		File content = new File(filepath);
 		CSVObject file = null;
 		if (content.isDirectory()) {
-			file = new CSVFolderImpl();
+			file = new CSVFolder();
 		} else if (content.isFile()) {
-			file = new CSVFileImpl(content);
+			file = new CSVFile(content);
 		} else {
 			System.out.println("ERROR: Can not upload a non-existing file.");
 			return;
@@ -113,11 +112,11 @@ public class CSVFileManager {
 
 		// If content of uploaded File is a folder: put all sub files and sub
 		// folders!
-		if (content.isDirectory() && file instanceof CSVFolderImpl) {
+		if (content.isDirectory() && file instanceof CSVFolder) {
 			String[] subfiles = content.list();
 			for (int i = 0; i < subfiles.length; i++)
 				this.put(content.getAbsolutePath() + "/" + subfiles[i],
-						(CSVFolderImpl) file);
+						(CSVFolder) file);
 		}
 	}
 
@@ -136,10 +135,10 @@ public class CSVFileManager {
 		CSVObject file;
 		switch (resp[0]) {
 		case 1:
-			file = CSVFolderImpl.createFromByteArray(resp, cap);
+			file = CSVFolder.createFromByteArray(resp, cap);
 			break;
 		case 0:
-			file = CSVFileImpl.createFromByteArray(resp, cap);
+			file = CSVFile.createFromByteArray(resp, cap);
 			break;
 		default:
 			file = null;
@@ -168,18 +167,18 @@ public class CSVFileManager {
 			if (folder == null || folder instanceof CSVFile)
 				return;
 			this.location.push(this.currentFolder.getCapability());
-			this.currentFolder = (CSVFolderImpl) folder;
+			this.currentFolder = (CSVFolder) folder;
 		} else {
 			if (this.location.size() <= 0)
 				return;
 			byte[] resp = Communication.get(this.location.lastElement()
 					.getStorageIndex(), Communication.SERVER_GET);
-			folder = CSVFolderImpl.createFromByteArray(resp,
+			folder = CSVFolder.createFromByteArray(resp,
 					this.location.lastElement());
 			if (folder == null)
 				return;
 			folder.decrypt();
-			this.currentFolder = (CSVFolderImpl) folder;
+			this.currentFolder = (CSVFolder) folder;
 			this.location.pop();
 		}
 	}
@@ -207,7 +206,7 @@ public class CSVFileManager {
 			return;
 		}
 
-		CSVFolderImpl folder = new CSVFolderImpl();
+		CSVFolder folder = new CSVFolder();
 		folder.encrypt();
 
 		// Upload folder
@@ -313,8 +312,8 @@ public class CSVFileManager {
 				String save_path = tmp[1];
 				CSVFile foo = (CSVFile) fm.get(alias);
 				foo.decrypt();
-				CSVFileFacade foobar = (CSVFileFacade) foo;
-				foobar.writeFileToDisk(save_path);
+				CSVFile foobar = foo;
+				FileUtils.writeFileToDisk(save_path, foo.getPlainText());
 				System.out.println("Wrote file to disk");
 			} else if (input.startsWith("mkdir")) {
 				String tmp = input.substring("mkdir".length() + 1);

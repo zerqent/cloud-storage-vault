@@ -10,12 +10,12 @@ public interface CSVObject {
 
 	public boolean isValid();
 
-	public byte[] getCipherText();
+	// public byte[] getCipherText();
 
 	public Capability getCapability();
 
 	public void setCapability(Capability capability);
-	
+
 	public byte[] getTransferArray();
-	
+
 }
