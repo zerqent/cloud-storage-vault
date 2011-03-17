@@ -33,7 +33,7 @@ public class CSVFolderTest {
 	public void testEncryption() {
 		SecretKey key = Cryptoutil.generateSymmetricKey();
 		Capability cap = new CapabilityImpl(CapabilityType.RO,
-				key.getEncoded(), null);
+				key.getEncoded(), null, false);
 		this.newFolder.addContent("Hallo", cap);
 		this.newFolder.encrypt();
 		Assert.assertNotNull(this.newFolder.getCipherText());
@@ -59,13 +59,13 @@ public class CSVFolderTest {
 	@Test
 	public void testSerialization() {
 		CapabilityImpl cap = new CapabilityImpl(CapabilityType.RO, Cryptoutil
-				.generateSymmetricKey().getEncoded(), null);
+				.generateSymmetricKey().getEncoded(), null, true);
 		this.newFolder.addContent("Foobar", cap);
 		this.newFolder.encrypt();
 		byte[] enc = this.newFolder.getTransferArray();
-		int expectedLength = 1 + 272 + 132 + 128 + 16
+		int expectedLength = 272 + 132 + 128 + 16
 				+ this.newFolder.getCipherText().length;
-		// identifier + encPrivkey + pubkey + signature + iv + Ciphertext
+		// encPrivkey + pubkey + signature + iv + Ciphertext
 		Assert.assertEquals(expectedLength, enc.length);
 		CSVFolder dec = CSVFolder.createFromByteArray(enc,
 				this.newFolder.getCapability());
@@ -83,8 +83,6 @@ public class CSVFolderTest {
 				.getType());
 
 		Assert.assertEquals(enc.length, dec.getTransferArray().length);
-		// Assert.assertArrayEquals(enc, dec.getTransferArray()); // Signature
-		// will always be different.
 	}
 
 }

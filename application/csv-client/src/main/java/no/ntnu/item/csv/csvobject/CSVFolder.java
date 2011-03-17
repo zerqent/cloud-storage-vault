@@ -38,8 +38,8 @@ public class CSVFolder implements CSVObject {
 		this.contents = new HashMap<String, Capability>();
 	}
 
-	public CSVFolder(Capability capability, byte[] cipherText,
-			byte[] pubkey, byte[] iv, byte[] signature) {
+	public CSVFolder(Capability capability, byte[] cipherText, byte[] pubkey,
+			byte[] iv, byte[] signature) {
 		// super(capability, cipherText, pubkey, iv, signature);
 		this.ciphertext = cipherText;
 		this.iv = iv;
@@ -67,7 +67,7 @@ public class CSVFolder implements CSVObject {
 		byte[] verify = Cryptoutil.hash(to_hash, 16);
 
 		Capability writecap = new CapabilityImpl(CapabilityType.RW, write,
-				verify);
+				verify, false);
 		this.capability = writecap;
 	}
 
@@ -76,6 +76,7 @@ public class CSVFolder implements CSVObject {
 		this.signature = Cryptoutil.signature(hash, this.privkey);
 	}
 
+	@Override
 	public void encrypt() {
 		byte[] read;
 		if (this.capability.getType() == CapabilityType.RW) {
@@ -95,6 +96,7 @@ public class CSVFolder implements CSVObject {
 						Cryptoutil.SYM_CIPHER));
 	}
 
+	@Override
 	public void decrypt() {
 		byte[] read;
 		if (this.capability.getType() == CapabilityType.RW) {
@@ -187,20 +189,20 @@ public class CSVFolder implements CSVObject {
 
 		byte[] pub = Cryptoutil.serializePublicKey((RSAPublicKey) this.pubkey);
 
-		byte[] transfer = new byte[1 + pub.length + this.signature.length
+		byte[] transfer = new byte[pub.length + this.signature.length
 				+ this.iv.length + this.encPrivKey.length
 				+ this.ciphertext.length];
-		transfer[0] = 1;
+		// transfer[0] = 1;
 
-		System.arraycopy(pub, 0, transfer, 1, pub.length);
+		System.arraycopy(pub, 0, transfer, 0, pub.length);
 		System.arraycopy(this.signature, 0, transfer, 1 + pub.length,
 				this.signature.length);
-		System.arraycopy(this.iv, 0, transfer, 1 + pub.length
+		System.arraycopy(this.iv, 0, transfer, pub.length
 				+ this.signature.length, this.iv.length);
-		System.arraycopy(this.encPrivKey, 0, transfer, 1 + pub.length
+		System.arraycopy(this.encPrivKey, 0, transfer, pub.length
 				+ this.signature.length + this.iv.length,
 				this.encPrivKey.length);
-		System.arraycopy(this.ciphertext, 0, transfer, 1 + pub.length
+		System.arraycopy(this.ciphertext, 0, transfer, pub.length
 				+ this.signature.length + this.iv.length
 				+ this.encPrivKey.length, this.ciphertext.length);
 
@@ -210,28 +212,25 @@ public class CSVFolder implements CSVObject {
 	public static CSVFolder createFromByteArray(byte[] input, Capability cap) {
 		// FIXME: Make more generic
 		byte[] pubkey = new byte[132];
-		System.arraycopy(input, 1, pubkey, 0, pubkey.length);
+		System.arraycopy(input, 0, pubkey, 0, pubkey.length);
 
 		byte[] signature = new byte[128];
-		System.arraycopy(input, 1 + pubkey.length, signature, 0,
-				signature.length);
+		System.arraycopy(input, pubkey.length, signature, 0, signature.length);
 
 		byte[] iv = new byte[16];
-		System.arraycopy(input, 1 + pubkey.length + signature.length, iv, 0,
+		System.arraycopy(input, pubkey.length + signature.length, iv, 0,
 				iv.length);
 
 		byte[] encPrivKey = new byte[272];
-		System.arraycopy(input, 1 + pubkey.length + signature.length
-				+ iv.length, encPrivKey, 0, encPrivKey.length);
+		System.arraycopy(input, pubkey.length + signature.length + iv.length,
+				encPrivKey, 0, encPrivKey.length);
 
-		byte[] cipherText = new byte[input.length - 1 - pubkey.length
+		byte[] cipherText = new byte[input.length - pubkey.length
 				- signature.length - iv.length - encPrivKey.length];
-		System.arraycopy(input, 1 + pubkey.length + signature.length
-				+ iv.length + encPrivKey.length, cipherText, 0,
-				cipherText.length);
+		System.arraycopy(input, pubkey.length + signature.length + iv.length
+				+ encPrivKey.length, cipherText, 0, cipherText.length);
 
-		CSVFolder foo = new CSVFolder(cap, cipherText, pubkey, iv,
-				signature);
+		CSVFolder foo = new CSVFolder(cap, cipherText, pubkey, iv, signature);
 		byte tmp[] = Cryptoutil.symECBDecrypt(encPrivKey, new SecretKeySpec(foo
 				.getCapability().getKey(), Cryptoutil.SYM_CIPHER));
 		foo.privkey = Cryptoutil.createRSAPrivateKey(tmp);

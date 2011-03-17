@@ -9,23 +9,28 @@ public class CapabilityImpl implements Capability {
 	private byte[] key;
 	private byte[] verification;
 	private CapabilityType type;
+	private boolean isFile;
 
 	public CapabilityImpl() {
 	}
 
-	public CapabilityImpl(CapabilityType type, byte[] storageIndex, byte[] key, byte[] verificationKey) {
+	public CapabilityImpl(CapabilityType type, byte[] storageIndex, byte[] key,
+			byte[] verificationKey, boolean isFile) {
 		this.storageIndex = storageIndex;
 		this.type = type;
 		this.key = key;
 		this.verification = verificationKey;
+		this.isFile = isFile;
 	}
 
-	public CapabilityImpl(CapabilityType type, byte[] key, byte[] verification) {
+	public CapabilityImpl(CapabilityType type, byte[] key, byte[] verification,
+			boolean isFile) {
 		this.type = type;
 		this.key = key;
 		this.verification = verification;
+		this.isFile = isFile;
 
-		switch(this.type) {
+		switch (this.type) {
 		case RW:
 			this.storageIndex = Cryptoutil.nHash(this.key, 2, 16);
 			break;
@@ -40,7 +45,7 @@ public class CapabilityImpl implements Capability {
 
 	@Override
 	public String getStorageIndex() {
-		//return Base64.encodeBase64String(this.storageIndex);
+		// return Base64.encodeBase64String(this.storageIndex);
 		return Base32.encode(this.storageIndex);
 	}
 
@@ -51,7 +56,7 @@ public class CapabilityImpl implements Capability {
 
 	@Override
 	public CapabilityType getType() {
-		return this.type;	
+		return this.type;
 	}
 
 	public void setStorageIndex(byte[] storageIndex) {
@@ -67,12 +72,17 @@ public class CapabilityImpl implements Capability {
 		return this.verification;
 	}
 
+	@Override
 	public String toString() {
 		String toString = "";
-		//toString += this.type.name() + ":" + Base64.encodeBase64String(this.key);
+		if (this.isFile) {
+			toString += "F:";
+		} else {
+			toString += "D:";
+		}
+
 		toString += this.type.name() + ":" + Base32.encode(this.key);
 		if (this.verification != null) {
-			//toString += ":" + Base64.encodeBase64String(this.verification);
 			toString += ":" + Base32.encode(this.verification);
 		}
 		return toString;
@@ -80,22 +90,27 @@ public class CapabilityImpl implements Capability {
 
 	public static Capability fromString(String capability) {
 		String[] content = capability.split(":");
-		CapabilityType type = CapabilityType.valueOf(content[0]);
-		//byte[] key = Base64.decodeBase64(content[1]);
-		byte[] key = Base32.decode(content[1]);
+		boolean isFile = true;
+
+		if (content[0] == "D") {
+			isFile = false;
+		}
+		CapabilityType type = CapabilityType.valueOf(content[1]);
+
+		byte[] key = Base32.decode(content[2]);
 		byte[] verify = null;
-		if (content.length>2) {
-			//verify = Base64.decodeBase64(content[2]);
-			verify = Base32.decode(content[2]);
+		if (content.length > 3) {
+			verify = Base32.decode(content[3]);
 		}
 
-		return new CapabilityImpl(type, key, verify);
+		return new CapabilityImpl(type, key, verify, isFile);
 	}
 
 	@Override
 	public byte[] getWriteEnabler() {
 		// TODO: Figure out if the message is somehow important for security.
-		byte[] taggedmsg = {'t','h','i','s','i','s','h','m','a','c','f','o','r'}; 
+		byte[] taggedmsg = { 't', 'h', 'i', 's', 'i', 's', 'h', 'm', 'a', 'c',
+				'f', 'o', 'r' };
 		if (this.type == CapabilityType.RW) {
 			byte[] tmp = Cryptoutil.hmac(taggedmsg, this.key);
 			byte[] tmp2 = new byte[16];
@@ -104,6 +119,16 @@ public class CapabilityImpl implements Capability {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isFolder() {
+		return !this.isFile;
+	}
+
+	@Override
+	public boolean isFile() {
+		return this.isFile;
 	}
 
 }

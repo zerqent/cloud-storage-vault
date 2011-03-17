@@ -133,15 +133,19 @@ public class CSVFileManager {
 		byte[] resp = Communication.get(cap.getStorageIndex(),
 				Communication.SERVER_GET);
 		CSVObject file;
-		switch (resp[0]) {
-		case 1:
-			file = CSVFolder.createFromByteArray(resp, cap);
-			break;
-		case 0:
+		// switch (resp[0]) {
+		// case 1:
+		// file = CSVFolder.createFromByteArray(resp, cap);
+		// break;
+		// case 0:
+		// file = CSVFile.createFromByteArray(resp, cap);
+		// break;
+		// default:
+		// file = null;
+		if (cap.isFile()) {
 			file = CSVFile.createFromByteArray(resp, cap);
-			break;
-		default:
-			file = null;
+		} else {
+			file = CSVFolder.createFromByteArray(resp, cap);
 		}
 		return file;
 	}
@@ -266,13 +270,14 @@ public class CSVFileManager {
 
 	public static void main(String[] args) throws IOException {
 		// Creating a root directory
-		// CSVFolderImpl root = new CSVFolderImpl();
+		// CSVFolder root = new CSVFolder();
 		// root.encrypt();
 		// Communication.put(root, Communication.SERVER_PUT);
 		// System.out.println(root.getCapability().toString());
+		// System.out.println(root.getCapability().getStorageIndex());
 
 		Capability root_cap = CapabilityImpl
-				.fromString("RW:GY6DLOF7KQ34MDZLVADUHEOCYM:ODLYUTOLAK4FCEJ4G47WNMGKFA");
+				.fromString("D:RW:YYGTXFSLWRFH3D33NJYFIXJBTQ:J4N4SFU7BLNIDZUYE5OEO4KBTU");
 		CSVFileManager fm = new CSVFileManager(root_cap);
 		System.out.println("File manager created!");
 		// fm.cd("Desktop");

@@ -30,7 +30,7 @@ public class CSVFile implements CSVObject {
 		this.plainText = FileUtils.readDataBinary(in, (int) f.length());
 		this.secretKey = Cryptoutil.generateSymmetricKey();
 		this.capability = new CapabilityImpl(CapabilityType.RO,
-				this.secretKey.getEncoded(), null);
+				this.secretKey.getEncoded(), null, true);
 		this.iv = new IvParameterSpec(Cryptoutil.nHash(
 				this.secretKey.getEncoded(), 2, 16));
 	}
@@ -40,11 +40,13 @@ public class CSVFile implements CSVObject {
 		this.cipherText = cipherText;
 	}
 
+	@Override
 	public void encrypt() {
 		this.cipherText = Cryptoutil.symEncrypt(this.plainText, this.secretKey,
 				this.iv);
 	}
 
+	@Override
 	public void decrypt() {
 		this.plainText = Cryptoutil.symDecrypt(this.cipherText, this.secretKey,
 				this.iv);
@@ -91,11 +93,7 @@ public class CSVFile implements CSVObject {
 		if (this.cipherText == null) {
 			encrypt();
 		}
-		byte[] transfer = new byte[1 + this.cipherText.length];
-		transfer[0] = 0;
-		System.arraycopy(this.cipherText, 0, transfer, 1,
-				this.cipherText.length);
-		return transfer;
+		return this.cipherText;
 	}
 
 	public byte[] getCipherText() {
@@ -103,11 +101,8 @@ public class CSVFile implements CSVObject {
 	}
 
 	public static CSVFile createFromByteArray(byte[] input, Capability cap) {
-
-		byte[] cipherText = new byte[input.length - 1];
-		System.arraycopy(input, 1, cipherText, 0, cipherText.length);
-		CSVFile foo = new CSVFile(cap, cipherText);
-		return foo;
+		CSVFile file = new CSVFile(cap, input);
+		return file;
 
 	}
 

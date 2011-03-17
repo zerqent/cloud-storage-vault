@@ -9,9 +9,14 @@ public interface Capability {
 	public byte[] getVerificationKey();
 
 	public CapabilityType getType();
-	
+
 	public byte[] getWriteEnabler();
-	
+
+	@Override
 	public String toString();
+
+	public boolean isFolder();
+
+	public boolean isFile();
 
 }

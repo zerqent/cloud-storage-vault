@@ -21,8 +21,10 @@ public class CapabilityImplTest {
 		KeyGenerator keygen = KeyGenerator.getInstance("AES");
 		keygen.init(128);
 		SecretKey sk = Cryptoutil.generateSymmetricKey();
-		this.cap = new CapabilityImpl(CapabilityType.RO, sk.getEncoded(), null);
-		this.rwcap = new CapabilityImpl(CapabilityType.RW, sk.getEncoded(), null);
+		this.cap = new CapabilityImpl(CapabilityType.RO, sk.getEncoded(), null,
+				false);
+		this.rwcap = new CapabilityImpl(CapabilityType.RW, sk.getEncoded(),
+				null, false);
 	}
 
 	@After
@@ -35,13 +37,17 @@ public class CapabilityImplTest {
 		String base32 = this.cap.getStorageIndex();
 		Assert.assertEquals(26, base32.length());
 		Assert.assertTrue(isBase32(base32));
-		Assert.assertArrayEquals(this.cap.getStorageIndexByte(), Base32.decode(this.cap.getStorageIndex()));
+		Assert.assertArrayEquals(this.cap.getStorageIndexByte(),
+				Base32.decode(this.cap.getStorageIndex()));
 	}
 
 	@Test
 	public void testStorageIndexGeneration() {
-		Assert.assertEquals(this.cap.getStorageIndex(), Base32.encode(Cryptoutil.nHash(this.cap.getKey(), 1, 16)));
-		Assert.assertEquals(this.rwcap.getStorageIndex(), Base32.encode(Cryptoutil.nHash(this.cap.getStorageIndexByte(),1,16)));
+		Assert.assertEquals(this.cap.getStorageIndex(),
+				Base32.encode(Cryptoutil.nHash(this.cap.getKey(), 1, 16)));
+		Assert.assertEquals(this.rwcap.getStorageIndex(),
+				Base32.encode(Cryptoutil.nHash(this.cap.getStorageIndexByte(),
+						1, 16)));
 	}
 
 	@Test
@@ -50,14 +56,17 @@ public class CapabilityImplTest {
 		Capability decoded = CapabilityImpl.fromString(encoded);
 		Assert.assertArrayEquals(this.cap.getKey(), decoded.getKey());
 		Assert.assertEquals(this.cap.getType(), decoded.getType());
-		Assert.assertEquals(this.cap.getStorageIndex(), decoded.getStorageIndex());
-		Assert.assertEquals(this.cap.getVerificationKey(), decoded.getVerificationKey());
+		Assert.assertEquals(this.cap.getStorageIndex(),
+				decoded.getStorageIndex());
+		Assert.assertEquals(this.cap.getVerificationKey(),
+				decoded.getVerificationKey());
 	}
 
 	@Test
 	public void testWriteEnablerGeneration() {
 		Assert.assertNull(this.cap.getWriteEnabler());
-		CapabilityImpl capimpl = new CapabilityImpl(CapabilityType.RW, Cryptoutil.generateSymmetricKey().getEncoded(), null);
+		CapabilityImpl capimpl = new CapabilityImpl(CapabilityType.RW,
+				Cryptoutil.generateSymmetricKey().getEncoded(), null, false);
 		Assert.assertNotNull(capimpl.getWriteEnabler());
 		Assert.assertEquals(16, capimpl.getWriteEnabler().length);
 	}
@@ -76,12 +85,11 @@ public class CapabilityImplTest {
 					break;
 				}
 			}
-			if(!isBase32) {
+			if (!isBase32) {
 				return false;
 			}
 		}
 		return true;
 	}
-
 
 }
