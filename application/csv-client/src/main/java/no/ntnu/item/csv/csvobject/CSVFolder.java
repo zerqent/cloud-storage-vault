@@ -33,7 +33,7 @@ public class CSVFolder implements CSVObject {
 	private byte[] signature;
 
 	public CSVFolder() {
-		super();
+		// super();
 		generateKeys();
 		this.contents = new HashMap<String, Capability>();
 	}

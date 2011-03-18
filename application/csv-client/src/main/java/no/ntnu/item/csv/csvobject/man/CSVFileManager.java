@@ -76,7 +76,7 @@ public class CSVFileManager {
 
 		// Upload file
 		switch (Communication.put(file, Communication.SERVER_PUT)) {
-		case 200:
+		case 201:
 			System.out.println("File successfully uploaded.");
 			break;
 		case 400:
@@ -181,6 +181,7 @@ public class CSVFileManager {
 					this.location.lastElement());
 			if (folder == null)
 				return;
+			Capability cap = folder.getCapability();
 			folder.decrypt();
 			this.currentFolder = (CSVFolder) folder;
 			this.location.pop();
@@ -215,7 +216,7 @@ public class CSVFileManager {
 
 		// Upload folder
 		switch (Communication.put(folder, Communication.SERVER_PUT)) {
-		case 200:
+		case 201:
 			System.out
 					.println("Folder " + alias + " was successfully created.");
 			break;
@@ -275,9 +276,9 @@ public class CSVFileManager {
 		// Communication.put(root, Communication.SERVER_PUT);
 		// System.out.println(root.getCapability().toString());
 		// System.out.println(root.getCapability().getStorageIndex());
-
+		// System.exit(0);
 		Capability root_cap = CapabilityImpl
-				.fromString("D:RW:YYGTXFSLWRFH3D33NJYFIXJBTQ:J4N4SFU7BLNIDZUYE5OEO4KBTU");
+				.fromString("D:RW:HEKYPXHSSDY2D6Q5JJ2XKTBEKQ:PKNUQN6YE2L6TOR23WWP3Q7MFY");
 		CSVFileManager fm = new CSVFileManager(root_cap);
 		System.out.println("File manager created!");
 		// fm.cd("Desktop");

@@ -92,7 +92,7 @@ public class CapabilityImpl implements Capability {
 		String[] content = capability.split(":");
 		boolean isFile = true;
 
-		if (content[0] == "D") {
+		if (content[0].equals("D")) {
 			isFile = false;
 		}
 		CapabilityType type = CapabilityType.valueOf(content[1]);

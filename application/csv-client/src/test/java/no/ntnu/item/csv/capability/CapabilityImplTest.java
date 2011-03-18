@@ -60,6 +60,7 @@ public class CapabilityImplTest {
 				decoded.getStorageIndex());
 		Assert.assertEquals(this.cap.getVerificationKey(),
 				decoded.getVerificationKey());
+		Assert.assertEquals(this.cap.isFile(), decoded.isFile());
 	}
 
 	@Test
