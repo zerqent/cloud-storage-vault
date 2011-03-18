@@ -148,6 +148,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ETE}{External Trusted Entity}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{HTTP}{Hypertext Transfer Protocol}
+\acro{HTTPS}{Hypertext Transfer Protocol Secure}
 \acro{IaaS}{Infrastructure as a Service}
 \acro{IV}{Initialization Vector}
 \acro{JCA}{Java Cryptography Architecture}
@@ -1125,7 +1126,6 @@ and receiving files. In addition, an \ac{ACL} layer is needed to support user
 management and access control to able to allow the deletion of files.
 
 \subsection{Communication and Architecture}
-% (\texttt{POST}) (\texttt{GET})
 
 By definition, cloud applications are accessible over the Internet. The system
 we are creating, should be able to send and receive files and information from a
@@ -1133,27 +1133,44 @@ server in the cloud. The \ac{HTTP} networking protocol is the foundation of data
 communication for the World Wide Web, and is thus chosen as the method of
 transferring information between client and server.
 
-The Web is built around an architectural style called \ac{REST} 
-\cite[ch. 5]{fielding}, and is defined by four interface constraints:
-identification of resources, manipulation of resources through representations,
-self-descriptive messages, and, hypermedia as the engine of application state. 
-In addition, \ac{REST} dictates five\footnote{And one optional, Code on demand,
-which is not applicable for our system.} architectural constraints
-\cite{fielding}:
+\paragraph{\acs{REST}} The Web is built around an architectural style called
+\ac{REST} \cite[ch. 5]{fielding}, which is defined by four interface
+constraints: identification of resources, manipulation of resources through
+representations, self-descriptive messages, and, hypermedia as the engine of
+application state. In addition, \ac{REST} dictates five\footnote{And one
+optional, Code on demand, which is not applicable for our system.} architectural
+constraints \cite{fielding}. Our server application adheres to these
+constraints:
 
 \begin{itemize}\addtolength{\itemsep}{-0.5\baselineskip}
-  \item Client-server
-  \item Stateless
-  \item Cacheable
-  \item Layered system
-  \item Uniform interface
+  \item[\textbf{Client-server}]
+    The server is our server application, and the client is the various client
+    applications, either mobile or stationary.
+  
+  \item[Stateless]
+    Obviously, since the server is just a simple key-value file store, it does
+    not need to keep state.
+
+  \item[Cacheable]
+
+  \item[Layered system]
+
+  \item[Uniform interface]
+
 \end{itemize}
 
-In our case, resources are the encrypted files, and the architectural
+In this context, resources are the encrypted files, and the architectural
 constraints of \ac{REST} also matches that of our system as a
-whole, thus, the server application are designed in a \acs{REST}ful manner.
+whole. Thus, the server application are designed in a \acs{REST}ful manner.
 
-% TODO: HTTPS
+The server is obviously stateless -- it is just a simple key-value file
+store -- and it is easy for the server to cache.
+
+
+\paragraph{Network Security} Since we are utilizing \ac{HTTP}, we can easily add
+an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more difficult for
+potential attackers to intercept messages, and also provides protection against
+the most basic form of \ac{MITM} attacks.
 
 \subsection{Environment}
 
