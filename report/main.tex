@@ -137,10 +137,13 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{AES}{Advanced Encryption Standard}
 \acro{CA}{Certification authority}
 \acro{CBC}{Cipher Block Chaining}
+\acro{CG}{Credential Generator}
 \acro{CM}{Cloud Manager}
+\acro{DP}{Data Processor}
 \acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
+\acro{DV}{Data Verifier}
 \acro{ECB}{Electronic Codeboo}
 \acro{ETE}{External Trusted Entity}
 \acro{FAQ}{Frequently Asked Questions}
@@ -168,6 +171,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{TC}{Trusted Coordinator}
 \acro{TCCP}{Trusted Cloud Computing Platform}
 \acro{TCG}{Trusted Computing Group}
+\acro{TG}{Token Generator}
 \acro{TLS}{Transport Layer Security}
 \acro{TPM}{Trusted Platform Module}
 \acro{TTP}{Trusted Third Party}
@@ -451,7 +455,12 @@ To be operational, PasS is dependent on a fundamental system and trust model. Th
 system model consists of 3 communicating parties, namely a cloud provider, a
 cloud customer and a \ac{TTP}. The PasS system model is shown
 in Figure \ref{fig:RW:PasS}. 
-
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{ArchitecturePasS.pdf}
+    \caption{System model of PasS}
+    \label{fig:RW:PasS}
+\end{figure}
 It is important to notice that the PasS system model is dependent on
 pre-installed cryptographic coprocessors in the cloud. A cryptographic
 coprocessor is a small hardware card, including a processor, RAM, ROM, backup
@@ -486,7 +495,6 @@ co-processor can further process the encrypted data and store it in the cloud
 facility. The stored data is encrypted and unknown to the cloud provider.
 
 \subsection{Privacy Manager}
-\
 In 2009, HP Labs proposed a way to manage and control a user's private data stored and
 processed in a cloud facility \cite{privacymanager}. Their solution was partially implemented
 as a software program called a privacy manager.
@@ -542,7 +550,12 @@ the TPM chip. With this in mind, TCCP is based upon a remote attestation scheme.
 The remote attestation scheme enables a network entity to verify whether another
 remote entity runs a TPM or not. A detailed description of the remote
 attestation scheme is given in \cite{tccp}.
-
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{ArchitectureTCCP.pdf}
+    \caption{System architecture of TCCP}
+    \label{fig:RW:TCCP}
+\end{figure}
 The TCCP system architecture is illustrated in Figure \ref{fig:RW:TCCP}. The
 trusted computing base of TCCP includes a \ac{TC} and a \ac{TVMM}. The TC
 manages the trusted nodes within a cluster. To be trusted, a node must be
@@ -567,6 +580,27 @@ is that the trusted nodes and their TC communicates to ensure a secure environme
 the client's VM.
 
 \subsection{Cryptographic Cloud Storage}
+In 2010, researchers at Microsoft were looking at the problem of building a secure
+cloud storage service on top of a non-trusted cloud storage provider
+\cite{microsoftresearch}. They described architectural solutions related to both consumers and
+enterprises. The architectures were explained in high level and were designed to
+utilize and combine recent and non-standard cryptographic primitives.
+
+The consumer architecture is depicted in Figure \ref{fig:RW:CCS:CA}. A typical
+enterprise architecture is shown in Figure \ref{fig:RW:CCS:EA}.
+
+Each architecture consists of the following computational components:
+\begin{description}
+\item[\ac{DP}] \hfill \\Processes data before it is sent to the cloud.
+\item[\ac{DV}] \hfill \\Checks whether data stored in the cloud has been
+tampered with.
+\item[\ac{TG}] \hfill \\Generates tokens that enable the cloud provider to
+retrieve segments of customer data.
+\item[\ac{CG}] \hfill \\Responsible for creating and distributing access 
+policies.
+\end{description}
+The core components are suggested to support searchable encryption,
+attribute-based encryption and a ``proofs of storage'' protocol.
 
 \section{Existing Solutions}
 There are a number of existing storage solutions for storing data in the cloud,
@@ -1348,6 +1382,7 @@ without the users knowledge.
 % - Hvem 'eier' en directory
 % - Garbage collection? (vanskelig)
 
+\section{Compared with Other Solutions}
 %**************************************%
 \chapter{Conclusion and Future Work}
 %**************************************%
