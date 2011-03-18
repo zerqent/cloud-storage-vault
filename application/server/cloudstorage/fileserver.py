@@ -41,7 +41,7 @@ def get_file(request, storage_index=None):
                    ('Content-Length', str(size))]
         return Response(file_to_send, headers)
 
-    return Response('Did not receive any storage index.', status_code=400)
+    return Response('No resource ID given.', status_code=400)
 
 @route('/put')
 def put_file(request, storage_index=None, write_enabler=None):
@@ -63,11 +63,7 @@ def put_file(request, storage_index=None, write_enabler=None):
                     _clean_input(write_enabler)
                     )
 
-                if save_status:
-                    return Response('File received')
-                else:
-                    # File Access Problems?
-                    return Response(status_code=500)
+                return Response(status_code=save_status)
             except FileSystemException, e:
                 return Response(e.text, status_code=e.code)
 
