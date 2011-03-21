@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.workers.DownloadTask;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -52,6 +53,7 @@ public class RemoteBrowseActivity extends ListActivity {
 			long after = System.currentTimeMillis();
 			System.out.println(after - before);
 			return true;
+
 		} else if (item.getTitle().equals("Upload File")) {
 			long before = System.currentTimeMillis();
 			try {
@@ -88,20 +90,27 @@ public class RemoteBrowseActivity extends ListActivity {
 					int position, long id) {
 				TextView tmp = (TextView) view;
 				String alias = tmp.getText().toString();
-				try {
-					CSVActivity.fm.cd(alias);
-					doBrowsing();
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Capability cap = files.get(alias);
+				if (alias.equals("..") || cap.isFolder()) {
+					try {
+						CSVActivity.fm.cd(alias);
+						doBrowsing();
+					} catch (ClientProtocolException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					// CSVFile foo = (CSVFile) CSVActivity.fm.get(alias);
+					// FileUtils.writeFileToDisk("/mnt/sdcard/" + alias,
+					// foo.getPlainText());
+					new DownloadTask().execute(alias);
 
+				}
 			}
 		});
 
 	}
-
 }
