@@ -74,6 +74,9 @@ def save_file(storage_index, data, data_length, write_enabler=None):
             elif e.errno == errno.EACCES:
                 # We have problems getting access to FILE_STORE
                 raise FileSystemException(code=503) # Service Unavailable
+            else:
+                # We have some other OSError
+                raise FileSystemException(errno.errorcode[e.errno], code=500)
 
         #FIXME: Probably want some sort of loop to read chunks at the time.
         fp.write(data.read(int(data_length)))
