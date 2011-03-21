@@ -1258,8 +1258,8 @@ application, and basically includes the \ac{URL} scheme in
 \texttt{fileserver.py}. An example \ac{URL} mapping is shown in Listing
 \ref{lst:IM:get}. The function \texttt{get\_file} is registered to have the
 \ac{URL} \texttt{/get} through the decorator provided by Pyroutes. After
-retrieving the file from disk, a proper \ac{HTTP} response is returned, containing
-required headers.
+retrieving the file from disk, a proper \ac{HTTP} response is returned,
+containing required headers.
 
 The file \texttt{filesystem.py} contains the low-level file system operations,
 \texttt{save\_file()} and \texttt{retrieve\_file()}, together with a set of
@@ -1286,10 +1286,8 @@ database.
     \label{fig:IM:layout}
 \end{figure}
 
-\lstinputlisting[breaklines=false,label=lst:IM:get, caption=URL mapping in fileserver.py]
+\lstinputlisting[language=Python,breaklines=false,label=lst:IM:get, caption=URL mapping in fileserver.py]
 {listings/fileserver.py}
-
-\subsection{Upload/Download Functionality}
 
 \subsection{ACL functionality}
 
