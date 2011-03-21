@@ -4,11 +4,13 @@ import java.io.IOException;
 
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.csvobject.CSVFile;
+import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
 import org.apache.http.client.ClientProtocolException;
 
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -32,6 +34,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
+		} catch (NoSuchAliasException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return "/mnt/sdcard/" + alias;
@@ -40,7 +45,13 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		// TODO Auto-generated method stub
+		// Context ctx = Context.this.getApplicationContext();
 		super.onPostExecute(result);
+		CharSequence text = "Hello toast!";
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(null, text, duration);
+		toast.show();
 	}
 
 	@Override

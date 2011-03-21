@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.exception.DuplicateAliasException;
+import no.ntnu.item.csv.exception.IllegalFileNameException;
+import no.ntnu.item.csv.exception.InsufficientPermissionException;
+import no.ntnu.item.csv.exception.NoSuchAliasException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import no.ntnu.item.csv.workers.DownloadTask;
 
 import org.apache.http.client.ClientProtocolException;
@@ -43,27 +48,16 @@ public class RemoteBrowseActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Ugly
-		if (item.getTitle().equals("Create folder")) {
-			long before = System.currentTimeMillis();
-			try {
-				CSVActivity.fm.mkdir("test22");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			long after = System.currentTimeMillis();
-			System.out.println(after - before);
+		if (item.getTitle().equals("Create folder")){
+			Intent intent = new Intent();
+			intent.setClass(this, NewFolderActivity.class);
+			startActivityForResult(intent, 2);
 			return true;
 
 		} else if (item.getTitle().equals("Upload File")) {
 			Intent intent = new Intent();
 			intent.setClass(this, LocalBrowseActivity.class);
 			startActivityForResult(intent, 1);
-			
-			long before = System.currentTimeMillis();
-			//put
-			long after = System.currentTimeMillis();
-			System.out.println(after - before);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -77,7 +71,6 @@ public class RemoteBrowseActivity extends ListActivity {
 		tmpList.addAll(files.keySet());
 		Collections.sort(tmpList);
 		tmpList.add(0, "..");
-
 		setListAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.test_list_item, tmpList));
 		System.out.print("Done");
@@ -101,6 +94,9 @@ public class RemoteBrowseActivity extends ListActivity {
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} catch (NoSuchAliasException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				} else {
 					// CSVFile foo = (CSVFile) CSVActivity.fm.get(alias);
@@ -119,12 +115,28 @@ public class RemoteBrowseActivity extends ListActivity {
 		
 		if(resultCode == RESULT_OK){
 			switch (requestCode){
-				case 1:	try {
+				case 1: long before = System.currentTimeMillis();	
+					try {
 					CSVActivity.fm.put(data.getStringExtra("FILEPATH"), null);
-					doBrowsing();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}; break;
+					} catch (InsufficientPermissionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalFileNameException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (DuplicateAliasException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ServerCommunicationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					long after = System.currentTimeMillis();
+					System.out.println(after - before);
+					break;
 				default:;
 			}		
 		}
