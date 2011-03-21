@@ -168,6 +168,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SaaS}{Software as a Service}
 \acro{SHA}{Secure Hash Algorithm}
+\acro{SQL}{Structured Query Language}
 \acro{SSL}{Secure Socket Layer}
 \acro{TC}{Trusted Coordinator}
 \acro{TCCP}{Trusted Cloud Computing Platform}
@@ -177,6 +178,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{TPM}{Trusted Platform Module}
 \acro{TTP}{Trusted Third Party}
 \acro{TVMM}{Trusted Virtual Machine Monitor}
+\acro{URI}{Uniform Resource Indetifier}
 \acro{URL}{Uniform Resource Locator}
 \acro{VM}{Virtual Machine}
 \acro{VMM}{Virtual Machine Monitor}
@@ -1136,7 +1138,7 @@ The server, in the most basic form, has to support two operations -- sending
 and receiving files. In addition, an \ac{ACL} layer is needed to support user
 management and access control to able to allow the deletion of files.
 
-\subsection{Communication and Architecture}
+\subsection{Communication and Architectural Patterns}
 
 By definition, cloud applications are accessible over the Internet. The system
 we are creating, should be able to send and receive files and information from a
@@ -1144,44 +1146,71 @@ server in the cloud. The \ac{HTTP} networking protocol is the foundation of data
 communication for the World Wide Web, and is thus chosen as the method of
 transferring information between client and server.
 
-\paragraph{\acs{REST}} The Web is built around an architectural style called
+\subsubsection{\acs{REST}} The Web is built around an architectural style called
 \ac{REST} \cite[ch. 5]{fielding}, which is defined by four interface
 constraints: identification of resources, manipulation of resources through
 representations, self-descriptive messages, and, hypermedia as the engine of
 application state. In addition, \ac{REST} dictates five\footnote{And one
 optional, Code on demand, which is not applicable for our system.} architectural
 constraints \cite{fielding}. Our server application adheres to these
-constraints:
+constraints or \emph{patterns} as follows:
 
-\begin{itemize}\addtolength{\itemsep}{-0.5\baselineskip}
-  \item[\textbf{Client-server}]
+\begin{description}
+  \item[Client-server] \hfill \\
     The server is our server application, and the client is the various client
     applications, either mobile or stationary.
   
-  \item[Stateless]
+  \item[Stateless] \hfill \\
     Obviously, since the server is just a simple key-value file store, it does
     not need to keep state.
 
-  \item[Cacheable]
+  \item[Cacheable] \hfill \\
+    The server could easily add caching, by putting each encrypted file in
+    memory as downloaded, and using the Least-Frequently Used algorithm for
+    choosing which items to swap out. In addition, for every update of a folder,
+    the corresponding cache item has to be marked as invalid.
 
-  \item[Layered system]
+  \item[Layered system] \hfill \\
+    Layers are used to encapsulate, separate and hide functionality.
+    Figure \ref{fig:IM:layers} illustrates the layers of the server application.
 
-  \item[Uniform interface]
+  \item[Uniform interface] \hfill \\
+    The interface between clients and server(s) are given by the URI scheme in
+    Table \ref{tbl:IM:restinterface}.
 
-\end{itemize}
+\end{description}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{ImplementationServerLayers.pdf}
+    \caption{Architectural Layers in the Server application.}
+    \label{fig:IM:layers}
+\end{figure}
+
+\begin{table}[h!]
+    \centering
+    \caption{The \acs{REST} interface of the server application.}
+    \begin{tabular}{|l|l|}
+        \hline
+        \multicolumn{1}{|c}{\textbf{\acs{URI}}} & \multicolumn{1}{|c|}{\textbf{Description}} \\
+        \hline
+        \texttt{/put/<storage index>} & Creates or updates encrypted file \\
+        \hline
+        \texttt{/get/<storage index>} & Retrieves encrypted file \\
+        \hline
+    \end{tabular}
+    \label{tbl:IM:restinterface}
+\end{table}
 
 In this context, resources are the encrypted files, and the architectural
 constraints of \ac{REST} also matches that of our system as a
 whole. Thus, the server application are designed in a \acs{REST}ful manner.
 
-The server is obviously stateless -- it is just a simple key-value file
-store -- and it is easy for the server to cache.
-
-
-\paragraph{Network Security} Since we are utilizing \ac{HTTP}, we can easily add
-an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more difficult for
-potential attackers to intercept messages, and also provides protection against
-the most basic form of \ac{MITM} attacks.
+\subsubsection{Network Security} Since we are utilizing \ac{HTTP}, we can easily
+add an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more difficult
+for potential attackers to intercept messages, and also provides protection
+against the most basic form of \ac{MITM} attacks. The top-most layer of Figure
+\ref{fig:IM:layers} thus refers to \ac{TLS}.
 
 \subsection{Environment}
 
@@ -1212,13 +1241,34 @@ containing the environment variables, and a callback function for which the
 application uses to return data to the requesting user via the server.
 
 \paragraph{Pyroutes} To adhere to the \ac{DRY} principles, we chose to make use
-of a micro framework around \ac{WSGI} called Pyroutes. It provides shortcuts for
-the most frequently used functionality when developing web services, as that of
-\ac{URL} handling and processing of submitted user data in the form
-of \texttt{GET} and \texttt{POST} requests.
+of a micro framework around \ac{WSGI} called
+Pyroutes\footnote{\url{http://www.pyroutes.com/}}. It provides shortcuts for the
+most frequently used functionality when developing web services, as that of
+\ac{URL} handling and processing of submitted user data in the form of
+\texttt{GET} and \texttt{POST} requests.
+
+Pyroutes did not, however, support the HTTP \texttt{PUT} request, so this was
+implemented and contributed back to the project.
+
+\subsection{Implementation Details}
+
+The code was structured as illustrated in Figure \ref{fig:IM:layout}. The file
+\texttt{handler.py} provides the interface for \texttt{mod\_wsgi} and the server
+application, and basically includes the \ac{URL} scheme in
+\texttt{fileserver.py}. An example \ac{URL} mapping is shown in Listing
+\ref{lst:IM:get}. The function \texttt{get\_file} is registered to have the
+\ac{URL} \texttt{/get} through the decorator provided by Pyroutes. After
+retrieving the file from disk, a proper \ac{HTTP} response is returned, containing
+required headers.
+
+The file \texttt{filesystem.py} contains the low-level file system operations,
+\texttt{save\_file()} and \texttt{retrieve\_file()}, together with a set of
+helper functions to manage file access checking and database operations.  The
+folder \texttt{sql/} contains \ac{SQL} code to create necessary tables in the
+database, and \texttt{db.py} provides an helper function to connect to the
+database.
 
 \begin{figure}[h!]
-    \centering
 \begin{verbatim}
 |-- cloudstorage
 |   |-- __init__.py
@@ -1229,16 +1279,15 @@ of \texttt{GET} and \texttt{POST} requests.
 |   `-- sql
 |       `-- write_enablers.sql
 |-- handler.py
-|-- pyroutes_settings.py
 `-- tests
     `-- filesystem_tests.py
 \end{verbatim}
     \caption{Server module structure}
-    \label{fig:I:server}
+    \label{fig:IM:layout}
 \end{figure}
 
-\subsection{Communication with Client}
-% HTTP/SSL/RESTfull
+\lstinputlisting[breaklines=false,label=lst:IM:get, caption=URL mapping in fileserver.py]
+{listings/fileserver.py}
 
 \subsection{Upload/Download Functionality}
 
