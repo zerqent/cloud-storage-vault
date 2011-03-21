@@ -26,7 +26,7 @@ public class CSVActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		String root_uri = "D:RW:HEKYPXHSSDY2D6Q5JJ2XKTBEKQ:PKNUQN6YE2L6TOR23WWP3Q7MFY";
+		String root_uri = "D:RW:6ORLM4E44ZEDQWVELOWZ26FQTQ:V655OJG2DI2XLNIYQYV63SFGYA";
 		Capability root_cap = CapabilityImpl.fromString(root_uri);
 
 		fm = new CSVFileManager(root_cap);

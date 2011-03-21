@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.exception.DuplicateAliasException;
+import no.ntnu.item.csv.exception.IllegalFileNameException;
+import no.ntnu.item.csv.exception.InsufficientPermissionException;
+import no.ntnu.item.csv.exception.NoSuchAliasException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import no.ntnu.item.csv.workers.DownloadTask;
 
 import org.apache.http.client.ClientProtocolException;
@@ -49,6 +54,18 @@ public class RemoteBrowseActivity extends ListActivity {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (InsufficientPermissionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DuplicateAliasException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServerCommunicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalFileNameException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			long after = System.currentTimeMillis();
 			System.out.println(after - before);
@@ -59,6 +76,18 @@ public class RemoteBrowseActivity extends ListActivity {
 			try {
 				CSVActivity.fm.put("/mnt/sdcard/test.mp3", null);
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InsufficientPermissionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalFileNameException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DuplicateAliasException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServerCommunicationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -99,6 +128,9 @@ public class RemoteBrowseActivity extends ListActivity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchAliasException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
