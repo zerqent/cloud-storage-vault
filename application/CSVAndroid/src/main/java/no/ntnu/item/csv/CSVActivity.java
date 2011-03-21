@@ -26,10 +26,10 @@ public class CSVActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		String root_uri = "D:RW:HEKYPXHSSDY2D6Q5JJ2XKTBEKQ:PKNUQN6YE2L6TOR23WWP3Q7MFY";
-		Capability root_cap = CapabilityImpl.fromString(root_uri);
-
-		fm = new CSVFileManager(root_cap);
+//		String root_uri = "D:RW:HEKYPXHSSDY2D6Q5JJ2XKTBEKQ:PKNUQN6YE2L6TOR23WWP3Q7MFY";
+//		Capability root_cap = CapabilityImpl.fromString(root_uri);
+//
+//		fm = new CSVFileManager(root_cap);
 
 		// Capture viewed buttons.
 		bDownload = (Button) findViewById(R.id.menu_download);

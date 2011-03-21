@@ -12,6 +12,7 @@ import no.ntnu.item.csv.workers.DownloadTask;
 import org.apache.http.client.ClientProtocolException;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,13 +56,12 @@ public class RemoteBrowseActivity extends ListActivity {
 			return true;
 
 		} else if (item.getTitle().equals("Upload File")) {
+			Intent intent = new Intent();
+			intent.setClass(this, LocalBrowseActivity.class);
+			startActivityForResult(intent, 1);
+			
 			long before = System.currentTimeMillis();
-			try {
-				CSVActivity.fm.put("/mnt/sdcard/test.mp3", null);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			//put
 			long after = System.currentTimeMillis();
 			System.out.println(after - before);
 			return true;
@@ -107,10 +107,26 @@ public class RemoteBrowseActivity extends ListActivity {
 					// FileUtils.writeFileToDisk("/mnt/sdcard/" + alias,
 					// foo.getPlainText());
 					new DownloadTask().execute(alias);
-
 				}
 			}
 		});
-
+	}
+    
+	@Override
+	public void onActivityResult(int requestCode,int resultCode,Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if(resultCode == RESULT_OK){
+			switch (requestCode){
+				case 1:	try {
+					CSVActivity.fm.put(data.getStringExtra("FILEPATH"), null);
+					doBrowsing();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}; break;
+				default:;
+			}		
+		}
 	}
 }
