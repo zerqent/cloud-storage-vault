@@ -1,6 +1,4 @@
 # coding: utf-8
-from wsgiref.util import FileWrapper
-
 from pyroutes import route
 from pyroutes.http.response import Response
 

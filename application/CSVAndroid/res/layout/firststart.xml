@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+	<TextView android:text="Configuration" android:id="@+id/firstStart_header" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:textStyle="bold" android:singleLine="true" android:textSize="25sp"></TextView>
+	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_new" android:text="Create new root Capability" android:layout_width="fill_parent"/>
+	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_import" android:text="Import root Capability" android:layout_width="fill_parent"></Button>
+
+
+
+
+</LinearLayout>
