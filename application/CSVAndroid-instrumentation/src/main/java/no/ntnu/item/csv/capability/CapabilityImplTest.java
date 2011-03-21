@@ -25,9 +25,10 @@ public class CapabilityImplTest extends
 		KeyGenerator keygen = KeyGenerator.getInstance("AES");
 		keygen.init(128);
 		SecretKey sk = Cryptoutil.generateSymmetricKey();
-		this.cap = new CapabilityImpl(CapabilityType.RO, sk.getEncoded(), null);
+		this.cap = new CapabilityImpl(CapabilityType.RO, sk.getEncoded(), null,
+				true);
 		this.rwcap = new CapabilityImpl(CapabilityType.RW, sk.getEncoded(),
-				null);
+				null, true);
 	}
 
 	public void testStorageIndexEncoding() {
@@ -62,7 +63,7 @@ public class CapabilityImplTest extends
 	public void testWriteEnablerGeneration() {
 		assertNull(this.cap.getWriteEnabler());
 		CapabilityImpl capimpl = new CapabilityImpl(CapabilityType.RW,
-				Cryptoutil.generateSymmetricKey().getEncoded(), null);
+				Cryptoutil.generateSymmetricKey().getEncoded(), null, true);
 		assertNotNull(capimpl.getWriteEnabler());
 		assertEquals(16, capimpl.getWriteEnabler().length);
 	}

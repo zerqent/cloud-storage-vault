@@ -13,6 +13,8 @@ public class FileUtils {
 			DataOutputStream os = new DataOutputStream(new FileOutputStream(
 					path));
 			os.write(data);
+			os.flush();
+			os.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

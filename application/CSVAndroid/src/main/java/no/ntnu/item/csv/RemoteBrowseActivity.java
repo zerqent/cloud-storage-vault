@@ -138,7 +138,7 @@ public class RemoteBrowseActivity extends ListActivity {
 					// CSVFile foo = (CSVFile) CSVActivity.fm.get(alias);
 					// FileUtils.writeFileToDisk("/mnt/sdcard/" + alias,
 					// foo.getPlainText());
-					new DownloadTask().execute(alias);
+					new DownloadTask(RemoteBrowseActivity.this).execute(alias);
 
 				}
 			}
