@@ -1,4 +1,4 @@
-package no.ntnu.item.csv.localcredentials;
+package no.ntnu.item.csv.credentials;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

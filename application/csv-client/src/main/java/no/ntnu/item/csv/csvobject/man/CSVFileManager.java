@@ -301,4 +301,8 @@ public class CSVFileManager {
 		}
 
 	}
+
+	public CSVFolder getCurrentFolder() {
+		return currentFolder;
+	}
 }
