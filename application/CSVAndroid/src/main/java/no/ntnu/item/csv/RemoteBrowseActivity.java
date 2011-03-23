@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.credentials.DisplayCapability;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.workers.CreateFolderTask;
 import no.ntnu.item.csv.workers.DownloadTask;
@@ -28,8 +29,9 @@ import android.widget.TextView;
 
 public class RemoteBrowseActivity extends ListActivity {
 
-	public final int MENU_CREATE_FOLDER = 2;
-	public final int MENU_UPLOAD_FILE = 1;
+	public static final int MENU_UPLOAD_FILE = 1;
+	public static final int MENU_CREATE_FOLDER = 2;
+	public static final int MENU_SHOW_CAPABILITY = 3;
 
 	private static Map<String, Capability> files;
 
@@ -43,6 +45,7 @@ public class RemoteBrowseActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_UPLOAD_FILE, 0, "Upload File");
 		menu.add(0, MENU_CREATE_FOLDER, 0, "Create Folder");
+		menu.add(0, MENU_SHOW_CAPABILITY, 0, "Show cap");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -58,6 +61,11 @@ public class RemoteBrowseActivity extends ListActivity {
 		case MENU_UPLOAD_FILE:
 			intent.setClass(this, LocalBrowseActivity.class);
 			startActivityForResult(intent, MENU_UPLOAD_FILE);
+			return true;
+		case MENU_SHOW_CAPABILITY:
+			DisplayCapability.displayCapability(this,
+					CSVActivity.fm.getCurrentFolder().getCapability()).show();
+			intent = null;
 			return true;
 		}
 
