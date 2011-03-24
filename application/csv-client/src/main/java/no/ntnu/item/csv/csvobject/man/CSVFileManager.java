@@ -325,4 +325,18 @@ public class CSVFileManager {
 	public CSVFolder getCurrentFolder() {
 		return currentFolder;
 	}
+
+	public static CSVObject getCSVObject(Capability cap) {
+		byte[] resp = Communication.get(cap.getStorageIndex(),
+				Communication.SERVER_GET);
+		CSVObject file;
+
+		if (cap.isFile()) {
+			file = CSVFile.createFromByteArray(resp, cap);
+		} else {
+			file = CSVFolder.createFromByteArray(resp, cap);
+		}
+		return file;
+
+	}
 }
