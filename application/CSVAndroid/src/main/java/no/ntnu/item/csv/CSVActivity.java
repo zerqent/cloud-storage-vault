@@ -2,7 +2,7 @@ package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
-import no.ntnu.item.csv.credentials.DisplayCapability;
+import no.ntnu.item.csv.contrib.com.google.zxing.integration.android.IntentIntegrator;
 import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
@@ -61,9 +61,11 @@ public class CSVActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				DisplayCapability.displayCapability(CSVActivity.this,
-						CSVActivity.fm.getCurrentFolder().getCapability())
-						.show();
+				// DisplayCapability.displayCapability(CSVActivity.this,
+				// CSVActivity.fm.getCurrentFolder().getCapability())
+				// .show();
+				IntentIntegrator.shareText(CSVActivity.this, fm
+						.getCurrentFolder().getCapability().toString());
 			}
 		});
 
@@ -71,8 +73,9 @@ public class CSVActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				 Intent intent = new Intent(CSVActivity.this, CreateShareActivity.class);
-				 startActivity(intent);
+				Intent intent = new Intent(CSVActivity.this,
+						CreateShareActivity.class);
+				startActivity(intent);
 			}
 		});
 	}

@@ -4,7 +4,10 @@ import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.credentials.LocalCredentials;
+import no.ntnu.item.csv.workers.CreateRootCapTask;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 public class FirstStartActivity extends Activity {
 
 	public static final int REQUEST_ROOTCAP = 1;
+	public static final int REQUEST_BARCODE = 0;
 
 	public Capability root_cap;
 	public String rootCapString = null;
@@ -23,6 +27,7 @@ public class FirstStartActivity extends Activity {
 	private Button bImportBarcode;
 	private Button bCreateNew;
 	private Button bImport;
+	private Dialog progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +44,9 @@ public class FirstStartActivity extends Activity {
 		bCreateNew.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				LocalCredentials creds = new LocalCredentials(
-						getApplicationContext(), true);
-				root_cap = creds.getRootCapability();
-				done();
-
+				progress = ProgressDialog.show(FirstStartActivity.this, "",
+						"Generating secret keys, please wait..", true);
+				new CreateRootCapTask(FirstStartActivity.this).execute();
 			}
 		});
 
@@ -78,7 +81,11 @@ public class FirstStartActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO: Figure out barcode support.
+				Intent intent = new Intent(
+						"com.google.zxing.client.android.SCAN");
+				intent.setPackage("com.google.zxing.client.android");
+				intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+				startActivityForResult(intent, REQUEST_BARCODE);
 			}
 		});
 
@@ -104,7 +111,22 @@ public class FirstStartActivity extends Activity {
 			new LocalCredentials(this, CapabilityImpl.fromString(rootCapString));
 			done();
 			return;
+		case REQUEST_BARCODE:
+			if (resultCode == RESULT_OK) {
+				rootCapString = data.getStringExtra("SCAN_RESULT");
+				new LocalCredentials(this,
+						CapabilityImpl.fromString(rootCapString));
+				done();
+			}
 		}
 
 	}
+
+	public void supplyWithRootCap(Capability cap) {
+		this.root_cap = cap;
+		new LocalCredentials(this, cap);
+		this.progress.dismiss();
+		done();
+	}
+
 }
