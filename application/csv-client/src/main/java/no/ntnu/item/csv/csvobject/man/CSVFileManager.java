@@ -24,7 +24,7 @@ import org.apache.http.client.ClientProtocolException;
 
 /**
  * @author pal
- *
+ * 
  */
 public class CSVFileManager {
 
@@ -44,8 +44,8 @@ public class CSVFileManager {
 	}
 
 	public void put(String filepath, CSVFolder folder) throws IOException,
-	InsufficientPermissionException, IllegalFileNameException,
-	DuplicateAliasException, ServerCommunicationException {
+			InsufficientPermissionException, IllegalFileNameException,
+			DuplicateAliasException, ServerCommunicationException {
 		// Check write permissions
 		if (folder == null) {
 			folder = this.currentFolder;
@@ -107,7 +107,7 @@ public class CSVFileManager {
 	}
 
 	public CSVObject get(String alias) throws ClientProtocolException,
-	IOException, NoSuchAliasException {
+			IOException, NoSuchAliasException {
 		Capability cap;
 
 		if ((cap = this.currentFolder.getContents().get(alias)) == null) {
@@ -134,7 +134,7 @@ public class CSVFileManager {
 	}
 
 	public void cd(String folderAlias) throws ClientProtocolException,
-	IOException, NoSuchAliasException {
+			IOException, NoSuchAliasException {
 		CSVObject folder;
 		if (!folderAlias.equals("..")) {
 			folder = this.get(folderAlias);
@@ -163,7 +163,9 @@ public class CSVFileManager {
 		return new CSVFolder();
 	}
 
-	public void putCSVObjectIntoCurrentFolder(CSVObject csvObject, String alias) throws IllegalFileNameException, DuplicateAliasException, InsufficientPermissionException, ServerCommunicationException {
+	public void putCSVObjectIntoCurrentFolder(CSVObject csvObject, String alias)
+			throws IllegalFileNameException, DuplicateAliasException,
+			InsufficientPermissionException, ServerCommunicationException {
 		// Check write permissions
 		if (this.currentFolder.getCapability().getType() != CapabilityType.RW) {
 			throw new InsufficientPermissionException(alias);
@@ -189,18 +191,19 @@ public class CSVFileManager {
 		}
 	}
 
-	public void uploadObject(CSVObject object) throws ServerCommunicationException {
+	public void uploadObject(CSVObject object)
+			throws ServerCommunicationException {
 		int code = Communication.put(object, Communication.SERVER_PUT);
 		if (code != 201 || code != 200) {
 			throw new ServerCommunicationException(code);
 		}
 		return;
 	}
-	
+
 	public void mkdir(String alias, CSVFolder folder) throws IOException,
-	InsufficientPermissionException, DuplicateAliasException,
-	ServerCommunicationException, IllegalFileNameException {
-		
+			InsufficientPermissionException, DuplicateAliasException,
+			ServerCommunicationException, IllegalFileNameException {
+
 		uploadObject(folder);
 		putCSVObjectIntoCurrentFolder(folder, alias);
 
@@ -208,8 +211,8 @@ public class CSVFileManager {
 	}
 
 	public void mkdir(String alias) throws IOException,
-	InsufficientPermissionException, DuplicateAliasException,
-	ServerCommunicationException, IllegalFileNameException {
+			InsufficientPermissionException, DuplicateAliasException,
+			ServerCommunicationException, IllegalFileNameException {
 
 		CSVFolder folder = createNewFolder();
 		mkdir(alias, folder);
@@ -242,7 +245,7 @@ public class CSVFileManager {
 				Map<String, Capability> content = fm.ls();
 				if (!content.isEmpty()) {
 					System.out
-					.println("File name \tStorage index \t\t\t\tCapability type");
+							.println("File name \tStorage index \t\t\t\tCapability type");
 					for (Map.Entry<String, Capability> entry : content
 							.entrySet())
 						System.out.println(entry.getKey() + " "
