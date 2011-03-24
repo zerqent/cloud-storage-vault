@@ -3,7 +3,7 @@ package no.ntnu.item.csv;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -85,7 +85,27 @@ public class LocalBrowseActivity extends ListActivity {
 		// Open "file" if it is a directory.
 		if (file.isDirectory()) {
 			files.add("..");
-			files.addAll(Arrays.asList(file.list(filter)));
+			// files.addAll(Arrays.asList(file.list(filter)));
+			// Sort list
+			File[] tmp = file.listFiles(filter);
+			List<String> filesInDir = new ArrayList<String>();
+			List<String> dirs = new ArrayList<String>();
+			for (int i = 0; i < tmp.length; i++) {
+				File f = tmp[i];
+				if (f.isFile()) {
+					filesInDir.add(f.getName());
+				} else if (f.isDirectory()) {
+					dirs.add(f.getName());
+				} else {
+					System.out.println(tmp[i]);
+					System.exit(1);
+				}
+			}
+			Collections.sort(filesInDir, String.CASE_INSENSITIVE_ORDER);
+			Collections.sort(dirs, String.CASE_INSENSITIVE_ORDER);
+			files.addAll(dirs);
+			files.addAll(filesInDir);
+
 			setListAdapter(new ArrayAdapter<String>(this,
 					android.R.layout.test_list_item, files));
 			ListView lv = getListView();
