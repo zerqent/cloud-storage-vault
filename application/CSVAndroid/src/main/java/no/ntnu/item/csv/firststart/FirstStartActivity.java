@@ -2,6 +2,7 @@ package no.ntnu.item.csv.firststart;
 
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.credentials.LocalCredentials;
 import android.app.Activity;
 import android.content.Intent;
@@ -20,7 +21,6 @@ public class FirstStartActivity extends Activity {
 	private TextView tv;
 	private Button bImportManual;
 	private Button bImportBarcode;
-	private TextView header;
 	private Button bCreateNew;
 	private Button bImport;
 
@@ -29,16 +29,13 @@ public class FirstStartActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.firststart);
 
-		// Capture viewed buttons.
 		bCreateNew = (Button) findViewById(R.id.firstStart_new);
 		bImport = (Button) findViewById(R.id.firstStart_import);
-		header = (TextView) findViewById(R.id.firstStart_header);
 
 		bImportManual = (Button) findViewById(R.id.firstStart_importmanual);
 		bImportBarcode = (Button) findViewById(R.id.firstStart_importbarcode);
 		tv = (TextView) findViewById(R.id.firstStart_importheader);
 
-		// Add button listeners.
 		bCreateNew.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -54,10 +51,7 @@ public class FirstStartActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// header.setVisibility(View.INVISIBLE);
-				// bImport.setVisibility(View.INVISIBLE);
 				bImport.setEnabled(false);
-				// bCreateNew.setVisibility(View.INVISIBLE);
 				bCreateNew.setEnabled(false);
 
 				tv.setVisibility(View.VISIBLE);
@@ -107,6 +101,7 @@ public class FirstStartActivity extends Activity {
 		switch (requestCode) {
 		case REQUEST_ROOTCAP:
 			rootCapString = data.getStringExtra("rootcapstring");
+			new LocalCredentials(this, CapabilityImpl.fromString(rootCapString));
 			done();
 			return;
 		}

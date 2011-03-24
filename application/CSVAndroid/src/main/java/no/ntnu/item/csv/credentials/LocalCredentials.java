@@ -15,27 +15,23 @@ public class LocalCredentials {
 
 	public static final String save_file = "my_credentials.csv";
 	private Capability rootCapability;
+	private Context ctx;
+
+	public LocalCredentials(Context ctx, Capability cap) {
+		this.ctx = ctx;
+		this.rootCapability = cap;
+		writeCredentialsToDisk();
+	}
 
 	public LocalCredentials(Context ctx, boolean createNew) {
+		this.ctx = ctx;
 		if (createNew) {
-			try {
-				CSVFolder rootFolder = new CSVFolder();
-				rootFolder.encrypt();
-				this.rootCapability = rootFolder.getCapability();
-				Communication.put(rootFolder, Communication.SERVER_PUT);
+			CSVFolder rootFolder = new CSVFolder();
+			rootFolder.encrypt();
+			this.rootCapability = rootFolder.getCapability();
+			Communication.put(rootFolder, Communication.SERVER_PUT);
 
-				FileOutputStream out = ctx.openFileOutput(
-						LocalCredentials.save_file, Context.MODE_PRIVATE);
-				out.write(this.rootCapability.toString().getBytes());
-				out.close();
-
-			} catch (FileNotFoundException e) {
-				// If this exception triggers I will be impressed...
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			writeCredentialsToDisk();
 		} else {
 			try {
 				FileInputStream in = ctx
@@ -54,6 +50,17 @@ public class LocalCredentials {
 			}
 		}
 
+	}
+
+	private void writeCredentialsToDisk() {
+		try {
+			FileOutputStream out = ctx.openFileOutput(
+					LocalCredentials.save_file, Context.MODE_PRIVATE);
+			out.write(this.rootCapability.toString().getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public boolean isFirstStart() {
