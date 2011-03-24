@@ -5,6 +5,7 @@ import java.io.IOException;
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.RemoteBrowseActivity;
+import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
@@ -22,13 +23,22 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-public class CreateFolderTask extends AsyncTask<String, Void, String> {
+public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 
 	private Activity caller;
 	private String error = null;
+	private CSVFolder folder;
 
 	public CreateFolderTask(Activity caller) {
 		this.caller = caller;
+	}
+
+	public void setFolder(CSVFolder folder) {
+		this.folder = folder;
+	}
+
+	public CSVFolder getFolder() {
+		return this.folder;
 	}
 
 	@Override
@@ -43,10 +53,19 @@ public class CreateFolderTask extends AsyncTask<String, Void, String> {
 	}
 
 	@Override
-	protected String doInBackground(String... params) {
+	protected CSVFolder doInBackground(String... params) {
+		if (params.length == 0 || params[0] == null) {
+			CSVFolder folder = CSVActivity.fm.createNewFolder();
+			return folder;
+		}
+
 		String alias = params[0];
 		try {
-			CSVActivity.fm.mkdir(alias);
+			if (this.folder != null) {
+				CSVActivity.fm.mkdir(alias, this.folder);
+			} else {
+				CSVActivity.fm.mkdir(alias);
+			}
 			System.out.println("Uploaded file");
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
@@ -65,11 +84,11 @@ public class CreateFolderTask extends AsyncTask<String, Void, String> {
 		} catch (ServerCommunicationException e) {
 			this.error = e.getMessage();
 		}
-		return ""; // TODO: Workaround, how do we return Void?
+		return null;
 	}
 
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(CSVFolder folder) {
 
 		// We notify iv something goes wrong
 		if (this.error != null) {
@@ -92,7 +111,6 @@ public class CreateFolderTask extends AsyncTask<String, Void, String> {
 			notification.setLatestEventInfo(context, contentTitle, contentText,
 					contentIntent);
 			mNotificationManager.notify(1, notification);
-			super.onPostExecute(result);
 		}
 
 		if (caller instanceof RemoteBrowseActivity) {
@@ -103,6 +121,5 @@ public class CreateFolderTask extends AsyncTask<String, Void, String> {
 		}
 
 		this.caller = null;
-		super.onPostExecute(result);
 	}
 }

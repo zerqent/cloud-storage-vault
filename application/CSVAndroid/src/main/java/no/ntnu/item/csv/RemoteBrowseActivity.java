@@ -126,6 +126,7 @@ public class RemoteBrowseActivity extends ListActivity {
 			case MENU_CREATE_FOLDER:
 				new CreateFolderTask(this).execute(data
 						.getStringExtra(NewFolderActivity.NEW_FOLDER));
+
 			default:
 				;
 			}
