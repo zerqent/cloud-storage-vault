@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+android:id="@+id/widget27"
 android:layout_width="fill_parent"
 android:layout_height="fill_parent"
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:orientation="vertical"
 >
+<TextView
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:padding="5px"
+android:text="Nickname of share:"
+>
+</TextView>
 <EditText
 android:id="@+id/CreateShareAlias"
 android:layout_width="fill_parent"
@@ -23,7 +31,6 @@ android:text="Create Share"
 android:id="@+id/CreateShareQR"
 android:layout_width="186px"
 android:layout_height="180px"
-android:layout_gravity="center_horizontal"
 >
 </ImageView>
 </LinearLayout>
