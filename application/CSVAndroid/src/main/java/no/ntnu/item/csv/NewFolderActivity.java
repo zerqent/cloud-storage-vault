@@ -23,7 +23,6 @@ public class NewFolderActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.text);
-
 		bCancel = (Button) findViewById(R.id.nf_cancel);
 		bOk = (Button) findViewById(R.id.nf_ok);
 		

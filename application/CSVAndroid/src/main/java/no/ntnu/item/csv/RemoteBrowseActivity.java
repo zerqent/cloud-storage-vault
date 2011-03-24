@@ -53,7 +53,6 @@ public class RemoteBrowseActivity extends ListActivity {
 			intent.setClass(this, NewFolderActivity.class);
 			startActivityForResult(intent, 2);
 			return true;
-
 		} else if (item.getTitle().equals("Upload File")) {
 			Intent intent = new Intent();
 			intent.setClass(this, LocalBrowseActivity.class);

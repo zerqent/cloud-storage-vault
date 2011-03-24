@@ -88,6 +88,7 @@ public class LocalBrowseActivity extends ListActivity{
 			});
 		// Upload file if it is not a directory.
 		}else{
+			//TODO: new UploadTask()
 			Intent intent = new Intent();
 			intent.putExtra("FILEPATH", file.getAbsolutePath());
 			setResult(RESULT_OK, intent);
