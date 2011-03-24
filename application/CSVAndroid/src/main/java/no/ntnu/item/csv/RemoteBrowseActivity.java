@@ -74,15 +74,6 @@ public class RemoteBrowseActivity extends ListActivity {
 
 	public void doBrowsing() {
 		files = CSVActivity.fm.ls();
-		// files.put("..", null);
-
-		// List<String> tmpList = new ArrayList<String>();
-		// tmpList.addAll(files.keySet());
-		// Collections.sort(tmpList);
-		// tmpList.add(0, "..");
-		// setListAdapter(new ArrayAdapter<String>(this,
-		// android.R.layout.test_list_item, tmpList));
-		// System.out.print("Done");
 
 		BrowseList bl = new BrowseList(files);
 		SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
