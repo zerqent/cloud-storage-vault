@@ -2,9 +2,10 @@ package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
+import no.ntnu.item.csv.credentials.DisplayCapability;
+import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
-import no.ntnu.item.csv.localcredentials.LocalCredentials;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +33,8 @@ public class CSVActivity extends Activity {
 
 		String root_uri = "D:RW:N6F4G3YQONT4RDHX6FQJIAKTJE:6KLHZH7URKTU7I6RL5CNEEL7QA";
 		Capability root_cap = CapabilityImpl.fromString(root_uri);
-		// String root_uri = "D:RW:MDJH4ISE34ULD7RW3TGOX7NOJU:LID4JW5EQAI2QMCLNMPM7ZSNG4";
+		// String root_uri =
+		// "D:RW:MDJH4ISE34ULD7RW3TGOX7NOJU:LID4JW5EQAI2QMCLNMPM7ZSNG4";
 		// Capability root_cap = CapabilityImpl.fromString(root_uri);
 
 		LocalCredentials creds = new LocalCredentials(
@@ -65,9 +67,9 @@ public class CSVActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(CSVActivity.this, RemoteBrowseActivity.class);
-				startActivity(intent);
+				DisplayCapability.displayCapability(CSVActivity.this,
+						CSVActivity.fm.getCurrentFolder().getCapability())
+						.show();
 			}
 		});
 

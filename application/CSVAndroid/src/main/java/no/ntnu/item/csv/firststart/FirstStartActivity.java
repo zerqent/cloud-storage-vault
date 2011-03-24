@@ -2,7 +2,7 @@ package no.ntnu.item.csv.firststart;
 
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
-import no.ntnu.item.csv.localcredentials.LocalCredentials;
+import no.ntnu.item.csv.credentials.LocalCredentials;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

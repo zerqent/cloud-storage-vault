@@ -88,7 +88,7 @@ public class CSVFileManager {
 		folder.encrypt();
 
 		code = Communication.put(folder, Communication.SERVER_PUT);
-		if (code != 201) {
+		if (code != 201 && code != 200) {
 			throw new ServerCommunicationException(code);
 		}
 
@@ -192,7 +192,8 @@ public class CSVFileManager {
 		int code_folder = Communication.put(this.currentFolder,
 				Communication.SERVER_PUT);
 
-		if (code_folder != 201) {
+		if (code_folder != 200) {
+			// Expected return is 200, we are updating an existing folder
 			throw new ServerCommunicationException(code_folder);
 		}
 		return;
@@ -207,6 +208,7 @@ public class CSVFileManager {
 		// System.out.println(root.getCapability().toString());
 		// System.out.println(root.getCapability().getStorageIndex());
 		// System.exit(0);
+
 		Capability root_cap = CapabilityImpl
 				.fromString("D:RW:MDJH4ISE34ULD7RW3TGOX7NOJU:LID4JW5EQAI2QMCLNMPM7ZSNG4");
 		CSVFileManager fm = new CSVFileManager(root_cap);
@@ -298,5 +300,9 @@ public class CSVFileManager {
 
 		}
 
+	}
+
+	public CSVFolder getCurrentFolder() {
+		return currentFolder;
 	}
 }
