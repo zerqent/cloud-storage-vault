@@ -31,12 +31,6 @@ public class CSVActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		String root_uri = "D:RW:N6F4G3YQONT4RDHX6FQJIAKTJE:6KLHZH7URKTU7I6RL5CNEEL7QA";
-		Capability root_cap = CapabilityImpl.fromString(root_uri);
-		// String root_uri =
-		// "D:RW:MDJH4ISE34ULD7RW3TGOX7NOJU:LID4JW5EQAI2QMCLNMPM7ZSNG4";
-		// Capability root_cap = CapabilityImpl.fromString(root_uri);
-
 		LocalCredentials creds = new LocalCredentials(
 				this.getApplicationContext(), false);
 		if (creds.isFirstStart()) {
@@ -77,10 +71,8 @@ public class CSVActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// Intent intent = new Intent();
-				// intent.setClass(TestActivity.this,
-				// RemoteBrowseActivity.class);
-				// startActivityForResult(intent, 1);
+				 Intent intent = new Intent(CSVActivity.this, CreateShareActivity.class);
+				 startActivity(intent);
 			}
 		});
 	}

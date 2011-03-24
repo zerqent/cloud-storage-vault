@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+android:id="@+id/widget27"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+>
+<TextView
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:padding="5px"
+android:text="Nickname of share:"
+>
+</TextView>
+<EditText
+android:id="@+id/CreateShareAlias"
+android:layout_width="fill_parent"
+android:layout_height="47px"
+android:textSize="18sp"
+>
+</EditText>
+<Button
+android:id="@+id/CreateShareConfirm"
+android:layout_width="fill_parent"
+android:layout_height="51px"
+android:text="Create Share"
+>
+</Button>
+<ImageView
+android:id="@+id/CreateShareQR"
+android:layout_width="186px"
+android:layout_height="180px"
+>
+</ImageView>
+</LinearLayout>
