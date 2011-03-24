@@ -26,7 +26,4 @@ public class CreateShareActivity extends Activity {
 		});
 	}
 	
-	
-	
-	
 }

@@ -22,10 +22,14 @@ import no.ntnu.item.csv.fileutils.FileUtils;
 
 import org.apache.http.client.ClientProtocolException;
 
+/**
+ * @author pal
+ *
+ */
 public class CSVFileManager {
 
 	private Stack<Capability> location; // Stack storing capabilities of parent
-										// directories
+	// directories
 	private CSVFolder currentFolder; // The current folder object visited
 
 	public CSVFileManager(Capability root_cap) {
@@ -40,8 +44,8 @@ public class CSVFileManager {
 	}
 
 	public void put(String filepath, CSVFolder folder) throws IOException,
-			InsufficientPermissionException, IllegalFileNameException,
-			DuplicateAliasException, ServerCommunicationException {
+	InsufficientPermissionException, IllegalFileNameException,
+	DuplicateAliasException, ServerCommunicationException {
 		// Check write permissions
 		if (folder == null) {
 			folder = this.currentFolder;
@@ -103,7 +107,7 @@ public class CSVFileManager {
 	}
 
 	public CSVObject get(String alias) throws ClientProtocolException,
-			IOException, NoSuchAliasException {
+	IOException, NoSuchAliasException {
 		Capability cap;
 
 		if ((cap = this.currentFolder.getContents().get(alias)) == null) {
@@ -130,7 +134,7 @@ public class CSVFileManager {
 	}
 
 	public void cd(String folderAlias) throws ClientProtocolException,
-			IOException, NoSuchAliasException {
+	IOException, NoSuchAliasException {
 		CSVObject folder;
 		if (!folderAlias.equals("..")) {
 			folder = this.get(folderAlias);
@@ -155,13 +159,11 @@ public class CSVFileManager {
 		}
 	}
 
-	public void mkdir(String alias) throws IOException,
-			InsufficientPermissionException, DuplicateAliasException,
-			ServerCommunicationException, IllegalFileNameException {
-		// Check that the user is within a directory
-		if (this.currentFolder == null) {
-			return;
-		}
+	public CSVFolder createNewFolder() {
+		return new CSVFolder();
+	}
+
+	public void putCSVObjectIntoCurrentFolder(CSVObject csvObject, String alias) throws IllegalFileNameException, DuplicateAliasException, InsufficientPermissionException, ServerCommunicationException {
 		// Check write permissions
 		if (this.currentFolder.getCapability().getType() != CapabilityType.RW) {
 			throw new InsufficientPermissionException(alias);
@@ -175,18 +177,7 @@ public class CSVFileManager {
 			throw new IllegalFileNameException(alias);
 		}
 
-		CSVFolder folder = new CSVFolder();
-		folder.encrypt();
-
-		// Upload folder
-		int code = Communication.put(folder, Communication.SERVER_PUT);
-		if (code != 201) {
-			throw new ServerCommunicationException(code);
-		}
-
-		// Insert folder capability and alias into parent directory and upload
-		// parent directory
-		this.currentFolder.getContents().put(alias, folder.getCapability());
+		this.currentFolder.getContents().put(alias, csvObject.getCapability());
 		this.currentFolder.encrypt();
 
 		int code_folder = Communication.put(this.currentFolder,
@@ -196,8 +187,34 @@ public class CSVFileManager {
 			// Expected return is 200, we are updating an existing folder
 			throw new ServerCommunicationException(code_folder);
 		}
-		return;
+	}
 
+	public void uploadObject(CSVObject object) throws ServerCommunicationException {
+		int code = Communication.put(object, Communication.SERVER_PUT);
+		if (code != 201 || code != 200) {
+			throw new ServerCommunicationException(code);
+		}
+		return;
+	}
+	
+	public void mkdir(String alias, CSVFolder folder) throws IOException,
+	InsufficientPermissionException, DuplicateAliasException,
+	ServerCommunicationException, IllegalFileNameException {
+		
+		uploadObject(folder);
+		putCSVObjectIntoCurrentFolder(folder, alias);
+
+		return;
+	}
+
+	public void mkdir(String alias) throws IOException,
+	InsufficientPermissionException, DuplicateAliasException,
+	ServerCommunicationException, IllegalFileNameException {
+
+		CSVFolder folder = createNewFolder();
+		mkdir(alias, folder);
+
+		return;
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -225,7 +242,7 @@ public class CSVFileManager {
 				Map<String, Capability> content = fm.ls();
 				if (!content.isEmpty()) {
 					System.out
-							.println("File name \tStorage index \t\t\t\tCapability type");
+					.println("File name \tStorage index \t\t\t\tCapability type");
 					for (Map.Entry<String, Capability> entry : content
 							.entrySet())
 						System.out.println(entry.getKey() + " "
