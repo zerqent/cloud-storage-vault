@@ -16,6 +16,7 @@
 		<activity android:name="CreateShareActivity" android:label="@string/app_name"></activity>
 		<activity android:name="LocalBrowseActivity" android:label="@string/app_name"></activity>
 		<activity android:label="@string/app_name" android:name=".firststart.FirstStartActivity"></activity>
+		<activity android:label="@string/app_name" android:name=".firststart.ManualCapabilityImportActivity"></activity>
 	</application>
 
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>

@@ -268,4 +268,14 @@ public class CSVFolder implements CSVObject {
 		this.setPlainText(plaintext.getBytes());
 	}
 
+	public byte[] getPublicKeyHash() {
+		RSAPublicKey pub = (RSAPublicKey) this.pubkey;
+		byte[] mod = pub.getModulus().toByteArray();
+		byte[] pubexp = pub.getPublicExponent().toByteArray();
+		byte[] to_hash = new byte[mod.length + pubexp.length];
+		System.arraycopy(mod, 0, to_hash, 0, mod.length);
+		System.arraycopy(pubexp, 0, to_hash, mod.length, pubexp.length);
+		return Cryptoutil.hash(to_hash, 16);
+	}
+
 }
