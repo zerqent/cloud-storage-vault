@@ -53,6 +53,7 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 
 	@Override
 	protected CSVFolder doInBackground(String... params) {
+
 		if (params.length == 0 || params[0] == null) {
 			System.out.println("Lager bare keys");
 			CSVFolder folder = CSVActivity.fm.createNewFolder();
