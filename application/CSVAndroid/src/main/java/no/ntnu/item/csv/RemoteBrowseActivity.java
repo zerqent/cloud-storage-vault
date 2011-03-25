@@ -94,24 +94,34 @@ public class RemoteBrowseActivity extends ListActivity {
 				LinearLayout ll = (LinearLayout) view;
 				TextView tmp = (TextView) ll.getChildAt(1);
 				String alias = tmp.getText().toString();
-				Capability cap = files.get(alias);
-				if (alias.equals("..") || cap.isFolder()) {
+				if (!alias.equals("..")) {
+					Capability cap = files.get(alias);
+					if (cap.isFolder()) {
+						try {
+							CSVActivity.fm.cd(alias);
+							doBrowsing();
+						} catch (ClientProtocolException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (NoSuchAliasException e) {
+							e.printStackTrace();
+						}
+					} else {
+						new DownloadTask(RemoteBrowseActivity.this)
+								.execute(alias);
+					}
+				} else {
 					try {
 						CSVActivity.fm.cd(alias);
 						doBrowsing();
 					} catch (ClientProtocolException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						System.out.println("OMGLOLFOOBAR");
 						e.printStackTrace();
 					} catch (NoSuchAliasException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				} else {
-					new DownloadTask(RemoteBrowseActivity.this).execute(alias);
 				}
 			}
 		});

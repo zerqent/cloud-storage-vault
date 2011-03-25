@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
 
@@ -37,9 +38,12 @@ public class BrowseList {
 		}
 
 		Map<String, Object> parMap = new HashMap<String, Object>();
-		parMap.put(TEXT, "..");
-		parMap.put(ICON, R.drawable.folder);
-		this.list.add(parMap);
+		System.out.println("In root: " + CSVActivity.fm.inRootDir());
+		if (!CSVActivity.fm.inRootDir()) {
+			parMap.put(TEXT, "..");
+			parMap.put(ICON, R.drawable.folder);
+			this.list.add(parMap);
+		}
 		this.list.addAll(dirList);
 		this.list.addAll(fileList);
 	}
