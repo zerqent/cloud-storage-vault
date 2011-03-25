@@ -38,7 +38,7 @@ public class BrowseList {
 
 		Map<String, Object> parMap = new HashMap<String, Object>();
 		parMap.put(TEXT, "..");
-		parMap.put(ICON, null);
+		parMap.put(ICON, R.drawable.folder);
 		this.list.add(parMap);
 		this.list.addAll(dirList);
 		this.list.addAll(fileList);
@@ -51,16 +51,16 @@ public class BrowseList {
 			Map<String, Object> map = new HashMap<String, Object>();
 			if (!alias.equals("..")) {
 				map.put(TEXT, alias);
-				File tmpFile = new File(dir+alias);
+				File tmpFile = new File(dir + alias);
 				if (tmpFile.exists() && tmpFile.isDirectory()) {
 					map.put(ICON, R.drawable.folder);
-				} else if(tmpFile.exists()){
+				} else if (tmpFile.exists()) {
 					map.put(ICON, R.drawable.text);
 				}
 				this.list.add(map);
 			}
 		}
-		
+
 		Map<String, Object> parMap = new HashMap<String, Object>();
 		parMap.put(TEXT, "..");
 		parMap.put(ICON, null);
