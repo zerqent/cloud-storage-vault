@@ -32,7 +32,8 @@ public class CSVFileManager {
 
 	public static final String SHARE_FOLDER = "SHARE_FOLDER";
 
-	private Stack<Capability> location; // Stack storing capabilities of parent
+	private final Stack<Capability> location; // Stack storing capabilities of
+												// parent
 	// directories
 	private CSVFolder currentFolder; // The current folder object visited
 
@@ -168,7 +169,9 @@ public class CSVFileManager {
 			if (this.location.peek() != current_cap) {
 				this.location.push(current_cap);
 			}
+
 			this.currentFolder = (CSVFolder) folder;
+			this.location.push(folder.getCapability());
 		} else {
 			// Check if we are in root dir:
 			if (this.location.size() <= 1)
