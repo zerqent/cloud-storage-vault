@@ -1,5 +1,6 @@
 package no.ntnu.item.csv.guiutils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,29 @@ public class BrowseList {
 		this.list.add(parMap);
 		this.list.addAll(dirList);
 		this.list.addAll(fileList);
+	}
+
+	public BrowseList(String dir, List<String> files) {
+		this.list = new ArrayList<Map<String, Object>>();
+
+		for (String alias : files) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			if (!alias.equals("..")) {
+				map.put(TEXT, alias);
+				File tmpFile = new File(dir+alias);
+				if (tmpFile.exists() && tmpFile.isDirectory()) {
+					map.put(ICON, R.drawable.folder);
+				} else if(tmpFile.exists()){
+					map.put(ICON, R.drawable.text);
+				}
+				this.list.add(map);
+			}
+		}
+		
+		Map<String, Object> parMap = new HashMap<String, Object>();
+		parMap.put(TEXT, "..");
+		parMap.put(ICON, null);
+		this.list.add(0, parMap);
 	}
 
 	public List<Map<String, Object>> getList() {

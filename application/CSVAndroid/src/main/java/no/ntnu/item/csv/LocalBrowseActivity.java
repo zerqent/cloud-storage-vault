@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import no.ntnu.item.csv.guiutils.BrowseList;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 public class LocalBrowseActivity extends ListActivity {
 
@@ -84,9 +86,8 @@ public class LocalBrowseActivity extends ListActivity {
 		files.clear();
 		// Open "file" if it is a directory.
 		if (file.isDirectory()) {
-			files.add("..");
-			// files.addAll(Arrays.asList(file.list(filter)));
 			// Sort list
+			files.add("..");
 			File[] tmp = file.listFiles(filter);
 			List<String> filesInDir = new ArrayList<String>();
 			List<String> dirs = new ArrayList<String>();
@@ -106,8 +107,16 @@ public class LocalBrowseActivity extends ListActivity {
 			files.addAll(dirs);
 			files.addAll(filesInDir);
 
-			setListAdapter(new ArrayAdapter<String>(this,
-					android.R.layout.test_list_item, files));
+			// setListAdapter(new ArrayAdapter<String>(this,
+			// android.R.layout.test_list_item, files));
+
+			BrowseList bl = new BrowseList(getCurrentDirectory(), files);
+			SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
+					android.R.layout.activity_list_item, new String[] { "TEXT",
+							"ICON" }, new int[] { android.R.id.text1,
+							android.R.id.icon });
+			setListAdapter(sa);
+
 			ListView lv = getListView();
 			lv.setTextFilterEnabled(true);
 

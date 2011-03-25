@@ -74,6 +74,7 @@ public class RemoteBrowseActivity extends ListActivity {
 
 	public void doBrowsing() {
 		files = CSVActivity.fm.ls();
+		files.put("..", null);
 
 		BrowseList bl = new BrowseList(files);
 		SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
