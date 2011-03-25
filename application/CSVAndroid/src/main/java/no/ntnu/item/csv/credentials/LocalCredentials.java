@@ -9,6 +9,7 @@ import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.CSVFolder;
+import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import android.content.Context;
 
 public class LocalCredentials {
@@ -27,9 +28,16 @@ public class LocalCredentials {
 		this.ctx = ctx;
 		if (createNew) {
 			CSVFolder rootFolder = new CSVFolder();
+			CSVFolder shareFolder = new CSVFolder();
+
+			rootFolder.addContent(CSVFileManager.SHARE_FOLDER,
+					shareFolder.getCapability());
 			rootFolder.encrypt();
+			shareFolder.encrypt();
+
 			this.rootCapability = rootFolder.getCapability();
 			Communication.put(rootFolder, Communication.SERVER_PUT);
+			Communication.put(shareFolder, Communication.SERVER_PUT);
 
 			writeCredentialsToDisk();
 		} else {
