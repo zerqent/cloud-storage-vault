@@ -108,6 +108,7 @@ public class CSVActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(CSVActivity.this,
 						CreateShareActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 				startActivity(intent);
 			}
 		});
