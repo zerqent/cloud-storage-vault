@@ -154,6 +154,7 @@ public class CSVActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// FIXME: Just for testing purposes
 		menu.add("Delete Capability");
+		menu.add("Exit program");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -163,6 +164,8 @@ public class CSVActivity extends Activity {
 			deleteFile(LocalCredentials.save_file);
 			finish();
 			return true;
+		} else if (item.getTitle().equals("Exit program")) {
+			System.exit(0);
 		}
 		return false;
 	}
