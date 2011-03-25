@@ -16,11 +16,12 @@ import android.widget.TextView;
 
 public class FirstStartActivity extends Activity {
 
-	public static final int REQUEST_ROOTCAP = 1;
-	public static final int REQUEST_BARCODE = 0;
+	private static final int REQUEST_ROOTCAP = 1;
+	private static final int REQUEST_BARCODE = 0;
+	public static final String ROOT_CAP_STRING_KEY = "rootcapstring";
 
 	public Capability root_cap;
-	public String rootCapString = null;
+	public String rootCapString;
 
 	private TextView tv;
 	private Button bImportManual;
@@ -62,12 +63,10 @@ public class FirstStartActivity extends Activity {
 				bImportManual.setVisibility(View.VISIBLE);
 				bImportBarcode.setEnabled(true);
 				bImportBarcode.setVisibility(View.VISIBLE);
-
 			}
 		});
 
 		bImportManual.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
@@ -78,7 +77,6 @@ public class FirstStartActivity extends Activity {
 		});
 
 		bImportBarcode.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(
@@ -107,10 +105,13 @@ public class FirstStartActivity extends Activity {
 
 		switch (requestCode) {
 		case REQUEST_ROOTCAP:
-			rootCapString = data.getStringExtra("rootcapstring");
-			new LocalCredentials(this, CapabilityImpl.fromString(rootCapString));
-			done();
-			return;
+			if (resultCode == RESULT_OK) {
+				rootCapString = data.getStringExtra(ROOT_CAP_STRING_KEY);
+				new LocalCredentials(this,
+						CapabilityImpl.fromString(rootCapString));
+				done();
+				return;
+			}
 		case REQUEST_BARCODE:
 			if (resultCode == RESULT_OK) {
 				rootCapString = data.getStringExtra("SCAN_RESULT");

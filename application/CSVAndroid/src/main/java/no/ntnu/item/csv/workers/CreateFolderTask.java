@@ -10,7 +10,6 @@ import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
-import no.ntnu.item.csv.firststart.FirstStartActivity;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -116,8 +115,6 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 		if (caller instanceof RemoteBrowseActivity) {
 			RemoteBrowseActivity ac = (RemoteBrowseActivity) caller;
 			ac.doBrowsing();
-		} else if (caller instanceof FirstStartActivity) {
-			FirstStartActivity foo = (FirstStartActivity) caller;
 		}
 
 		this.caller = null;

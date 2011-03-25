@@ -29,7 +29,6 @@ public class ManualCapabilityImportActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.manualcapability);
 
@@ -37,7 +36,6 @@ public class ManualCapabilityImportActivity extends Activity {
 		this.processButon = (Button) findViewById(R.id.manualcapability_processbutton);
 
 		this.processButon.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				byte[] encKey = Base32.decode(key.getText().toString());
@@ -47,10 +45,8 @@ public class ManualCapabilityImportActivity extends Activity {
 						.getCSVObject(rootCap);
 				verifyHash = Base32.encode(folder.getPublicKeyHash());
 				showDialog(DIALOG_VERIFY_KEY);
-
 			}
 		});
-
 	}
 
 	@Override
@@ -66,12 +62,12 @@ public class ManualCapabilityImportActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							Intent intent = getIntent();
-							intent.putExtra("rootcapstring", rootCap.toString()
-									+ ":" + verifyHash);
+							intent.putExtra(
+									FirstStartActivity.ROOT_CAP_STRING_KEY,
+									rootCap.toString() + ":" + verifyHash);
 							setResult(RESULT_OK, intent);
 							dismissDialog(DIALOG_VERIFY_KEY);
 							finish();
-
 						}
 					});
 			builder.setNegativeButton("No",

@@ -97,9 +97,6 @@ public class LocalBrowseActivity extends ListActivity {
 					filesInDir.add(f.getName());
 				} else if (f.isDirectory()) {
 					dirs.add(f.getName());
-				} else {
-					System.out.println(tmp[i]);
-					System.exit(1);
 				}
 			}
 			Collections.sort(filesInDir, String.CASE_INSENSITIVE_ORDER);
