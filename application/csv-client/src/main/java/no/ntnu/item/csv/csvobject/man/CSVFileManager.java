@@ -28,6 +28,8 @@ import org.apache.http.client.ClientProtocolException;
  */
 public class CSVFileManager {
 
+	public static final String SHARE_FOLDER = "SHARE_FOLDER";
+
 	private Stack<Capability> location; // Stack storing capabilities of parent
 	// directories
 	private CSVFolder currentFolder; // The current folder object visited
@@ -40,7 +42,9 @@ public class CSVFileManager {
 			return;
 
 		this.location = new Stack<Capability>();
+
 		this.currentFolder = CSVFolder.createFromByteArray(resp, root_cap);
+		this.location.push(root_cap);
 	}
 
 	public void put(String filepath, CSVFolder folder) throws IOException,
@@ -92,7 +96,7 @@ public class CSVFileManager {
 		folder.encrypt();
 
 		code = Communication.put(folder, Communication.SERVER_PUT);
-		if (code != 201 && code != 200) {
+		if (code != 200) {
 			throw new ServerCommunicationException(code);
 		}
 
@@ -106,11 +110,16 @@ public class CSVFileManager {
 		}
 	}
 
-	public CSVObject get(String alias) throws ClientProtocolException,
-			IOException, NoSuchAliasException {
+	public CSVObject get(CSVFolder folder, String alias)
+			throws ClientProtocolException, IOException, NoSuchAliasException {
 		Capability cap;
-
-		if ((cap = this.currentFolder.getContents().get(alias)) == null) {
+		if (folder == null) {
+			folder = this.currentFolder;
+		} else {
+			System.out.println("Folder er satt.");
+		}
+		System.out.println("Innhold i root:" + folder.getContents().size());
+		if ((cap = folder.getContents().get(alias)) == null) {
 			throw new NoSuchAliasException(alias);
 		}
 
@@ -137,22 +146,29 @@ public class CSVFileManager {
 			IOException, NoSuchAliasException {
 		CSVObject folder;
 		if (!folderAlias.equals("..")) {
-			folder = this.get(folderAlias);
+			folder = this.get(null, folderAlias);
 			if (folder == null || folder instanceof CSVFile)
 				// Shouldn't really happen
 				return;
-			this.location.push(this.currentFolder.getCapability());
+
+			Capability current_cap = this.currentFolder.getCapability();
+			if (this.location.peek() != current_cap) {
+				this.location.push(current_cap);
+			}
 			this.currentFolder = (CSVFolder) folder;
 		} else {
-			if (this.location.size() <= 0)
+			// Check if we are in root dir:
+			if (this.location.size() <= 1)
 				return;
+
 			byte[] resp = Communication.get(this.location.lastElement()
 					.getStorageIndex(), Communication.SERVER_GET);
 			folder = CSVFolder.createFromByteArray(resp,
 					this.location.lastElement());
+
 			if (folder == null)
 				return;
-			// Capability cap = folder.getCapability();
+
 			folder.decrypt();
 			this.currentFolder = (CSVFolder) folder;
 			this.location.pop();
@@ -163,15 +179,56 @@ public class CSVFileManager {
 		return new CSVFolder();
 	}
 
-	public void putCSVObjectIntoCurrentFolder(CSVObject csvObject, String alias)
-			throws IllegalFileNameException, DuplicateAliasException,
-			InsufficientPermissionException, ServerCommunicationException {
+	public void putCSVObjectIntoFolder(CSVObject csvObject, String target_dir,
+			String alias) throws IllegalFileNameException,
+			DuplicateAliasException, InsufficientPermissionException,
+			ServerCommunicationException {
+
+		CSVFolder target = this.currentFolder;
+
+		if (target_dir != null && target_dir == CSVFileManager.SHARE_FOLDER) {
+			Capability root_cap = this.location.firstElement();
+			byte[] resp = Communication.get(root_cap.getStorageIndex(),
+					Communication.SERVER_GET);
+
+			if (resp == null)
+				return;
+
+			CSVFolder root_folder = CSVFolder.createFromByteArray(resp,
+					root_cap);
+			root_folder.decrypt();
+
+			Capability share_cap = null;
+
+			try {
+				share_cap = this.get(root_folder, CSVFileManager.SHARE_FOLDER)
+						.getCapability();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAliasException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			resp = Communication.get(share_cap.getStorageIndex(),
+					Communication.SERVER_GET);
+			if (resp == null)
+				return;
+
+			target = CSVFolder.createFromByteArray(resp, share_cap);
+			target.decrypt();
+		}
+
 		// Check write permissions
-		if (this.currentFolder.getCapability().getType() != CapabilityType.RW) {
+		if (target.getCapability().getType() != CapabilityType.RW) {
 			throw new InsufficientPermissionException(alias);
 		}
 		// Check for duplicate filenames
-		if (this.currentFolder.getContents().containsKey(alias)) {
+		if (target.getContents().containsKey(alias)) {
 			throw new DuplicateAliasException(alias);
 		}
 		// Check for illegal directory name
@@ -179,11 +236,10 @@ public class CSVFileManager {
 			throw new IllegalFileNameException(alias);
 		}
 
-		this.currentFolder.getContents().put(alias, csvObject.getCapability());
-		this.currentFolder.encrypt();
+		target.getContents().put(alias, csvObject.getCapability());
+		target.encrypt();
 
-		int code_folder = Communication.put(this.currentFolder,
-				Communication.SERVER_PUT);
+		int code_folder = Communication.put(target, Communication.SERVER_PUT);
 
 		if (code_folder != 200) {
 			// Expected return is 200, we are updating an existing folder
@@ -194,28 +250,29 @@ public class CSVFileManager {
 	public void uploadObject(CSVObject object)
 			throws ServerCommunicationException {
 		int code = Communication.put(object, Communication.SERVER_PUT);
-		if (code != 201 || code != 200) {
+		if (code != 201 && code != 200) {
 			throw new ServerCommunicationException(code);
 		}
 		return;
 	}
 
-	public void mkdir(String alias, CSVFolder folder) throws IOException,
-			InsufficientPermissionException, DuplicateAliasException,
-			ServerCommunicationException, IllegalFileNameException {
+	public void mkdir(String alias, String target_dir, CSVFolder folder)
+			throws IOException, InsufficientPermissionException,
+			DuplicateAliasException, ServerCommunicationException,
+			IllegalFileNameException {
 
 		uploadObject(folder);
-		putCSVObjectIntoCurrentFolder(folder, alias);
+		putCSVObjectIntoFolder(folder, target_dir, alias);
 
 		return;
 	}
 
-	public void mkdir(String alias) throws IOException,
+	public void mkdir(String alias, String target_dir) throws IOException,
 			InsufficientPermissionException, DuplicateAliasException,
 			ServerCommunicationException, IllegalFileNameException {
 
 		CSVFolder folder = createNewFolder();
-		mkdir(alias, folder);
+		mkdir(alias, target_dir, folder);
 
 		return;
 	}
@@ -276,7 +333,7 @@ public class CSVFileManager {
 				String tmp = input.substring(4);
 				CSVFile foo;
 				try {
-					foo = (CSVFile) fm.get(tmp);
+					foo = (CSVFile) fm.get(null, tmp);
 					foo.decrypt();
 					String bar = new String(foo.getPlainText());
 					System.out.println(bar);
@@ -290,7 +347,7 @@ public class CSVFileManager {
 				String save_path = tmp[1];
 				CSVFile foo;
 				try {
-					foo = (CSVFile) fm.get(alias);
+					foo = (CSVFile) fm.get(null, alias);
 					foo.decrypt();
 					CSVFile foobar = foo;
 					FileUtils.writeFileToDisk(save_path, foo.getPlainText());
@@ -302,7 +359,7 @@ public class CSVFileManager {
 			} else if (input.startsWith("mkdir")) {
 				String tmp = input.substring("mkdir".length() + 1);
 				try {
-					fm.mkdir(tmp);
+					fm.mkdir(tmp, null);
 				} catch (InsufficientPermissionException e) {
 					System.out.println(e.getMessage());
 				} catch (DuplicateAliasException e) {

@@ -35,7 +35,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		String alias = params[0];
 		CSVFile file;
 		try {
-			file = (CSVFile) CSVActivity.fm.get(alias);
+			file = (CSVFile) CSVActivity.fm.get(null, alias);
 			System.out.println("Downloaded file");
 			FileUtils.writeFileToDisk("/sdcard/" + alias, file.getPlainText());
 			System.out.println("Wrote file to disk");

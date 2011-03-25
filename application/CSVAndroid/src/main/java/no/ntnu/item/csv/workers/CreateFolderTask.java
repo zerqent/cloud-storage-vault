@@ -26,7 +26,7 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 
 	private Activity caller;
 	private String error = null;
-	private CSVFolder folder;
+	private CSVFolder folder = null;
 
 	public CreateFolderTask(Activity caller) {
 		this.caller = caller;
@@ -54,16 +54,27 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 	@Override
 	protected CSVFolder doInBackground(String... params) {
 		if (params.length == 0 || params[0] == null) {
+			System.out.println("Lager bare keys");
 			CSVFolder folder = CSVActivity.fm.createNewFolder();
 			return folder;
 		}
 
 		String alias = params[0];
+		String target_folder = null;
+
+		if (params.length >= 2) {
+			target_folder = params[1];
+		}
+
 		try {
 			if (this.folder != null) {
-				CSVActivity.fm.mkdir(alias, this.folder);
+				System.out
+						.println("Laster opp mappe med predefinerte keys til "
+								+ target_folder);
+				CSVActivity.fm.mkdir(alias, target_folder, this.folder);
 			} else {
-				CSVActivity.fm.mkdir(alias);
+				System.out.println("Lager mappe til maal: " + target_folder);
+				CSVActivity.fm.mkdir(alias, target_folder);
 			}
 			System.out.println("Uploaded file");
 		} catch (ClientProtocolException e) {
