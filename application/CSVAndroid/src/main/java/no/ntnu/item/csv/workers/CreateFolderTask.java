@@ -20,7 +20,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 
@@ -43,12 +42,13 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-		CharSequence text = "Creating folder";
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(this.caller.getApplicationContext(), text,
-				duration);
-		toast.show();
+		// CharSequence text = "Creating folder";
+		// int duration = Toast.LENGTH_SHORT;
+		//
+		// Toast toast = Toast.makeText(this.caller.getApplicationContext(),
+		// text,
+		// duration);
+		// toast.show();
 	}
 
 	@Override

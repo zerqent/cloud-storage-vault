@@ -3,9 +3,11 @@ package no.ntnu.item.csv;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.credentials.DisplayCapability;
+import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.guiutils.BrowseList;
 import no.ntnu.item.csv.workers.CreateFolderTask;
@@ -34,6 +36,7 @@ public class RemoteBrowseActivity extends ListActivity {
 	public static final int MENU_SHOW_CAPABILITY = 3;
 
 	private static Map<String, Capability> files;
+	private CreateFolderTask newFolderTask;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,9 @@ public class RemoteBrowseActivity extends ListActivity {
 
 		switch (item.getItemId()) {
 		case MENU_CREATE_FOLDER:
+			this.newFolderTask = new CreateFolderTask(this);
+			this.newFolderTask.execute();
+
 			intent.setClass(this, NewFolderActivity.class);
 			startActivityForResult(intent, MENU_CREATE_FOLDER);
 			return true;
@@ -127,8 +133,20 @@ public class RemoteBrowseActivity extends ListActivity {
 				new UploadTask(this).execute(data.getStringExtra("FILEPATH"));
 				break;
 			case MENU_CREATE_FOLDER:
-				new CreateFolderTask(this).execute(data
-						.getStringExtra(NewFolderActivity.NEW_FOLDER));
+				String alias = data
+						.getStringExtra(NewFolderActivity.NEW_FOLDER);
+				try {
+					CSVFolder folder = this.newFolderTask.get();
+					CreateFolderTask cft = new CreateFolderTask(this);
+					cft.setFolder(folder);
+					cft.execute(alias);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			default:
 				;
