@@ -1,6 +1,7 @@
 package no.ntnu.item.csv;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import no.ntnu.item.csv.capability.Capability;
@@ -73,7 +74,8 @@ public class RemoteBrowseActivity extends ListActivity {
 	}
 
 	public void doBrowsing() {
-		files = CSVActivity.fm.ls();
+		files = new HashMap<String, Capability>();
+		files.putAll(CSVActivity.fm.ls());
 		files.put("..", null);
 
 		BrowseList bl = new BrowseList(files);
@@ -102,6 +104,7 @@ public class RemoteBrowseActivity extends ListActivity {
 						e.printStackTrace();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
+						System.out.println("OMGLOLFOOBAR");
 						e.printStackTrace();
 					} catch (NoSuchAliasException e) {
 						// TODO Auto-generated catch block

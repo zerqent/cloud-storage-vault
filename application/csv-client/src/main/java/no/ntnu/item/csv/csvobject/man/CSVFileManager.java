@@ -45,6 +45,7 @@ public class CSVFileManager {
 
 		this.currentFolder = CSVFolder.createFromByteArray(resp, root_cap);
 		this.location.push(root_cap);
+		this.currentFolder.decrypt();
 	}
 
 	public void put(String filepath, CSVFolder folder) throws IOException,

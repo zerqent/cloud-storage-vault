@@ -46,6 +46,7 @@ public class CSVFolder implements CSVObject {
 		this.signature = signature;
 		this.setPubKey(pubkey);
 		this.setCapability(capability);
+		// this.contents = new HashMap<String, Capability>();
 		// this.decrypt();
 	}
 
@@ -136,6 +137,9 @@ public class CSVFolder implements CSVObject {
 	}
 
 	public Map<String, Capability> getContents() {
+		if (this.contents == null && this.ciphertext != null) {
+			decrypt();
+		}
 		return this.contents;
 	}
 
@@ -258,14 +262,16 @@ public class CSVFolder implements CSVObject {
 	}
 
 	protected void createPlainText() {
-		String plaintext = "";
-		for (Iterator<String> iterator = this.getContents().keySet().iterator(); iterator
-				.hasNext();) {
-			String key = iterator.next();
-			Capability cap = this.getContents().get(key);
-			plaintext += key + ";" + cap.toString() + "\n";
+		if (this.contents != null) {
+			String plaintext = "";
+			for (Iterator<String> iterator = this.getContents().keySet()
+					.iterator(); iterator.hasNext();) {
+				String key = iterator.next();
+				Capability cap = this.getContents().get(key);
+				plaintext += key + ";" + cap.toString() + "\n";
+			}
+			this.setPlainText(plaintext.getBytes());
 		}
-		this.setPlainText(plaintext.getBytes());
 	}
 
 	public byte[] getPublicKeyHash() {
