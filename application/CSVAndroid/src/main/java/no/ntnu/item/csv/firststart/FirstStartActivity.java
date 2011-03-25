@@ -30,6 +30,9 @@ public class FirstStartActivity extends Activity {
 	private Button bImport;
 	private Dialog progress;
 
+	private static final int PROGRESSBAR_GENERATE = 1;
+	private ProgressDialog progressDialog;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,6 +90,19 @@ public class FirstStartActivity extends Activity {
 			}
 		});
 
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case PROGRESSBAR_GENERATE:
+			this.progressDialog = new ProgressDialog(
+					FirstStartActivity.this.getApplicationContext());
+			this.progressDialog.setTitle("Title");
+			this.progressDialog.setMessage("Message");
+			return this.progressDialog;
+		}
+		return super.onCreateDialog(id);
 	}
 
 	private void done() {
