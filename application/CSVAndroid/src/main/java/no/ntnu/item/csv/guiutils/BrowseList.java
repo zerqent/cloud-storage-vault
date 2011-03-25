@@ -2,6 +2,7 @@ package no.ntnu.item.csv.guiutils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,37 +18,59 @@ public class BrowseList {
 
 	private List<Map<String, Object>> list;
 
+	// Creating browse list for remote browsing
 	public BrowseList(Map<String, Capability> currentFolder) {
 		this.list = new ArrayList<Map<String, Object>>();
-
-		List<Map<String, Object>> dirList = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> fileList = new ArrayList<Map<String, Object>>();
+		Map<String, Capability> dirList = new HashMap<String, Capability>();
+		Map<String, Capability> fileList = new HashMap<String, Capability>();
+		List<Map<String, Object>> tmpList = new ArrayList<Map<String, Object>>(
+				currentFolder.size());
 
 		for (String alias : currentFolder.keySet()) {
-			Map<String, Object> map = new HashMap<String, Object>();
 			if (!alias.equals("..")) {
-				map.put(TEXT, alias);
 				if (currentFolder.get(alias).isFolder()) {
-					map.put(ICON, R.drawable.folder);
-					dirList.add(map);
+					dirList.put(alias, currentFolder.get(alias));
+
 				} else {
-					map.put(ICON, R.drawable.text);
-					fileList.add(map);
+					fileList.put(alias, currentFolder.get(alias));
 				}
 			}
 		}
 
-		Map<String, Object> parMap = new HashMap<String, Object>();
-		System.out.println("In root: " + CSVActivity.fm.inRootDir());
+		Object[] dirKeys = dirList.keySet().toArray();
+
+		Object[] fileKeys = fileList.keySet().toArray();
+		Object[] keys = new Object[dirKeys.length + fileKeys.length];
+
+		Arrays.sort(dirKeys);
+		Arrays.sort(fileKeys);
+
+		System.arraycopy(dirKeys, 0, keys, 0, dirKeys.length);
+		System.arraycopy(fileKeys, 0, keys, dirKeys.length, fileKeys.length);
+
+		for (int i = 0; i < keys.length; i++) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put(TEXT, keys[i].toString());
+			if (currentFolder.get(keys[i]).isFolder()) {
+				map.put(ICON, R.drawable.folder);
+				tmpList.add(map);
+			} else {
+				map.put(ICON, R.drawable.text);
+				tmpList.add(map);
+			}
+		}
+
 		if (!CSVActivity.fm.inRootDir()) {
+			Map<String, Object> parMap = new HashMap<String, Object>();
 			parMap.put(TEXT, "..");
 			parMap.put(ICON, R.drawable.folder);
 			this.list.add(parMap);
 		}
-		this.list.addAll(dirList);
-		this.list.addAll(fileList);
+
+		this.list.addAll(tmpList);
 	}
 
+	// Creating browse list for local browsing
 	public BrowseList(String dir, List<String> files) {
 		this.list = new ArrayList<Map<String, Object>>();
 

@@ -83,7 +83,6 @@ public class RemoteBrowseActivity extends ListActivity {
 		files = new HashMap<String, Capability>();
 		files.putAll(CSVActivity.fm.ls());
 		files.put("..", null);
-
 		BrowseList bl = new BrowseList(files);
 		SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
 				android.R.layout.activity_list_item, new String[] { "TEXT",
@@ -100,24 +99,8 @@ public class RemoteBrowseActivity extends ListActivity {
 				LinearLayout ll = (LinearLayout) view;
 				TextView tmp = (TextView) ll.getChildAt(1);
 				String alias = tmp.getText().toString();
-				if (!alias.equals("..")) {
-					Capability cap = files.get(alias);
-					if (cap.isFolder()) {
-						try {
-							CSVActivity.fm.cd(alias);
-							doBrowsing();
-						} catch (ClientProtocolException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						} catch (NoSuchAliasException e) {
-							e.printStackTrace();
-						}
-					} else {
-						new DownloadTask(RemoteBrowseActivity.this)
-								.execute(alias);
-					}
-				} else {
+				Capability cap = files.get(alias);
+				if (alias.equals("..") || cap.isFolder()) {
 					try {
 						CSVActivity.fm.cd(alias);
 						doBrowsing();
@@ -128,7 +111,10 @@ public class RemoteBrowseActivity extends ListActivity {
 					} catch (NoSuchAliasException e) {
 						e.printStackTrace();
 					}
+				} else {
+					new DownloadTask(RemoteBrowseActivity.this).execute(alias);
 				}
+
 			}
 		});
 	}
