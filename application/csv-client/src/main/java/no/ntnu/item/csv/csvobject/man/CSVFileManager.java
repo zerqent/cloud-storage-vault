@@ -15,8 +15,10 @@ import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.CSVObject;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
+import no.ntnu.item.csv.exception.IllegalRootCapException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
@@ -34,12 +36,13 @@ public class CSVFileManager {
 	// directories
 	private CSVFolder currentFolder; // The current folder object visited
 
-	public CSVFileManager(Capability root_cap) {
+	public CSVFileManager(Capability root_cap) throws IllegalRootCapException,
+			RemoteFileDoesNotExistException, ServerCommunicationException {
+		if (root_cap == null)
+			throw new IllegalRootCapException();
+
 		byte[] resp = Communication.get(root_cap.getStorageIndex(),
 				Communication.SERVER_GET);
-
-		if (resp == null)
-			return;
 
 		this.location = new Stack<Capability>();
 
@@ -119,13 +122,22 @@ public class CSVFileManager {
 		} else {
 			System.out.println("Folder er satt.");
 		}
-		System.out.println("Innhold i root:" + folder.getContents().size());
+
 		if ((cap = folder.getContents().get(alias)) == null) {
 			throw new NoSuchAliasException(alias);
 		}
 
-		byte[] resp = Communication.get(cap.getStorageIndex(),
-				Communication.SERVER_GET);
+		byte[] resp;
+		try {
+			resp = Communication.get(cap.getStorageIndex(),
+					Communication.SERVER_GET);
+		} catch (RemoteFileDoesNotExistException e) {
+			e.printStackTrace();
+			return null;
+		} catch (ServerCommunicationException e) {
+			e.printStackTrace();
+			return null;
+		}
 		CSVObject file;
 
 		if (cap.isFile()) {
@@ -162,8 +174,17 @@ public class CSVFileManager {
 			if (this.location.size() <= 1)
 				return;
 
-			byte[] resp = Communication.get(this.location.lastElement()
-					.getStorageIndex(), Communication.SERVER_GET);
+			byte[] resp;
+			try {
+				resp = Communication.get(this.location.lastElement()
+						.getStorageIndex(), Communication.SERVER_GET);
+			} catch (RemoteFileDoesNotExistException e) {
+				e.printStackTrace();
+				return;
+			} catch (ServerCommunicationException e) {
+				e.printStackTrace();
+				return;
+			}
 			folder = CSVFolder.createFromByteArray(resp,
 					this.location.lastElement());
 
@@ -189,11 +210,14 @@ public class CSVFileManager {
 
 		if (target_dir != null && target_dir == CSVFileManager.SHARE_FOLDER) {
 			Capability root_cap = this.location.firstElement();
-			byte[] resp = Communication.get(root_cap.getStorageIndex(),
-					Communication.SERVER_GET);
-
-			if (resp == null)
+			byte[] resp;
+			try {
+				resp = Communication.get(root_cap.getStorageIndex(),
+						Communication.SERVER_GET);
+			} catch (RemoteFileDoesNotExistException e1) {
+				e1.printStackTrace();
 				return;
+			}
 
 			CSVFolder root_folder = CSVFolder.createFromByteArray(resp,
 					root_cap);
@@ -205,20 +229,20 @@ public class CSVFileManager {
 				share_cap = this.get(root_folder, CSVFileManager.SHARE_FOLDER)
 						.getCapability();
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchAliasException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			resp = Communication.get(share_cap.getStorageIndex(),
-					Communication.SERVER_GET);
-			if (resp == null)
+			try {
+				resp = Communication.get(share_cap.getStorageIndex(),
+						Communication.SERVER_GET);
+			} catch (RemoteFileDoesNotExistException e) {
+				e.printStackTrace();
 				return;
+			}
 
 			target = CSVFolder.createFromByteArray(resp, share_cap);
 			target.decrypt();
@@ -278,7 +302,9 @@ public class CSVFileManager {
 		return;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException,
+			IllegalRootCapException, RemoteFileDoesNotExistException,
+			ServerCommunicationException {
 		// Creating a root directory
 		// CSVFolder root = new CSVFolder();
 		// root.encrypt();
@@ -385,8 +411,17 @@ public class CSVFileManager {
 	}
 
 	public static CSVObject getCSVObject(Capability cap) {
-		byte[] resp = Communication.get(cap.getStorageIndex(),
-				Communication.SERVER_GET);
+		byte[] resp;
+		try {
+			resp = Communication.get(cap.getStorageIndex(),
+					Communication.SERVER_GET);
+		} catch (RemoteFileDoesNotExistException e) {
+			e.printStackTrace();
+			return null;
+		} catch (ServerCommunicationException e) {
+			e.printStackTrace();
+			return null;
+		}
 		CSVObject file;
 
 		if (cap.isFile()) {
@@ -396,5 +431,11 @@ public class CSVFileManager {
 		}
 		return file;
 
+	}
+
+	public boolean inRootDir() {
+		if (this.location.size() == 1)
+			return true;
+		return false;
 	}
 }
