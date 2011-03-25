@@ -5,6 +5,9 @@ import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.contrib.com.google.zxing.integration.android.IntentIntegrator;
 import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.exception.IllegalRootCapException;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class CSVActivity extends Activity {
 	/** Called when the activity is first created. */
@@ -38,7 +42,36 @@ public class CSVActivity extends Activity {
 			intent.setClass(this, FirstStartActivity.class);
 			startActivityForResult(intent, 1);
 		} else {
-			fm = new CSVFileManager(creds.getRootCapability());
+			try {
+				fm = new CSVFileManager(creds.getRootCapability());
+			} catch (IllegalRootCapException e) {
+				Toast.makeText(
+						getApplicationContext(),
+						"You have used an illegal root capability. Please use a valid capability.",
+						Toast.LENGTH_LONG).show();
+				Intent intent = new Intent();
+				intent.setClass(this, FirstStartActivity.class);
+				startActivityForResult(intent, 1);
+				e.printStackTrace();
+			} catch (RemoteFileDoesNotExistException e) {
+				Toast.makeText(
+						getApplicationContext(),
+						"The requested root folder does not exist on this server.",
+						Toast.LENGTH_LONG).show();
+				Intent intent = new Intent();
+				intent.setClass(this, FirstStartActivity.class);
+				startActivityForResult(intent, 1);
+				e.printStackTrace();
+			} catch (ServerCommunicationException e) {
+				Toast.makeText(
+						getApplicationContext(),
+						"An unknown error occured. Please check your configuration.",
+						Toast.LENGTH_LONG).show();
+				Intent intent = new Intent();
+				intent.setClass(this, FirstStartActivity.class);
+				startActivityForResult(intent, 1);
+				e.printStackTrace();
+			}
 		}
 
 		// Capture viewed buttons.
@@ -86,7 +119,35 @@ public class CSVActivity extends Activity {
 		// TODO: Modify this if we wait for other results
 		String root = (String) data.getExtras().get("rootcap");
 		Capability rootcap = CapabilityImpl.fromString(root);
-		fm = new CSVFileManager(rootcap);
+		try {
+			fm = new CSVFileManager(rootcap);
+		} catch (IllegalRootCapException e) {
+			Toast.makeText(
+					getApplicationContext(),
+					"You have used an illegal root capability. Please use a valid capability.",
+					Toast.LENGTH_LONG).show();
+			Intent intent = new Intent();
+			intent.setClass(this, FirstStartActivity.class);
+			startActivityForResult(intent, 1);
+			e.printStackTrace();
+		} catch (RemoteFileDoesNotExistException e) {
+			Toast.makeText(getApplicationContext(),
+					"The requested root folder does not exist on this server.",
+					Toast.LENGTH_LONG).show();
+			Intent intent = new Intent();
+			intent.setClass(this, FirstStartActivity.class);
+			startActivityForResult(intent, 1);
+			e.printStackTrace();
+		} catch (ServerCommunicationException e) {
+			Toast.makeText(
+					getApplicationContext(),
+					"An unknown error occured. Please check your configuration.",
+					Toast.LENGTH_LONG).show();
+			Intent intent = new Intent();
+			intent.setClass(this, FirstStartActivity.class);
+			startActivityForResult(intent, 1);
+			e.printStackTrace();
+		}
 	}
 
 	@Override

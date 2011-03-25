@@ -6,6 +6,8 @@ import java.io.InputStream;
 import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.CSVObject;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -73,7 +75,9 @@ public class Communication {
 		return code;
 	}
 
-	public static byte[] get(String index, String serv_addr) {
+	public static byte[] get(String index, String serv_addr)
+			throws RemoteFileDoesNotExistException,
+			ServerCommunicationException {
 		if (index == null || serv_addr == null)
 			throw new NullPointerException();
 
@@ -93,6 +97,22 @@ public class Communication {
 		HttpResponse response;
 		try {
 			response = client.execute(get);
+			System.out.println("RESPONSE: "
+					+ response.getStatusLine().getStatusCode());
+			switch (response.getStatusLine().getStatusCode()) {
+			case 200:
+				break;
+			case 201:
+				break;
+			case 202:
+				break;
+			case 204:
+				break;
+			case 404:
+				throw new RemoteFileDoesNotExistException();
+			default:
+				throw new ServerCommunicationException();
+			}
 
 			InputStream is = response.getEntity().getContent();
 			int len = Integer.parseInt(response
