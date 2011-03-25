@@ -27,10 +27,4 @@ android:layout_height="51px"
 android:text="Create Share"
 >
 </Button>
-<ImageView
-android:id="@+id/CreateShareQR"
-android:layout_width="186px"
-android:layout_height="180px"
->
-</ImageView>
 </LinearLayout>
