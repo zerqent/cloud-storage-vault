@@ -179,8 +179,9 @@ public class CSVFileManager {
 
 			byte[] resp;
 			try {
-				resp = Communication.get(this.location.lastElement()
-						.getStorageIndex(), Communication.SERVER_GET);
+				resp = Communication.get(
+						this.location.get(this.location.size() - 2)
+								.getStorageIndex(), Communication.SERVER_GET);
 			} catch (RemoteFileDoesNotExistException e) {
 				e.printStackTrace();
 				return;
@@ -189,7 +190,7 @@ public class CSVFileManager {
 				return;
 			}
 			folder = CSVFolder.createFromByteArray(resp,
-					this.location.lastElement());
+					this.location.get(this.location.size() - 2));
 
 			if (folder == null)
 				return;
@@ -197,6 +198,7 @@ public class CSVFileManager {
 			folder.decrypt();
 			this.currentFolder = (CSVFolder) folder;
 			this.location.pop();
+			System.out.println("Performed action");
 		}
 	}
 

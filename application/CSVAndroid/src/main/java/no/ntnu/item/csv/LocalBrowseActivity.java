@@ -50,6 +50,7 @@ public class LocalBrowseActivity extends ListActivity {
 
 	// Mount and display storage devices before browsing locally.
 	public void startLocalBrowsing() {
+		location.clear();
 		files.clear();
 		files.add("Internal storage");
 
