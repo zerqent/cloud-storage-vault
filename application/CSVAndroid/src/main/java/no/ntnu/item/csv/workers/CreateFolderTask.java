@@ -115,6 +115,7 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 			int icon = R.drawable.icon;
 			Notification notification = new Notification(icon, tickerText,
 					System.currentTimeMillis());
+			notification.flags = Notification.FLAG_AUTO_CANCEL;
 			Context context = this.caller.getApplicationContext();
 			Intent notificationIntent = new Intent();
 			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
