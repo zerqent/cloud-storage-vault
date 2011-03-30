@@ -10,6 +10,7 @@ import no.ntnu.item.csv.credentials.DisplayCapability;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.guiutils.BrowseList;
+import no.ntnu.item.csv.workers.AddToShareTask;
 import no.ntnu.item.csv.workers.CreateFolderTask;
 import no.ntnu.item.csv.workers.DownloadTask;
 import no.ntnu.item.csv.workers.UploadTask;
@@ -19,10 +20,13 @@ import org.apache.http.client.ClientProtocolException;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -38,10 +42,48 @@ public class RemoteBrowseActivity extends ListActivity {
 	private static Map<String, Capability> files;
 	private CreateFolderTask newFolderTask;
 
+	private final String NEW_SHARE_ACTION = "Share with new user";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		registerForContextMenu(getListView());
 		doBrowsing();
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		menu.setHeaderTitle("Share with ...");
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		for (String alias : CSVActivity.fm.getSharedfolder().getContents()
+				.keySet()) {
+			menu.add(alias);
+		}
+		menu.add(this.NEW_SHARE_ACTION);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		LinearLayout ll = (LinearLayout) info.targetView;
+		String alias = ((TextView) ll.getChildAt(1)).getText().toString();
+
+		String menu_element = item.getTitle().toString();
+
+		if (menu_element.equals(this.NEW_SHARE_ACTION)) {
+			// TODO: Make this more user friendly, aka upon result, should share
+			// the folder in question.
+			Intent intent = new Intent(RemoteBrowseActivity.this,
+					CreateShareActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(intent);
+		}
+		AddToShareTask atst = new AddToShareTask(this);
+		atst.execute(menu_element, alias);
+
+		return super.onContextItemSelected(item);
 	}
 
 	@Override

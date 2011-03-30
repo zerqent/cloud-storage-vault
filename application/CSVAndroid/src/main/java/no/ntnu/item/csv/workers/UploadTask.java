@@ -17,7 +17,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -90,6 +89,7 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 		int icon = R.drawable.icon;
 		Notification notification = new Notification(icon, tickerText,
 				System.currentTimeMillis());
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
 
 		Context context = this.caller.getApplicationContext();
 
@@ -100,21 +100,16 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 		}
 		CharSequence contentText = result;
 
-		// What to do when someone touch the intent
-		Intent notificationIntent = new Intent();
-		// TODO: On Upload user should be able to click the notification and
-		// brought into the folder above
-		// notificationIntent.setAction(android.content.Intent.ACTION_VIEW);
-		// File file = new File(result);
-		// notificationIntent.setDataAndType(Uri.fromFile(file), "audio/*");
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(this.caller, 0,
+				null, 0);
 		notification.setLatestEventInfo(context, contentTitle, contentText,
 				contentIntent);
 		mNotificationManager.notify(1, notification);
 
-		RemoteBrowseActivity ac = (RemoteBrowseActivity) caller;
-		ac.doBrowsing();
+		if (caller instanceof RemoteBrowseActivity) {
+			RemoteBrowseActivity ac = (RemoteBrowseActivity) caller;
+			ac.doBrowsing();
+		}
 		this.caller = null;
 		return;
 	}

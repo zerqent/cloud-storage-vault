@@ -68,6 +68,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		int icon = R.drawable.icon;
 		Notification notification = new Notification(icon, tickerText,
 				System.currentTimeMillis());
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
 
 		Context context = this.caller.getApplicationContext();
 
