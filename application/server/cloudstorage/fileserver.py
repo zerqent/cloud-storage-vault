@@ -4,18 +4,7 @@ from pyroutes.http.response import Response
 
 from cloudstorage.filesystem import (retrieve_file, save_file,
                                      FileSystemException)
-
-def _clean_input(parameter):
-    '''Sets parameter to None if it is an empty string.
-
-    The doc of pyroutes states that "variables not available from the URL
-    is passed to your method as an empty string or your defined default in
-    the method declaration." But apparently not.
-
-    '''
-    if parameter is not None and parameter == "":
-        return None
-    return parameter
+from cloudstorage.utils import _clean_input
 
 @route('/')
 def index(request):
