@@ -1,6 +1,8 @@
 package no.ntnu.item.csv.firststart;
 
+import no.ntnu.item.csv.GetRootCapActivity;
 import no.ntnu.item.csv.R;
+import no.ntnu.item.csv.SetPasswordActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.credentials.LocalCredentials;
@@ -30,7 +32,9 @@ public class FirstStartActivity extends Activity {
 	private Button bImport;
 	private Dialog progress;
 
-	private static final int PROGRESSBAR_GENERATE = 1;
+	private static final int PROGRESSBAR_GENERATE = 2;
+	private static final int SET_PASSWORD = 3;
+
 	private ProgressDialog progressDialog;
 
 	@Override
@@ -48,9 +52,10 @@ public class FirstStartActivity extends Activity {
 		bCreateNew.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				progress = ProgressDialog.show(FirstStartActivity.this, "",
-						"Generating secret keys, please wait..", true);
-				new CreateRootCapTask(FirstStartActivity.this).execute();
+				Intent intent = new Intent();
+				intent.setClass(FirstStartActivity.this,
+						SetPasswordActivity.class);
+				startActivityForResult(intent, SET_PASSWORD);
 			}
 		});
 
@@ -110,7 +115,7 @@ public class FirstStartActivity extends Activity {
 		if (rootCapString == null) {
 			rootCapString = root_cap.toString();
 		}
-		intent.putExtra("rootcap", rootCapString);
+		intent.putExtra(GetRootCapActivity.ROOTCAP, rootCapString);
 		setResult(RESULT_OK, intent);
 		finish();
 	}
@@ -125,6 +130,7 @@ public class FirstStartActivity extends Activity {
 				rootCapString = data.getStringExtra(ROOT_CAP_STRING_KEY);
 				new LocalCredentials(this,
 						CapabilityImpl.fromString(rootCapString));
+				// TODO: Insert SetPasswordActivity!
 				done();
 				return;
 			}
@@ -133,7 +139,16 @@ public class FirstStartActivity extends Activity {
 				rootCapString = data.getStringExtra("SCAN_RESULT");
 				new LocalCredentials(this,
 						CapabilityImpl.fromString(rootCapString));
+				// TODO: Insert SetPasswordActivity!
 				done();
+			}
+		case SET_PASSWORD:
+			if (resultCode == RESULT_OK) {
+				progress = ProgressDialog.show(FirstStartActivity.this, "",
+						"Generating secret keys, please wait..", true);
+				new CreateRootCapTask(FirstStartActivity.this,
+						data.getStringExtra(SetPasswordActivity.PASSWORD))
+						.execute();
 			}
 		}
 

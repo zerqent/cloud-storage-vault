@@ -16,7 +16,6 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -59,8 +58,12 @@ public class LocalBrowseActivity extends ListActivity {
 		if (eState.equals(Environment.MEDIA_MOUNTED))
 			files.add("External storage");
 
-		setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.test_list_item, files));
+		BrowseList bl = new BrowseList(files);
+		SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
+				R.layout.filelist, new String[] { "ICON", "TEXT" }, new int[] {
+						R.id.browse_icon, R.id.browse_text });
+		setListAdapter(sa);
+
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
 
@@ -110,9 +113,8 @@ public class LocalBrowseActivity extends ListActivity {
 
 			BrowseList bl = new BrowseList(getCurrentDirectory(), files);
 			SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
-					android.R.layout.activity_list_item, new String[] { "TEXT",
-							"ICON" }, new int[] { android.R.id.text1,
-							android.R.id.icon });
+					R.layout.filelist, new String[] { "ICON", "TEXT" },
+					new int[] { R.id.browse_icon, R.id.browse_text });
 			setListAdapter(sa);
 
 			ListView lv = getListView();

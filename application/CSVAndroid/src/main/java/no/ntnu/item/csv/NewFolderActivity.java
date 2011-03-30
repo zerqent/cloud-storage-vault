@@ -18,7 +18,7 @@ public class NewFolderActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.text);
+		setContentView(R.layout.newfolder);
 		bCancel = (Button) findViewById(R.id.nf_cancel);
 		bOk = (Button) findViewById(R.id.nf_ok);
 
@@ -38,7 +38,6 @@ public class NewFolderActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = getIntent();
 				if (tv.getText().toString().equals("")) {
-					System.out.println("No filename");
 					setResult(RESULT_CANCELED, intent);
 					finish();
 				} else {

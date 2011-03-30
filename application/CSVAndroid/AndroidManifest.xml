@@ -11,13 +11,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+    <activity android:name="MenuActivity" android:label="@string/app_name"></activity>
+    <activity android:name="GetRootCapActivity" android:label="@string/app_name"></activity>
+    <activity android:name="PBKDF2Activity" android:label="@string/app_name"></activity>
     <activity android:name="UploadActivity" android:label="@string/app_name"></activity>
-    <activity android:name="NewFolderActivity" android:label="@string/app_name"></activity>
+    <activity android:name="NewFolderActivity" android:label="@string/app_name" android:theme="@android:style/Theme.Dialog"></activity>
     <activity android:name="RemoteBrowseActivity" android:label="@string/app_name"></activity>
     <activity android:name="LocalBrowseActivity" android:label="@string/app_name"></activity>
 	<activity android:label="@string/app_name" android:name=".firststart.FirstStartActivity"></activity>
 	<activity android:label="@string/app_name" android:name=".firststart.ManualCapabilityImportActivity"></activity>
 	<activity android:name="CreateShareActivity" android:label="@string/app_name"></activity>
+	<activity android:name="PasswordPromptActivity" android:label="@string/app_name"></activity>
+	<activity android:name="SetPasswordActivity" android:label="@string/app_name"></activity>
 	</application>
 
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>

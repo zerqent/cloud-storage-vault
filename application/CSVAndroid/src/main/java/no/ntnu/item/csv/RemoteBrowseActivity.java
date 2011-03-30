@@ -85,9 +85,8 @@ public class RemoteBrowseActivity extends ListActivity {
 		files.put("..", null);
 		BrowseList bl = new BrowseList(files);
 		SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
-				android.R.layout.activity_list_item, new String[] { "TEXT",
-						"ICON" }, new int[] { android.R.id.text1,
-						android.R.id.icon });
+				R.layout.filelist, new String[] { "ICON", "TEXT" }, new int[] {
+						R.id.browse_icon, R.id.browse_text });
 		setListAdapter(sa);
 
 		ListView lv = getListView();

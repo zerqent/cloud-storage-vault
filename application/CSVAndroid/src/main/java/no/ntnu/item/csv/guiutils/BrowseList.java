@@ -55,7 +55,7 @@ public class BrowseList {
 				map.put(ICON, R.drawable.folder);
 				tmpList.add(map);
 			} else {
-				map.put(ICON, R.drawable.text);
+				map.put(ICON, R.drawable.file);
 				tmpList.add(map);
 			}
 		}
@@ -82,7 +82,7 @@ public class BrowseList {
 				if (tmpFile.exists() && tmpFile.isDirectory()) {
 					map.put(ICON, R.drawable.folder);
 				} else if (tmpFile.exists()) {
-					map.put(ICON, R.drawable.text);
+					map.put(ICON, R.drawable.file);
 				}
 				this.list.add(map);
 			}
@@ -92,6 +92,20 @@ public class BrowseList {
 		parMap.put(TEXT, "..");
 		parMap.put(ICON, null);
 		this.list.add(0, parMap);
+	}
+
+	// Creating browse list from a normal list of items
+	public BrowseList(List<String> files) {
+		this.list = new ArrayList<Map<String, Object>>();
+
+		for (String alias : files) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			if (!alias.equals("..")) {
+				map.put(TEXT, alias);
+				map.put(ICON, R.drawable.icon);
+				this.list.add(map);
+			}
+		}
 	}
 
 	public List<Map<String, Object>> getList() {
