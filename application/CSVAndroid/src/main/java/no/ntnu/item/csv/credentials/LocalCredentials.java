@@ -21,11 +21,10 @@ public class LocalCredentials {
 	private Capability rootCapability;
 	private Context ctx;
 
-	public LocalCredentials(Context ctx, Capability cap) {
+	public LocalCredentials(Context ctx, Capability cap, String password) {
 		this.ctx = ctx;
 		this.rootCapability = cap;
-		// TODO: request password in firstActivity!
-		// writeCredentialsToDisk(password);
+		writeCredentialsToDisk(password);
 	}
 
 	public LocalCredentials(Context ctx, String password, boolean createNew)
@@ -82,6 +81,7 @@ public class LocalCredentials {
 	private void writeCredentialsToDisk(String password) {
 		try {
 			System.out.println("Writing to file");
+			System.out.println(this.rootCapability.toString());
 			KeyChain kc = new KeyChain(password);
 
 			byte[] encRootCap = Cryptoutil.symECBEncrypt(this.rootCapability

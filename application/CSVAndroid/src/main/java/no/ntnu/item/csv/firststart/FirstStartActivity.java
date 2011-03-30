@@ -33,7 +33,8 @@ public class FirstStartActivity extends Activity {
 	private Dialog progress;
 
 	private static final int PROGRESSBAR_GENERATE = 2;
-	private static final int SET_PASSWORD = 3;
+	private static final int SET_PASSWORD_NEW_ROOT = 3;
+	private static final int SET_PASSWORD_OLD_ROOT = 4;
 
 	private ProgressDialog progressDialog;
 
@@ -55,7 +56,7 @@ public class FirstStartActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(FirstStartActivity.this,
 						SetPasswordActivity.class);
-				startActivityForResult(intent, SET_PASSWORD);
+				startActivityForResult(intent, SET_PASSWORD_NEW_ROOT);
 			}
 		});
 
@@ -125,24 +126,27 @@ public class FirstStartActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		switch (requestCode) {
-		case REQUEST_ROOTCAP:
+		case REQUEST_ROOTCAP: {
 			if (resultCode == RESULT_OK) {
 				rootCapString = data.getStringExtra(ROOT_CAP_STRING_KEY);
-				new LocalCredentials(this,
-						CapabilityImpl.fromString(rootCapString));
-				// TODO: Insert SetPasswordActivity!
-				done();
-				return;
+				Intent intent = new Intent();
+				intent.setClass(FirstStartActivity.this,
+						SetPasswordActivity.class);
+				startActivityForResult(intent, SET_PASSWORD_OLD_ROOT);
 			}
-		case REQUEST_BARCODE:
+			break;
+		}
+		case REQUEST_BARCODE: {
 			if (resultCode == RESULT_OK) {
 				rootCapString = data.getStringExtra("SCAN_RESULT");
-				new LocalCredentials(this,
-						CapabilityImpl.fromString(rootCapString));
-				// TODO: Insert SetPasswordActivity!
-				done();
+				Intent intent = new Intent();
+				intent.setClass(FirstStartActivity.this,
+						SetPasswordActivity.class);
+				startActivityForResult(intent, SET_PASSWORD_OLD_ROOT);
 			}
-		case SET_PASSWORD:
+			break;
+		}
+		case SET_PASSWORD_NEW_ROOT: {
 			if (resultCode == RESULT_OK) {
 				progress = ProgressDialog.show(FirstStartActivity.this, "",
 						"Generating secret keys, please wait..", true);
@@ -150,13 +154,23 @@ public class FirstStartActivity extends Activity {
 						data.getStringExtra(SetPasswordActivity.PASSWORD))
 						.execute();
 			}
+			return;
+		}
+		case SET_PASSWORD_OLD_ROOT: {
+			if (resultCode == RESULT_OK) {
+				new LocalCredentials(this,
+						CapabilityImpl.fromString(rootCapString),
+						data.getStringExtra(SetPasswordActivity.PASSWORD));
+				done();
+			}
+			return;
+		}
 		}
 
 	}
 
 	public void supplyWithRootCap(Capability cap) {
 		this.root_cap = cap;
-		new LocalCredentials(this, cap);
 		this.progress.dismiss();
 		done();
 	}

@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class ManualCapabilityImportActivity extends Activity {
 
@@ -43,8 +44,14 @@ public class ManualCapabilityImportActivity extends Activity {
 						false);
 				CSVFolder folder = (CSVFolder) CSVFileManager
 						.getCSVObject(rootCap);
-				verifyHash = Base32.encode(folder.getPublicKeyHash());
-				showDialog(DIALOG_VERIFY_KEY);
+				if (folder == null) {
+					Toast.makeText(ManualCapabilityImportActivity.this,
+							"The requested root capability does not exist",
+							Toast.LENGTH_LONG).show();
+				} else {
+					verifyHash = Base32.encode(folder.getPublicKeyHash());
+					showDialog(DIALOG_VERIFY_KEY);
+				}
 			}
 		});
 	}

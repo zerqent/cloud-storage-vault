@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SetPasswordActivity extends Activity {
 
@@ -46,7 +47,15 @@ public class SetPasswordActivity extends Activity {
 					setResult(RESULT_OK, intent);
 					finish();
 				} else {
-					// TODO: TOAST!
+					if (confPassword.equals(password))
+						Toast.makeText(
+								SetPasswordActivity.this,
+								"The password must be at least 9 characters long",
+								Toast.LENGTH_LONG);
+					else
+						Toast.makeText(SetPasswordActivity.this,
+								"The password is not confirmed corretly",
+								Toast.LENGTH_LONG);
 				}
 			}
 		});
