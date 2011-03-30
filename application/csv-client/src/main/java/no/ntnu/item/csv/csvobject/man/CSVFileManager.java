@@ -243,7 +243,7 @@ public class CSVFileManager {
 		CSVFolder target = this.currentFolder;
 
 		if (target_dir != null && target_dir == CSVFileManager.SHARE_FOLDER) {
-			this.sharedfolder.addContent(alias, csvObject.getCapability());
+			// this.sharedfolder.addContent(alias, csvObject.getCapability());
 			target = this.sharedfolder;
 		}
 
