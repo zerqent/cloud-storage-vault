@@ -33,7 +33,11 @@
         <version>4.1</version>
         <scope>compile</scope>
     </dependency>
-
+    <dependency>
+        <groupId>de.rtner.security.auth</groupId>
+        <artifactId>spi</artifactId>
+        <version>1.0.4</version>
+    </dependency>
   </dependencies>
     <build>
         <plugins>
