@@ -47,15 +47,16 @@ public class SetPasswordActivity extends Activity {
 					setResult(RESULT_OK, intent);
 					finish();
 				} else {
-					if (confPassword.equals(password))
+					if (confPassword.equals(password)) {
 						Toast.makeText(
 								SetPasswordActivity.this,
 								"The password must be at least 9 characters long",
 								Toast.LENGTH_LONG);
-					else
+					} else {
 						Toast.makeText(SetPasswordActivity.this,
 								"The password is not confirmed corretly",
 								Toast.LENGTH_LONG);
+					}
 				}
 			}
 		});
