@@ -2,7 +2,6 @@ package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
-import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
 import no.ntnu.item.csv.workers.ImportShareTask;
 import android.app.Activity;
@@ -80,8 +79,7 @@ public class MenuActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// FIXME: Just for testing purposes
-		// menu.add("Delete Capability");
+		menu.add("Log out");
 		menu.add("Exit program");
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -122,12 +120,11 @@ public class MenuActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getTitle().equals("Delete Capability")) {
-			deleteFile(LocalCredentials.save_file);
+		if (item.getTitle().equals("Log out")) {
+			System.exit(0);
+		} else if (item.getTitle().equals("Exit program")) {
 			finish();
 			return true;
-		} else if (item.getTitle().equals("Exit program")) {
-			System.exit(0);
 		}
 		return false;
 	}
