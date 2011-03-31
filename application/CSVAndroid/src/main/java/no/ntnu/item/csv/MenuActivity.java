@@ -67,13 +67,14 @@ public class MenuActivity extends Activity {
 				intent.setClass(MenuActivity.this, FirstStartActivity.class);
 				startActivity(intent);
 
-				bImportShare.setOnClickListener(new View.OnClickListener() {
+			}
+		});
 
-					@Override
-					public void onClick(View v) {
-						showDialog(MENU_IMPORTSHARE);
-					}
-				});
+		bImportShare.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDialog(MENU_IMPORTSHARE);
 			}
 		});
 	}
@@ -137,7 +138,7 @@ public class MenuActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				String tmp = data.getStringExtra("SCAN_RESULT");
 				String username = tmp.split(":")[0];
-				String stringCap = tmp.substring(username.length() - 1);
+				String stringCap = tmp.substring(username.length() + 1);
 				Capability capability = CapabilityImpl.fromString(stringCap);
 				ImportShareTask ist = new ImportShareTask(this, capability);
 				ist.execute(username);

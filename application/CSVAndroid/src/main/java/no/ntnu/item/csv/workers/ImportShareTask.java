@@ -14,6 +14,7 @@ public class ImportShareTask extends AsyncTask<String, Void, String> {
 	private Activity caller;
 
 	public ImportShareTask(Activity caller, Capability capability) {
+		this.caller = caller;
 		this.capability = capability;
 	}
 
