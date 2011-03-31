@@ -39,14 +39,13 @@ public class CSVFileManager {
 	private CSVFolder currentFolder; // The current folder object visited
 	private CSVFolder sharedfolder;
 
-	public CSVFileManager(Capability rootCap, String username, String password)
+	public CSVFileManager(Capability rootCap, Communication connection)
 			throws IllegalRootCapException, RemoteFileDoesNotExistException,
 			ServerCommunicationException {
 		if (rootCap == null)
 			throw new IllegalRootCapException();
 
-		this.connection = new Communication("http://create.q2s.ntnu.no/",
-				username, password);
+		this.connection = connection;
 
 		CSVFolder rootFolder = this.getFolder(rootCap);
 		rootFolder.decrypt();
@@ -319,7 +318,9 @@ public class CSVFileManager {
 
 		Capability root_cap = CapabilityImpl
 				.fromString("D:RW:MDJH4ISE34ULD7RW3TGOX7NOJU:LID4JW5EQAI2QMCLNMPM7ZSNG4");
-		CSVFileManager fm = new CSVFileManager(root_cap, "foo", "bar");
+		Communication conn = new Communication("http://create.q2s.ntnu.no/",
+				"foo", "bar");
+		CSVFileManager fm = new CSVFileManager(root_cap, conn);
 		System.out.println("File manager created!");
 		// fm.cd("Desktop");
 		// fm.ls();
