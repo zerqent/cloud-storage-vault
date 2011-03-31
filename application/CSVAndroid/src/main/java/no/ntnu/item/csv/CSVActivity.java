@@ -84,7 +84,7 @@ public class CSVActivity extends Activity {
 		}
 	}
 
-	public boolean initiated() {
+	public static boolean initiated() {
 		return fm != null;
 	}
 

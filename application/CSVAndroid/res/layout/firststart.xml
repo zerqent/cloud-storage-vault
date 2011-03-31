@@ -7,6 +7,7 @@
 	<TextView android:text="Configuration" android:id="@+id/firstStart_header" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:textStyle="bold" android:singleLine="true" android:textSize="25sp"></TextView>
 	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_new" android:text="Create new root Capability" android:layout_width="fill_parent"/>
 	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_import" android:text="Import root Capability" android:layout_width="fill_parent"></Button>
+	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_show" android:text="Show root Capability" android:layout_width="fill_parent" android:enabled="false" android:visibility="invisible"></Button>
 <TextView android:text="Import options" android:id="@+id/firstStart_importheader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:textStyle="bold" android:singleLine="true" android:textSize="25sp" android:enabled="false" android:visibility="invisible"></TextView>
 	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_importbarcode" android:text="Import via Barcode" android:layout_width="fill_parent" android:enabled="false" android:visibility="invisible"/>
 	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_importmanual" android:text="Import manualy" android:layout_width="fill_parent" android:enabled="false" android:visibility="invisible"></Button>

@@ -1,10 +1,13 @@
 package no.ntnu.item.csv.firststart;
 
+import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.GetRootCapActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.SetPasswordActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
+import no.ntnu.item.csv.contrib.com.google.zxing.integration.android.IntentIntegrator;
+import no.ntnu.item.csv.credentials.DisplayCapability;
 import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.workers.CreateRootCapTask;
 import android.app.Activity;
@@ -30,6 +33,7 @@ public class FirstStartActivity extends Activity {
 	private Button bImportBarcode;
 	private Button bCreateNew;
 	private Button bImport;
+	private Button bShow;
 	private Dialog progress;
 
 	private static final int PROGRESSBAR_GENERATE = 2;
@@ -45,10 +49,16 @@ public class FirstStartActivity extends Activity {
 
 		bCreateNew = (Button) findViewById(R.id.firstStart_new);
 		bImport = (Button) findViewById(R.id.firstStart_import);
+		bShow = (Button) findViewById(R.id.firstStart_show);
 
 		bImportManual = (Button) findViewById(R.id.firstStart_importmanual);
 		bImportBarcode = (Button) findViewById(R.id.firstStart_importbarcode);
 		tv = (TextView) findViewById(R.id.firstStart_importheader);
+
+		if (CSVActivity.initiated()) {
+			bShow.setEnabled(true);
+			bShow.setVisibility(View.VISIBLE);
+		}
 
 		bCreateNew.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -66,12 +76,24 @@ public class FirstStartActivity extends Activity {
 			public void onClick(View v) {
 				bImport.setEnabled(false);
 				bCreateNew.setEnabled(false);
+				bShow.setEnabled(false);
 
 				tv.setVisibility(View.VISIBLE);
 				bImportManual.setEnabled(true);
 				bImportManual.setVisibility(View.VISIBLE);
 				bImportBarcode.setEnabled(true);
 				bImportBarcode.setVisibility(View.VISIBLE);
+			}
+		});
+
+		bShow.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				DisplayCapability.displayCapability(FirstStartActivity.this,
+						CSVActivity.fm.getRootCap()).show();
+				IntentIntegrator.shareText(FirstStartActivity.this,
+						CSVActivity.fm.getRootCap().toString());
 			}
 		});
 

@@ -14,15 +14,15 @@
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:text="Download"/>
-	<Button  
-    	android:id="@+id/menu_upload"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:text="Show Root Capability"/>
     <Button  
     	android:id="@+id/menu_share"
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:text="Share"/>
+    <Button  
+    	android:id="@+id/menu_conf"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:text="Configuration"/>
 </LinearLayout>
 

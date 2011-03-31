@@ -1,6 +1,7 @@
 package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.credentials.LocalCredentials;
+import no.ntnu.item.csv.firststart.FirstStartActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +13,7 @@ import android.widget.Button;
 public class MenuActivity extends Activity {
 
 	private Button bDownload;
-	// private Button bUpload;
+	private Button bConf;
 	private Button bShare;
 
 	@Override
@@ -22,7 +23,7 @@ public class MenuActivity extends Activity {
 
 		// Capture viewed buttons.
 		bDownload = (Button) findViewById(R.id.menu_download);
-		// bUpload = (Button) findViewById(R.id.menu_upload);
+		bConf = (Button) findViewById(R.id.menu_conf);
 		bShare = (Button) findViewById(R.id.menu_share);
 
 		// Add button listeners.
@@ -36,18 +37,6 @@ public class MenuActivity extends Activity {
 			}
 		});
 
-		// bUpload.setOnClickListener(new View.OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// // DisplayCapability.displayCapability(CSVActivity.this,
-		// // CSVActivity.fm.getCurrentFolder().getCapability())
-		// // .show();
-		// IntentIntegrator.shareText(MenuActivity.this, CSVActivity.fm
-		// .getCurrentFolder().getCapability().toString());
-		// }
-		// });
-
 		bShare.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -55,6 +44,16 @@ public class MenuActivity extends Activity {
 				Intent intent = new Intent(MenuActivity.this,
 						CreateShareActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
+			}
+		});
+
+		bConf.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(MenuActivity.this, FirstStartActivity.class);
 				startActivity(intent);
 			}
 		});

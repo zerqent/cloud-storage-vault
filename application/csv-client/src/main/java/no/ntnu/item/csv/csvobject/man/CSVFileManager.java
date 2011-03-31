@@ -436,4 +436,8 @@ public class CSVFileManager {
 			return true;
 		return false;
 	}
+
+	public Capability getRootCap() {
+		return this.location.get(0);
+	}
 }
