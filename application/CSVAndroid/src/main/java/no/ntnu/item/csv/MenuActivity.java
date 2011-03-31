@@ -139,7 +139,7 @@ public class MenuActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				String tmp = data.getStringExtra("SCAN_RESULT");
 				String username = tmp.split(":")[0];
-				String stringCap = tmp.substring(username.length() - 1);
+				String stringCap = tmp.substring(username.length() + 1);
 				Capability capability = CapabilityImpl.fromString(stringCap);
 				ImportShareTask ist = new ImportShareTask(this, capability);
 				ist.execute(username);
