@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -24,6 +25,7 @@ public class CSVFile implements CSVObject {
 
 	private byte[] plainText;
 	private byte[] cipherText;
+	private byte[] hash;
 
 	public CSVFile(File f) throws IOException {
 		InputStream in = new FileInputStream(f);
@@ -33,6 +35,7 @@ public class CSVFile implements CSVObject {
 				this.secretKey.getEncoded(), null, true);
 		this.iv = new IvParameterSpec(Cryptoutil.nHash(
 				this.secretKey.getEncoded(), 2, 16));
+		this.hash = Cryptoutil.hash(this.plainText, 0);
 	}
 
 	public CSVFile(Capability capability, byte[] cipherText) {
@@ -42,14 +45,30 @@ public class CSVFile implements CSVObject {
 
 	@Override
 	public void encrypt() {
-		this.cipherText = Cryptoutil.symEncrypt(this.plainText, this.secretKey,
-				this.iv);
+		if (this.hash == null) {
+			this.hash = Cryptoutil.hash(this.plainText, 0);
+		}
+		byte[] tmp = new byte[this.plainText.length + this.hash.length];
+		System.arraycopy(this.plainText, 0, tmp, 0, this.plainText.length);
+		System.arraycopy(this.hash, 0, tmp, this.plainText.length,
+				this.hash.length);
+		this.cipherText = Cryptoutil.symEncrypt(tmp, this.secretKey, this.iv);
 	}
 
 	@Override
 	public void decrypt() {
-		this.plainText = Cryptoutil.symDecrypt(this.cipherText, this.secretKey,
+		byte[] tmp = Cryptoutil.symDecrypt(this.cipherText, this.secretKey,
 				this.iv);
+		if (this.plainText == null) {
+			this.plainText = new byte[tmp.length
+					- (Cryptoutil.HASH_LENGTH / Byte.SIZE)];
+		}
+		if (this.hash == null) {
+			this.hash = new byte[Cryptoutil.HASH_LENGTH / Byte.SIZE];
+		}
+		System.arraycopy(tmp, 0, this.plainText, 0, this.plainText.length);
+		System.arraycopy(tmp, this.plainText.length, this.hash, 0,
+				this.hash.length);
 	}
 
 	private void setSecretKey(byte[] sk) {
@@ -77,8 +96,11 @@ public class CSVFile implements CSVObject {
 
 	@Override
 	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
+		if (this.plainText == null) {
+			this.decrypt();
+		}
+		byte[] hash = Cryptoutil.hash(this.plainText, 0);
+		return Arrays.equals(hash, this.hash);
 	}
 
 	public byte[] getPlainText() {

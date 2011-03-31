@@ -6,6 +6,7 @@ import java.io.IOException;
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.csvobject.CSVFile;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
@@ -49,6 +50,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			e.printStackTrace();
 			return null;
 		} catch (NoSuchAliasException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FailedToVerifySignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

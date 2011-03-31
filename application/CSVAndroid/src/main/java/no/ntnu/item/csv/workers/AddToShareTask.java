@@ -5,6 +5,7 @@ import java.io.IOException;
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.csvobject.CSVFolder;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
 
@@ -49,6 +50,9 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ServerCommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FailedToVerifySignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

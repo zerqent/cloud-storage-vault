@@ -2,6 +2,7 @@ package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.IllegalRootCapException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
@@ -69,6 +70,14 @@ public class CSVActivity extends Activity {
 					Toast.makeText(
 							getApplicationContext(),
 							"An unknown error occured. Please check your configuration.",
+							Toast.LENGTH_LONG).show();
+					Intent intent = new Intent();
+					intent.setClass(CSVActivity.this, GetRootCapActivity.class);
+					startActivityForResult(intent, GET_ROOTCAP);
+					e.printStackTrace();
+				} catch (FailedToVerifySignatureException e) {
+					Toast.makeText(getApplicationContext(),
+							"The requested root folder could not be verified",
 							Toast.LENGTH_LONG).show();
 					Intent intent = new Intent();
 					intent.setClass(CSVActivity.this, GetRootCapActivity.class);
