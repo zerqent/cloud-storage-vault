@@ -1,8 +1,14 @@
 package no.ntnu.item.csv;
 
+import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
+import no.ntnu.item.csv.workers.ImportShareTask;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,6 +21,10 @@ public class MenuActivity extends Activity {
 	private Button bDownload;
 	private Button bConf;
 	private Button bShare;
+	private Button bImportShare;
+
+	private static final int MENU_IMPORTSHARE = 0;
+	private static final int REQUEST_BARCODEIMPORT = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,6 +35,7 @@ public class MenuActivity extends Activity {
 		bDownload = (Button) findViewById(R.id.menu_download);
 		bConf = (Button) findViewById(R.id.menu_conf);
 		bShare = (Button) findViewById(R.id.menu_share);
+		bImportShare = (Button) findViewById(R.id.menu_shareimport);
 
 		// Add button listeners.
 		bDownload.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +66,14 @@ public class MenuActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(MenuActivity.this, FirstStartActivity.class);
 				startActivity(intent);
+
+				bImportShare.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						showDialog(MENU_IMPORTSHARE);
+					}
+				});
 			}
 		});
 	}
@@ -68,6 +87,38 @@ public class MenuActivity extends Activity {
 	}
 
 	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case MENU_IMPORTSHARE:
+			final CharSequence[] items = { "From Barcode", "Manual" };
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose import method");
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int item) {
+					switch (item) {
+					case 0:
+						Intent intent = new Intent(
+								"com.google.zxing.client.android.SCAN");
+						intent.setPackage("com.google.zxing.client.android");
+						intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+						startActivityForResult(intent, REQUEST_BARCODEIMPORT);
+						break;
+					case 1:
+						// Manual
+						break;
+					}
+				}
+			});
+			return builder.create();
+		default:
+			break;
+		}
+		return super.onCreateDialog(id);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getTitle().equals("Delete Capability")) {
 			deleteFile(LocalCredentials.save_file);
@@ -77,5 +128,22 @@ public class MenuActivity extends Activity {
 			System.exit(0);
 		}
 		return false;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case REQUEST_BARCODEIMPORT:
+			if (resultCode == RESULT_OK) {
+				String tmp = data.getStringExtra("SCAN_RESULT");
+				String username = tmp.split(":")[0];
+				String stringCap = tmp.substring(username.length() - 1);
+				Capability capability = CapabilityImpl.fromString(stringCap);
+				ImportShareTask ist = new ImportShareTask(this, capability);
+				ist.execute(username);
+			}
+			return;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }
