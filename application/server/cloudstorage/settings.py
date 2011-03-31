@@ -1,4 +1,4 @@
-FILE_STORE='/tmp/cloud'
+FILE_STORE='/home/cloud_storage'
 
 DB_CONF = {
     'user': 'cloud',

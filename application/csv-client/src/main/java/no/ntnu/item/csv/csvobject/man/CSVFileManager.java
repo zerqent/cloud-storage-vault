@@ -37,7 +37,7 @@ public class CSVFileManager {
 	// directories
 	private CSVFolder currentFolder; // The current folder object visited
 
-	private static CSVFolder sharedfolder;
+	private CSVFolder sharedfolder;
 
 	public CSVFileManager(Capability root_cap) throws IllegalRootCapException,
 			RemoteFileDoesNotExistException, ServerCommunicationException {
@@ -77,7 +77,7 @@ public class CSVFileManager {
 
 	}
 
-	public static CSVFolder getSharedfolder() {
+	public CSVFolder getSharedfolder() {
 		return sharedfolder;
 	}
 
@@ -374,7 +374,6 @@ public class CSVFileManager {
 				try {
 					foo = (CSVFile) fm.get(null, alias);
 					foo.decrypt();
-					CSVFile foobar = foo;
 					FileUtils.writeFileToDisk(save_path, foo.getPlainText());
 					System.out.println("Wrote file to disk");
 				} catch (NoSuchAliasException e) {

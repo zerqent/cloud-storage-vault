@@ -24,6 +24,7 @@ public class MenuActivity extends Activity {
 
 	private static final int MENU_IMPORTSHARE = 0;
 	private static final int REQUEST_BARCODEIMPORT = 1;
+	private static final int REQUEST_MANUALIMPORT = 2;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -95,16 +96,20 @@ public class MenuActivity extends Activity {
 			builder.setItems(items, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int item) {
+					Intent intent;
 					switch (item) {
 					case 0:
-						Intent intent = new Intent(
+						intent = new Intent(
 								"com.google.zxing.client.android.SCAN");
 						intent.setPackage("com.google.zxing.client.android");
 						intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 						startActivityForResult(intent, REQUEST_BARCODEIMPORT);
 						break;
 					case 1:
-						// Manual
+						intent = new Intent();
+						intent.setClass(MenuActivity.this,
+								ManualImportShareActivity.class);
+						startActivityForResult(intent, REQUEST_MANUALIMPORT);
 						break;
 					}
 				}
@@ -142,6 +147,17 @@ public class MenuActivity extends Activity {
 				ist.execute(username);
 			}
 			return;
+		case REQUEST_MANUALIMPORT:
+			if (resultCode == RESULT_OK) {
+				String username = data
+						.getStringExtra(ManualImportShareActivity.REQUEST_RESULT_USERNAME);
+				String capabilityString = data
+						.getStringExtra(ManualImportShareActivity.REQUEST_RESULT_CAPABILITY);
+				Capability capability = CapabilityImpl
+						.fromString(capabilityString);
+				ImportShareTask ist = new ImportShareTask(this, capability);
+				ist.execute(username);
+			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
