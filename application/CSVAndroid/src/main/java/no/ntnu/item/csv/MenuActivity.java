@@ -59,6 +59,14 @@ public class MenuActivity extends Activity {
 			}
 		});
 
+		bImportShare.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDialog(MENU_IMPORTSHARE);
+			}
+		});
+
 		bConf.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -66,14 +74,6 @@ public class MenuActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(MenuActivity.this, FirstStartActivity.class);
 				startActivity(intent);
-			}
-		});
-
-		bImportShare.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDialog(MENU_IMPORTSHARE);
 			}
 		});
 	}
