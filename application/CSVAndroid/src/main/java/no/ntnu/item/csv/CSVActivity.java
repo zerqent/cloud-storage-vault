@@ -1,6 +1,7 @@
 package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.CapabilityImpl;
+import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.exception.IllegalRootCapException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
@@ -16,6 +17,8 @@ public class CSVActivity extends Activity {
 	public static final int GET_ROOTCAP = 1;
 	public static final int MENU = 2;
 	public static CSVFileManager fm;
+	public static Communication connection = new Communication(
+			"http://create.q2s.ntnu.no/");
 
 	// File manager enabling remote browsing in cloud
 	/** Called when the activity is first created. */
@@ -23,6 +26,7 @@ public class CSVActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		if (initiated()) {
 			// Code never reached
 			Intent intent = new Intent();
