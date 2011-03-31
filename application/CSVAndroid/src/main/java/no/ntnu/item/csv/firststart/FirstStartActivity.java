@@ -10,9 +10,12 @@ import no.ntnu.item.csv.contrib.com.google.zxing.integration.android.IntentInteg
 import no.ntnu.item.csv.credentials.DisplayCapability;
 import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.workers.CreateRootCapTask;
+import no.ntnu.item.csv.workers.ImportShareTask;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -39,6 +42,8 @@ public class FirstStartActivity extends Activity {
 	private static final int PROGRESSBAR_GENERATE = 2;
 	private static final int SET_PASSWORD_NEW_ROOT = 3;
 	private static final int SET_PASSWORD_OLD_ROOT = 4;
+	private static final int MENU_SHOWROOTCAP = 5;
+	private static final int REQUEST_SHOWROOTCAP = 6;
 
 	private ProgressDialog progressDialog;
 
@@ -90,10 +95,11 @@ public class FirstStartActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				DisplayCapability.displayCapability(FirstStartActivity.this,
-						CSVActivity.fm.getRootCap()).show();
-				IntentIntegrator.shareText(FirstStartActivity.this,
-						CSVActivity.fm.getRootCap().toString());
+				showDialog(MENU_SHOWROOTCAP);
+				// DisplayCapability.displayCapability(FirstStartActivity.this,
+				// CSVActivity.fm.getRootCap()).show();
+				// IntentIntegrator.shareText(FirstStartActivity.this,
+				// CSVActivity.fm.getRootCap().toString());
 			}
 		});
 
@@ -123,12 +129,38 @@ public class FirstStartActivity extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case PROGRESSBAR_GENERATE:
+		case PROGRESSBAR_GENERATE: {
 			this.progressDialog = new ProgressDialog(
 					FirstStartActivity.this.getApplicationContext());
 			this.progressDialog.setTitle("Title");
 			this.progressDialog.setMessage("Message");
 			return this.progressDialog;
+		}
+		case MENU_SHOWROOTCAP: {
+			final CharSequence[] items = { "Barcode", "Manual" };
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Display");
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int item) {
+					switch (item) {
+					case 0: {
+						IntentIntegrator.shareText(FirstStartActivity.this,
+								CSVActivity.fm.getRootCap().toString());
+						break;
+					}
+					case 1: {
+						DisplayCapability.displayCapability(
+								FirstStartActivity.this,
+								CSVActivity.fm.getRootCap()).show();
+						break;
+					}
+					}
+				}
+			});
+			return builder.create();
+		}
 		}
 		return super.onCreateDialog(id);
 	}
@@ -184,6 +216,17 @@ public class FirstStartActivity extends Activity {
 						CapabilityImpl.fromString(rootCapString),
 						data.getStringExtra(SetPasswordActivity.PASSWORD));
 				done();
+			}
+			return;
+		}
+		case REQUEST_SHOWROOTCAP: {
+			if (resultCode == RESULT_OK) {
+				String tmp = data.getStringExtra("SCAN_RESULT");
+				String username = tmp.split(":")[0];
+				String stringCap = tmp.substring(username.length() - 1);
+				Capability capability = CapabilityImpl.fromString(stringCap);
+				ImportShareTask ist = new ImportShareTask(this, capability);
+				ist.execute(username);
 			}
 			return;
 		}
