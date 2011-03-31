@@ -66,14 +66,14 @@ public class MenuActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(MenuActivity.this, FirstStartActivity.class);
 				startActivity(intent);
+			}
+		});
 
-				bImportShare.setOnClickListener(new View.OnClickListener() {
+		bImportShare.setOnClickListener(new View.OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						showDialog(MENU_IMPORTSHARE);
-					}
-				});
+			@Override
+			public void onClick(View v) {
+				showDialog(MENU_IMPORTSHARE);
 			}
 		});
 	}
@@ -81,7 +81,7 @@ public class MenuActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// FIXME: Just for testing purposes
-		menu.add("Delete Capability");
+		// menu.add("Delete Capability");
 		menu.add("Exit program");
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -89,7 +89,7 @@ public class MenuActivity extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case MENU_IMPORTSHARE:
+		case MENU_IMPORTSHARE: {
 			final CharSequence[] items = { "From Barcode", "Manual" };
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -112,8 +112,10 @@ public class MenuActivity extends Activity {
 				}
 			});
 			return builder.create();
-		default:
+		}
+		default: {
 			break;
+		}
 		}
 		return super.onCreateDialog(id);
 	}
