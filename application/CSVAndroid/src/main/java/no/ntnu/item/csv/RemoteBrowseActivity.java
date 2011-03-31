@@ -55,7 +55,6 @@ public class RemoteBrowseActivity extends ListActivity {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		menu.setHeaderTitle("Share with ...");
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		for (String alias : CSVActivity.fm.getSharedfolder().getContents()
 				.keySet()) {
 			menu.add(alias);
