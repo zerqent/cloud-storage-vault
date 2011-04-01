@@ -1,2 +1,2 @@
 # Generate self-signed cert:
-openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout server.key -out cert.pem
+openssl req -x509 -utf8 -nodes -days 365 -newkey rsa:4096 -keyout server.key -out cert.pem
