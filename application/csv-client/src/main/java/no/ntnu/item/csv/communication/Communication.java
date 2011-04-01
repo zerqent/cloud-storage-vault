@@ -30,8 +30,8 @@ public class Communication {
 	private int port = 8080;
 
 	private HttpHost serverHost;
-	private final String SERVER_PUT = "put/";
-	private final String SERVER_GET = "get/";
+	private final String SERVER_PUT = "/put/";
+	private final String SERVER_GET = "/get/";
 
 	private String username;
 	private String password;
@@ -53,6 +53,7 @@ public class Communication {
 
 	public boolean testLogin() throws ClientProtocolException, IOException {
 		DefaultHttpClient client = getNewBasicAuthHttpClient();
+
 		HttpGet httpget = new HttpGet("/");
 
 		HttpResponse response = client.execute(this.serverHost, httpget,
@@ -92,35 +93,19 @@ public class Communication {
 		return localcontext;
 	}
 
-	public static void main(String[] args) {
-		Communication conn = new Communication("create.q2s.ntnu.no", "palru",
-				"kompe123");
-		try {
-			conn.testLogin();
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public int put(CSVObject object) {
-		String putAddress = this.serverHost.getHostName() + this.SERVER_PUT;
-
 		if (object == null)
 			throw new NullPointerException();
 
-		HttpClient client = new DefaultHttpClient();
+		DefaultHttpClient client = getNewBasicAuthHttpClient();
 
 		HttpPut put;
 		if (object instanceof CSVFolder) {
-			put = new HttpPut(putAddress
+			put = new HttpPut(this.SERVER_PUT
 					+ object.getCapability().getStorageIndex() + "/"
 					+ Base32.encode(object.getCapability().getWriteEnabler()));
 		} else {
-			put = new HttpPut(putAddress
+			put = new HttpPut(this.SERVER_PUT
 					+ object.getCapability().getStorageIndex());
 		}
 
@@ -131,7 +116,8 @@ public class Communication {
 		HttpResponse response;
 		int code;
 		try {
-			response = client.execute(put);
+			response = client.execute(this.serverHost, put,
+					getAuthCacheContext());
 			code = response.getStatusLine().getStatusCode();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
@@ -139,6 +125,8 @@ public class Communication {
 		} catch (IOException e) {
 			e.printStackTrace();
 			code = 0;
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 
 		return code;
@@ -146,20 +134,19 @@ public class Communication {
 
 	public byte[] get(String index) throws RemoteFileDoesNotExistException,
 			ServerCommunicationException {
-		String getAddress = this.serverHost.getHostName() + this.SERVER_GET;
-
 		if (index == null)
 			throw new NullPointerException();
 
-		HttpClient client = new DefaultHttpClient();
-		HttpGet get = new HttpGet(getAddress + index);
+		HttpClient client = getNewBasicAuthHttpClient();
+		HttpGet get = new HttpGet(this.SERVER_GET + index);
 
 		byte[] bytes = null;
 		HttpResponse response;
 		try {
-			response = client.execute(get);
+			response = client.execute(this.serverHost, get,
+					getAuthCacheContext());
 			System.out.println("RESPONSE: "
-					+ response.getStatusLine().getStatusCode());
+					+ response.getStatusLine().toString());
 			switch (response.getStatusLine().getStatusCode()) {
 			case 200:
 				break;
@@ -186,11 +173,11 @@ public class Communication {
 			is.close();
 
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 
 		return bytes;
