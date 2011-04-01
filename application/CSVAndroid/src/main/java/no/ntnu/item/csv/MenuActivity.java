@@ -2,6 +2,7 @@ package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
+import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
 import no.ntnu.item.csv.workers.ImportShareTask;
 import android.app.Activity;
@@ -131,6 +132,9 @@ public class MenuActivity extends Activity {
 		} else if (item.getTitle().equals("Exit program")) {
 			finish();
 			return true;
+		} else if (item.getTitle().equals("Delete capability")) {
+			deleteFile(LocalCredentials.save_file);
+			System.exit(0);
 		}
 		return false;
 	}

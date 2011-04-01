@@ -8,9 +8,9 @@ import java.io.IOException;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
 import no.ntnu.item.cryptoutil.KeyChain;
+import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
-import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.exception.IncorrectPasswordException;
@@ -128,12 +128,13 @@ public class LocalCredentials {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		CSVActivity.connection.setUsername(localCredentials.onLineUserName);
+		CSVActivity.connection.setPassword(localCredentials.onLinePassword);
 		return localCredentials;
 	}
 
 	public static LocalCredentials createNewLocalCredentials(Activity activity,
-			String password, String onLineUserName, String onLinePassword) {
+			String password) {
 
 		CSVFolder rootFolder = new CSVFolder();
 		CSVFolder shareFolder = new CSVFolder();
@@ -143,20 +144,26 @@ public class LocalCredentials {
 		rootFolder.encrypt();
 		shareFolder.encrypt();
 
-		Communication.put(rootFolder, Communication.SERVER_PUT);
-		Communication.put(shareFolder, Communication.SERVER_PUT);
+		// CSVActivity.connection.setUsername(onLineUserName);
+		// CSVActivity.connection.setPassword(onLinePassword);
 
-		return createNewLocalCredentials(activity, password, onLineUserName,
-				onLinePassword, rootFolder.getCapability());
+		CSVActivity.connection.put(rootFolder);
+		CSVActivity.connection.put(shareFolder);
+
+		// Communication.put(rootFolder, Communication.SERVER_PUT);
+		// Communication.put(shareFolder, Communication.SERVER_PUT);
+
+		return importExistingLocalCredentials(activity, password,
+				rootFolder.getCapability());
 
 	}
 
-	public static LocalCredentials createNewLocalCredentials(Activity activity,
-			String password, String onLineUserName, String onLinePassword,
-			Capability rootCapability) {
+	public static LocalCredentials importExistingLocalCredentials(
+			Activity activity, String password, Capability rootCapability) {
 		LocalCredentials localCredentials = new LocalCredentials();
-		localCredentials.onLinePassword = onLinePassword;
-		localCredentials.onLineUserName = onLineUserName;
+		localCredentials.onLinePassword = CSVActivity.connection.getPassword();
+		localCredentials.onLineUserName = CSVActivity.connection.getUsername();
+		localCredentials.rootCapability = rootCapability;
 
 		KeyChain keyChain = new KeyChain(password);
 
@@ -189,6 +196,8 @@ public class LocalCredentials {
 
 		// eiriha komle123
 
+		// CSVActivity.connection.setUsername(onLineUserName);
+		// CSVActivity.connection.setPassword(onLinePassword);
 		return localCredentials;
 	}
 }

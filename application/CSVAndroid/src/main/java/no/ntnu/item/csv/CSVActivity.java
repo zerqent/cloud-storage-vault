@@ -18,7 +18,7 @@ public class CSVActivity extends Activity {
 	public static final int MENU = 2;
 	public static CSVFileManager fm;
 	public static Communication connection = new Communication(
-			"http://create.q2s.ntnu.no/");
+			"create.q2s.ntnu.no");
 
 	// File manager enabling remote browsing in cloud
 	/** Called when the activity is first created. */
@@ -26,6 +26,8 @@ public class CSVActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// deleteFile(LocalCredentials.save_file);
+		// System.exit(0);
 
 		if (initiated()) {
 			// Code never reached
@@ -47,7 +49,8 @@ public class CSVActivity extends Activity {
 			case GET_ROOTCAP: {
 				try {
 					fm = new CSVFileManager(CapabilityImpl.fromString(data
-							.getStringExtra(GetRootCapActivity.ROOTCAP)));
+							.getStringExtra(GetRootCapActivity.ROOTCAP)),
+							connection);
 					Intent intent = new Intent();
 					intent.setClass(CSVActivity.this, MenuActivity.class);
 					startActivityForResult(intent, MENU);
@@ -84,6 +87,7 @@ public class CSVActivity extends Activity {
 			}
 		}
 		if (resultCode == RESULT_CANCELED) {
+			System.out.println("SYSTEM EXIT11011");
 			System.exit(0);
 		}
 	}

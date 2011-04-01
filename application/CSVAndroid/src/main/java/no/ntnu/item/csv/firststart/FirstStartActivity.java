@@ -1,7 +1,6 @@
 package no.ntnu.item.csv.firststart;
 
 import no.ntnu.item.csv.CSVActivity;
-import no.ntnu.item.csv.EnterOnlineCredentialsActivity;
 import no.ntnu.item.csv.GetRootCapActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.SetPasswordActivity;
@@ -29,7 +28,7 @@ public class FirstStartActivity extends Activity {
 	private static final int REQUEST_BARCODE = 0;
 	public static final String ROOT_CAP_STRING_KEY = "rootcapstring";
 
-	public Capability root_cap;
+	public Capability rootCapability;
 	public String rootCapString;
 
 	private TextView tv;
@@ -52,14 +51,6 @@ public class FirstStartActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.firststart);
-
-		if (getCallingActivity() != null) {
-			Intent intent = getIntent();
-			String username = intent
-					.getStringExtra(EnterOnlineCredentialsActivity.REQUEST_RESPONSE_USERNAME);
-			String password = intent
-					.getStringExtra(EnterOnlineCredentialsActivity.REQUEST_RESPONSE_PASSWORD);
-		}
 
 		bCreateNew = (Button) findViewById(R.id.firstStart_new);
 		bImport = (Button) findViewById(R.id.firstStart_import);
@@ -177,7 +168,7 @@ public class FirstStartActivity extends Activity {
 	private void done() {
 		Intent intent = getIntent();
 		if (rootCapString == null) {
-			rootCapString = root_cap.toString();
+			rootCapString = rootCapability.toString();
 		}
 		intent.putExtra(GetRootCapActivity.ROOTCAP, rootCapString);
 		setResult(RESULT_OK, intent);
@@ -221,9 +212,9 @@ public class FirstStartActivity extends Activity {
 		}
 		case SET_PASSWORD_OLD_ROOT: {
 			if (resultCode == RESULT_OK) {
-				new LocalCredentials(this,
-						CapabilityImpl.fromString(rootCapString),
-						data.getStringExtra(SetPasswordActivity.PASSWORD));
+				LocalCredentials.importExistingLocalCredentials(this,
+						data.getStringExtra(SetPasswordActivity.PASSWORD),
+						CapabilityImpl.fromString(rootCapString));
 				done();
 			}
 			return;
@@ -244,7 +235,7 @@ public class FirstStartActivity extends Activity {
 	}
 
 	public void supplyWithRootCap(Capability cap) {
-		this.root_cap = cap;
+		this.rootCapability = cap;
 		this.progress.dismiss();
 		done();
 	}

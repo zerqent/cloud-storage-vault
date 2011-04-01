@@ -27,7 +27,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 
 public class Communication {
-	private int defaultPort = 8080;
+	private int defaultPort = 80;
 	private HttpHost serverHost;
 	private final String SERVER_PUT = "put/";
 	private final String SERVER_GET = "get/";
@@ -72,7 +72,8 @@ public class Communication {
 	}
 
 	public int put(CSVObject object) {
-		String putAddress = this.serverHost.getHostName() + this.SERVER_PUT;
+		String putAddress = "http://" + this.serverHost.getHostName() + "/"
+				+ this.SERVER_PUT;
 
 		if (object == null)
 			throw new NullPointerException();
@@ -111,7 +112,8 @@ public class Communication {
 
 	public byte[] get(String index) throws RemoteFileDoesNotExistException,
 			ServerCommunicationException {
-		String getAddress = this.serverHost.getHostName() + this.SERVER_GET;
+		String getAddress = "http://" + this.serverHost.getHostName() + "/"
+				+ this.SERVER_GET;
 
 		if (index == null)
 			throw new NullPointerException();

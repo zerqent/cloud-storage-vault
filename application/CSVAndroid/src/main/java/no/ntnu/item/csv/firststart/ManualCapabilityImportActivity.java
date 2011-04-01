@@ -2,22 +2,14 @@ package no.ntnu.item.csv.firststart;
 
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
-import no.ntnu.item.csv.capability.CapabilityImpl;
-import no.ntnu.item.csv.capability.CapabilityType;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
-import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class ManualCapabilityImportActivity extends Activity {
 
@@ -36,24 +28,24 @@ public class ManualCapabilityImportActivity extends Activity {
 		this.key = (EditText) findViewById(R.id.manualcapability_keyedittext);
 		this.processButon = (Button) findViewById(R.id.manualcapability_processbutton);
 
-		this.processButon.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				byte[] encKey = Base32.decode(key.getText().toString());
-				rootCap = new CapabilityImpl(CapabilityType.RW, encKey, null,
-						false);
-				CSVFolder folder = (CSVFolder) CSVFileManager
-						.getCSVObject(rootCap);
-				if (folder == null) {
-					Toast.makeText(ManualCapabilityImportActivity.this,
-							"The requested root capability does not exist",
-							Toast.LENGTH_LONG).show();
-				} else {
-					verifyHash = Base32.encode(folder.getPublicKeyHash());
-					showDialog(DIALOG_VERIFY_KEY);
-				}
-			}
-		});
+		// this.processButon.setOnClickListener(new OnClickListener() {
+		// @Override
+		// public void onClick(View v) {
+		// byte[] encKey = Base32.decode(key.getText().toString());
+		// rootCap = new CapabilityImpl(CapabilityType.RW, encKey, null,
+		// false);
+		// CSVFolder folder = (CSVFolder) CSVFileManager
+		// .getCSVObject(rootCap);
+		// if (folder == null) {
+		// Toast.makeText(ManualCapabilityImportActivity.this,
+		// "The requested root capability does not exist",
+		// Toast.LENGTH_LONG).show();
+		// } else {
+		// verifyHash = Base32.encode(folder.getPublicKeyHash());
+		// showDialog(DIALOG_VERIFY_KEY);
+		// }
+		// }
+		// });
 	}
 
 	@Override
