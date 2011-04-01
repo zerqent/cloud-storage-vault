@@ -27,7 +27,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 
 public class Communication {
-	private int port = 8080;
+	private int port = 443;
 
 	private HttpHost serverHost;
 	private final String SERVER_PUT = "/put/";
@@ -37,22 +37,22 @@ public class Communication {
 	private String password;
 
 	public Communication(String serverAddress, String username, String password) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "https");
 		this.username = username;
 		this.password = password;
 	}
 
 	public Communication(String serverAddress) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "https");
 	}
 
 	public Communication(String serverAddress, int port) {
 		this.port = port;
-		this.serverHost = new HttpHost(serverAddress, port, "http");
+		this.serverHost = new HttpHost(serverAddress, port, "https");
 	}
 
 	public boolean testLogin() throws ClientProtocolException, IOException {
-		DefaultHttpClient client = getNewBasicAuthHttpClient();
+		SecureHttpClient client = getNewSecureAuthHttpClient();
 
 		HttpGet httpget = new HttpGet("/");
 
@@ -65,6 +65,28 @@ public class Communication {
 		client.getConnectionManager().shutdown();
 
 		return responseStatus.getStatusCode() == 200;
+	}
+
+	public static void main(String[] arg) {
+		Communication cs = new Communication("create.q2s.ntnu.no", "palru",
+				"test123");
+		try {
+			cs.testLogin();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private SecureHttpClient getNewSecureAuthHttpClient() {
+		SecureHttpClient client = new SecureHttpClient();
+		addBasicAuth(client);
+
+		return client;
 	}
 
 	private DefaultHttpClient getNewBasicAuthHttpClient() {
