@@ -9,19 +9,26 @@ import no.ntnu.item.csv.csvobject.CSVObject;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
 
 public class Communication {
-	private String baseURL; // = "http://create.q2s.ntnu.no/";
-	private int defaultPort = 80;
+	private int defaultPort = 8080;
+	private HttpHost serverHost;
 	private final String SERVER_PUT = "put/";
 	private final String SERVER_GET = "get/";
 
@@ -29,25 +36,43 @@ public class Communication {
 	private String password;
 
 	public Communication(String serverAddress, String username, String password) {
-		this.baseURL = serverAddress;
+		this.serverHost = new HttpHost(serverAddress, defaultPort, "http");
 		this.username = username;
 		this.password = password;
 	}
 
 	public Communication(String serverAddress) {
-		this.baseURL = serverAddress;
+		this.serverHost = new HttpHost(serverAddress, defaultPort, "http");
 	}
 
-	public boolean testLogin() {
+	public boolean testLogin() throws ClientProtocolException, IOException {
 		DefaultHttpClient client = new DefaultHttpClient();
+
 		client.getCredentialsProvider().setCredentials(
-				new AuthScope(this.baseURL, this.defaultPort),
+				new AuthScope(this.serverHost.getHostName(),
+						this.serverHost.getPort()),
 				new UsernamePasswordCredentials(this.username, this.password));
-		return false;
+
+		AuthCache authCache = new BasicAuthCache();
+		BasicScheme basicAuth = new BasicScheme();
+		authCache.put(this.serverHost, basicAuth);
+
+		BasicHttpContext localcontext = new BasicHttpContext();
+		localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+
+		HttpGet httpget = new HttpGet("/");
+		HttpResponse response = client.execute(this.serverHost, httpget,
+				localcontext);
+
+		StatusLine responseStatus = response.getStatusLine();
+		System.out.println("Testing login: " + responseStatus.toString());
+
+		client.getConnectionManager().shutdown();
+		return responseStatus.getStatusCode() == 200;
 	}
 
 	public int put(CSVObject object) {
-		String putAddress = this.baseURL + this.SERVER_PUT;
+		String putAddress = this.serverHost.getHostName() + this.SERVER_PUT;
 
 		if (object == null)
 			throw new NullPointerException();
@@ -86,7 +111,7 @@ public class Communication {
 
 	public byte[] get(String index) throws RemoteFileDoesNotExistException,
 			ServerCommunicationException {
-		String getAddress = this.baseURL + this.SERVER_GET;
+		String getAddress = this.serverHost.getHostName() + this.SERVER_GET;
 
 		if (index == null)
 			throw new NullPointerException();
