@@ -27,32 +27,63 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 
 public class Communication {
-	private int defaultPort = 80;
+
+	private int port = 8080;
+
 	private HttpHost serverHost;
-	private final String SERVER_PUT = "put/";
-	private final String SERVER_GET = "get/";
+	private final String SERVER_PUT = "/put/";
+	private final String SERVER_GET = "/get/";
 
 	private String username;
 	private String password;
 
 	public Communication(String serverAddress, String username, String password) {
-		this.serverHost = new HttpHost(serverAddress, defaultPort, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "http");
 		this.username = username;
 		this.password = password;
 	}
 
 	public Communication(String serverAddress) {
-		this.serverHost = new HttpHost(serverAddress, defaultPort, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+	}
+
+	public Communication(String serverAddress, int port) {
+		this.port = port;
+		this.serverHost = new HttpHost(serverAddress, port, "http");
 	}
 
 	public boolean testLogin() throws ClientProtocolException, IOException {
-		DefaultHttpClient client = new DefaultHttpClient();
+		DefaultHttpClient client = getNewBasicAuthHttpClient();
 
+		HttpGet httpget = new HttpGet("/");
+
+		HttpResponse response = client.execute(this.serverHost, httpget,
+				getAuthCacheContext());
+		StatusLine responseStatus = response.getStatusLine();
+
+		System.out.println("Testing login: " + responseStatus.toString());
+
+		client.getConnectionManager().shutdown();
+
+		return responseStatus.getStatusCode() == 200;
+	}
+
+	private DefaultHttpClient getNewBasicAuthHttpClient() {
+		DefaultHttpClient client = new DefaultHttpClient();
+		addBasicAuth(client);
+
+		return client;
+	}
+
+	private void addBasicAuth(DefaultHttpClient client) {
 		client.getCredentialsProvider().setCredentials(
 				new AuthScope(this.serverHost.getHostName(),
 						this.serverHost.getPort()),
 				new UsernamePasswordCredentials(this.username, this.password));
+		return;
+	}
 
+	private BasicHttpContext getAuthCacheContext() {
 		AuthCache authCache = new BasicAuthCache();
 		BasicScheme basicAuth = new BasicScheme();
 		authCache.put(this.serverHost, basicAuth);
@@ -60,33 +91,22 @@ public class Communication {
 		BasicHttpContext localcontext = new BasicHttpContext();
 		localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
-		HttpGet httpget = new HttpGet("/");
-		HttpResponse response = client.execute(this.serverHost, httpget,
-				localcontext);
-
-		StatusLine responseStatus = response.getStatusLine();
-		System.out.println("Testing login: " + responseStatus.toString());
-
-		client.getConnectionManager().shutdown();
-		return responseStatus.getStatusCode() == 200;
+		return localcontext;
 	}
 
 	public int put(CSVObject object) {
-		String putAddress = "http://" + this.serverHost.getHostName() + "/"
-				+ this.SERVER_PUT;
-
 		if (object == null)
 			throw new NullPointerException();
 
-		HttpClient client = new DefaultHttpClient();
+		DefaultHttpClient client = getNewBasicAuthHttpClient();
 
 		HttpPut put;
 		if (object instanceof CSVFolder) {
-			put = new HttpPut(putAddress
+			put = new HttpPut(this.SERVER_PUT
 					+ object.getCapability().getStorageIndex() + "/"
 					+ Base32.encode(object.getCapability().getWriteEnabler()));
 		} else {
-			put = new HttpPut(putAddress
+			put = new HttpPut(this.SERVER_PUT
 					+ object.getCapability().getStorageIndex());
 		}
 
@@ -97,7 +117,8 @@ public class Communication {
 		HttpResponse response;
 		int code;
 		try {
-			response = client.execute(put);
+			response = client.execute(this.serverHost, put,
+					getAuthCacheContext());
 			code = response.getStatusLine().getStatusCode();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
@@ -105,6 +126,8 @@ public class Communication {
 		} catch (IOException e) {
 			e.printStackTrace();
 			code = 0;
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 
 		return code;
@@ -112,21 +135,19 @@ public class Communication {
 
 	public byte[] get(String index) throws RemoteFileDoesNotExistException,
 			ServerCommunicationException {
-		String getAddress = "http://" + this.serverHost.getHostName() + "/"
-				+ this.SERVER_GET;
-
 		if (index == null)
 			throw new NullPointerException();
 
-		HttpClient client = new DefaultHttpClient();
-		HttpGet get = new HttpGet(getAddress + index);
+		HttpClient client = getNewBasicAuthHttpClient();
+		HttpGet get = new HttpGet(this.SERVER_GET + index);
 
 		byte[] bytes = null;
 		HttpResponse response;
 		try {
-			response = client.execute(get);
+			response = client.execute(this.serverHost, get,
+					getAuthCacheContext());
 			System.out.println("RESPONSE: "
-					+ response.getStatusLine().getStatusCode());
+					+ response.getStatusLine().toString());
 			switch (response.getStatusLine().getStatusCode()) {
 			case 200:
 				break;
@@ -153,11 +174,11 @@ public class Communication {
 			is.close();
 
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 
 		return bytes;
@@ -177,5 +198,13 @@ public class Communication {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }

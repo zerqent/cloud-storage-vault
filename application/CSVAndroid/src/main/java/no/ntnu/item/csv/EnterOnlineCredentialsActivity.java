@@ -1,5 +1,9 @@
 package no.ntnu.item.csv;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -60,19 +64,19 @@ public class EnterOnlineCredentialsActivity extends Activity {
 
 	private boolean credentialsAreValid(String username, String password) {
 
-		// if (username.length() < 3 || password.length() < 3) {
-		// return false;
-		// }
+		if (username.length() < 3 || password.length() < 3) {
+			return false;
+		}
 		CSVActivity.connection.setPassword(password);
 		CSVActivity.connection.setUsername(username);
-		return true;
+		// return true;
 
-		// try {
-		// return CSVActivity.connection.testLogin();
-		// } catch (ClientProtocolException e) {
-		// return false;
-		// } catch (IOException e) {
-		// return false;
-		// }
+		try {
+			return CSVActivity.connection.testLogin();
+		} catch (ClientProtocolException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 }
