@@ -27,7 +27,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 
 public class Communication {
-	private int defaultPort = 8080;
+	private int port = 8080;
+
 	private HttpHost serverHost;
 	private final String SERVER_PUT = "put/";
 	private final String SERVER_GET = "get/";
@@ -36,23 +37,51 @@ public class Communication {
 	private String password;
 
 	public Communication(String serverAddress, String username, String password) {
-		this.serverHost = new HttpHost(serverAddress, defaultPort, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "http");
 		this.username = username;
 		this.password = password;
 	}
 
 	public Communication(String serverAddress) {
-		this.serverHost = new HttpHost(serverAddress, defaultPort, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+	}
+
+	public Communication(String serverAddress, int port) {
+		this.port = port;
+		this.serverHost = new HttpHost(serverAddress, port, "http");
 	}
 
 	public boolean testLogin() throws ClientProtocolException, IOException {
-		DefaultHttpClient client = new DefaultHttpClient();
+		DefaultHttpClient client = getNewBasicAuthHttpClient();
+		HttpGet httpget = new HttpGet("/");
 
+		HttpResponse response = client.execute(this.serverHost, httpget,
+				getAuthCacheContext());
+		StatusLine responseStatus = response.getStatusLine();
+
+		System.out.println("Testing login: " + responseStatus.toString());
+
+		client.getConnectionManager().shutdown();
+
+		return responseStatus.getStatusCode() == 200;
+	}
+
+	private DefaultHttpClient getNewBasicAuthHttpClient() {
+		DefaultHttpClient client = new DefaultHttpClient();
+		addBasicAuth(client);
+
+		return client;
+	}
+
+	private void addBasicAuth(DefaultHttpClient client) {
 		client.getCredentialsProvider().setCredentials(
 				new AuthScope(this.serverHost.getHostName(),
 						this.serverHost.getPort()),
 				new UsernamePasswordCredentials(this.username, this.password));
+		return;
+	}
 
+	private BasicHttpContext getAuthCacheContext() {
 		AuthCache authCache = new BasicAuthCache();
 		BasicScheme basicAuth = new BasicScheme();
 		authCache.put(this.serverHost, basicAuth);
@@ -60,15 +89,21 @@ public class Communication {
 		BasicHttpContext localcontext = new BasicHttpContext();
 		localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
-		HttpGet httpget = new HttpGet("/");
-		HttpResponse response = client.execute(this.serverHost, httpget,
-				localcontext);
+		return localcontext;
+	}
 
-		StatusLine responseStatus = response.getStatusLine();
-		System.out.println("Testing login: " + responseStatus.toString());
-
-		client.getConnectionManager().shutdown();
-		return responseStatus.getStatusCode() == 200;
+	public static void main(String[] args) {
+		Communication conn = new Communication("create.q2s.ntnu.no", "palru",
+				"kompe123");
+		try {
+			conn.testLogin();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public int put(CSVObject object) {
@@ -175,5 +210,13 @@ public class Communication {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }
