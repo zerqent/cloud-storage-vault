@@ -81,6 +81,7 @@ public class MenuActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Log out");
+		menu.add("Delete Capability");
 		menu.add("Exit program");
 		return super.onCreateOptionsMenu(menu);
 	}

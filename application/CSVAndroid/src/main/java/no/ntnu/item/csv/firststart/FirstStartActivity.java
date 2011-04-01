@@ -1,6 +1,7 @@
 package no.ntnu.item.csv.firststart;
 
 import no.ntnu.item.csv.CSVActivity;
+import no.ntnu.item.csv.EnterOnlineCredentialsActivity;
 import no.ntnu.item.csv.GetRootCapActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.SetPasswordActivity;
@@ -51,6 +52,14 @@ public class FirstStartActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.firststart);
+
+		if (getCallingActivity() != null) {
+			Intent intent = getIntent();
+			String username = intent
+					.getStringExtra(EnterOnlineCredentialsActivity.REQUEST_RESPONSE_USERNAME);
+			String password = intent
+					.getStringExtra(EnterOnlineCredentialsActivity.REQUEST_RESPONSE_PASSWORD);
+		}
 
 		bCreateNew = (Button) findViewById(R.id.firstStart_new);
 		bImport = (Button) findViewById(R.id.firstStart_import);
