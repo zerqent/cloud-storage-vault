@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
@@ -39,6 +40,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			file = (CSVFile) CSVActivity.fm.get(null, alias);
 			System.out.println("Downloaded file");
 			FileUtils.writeFileToDisk("/sdcard/" + alias, file.getPlainText());
+
 			System.out.println("Wrote file to disk");
 			file = null;
 		} catch (ClientProtocolException e) {
@@ -84,8 +86,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		Intent notificationIntent = new Intent();
 		notificationIntent.setAction(android.content.Intent.ACTION_VIEW);
 		File file = new File(result);
-		// TODO: Have to figure out how to get correct MimeType.
-		notificationIntent.setDataAndType(Uri.fromFile(file), "audio/*");
+		String extension = FileUtils.getFileExtension(result);
+		notificationIntent.setDataAndType(Uri.fromFile(file), MimeTypeMap
+				.getSingleton().getMimeTypeFromExtension(extension));
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 				notificationIntent, 0);
 		notification.setLatestEventInfo(context, contentTitle, contentText,

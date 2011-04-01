@@ -7,6 +7,7 @@ import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -42,16 +43,24 @@ public class ManualCapabilityImportActivity extends Activity {
 				byte[] encKey = Base32.decode(key.getText().toString());
 				rootCap = new CapabilityImpl(CapabilityType.RW, encKey, null,
 						false);
-				CSVFolder folder = (CSVFolder) CSVFileManager
-						.getCSVObject(rootCap);
-				if (folder == null) {
+				CSVFolder folder;
+				try {
+					folder = (CSVFolder) CSVFileManager.getCSVObject(rootCap);
+					if (folder == null) {
+						Toast.makeText(ManualCapabilityImportActivity.this,
+								"The requested root capability does not exist",
+								Toast.LENGTH_LONG).show();
+					} else {
+						verifyHash = Base32.encode(folder.getPublicKeyHash());
+						showDialog(DIALOG_VERIFY_KEY);
+					}
+				} catch (FailedToVerifySignatureException e) {
 					Toast.makeText(ManualCapabilityImportActivity.this,
-							"The requested root capability does not exist",
+							"The requested root folder could not be verified",
 							Toast.LENGTH_LONG).show();
-				} else {
-					verifyHash = Base32.encode(folder.getPublicKeyHash());
-					showDialog(DIALOG_VERIFY_KEY);
+					e.printStackTrace();
 				}
+
 			}
 		});
 	}

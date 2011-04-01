@@ -99,8 +99,14 @@ public class CSVFile implements CSVObject {
 		if (this.plainText == null) {
 			this.decrypt();
 		}
+		long start = System.currentTimeMillis();
 		byte[] hash = Cryptoutil.hash(this.plainText, 0);
-		return Arrays.equals(hash, this.hash);
+		boolean verified = Arrays.equals(hash, this.hash);
+		System.out.println("Verifying file took "
+				+ (System.currentTimeMillis() - start) / 1000.0 + " seconds");
+		System.out.println("File size = " + this.plainText.length / 1000.0
+				+ " KB");
+		return verified;
 	}
 
 	public byte[] getPlainText() {

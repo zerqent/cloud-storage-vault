@@ -39,6 +39,8 @@ public class LocalBrowseActivity extends ListActivity {
 			return !name.startsWith(".");
 		}
 	};
+	public static final String STORAGE_INTERNAL = "Internal Storage";
+	public static final String STORAGE_EXTERNAL = "External Storage";
 	public String eState; // State of external device.
 
 	@Override
@@ -51,12 +53,12 @@ public class LocalBrowseActivity extends ListActivity {
 	public void startLocalBrowsing() {
 		location.clear();
 		files.clear();
-		files.add("Internal storage");
+		files.add(STORAGE_INTERNAL);
 
 		// Mounting external storage.
 		eState = Environment.getExternalStorageState();
 		if (eState.equals(Environment.MEDIA_MOUNTED))
-			files.add("External storage");
+			files.add(STORAGE_EXTERNAL);
 
 		BrowseList bl = new BrowseList(files);
 		SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),

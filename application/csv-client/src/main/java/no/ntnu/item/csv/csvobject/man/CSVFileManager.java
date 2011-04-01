@@ -52,6 +52,11 @@ public class CSVFileManager {
 		this.location = new Stack<Capability>();
 
 		this.currentFolder = CSVFolder.createFromByteArray(resp, root_cap);
+
+		if (!this.currentFolder.isValid()) {
+			throw new FailedToVerifySignatureException();
+		}
+
 		this.location.push(root_cap);
 		this.currentFolder.decrypt();
 		try {
@@ -229,6 +234,10 @@ public class CSVFileManager {
 
 			if (folder == null)
 				return;
+
+			if (!folder.isValid()) {
+				throw new FailedToVerifySignatureException(folderAlias);
+			}
 
 			folder.decrypt();
 			this.currentFolder = (CSVFolder) folder;
@@ -413,7 +422,8 @@ public class CSVFileManager {
 		return currentFolder;
 	}
 
-	public static CSVObject getCSVObject(Capability cap) {
+	public static CSVObject getCSVObject(Capability cap)
+			throws FailedToVerifySignatureException {
 		byte[] resp;
 		try {
 			resp = Communication.get(cap.getStorageIndex(),
@@ -429,8 +439,14 @@ public class CSVFileManager {
 
 		if (cap.isFile()) {
 			file = CSVFile.createFromByteArray(resp, cap);
+			if (!file.isValid()) {
+				throw new FailedToVerifySignatureException();
+			}
 		} else {
 			file = CSVFolder.createFromByteArray(resp, cap);
+			if (!file.isValid()) {
+				throw new FailedToVerifySignatureException();
+			}
 		}
 		return file;
 
