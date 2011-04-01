@@ -1,6 +1,7 @@
 package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.CapabilityImpl;
+import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.IllegalRootCapException;
@@ -12,20 +13,18 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 public class CSVActivity extends Activity {
-	/** Called when the activity is first created. */
 
 	public static final int GET_ROOTCAP = 1;
 	public static final int MENU = 2;
 	public static CSVFileManager fm;
-
-	// File manager enabling remote browsing in cloud
-	/** Called when the activity is first created. */
+	public static Communication connection = new Communication(
+			"create.q2s.ntnu.no");
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		if (initiated()) {
-			// Code never reached
 			Intent intent = new Intent();
 			intent.setClass(CSVActivity.this, MenuActivity.class);
 			startActivityForResult(intent, MENU);
@@ -44,7 +43,8 @@ public class CSVActivity extends Activity {
 			case GET_ROOTCAP: {
 				try {
 					fm = new CSVFileManager(CapabilityImpl.fromString(data
-							.getStringExtra(GetRootCapActivity.ROOTCAP)));
+							.getStringExtra(GetRootCapActivity.ROOTCAP)),
+							connection);
 					Intent intent = new Intent();
 					intent.setClass(CSVActivity.this, MenuActivity.class);
 					startActivityForResult(intent, MENU);
@@ -89,6 +89,7 @@ public class CSVActivity extends Activity {
 			}
 		}
 		if (resultCode == RESULT_CANCELED) {
+			System.out.println("SYSTEM EXIT11011");
 			System.exit(0);
 		}
 	}

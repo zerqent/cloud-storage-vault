@@ -9,96 +9,145 @@ import no.ntnu.item.csv.csvobject.CSVObject;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
 
 public class Communication {
 
-	public static final String SERVER_PUT = "http://129.241.205.111/put";
-	public static final String SERVER_GET = "http://129.241.205.111/get";
+	private int port = 8080;
 
-	public static int put(CSVObject object, String serv_addr) {
-		if (object == null || serv_addr == null)
+	private HttpHost serverHost;
+	private final String SERVER_PUT = "/put/";
+	private final String SERVER_GET = "/get/";
+
+	private String username;
+	private String password;
+
+	public Communication(String serverAddress, String username, String password) {
+		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+		this.username = username;
+		this.password = password;
+	}
+
+	public Communication(String serverAddress) {
+		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+	}
+
+	public Communication(String serverAddress, int port) {
+		this.port = port;
+		this.serverHost = new HttpHost(serverAddress, port, "http");
+	}
+
+	public boolean testLogin() throws ClientProtocolException, IOException {
+		DefaultHttpClient client = getNewBasicAuthHttpClient();
+
+		HttpGet httpget = new HttpGet("/");
+
+		HttpResponse response = client.execute(this.serverHost, httpget,
+				getAuthCacheContext());
+		StatusLine responseStatus = response.getStatusLine();
+
+		System.out.println("Testing login: " + responseStatus.toString());
+
+		client.getConnectionManager().shutdown();
+
+		return responseStatus.getStatusCode() == 200;
+	}
+
+	private DefaultHttpClient getNewBasicAuthHttpClient() {
+		DefaultHttpClient client = new DefaultHttpClient();
+		addBasicAuth(client);
+
+		return client;
+	}
+
+	private void addBasicAuth(DefaultHttpClient client) {
+		client.getCredentialsProvider().setCredentials(
+				new AuthScope(this.serverHost.getHostName(),
+						this.serverHost.getPort()),
+				new UsernamePasswordCredentials(this.username, this.password));
+		return;
+	}
+
+	private BasicHttpContext getAuthCacheContext() {
+		AuthCache authCache = new BasicAuthCache();
+		BasicScheme basicAuth = new BasicScheme();
+		authCache.put(this.serverHost, basicAuth);
+
+		BasicHttpContext localcontext = new BasicHttpContext();
+		localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+
+		return localcontext;
+	}
+
+	public int put(CSVObject object) {
+		if (object == null)
 			throw new NullPointerException();
 
-		HttpClient client = new DefaultHttpClient();
-		// HttpPost post = new HttpPost(serv_addr);
+		DefaultHttpClient client = getNewBasicAuthHttpClient();
+
 		HttpPut put;
 		if (object instanceof CSVFolder) {
-			put = new HttpPut(serv_addr + "/"
+			put = new HttpPut(this.SERVER_PUT
 					+ object.getCapability().getStorageIndex() + "/"
 					+ Base32.encode(object.getCapability().getWriteEnabler()));
 		} else {
-			put = new HttpPut(serv_addr + "/"
+			put = new HttpPut(this.SERVER_PUT
 					+ object.getCapability().getStorageIndex());
 		}
 
-		// MultipartEntity entity = new
-		// MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		ByteArrayEntity entity = new ByteArrayEntity(object.getTransferArray());
-		// ByteArrayBody file = new ByteArrayBody(object.getTransferArray(),
-		// object.getCapability().getStorageIndex());
-		// entity.addPart("encrypted_file", file);
 
 		put.setEntity(entity);
 
 		HttpResponse response;
 		int code;
 		try {
-			response = client.execute(put);
+			response = client.execute(this.serverHost, put,
+					getAuthCacheContext());
 			code = response.getStatusLine().getStatusCode();
-
-			// HttpEntity respEnt = response.getEntity();
-			// if (respEnt != null) {
-			// InputStream is = respEnt.getContent();
-			// int l;
-			// byte[] tmp = new byte[2048];
-			// while ((l = is.read(tmp)) != -1);
-			// is.close();
-			// String value = new String(tmp);
-			//
-			// System.out.println(value);
-			// }
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 			code = 0;
 		} catch (IOException e) {
 			e.printStackTrace();
 			code = 0;
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 
 		return code;
 	}
 
-	public static byte[] get(String index, String serv_addr)
-			throws RemoteFileDoesNotExistException,
+	public byte[] get(String index) throws RemoteFileDoesNotExistException,
 			ServerCommunicationException {
-		if (index == null || serv_addr == null)
+		if (index == null)
 			throw new NullPointerException();
 
-		HttpClient client = new DefaultHttpClient();
-		HttpGet get = new HttpGet(serv_addr + "/" + index);
-
-		// List<NameValuePair> nvp = new ArrayList<NameValuePair>();
-		// nvp.add(new BasicNameValuePair("storage_index", index));
-		// try {
-		// post.setEntity(new UrlEncodedFormEntity(nvp, HTTP.UTF_8));
-		// } catch (UnsupportedEncodingException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		HttpClient client = getNewBasicAuthHttpClient();
+		HttpGet get = new HttpGet(this.SERVER_GET + index);
 
 		byte[] bytes = null;
 		HttpResponse response;
 		try {
-			response = client.execute(get);
+			response = client.execute(this.serverHost, get,
+					getAuthCacheContext());
 			System.out.println("RESPONSE: "
-					+ response.getStatusLine().getStatusCode());
+					+ response.getStatusLine().toString());
 			switch (response.getStatusLine().getStatusCode()) {
 			case 200:
 				break;
@@ -125,29 +174,37 @@ public class Communication {
 			is.close();
 
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 
 		return bytes;
 	}
 
-	// public static void main(String[] args) throws IOException{
-	//
-	// // CSVFileFacade file = new CSVFileFacade();
-	// // file.setPlainText(new File("/home/melvold/Desktop/test.txt"));
-	// // file.encrypt();
-	// //
-	// // put(file, "http://129.241.205.111/put");
-	//
-	// // byte[] b = get("prof.jpeg", "http://129.241.205.111/get");
-	// // if(b != null){
-	// // for(int i = 0; i < b.length; i++){
-	// // System.out.println((int)b[i]);
-	// // }
-	// // }
-	// }
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
 }

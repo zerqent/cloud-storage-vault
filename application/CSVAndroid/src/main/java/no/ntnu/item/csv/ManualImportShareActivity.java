@@ -5,7 +5,6 @@ import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,7 +55,7 @@ public class ManualImportShareActivity extends Activity {
 				} else {
 					CSVFolder folder;
 					try {
-						folder = (CSVFolder) CSVFileManager
+						folder = (CSVFolder) CSVActivity.fm
 								.getCSVObject(shareCapability);
 						if (folder == null) {
 							Toast.makeText(
@@ -79,6 +78,7 @@ public class ManualImportShareActivity extends Activity {
 
 			}
 		});
+
 	}
 
 	@Override

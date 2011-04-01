@@ -71,7 +71,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
 		// Will be displayed in the top bar before opening the notification view
 		CharSequence tickerText = "File download completed";
-		int icon = R.drawable.icon;
+		int icon = R.drawable.downloaded;
 		Notification notification = new Notification(icon, tickerText,
 				System.currentTimeMillis());
 		notification.flags = Notification.FLAG_AUTO_CANCEL;

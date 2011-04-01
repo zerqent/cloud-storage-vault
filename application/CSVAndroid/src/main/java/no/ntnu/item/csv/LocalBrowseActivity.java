@@ -109,10 +109,6 @@ public class LocalBrowseActivity extends ListActivity {
 			Collections.sort(dirs, String.CASE_INSENSITIVE_ORDER);
 			files.addAll(dirs);
 			files.addAll(filesInDir);
-
-			// setListAdapter(new ArrayAdapter<String>(this,
-			// android.R.layout.test_list_item, files));
-
 			BrowseList bl = new BrowseList(getCurrentDirectory(), files);
 			SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
 					R.layout.filelist, new String[] { "ICON", "TEXT" },
@@ -121,7 +117,6 @@ public class LocalBrowseActivity extends ListActivity {
 
 			ListView lv = getListView();
 			lv.setTextFilterEnabled(true);
-
 			lv.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
@@ -135,10 +130,11 @@ public class LocalBrowseActivity extends ListActivity {
 
 					// If browsing out of storage device, return to show storage
 					// devices.
-					if (location.size() == 0)
+					if (location.size() == 0) {
 						startLocalBrowsing();
-					else
+					} else {
 						doBrowse(new File(getCurrentDirectory()));
+					}
 				}
 			});
 			// Upload file if it is not a directory.

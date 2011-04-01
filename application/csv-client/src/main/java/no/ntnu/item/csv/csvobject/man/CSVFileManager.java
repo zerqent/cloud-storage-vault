@@ -33,35 +33,34 @@ public class CSVFileManager {
 
 	public static final String SHARE_FOLDER = "SHARE_FOLDER";
 
+	private final Communication connection;
 	private final Stack<Capability> location; // Stack storing capabilities of
 												// parent
 	// directories
 	private CSVFolder currentFolder; // The current folder object visited
-
 	private CSVFolder sharedfolder;
 
-	public CSVFileManager(Capability root_cap) throws IllegalRootCapException,
-			RemoteFileDoesNotExistException, ServerCommunicationException,
-			FailedToVerifySignatureException {
+	public CSVFileManager(Capability root_cap, Communication connection)
+			throws IllegalRootCapException, RemoteFileDoesNotExistException,
+			ServerCommunicationException, FailedToVerifySignatureException {
 		if (root_cap == null)
 			throw new IllegalRootCapException();
 
-		byte[] resp = Communication.get(root_cap.getStorageIndex(),
-				Communication.SERVER_GET);
+		this.connection = connection;
 
-		this.location = new Stack<Capability>();
-
-		this.currentFolder = CSVFolder.createFromByteArray(resp, root_cap);
+		CSVFolder rootFolder = this.getFolder(root_cap);
+		rootFolder.decrypt();
+		this.currentFolder = rootFolder;
 
 		if (!this.currentFolder.isValid()) {
 			throw new FailedToVerifySignatureException();
 		}
 
+		this.location = new Stack<Capability>();
 		this.location.push(root_cap);
-		this.currentFolder.decrypt();
+
 		try {
-			sharedfolder = (CSVFolder) this.get(this.currentFolder,
-					SHARE_FOLDER);
+			sharedfolder = (CSVFolder) this.get(rootFolder, SHARE_FOLDER);
 			sharedfolder.decrypt();
 		} catch (ClientProtocolException e) {
 			throw new ServerCommunicationException();
@@ -81,6 +80,13 @@ public class CSVFileManager {
 			e.printStackTrace();
 		}
 
+	}
+
+	private CSVFolder getFolder(Capability cap)
+			throws RemoteFileDoesNotExistException,
+			ServerCommunicationException {
+		byte[] resp = this.connection.get(cap.getStorageIndex());
+		return CSVFolder.createFromByteArray(resp, cap);
 	}
 
 	public CSVFolder getSharedfolder() {
@@ -125,7 +131,7 @@ public class CSVFileManager {
 		file.encrypt();
 
 		// Upload file
-		int code = Communication.put(file, Communication.SERVER_PUT);
+		int code = this.connection.put(file);
 		if (code != 201) {
 			throw new ServerCommunicationException(code);
 		}
@@ -135,7 +141,7 @@ public class CSVFileManager {
 		folder.getContents().put(content.getName(), file.getCapability());
 		folder.encrypt();
 
-		code = Communication.put(folder, Communication.SERVER_PUT);
+		code = this.connection.put(folder);
 		if (code != 200) {
 			throw new ServerCommunicationException(code);
 		}
@@ -164,8 +170,7 @@ public class CSVFileManager {
 
 		byte[] resp;
 		try {
-			resp = Communication.get(cap.getStorageIndex(),
-					Communication.SERVER_GET);
+			resp = this.connection.get(cap.getStorageIndex());
 		} catch (RemoteFileDoesNotExistException e) {
 			e.printStackTrace();
 			return null;
@@ -219,9 +224,8 @@ public class CSVFileManager {
 
 			byte[] resp;
 			try {
-				resp = Communication.get(
-						this.location.get(this.location.size() - 2)
-								.getStorageIndex(), Communication.SERVER_GET);
+				resp = this.connection.get(this.location.get(
+						this.location.size() - 2).getStorageIndex());
 			} catch (RemoteFileDoesNotExistException e) {
 				e.printStackTrace();
 				return;
@@ -278,7 +282,7 @@ public class CSVFileManager {
 		target.getContents().put(alias, csvObject.getCapability());
 		target.encrypt();
 
-		int code_folder = Communication.put(target, Communication.SERVER_PUT);
+		int code_folder = this.connection.put(target);
 
 		if (code_folder != 200) {
 			// Expected return is 200, we are updating an existing folder
@@ -288,7 +292,7 @@ public class CSVFileManager {
 
 	public void uploadObject(CSVObject object)
 			throws ServerCommunicationException {
-		int code = Communication.put(object, Communication.SERVER_PUT);
+		int code = this.connection.put(object);
 		if (code != 201 && code != 200) {
 			throw new ServerCommunicationException(code);
 		}
@@ -328,7 +332,9 @@ public class CSVFileManager {
 
 		Capability root_cap = CapabilityImpl
 				.fromString("D:RW:MDJH4ISE34ULD7RW3TGOX7NOJU:LID4JW5EQAI2QMCLNMPM7ZSNG4");
-		CSVFileManager fm = new CSVFileManager(root_cap);
+		Communication conn = new Communication("http://create.q2s.ntnu.no/",
+				"foo", "bar");
+		CSVFileManager fm = new CSVFileManager(root_cap, conn);
 		System.out.println("File manager created!");
 		// fm.cd("Desktop");
 		// fm.ls();
@@ -422,12 +428,11 @@ public class CSVFileManager {
 		return currentFolder;
 	}
 
-	public static CSVObject getCSVObject(Capability cap)
+	public CSVObject getCSVObject(Capability cap)
 			throws FailedToVerifySignatureException {
 		byte[] resp;
 		try {
-			resp = Communication.get(cap.getStorageIndex(),
-					Communication.SERVER_GET);
+			resp = this.connection.get(cap.getStorageIndex());
 		} catch (RemoteFileDoesNotExistException e) {
 			e.printStackTrace();
 			return null;
