@@ -96,10 +96,6 @@ public class FirstStartActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				showDialog(MENU_SHOWROOTCAP);
-				// DisplayCapability.displayCapability(FirstStartActivity.this,
-				// CSVActivity.fm.getRootCap()).show();
-				// IntentIntegrator.shareText(FirstStartActivity.this,
-				// CSVActivity.fm.getRootCap().toString());
 			}
 		});
 

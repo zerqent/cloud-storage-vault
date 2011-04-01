@@ -46,7 +46,7 @@ public class EnterOnlineCredentialsActivity extends Activity {
 				} else {
 					Toast.makeText(EnterOnlineCredentialsActivity.this,
 							"Username and/or password is invalid",
-							Toast.LENGTH_LONG);
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		});
@@ -69,7 +69,6 @@ public class EnterOnlineCredentialsActivity extends Activity {
 		}
 		CSVActivity.connection.setPassword(password);
 		CSVActivity.connection.setUsername(username);
-		// return true;
 
 		try {
 			return CSVActivity.connection.testLogin();

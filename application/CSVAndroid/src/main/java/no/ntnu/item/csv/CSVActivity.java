@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 public class CSVActivity extends Activity {
-	/** Called when the activity is first created. */
 
 	public static final int GET_ROOTCAP = 1;
 	public static final int MENU = 2;
@@ -20,17 +19,11 @@ public class CSVActivity extends Activity {
 	public static Communication connection = new Communication(
 			"create.q2s.ntnu.no");
 
-	// File manager enabling remote browsing in cloud
-	/** Called when the activity is first created. */
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// deleteFile(LocalCredentials.save_file);
-		// System.exit(0);
 
 		if (initiated()) {
-			// Code never reached
 			Intent intent = new Intent();
 			intent.setClass(CSVActivity.this, MenuActivity.class);
 			startActivityForResult(intent, MENU);
