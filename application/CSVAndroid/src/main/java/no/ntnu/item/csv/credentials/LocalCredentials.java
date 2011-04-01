@@ -21,74 +21,12 @@ public class LocalCredentials {
 	public static final String SEPARATOR = "¦";
 	public static final String save_file = "my_credentials.csv";
 	private Capability rootCapability;
-	private Context ctx;
 	private String onLineUserName;
 	private String onLinePassword;
-
-	// public LocalCredentials(Context ctx, Capability cap, String password) {
-	// this.ctx = ctx;
-	// this.rootCapability = cap;
-	// writeCredentialsToDisk(password);
-	// }
 
 	private LocalCredentials() {
 
 	}
-
-	// public LocalCredentials(Context ctx, String password, boolean createNew)
-	// throws IncorrectPasswordException {
-	// this.ctx = ctx;
-	// if (createNew) {
-	// CSVFolder rootFolder = new CSVFolder();
-	// CSVFolder shareFolder = new CSVFolder();
-	//
-	// rootFolder.addContent(CSVFileManager.SHARE_FOLDER,
-	// shareFolder.getCapability());
-	// rootFolder.encrypt();
-	// shareFolder.encrypt();
-	//
-	// this.rootCapability = rootFolder.getCapability();
-	// Communication.put(rootFolder, Communication.SERVER_PUT);
-	// Communication.put(shareFolder, Communication.SERVER_PUT);
-	//
-	// writeCredentialsToDisk(password);
-	// } else {
-	// try {
-	// FileInputStream in = ctx
-	// .openFileInput(LocalCredentials.save_file);
-	// // We know the size of the salt and encrypted capability
-	// byte[] salt = new byte[8];
-	// byte[] encCap = new byte[64];
-	//
-	// int b;
-	// for (int i = 0; (b = in.read()) != -1; i++) {
-	// if (i < salt.length)
-	// salt[i] = (byte) b;
-	// else
-	// encCap[i - salt.length] = (byte) b;
-	// }
-	//
-	// KeyChain kc = new KeyChain(password, salt);
-	// byte[] cap = Cryptoutil.symECBDecrypt(encCap, kc.getKey());
-	// if (cap != null) {
-	// String stringCap = new String(cap);
-	// this.rootCapability = CapabilityImpl.fromString(stringCap);
-	// } else {
-	// throw new IncorrectPasswordException();
-	// }
-	// } catch (FileNotFoundException e) {
-	// // This is our first time running the application
-	// return;
-	// } catch (IOException e) {
-	// return;
-	// }
-	// }
-	//
-	// }
-
-	// public boolean isFirstStart() {
-	// return this.rootCapability == null;
-	// }
 
 	public Capability getRootCapability() {
 		return this.rootCapability;
@@ -144,18 +82,11 @@ public class LocalCredentials {
 		rootFolder.encrypt();
 		shareFolder.encrypt();
 
-		// CSVActivity.connection.setUsername(onLineUserName);
-		// CSVActivity.connection.setPassword(onLinePassword);
-
 		CSVActivity.connection.put(rootFolder);
 		CSVActivity.connection.put(shareFolder);
 
-		// Communication.put(rootFolder, Communication.SERVER_PUT);
-		// Communication.put(shareFolder, Communication.SERVER_PUT);
-
 		return importExistingLocalCredentials(activity, password,
 				rootFolder.getCapability());
-
 	}
 
 	public static LocalCredentials importExistingLocalCredentials(
@@ -180,7 +111,6 @@ public class LocalCredentials {
 				cipherText.length);
 
 		FileOutputStream out;
-
 		try {
 			out = activity.openFileOutput(save_file, Context.MODE_PRIVATE);
 			out.write(writeOut);
@@ -193,11 +123,6 @@ public class LocalCredentials {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// eiriha komle123
-
-		// CSVActivity.connection.setUsername(onLineUserName);
-		// CSVActivity.connection.setPassword(onLinePassword);
 		return localCredentials;
 	}
 }
