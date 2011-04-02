@@ -25,6 +25,7 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.util.EntityUtils;
 
 public class Communication {
 	private int port = 443;
@@ -68,16 +69,22 @@ public class Communication {
 	}
 
 	public static void main(String[] arg) {
-		Communication cs = new Communication("create.q2s.ntnu.no", "palru",
-				"test123");
+		Communication cs = new Communication("create.q2s.ntnu.no", 444);
+		SecureHttpClient client = new SecureHttpClient();
+		HttpGet httpget = new HttpGet("/");
+
 		try {
-			cs.testLogin();
-		} catch (ClientProtocolException e) {
+			HttpResponse response = client.execute(cs.serverHost, httpget,
+					cs.getAuthCacheContext());
+			System.out.println(EntityUtils.toString(response.getEntity()));
+		} catch (ClientProtocolException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 
 	}
