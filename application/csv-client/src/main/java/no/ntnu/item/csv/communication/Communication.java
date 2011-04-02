@@ -119,7 +119,7 @@ public class Communication {
 		if (object == null)
 			throw new NullPointerException();
 
-		DefaultHttpClient client = getNewBasicAuthHttpClient();
+		DefaultHttpClient client = getNewSecureAuthHttpClient();
 
 		HttpPut put;
 		if (object instanceof CSVFolder) {
@@ -159,7 +159,7 @@ public class Communication {
 		if (index == null)
 			throw new NullPointerException();
 
-		HttpClient client = getNewBasicAuthHttpClient();
+		HttpClient client = getNewSecureAuthHttpClient();
 		HttpGet get = new HttpGet(this.SERVER_GET + index);
 
 		byte[] bytes = null;
