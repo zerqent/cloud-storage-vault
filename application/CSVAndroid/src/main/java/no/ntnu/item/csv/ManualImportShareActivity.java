@@ -5,7 +5,7 @@ import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -53,21 +53,32 @@ public class ManualImportShareActivity extends Activity {
 							"The folder name cannot be blank",
 							Toast.LENGTH_LONG).show();
 				} else {
-					CSVFolder folder = (CSVFolder) CSVFileManager
-							.getCSVObject(shareCapability);
-					if (folder == null) {
+					CSVFolder folder;
+					try {
+						folder = (CSVFolder) CSVActivity.fm
+								.getCSVObject(shareCapability);
+						if (folder == null) {
+							Toast.makeText(
+									ManualImportShareActivity.this,
+									"The requested share capability does not exist",
+									Toast.LENGTH_LONG).show();
+						} else {
+							verifyHash = Base32.encode(folder
+									.getPublicKeyHash());
+							showDialog(DIALOG_VERIFY_KEY);
+						}
+					} catch (FailedToVerifySignatureException e) {
 						Toast.makeText(
 								ManualImportShareActivity.this,
-								"The requested share capability does not exist",
+								"The requested share folder could not be verified",
 								Toast.LENGTH_LONG).show();
-					} else {
-						verifyHash = Base32.encode(folder.getPublicKeyHash());
-						showDialog(DIALOG_VERIFY_KEY);
+						e.printStackTrace();
 					}
 				}
 
 			}
 		});
+
 	}
 
 	@Override

@@ -46,8 +46,11 @@ public class PasswordPromptActivity extends Activity {
 							Toast.LENGTH_LONG).show();
 				} else {
 					try {
-						LocalCredentials creds = new LocalCredentials(
-								PasswordPromptActivity.this, password, false);
+						// LocalCredentials creds = new LocalCredentials(
+						// PasswordPromptActivity.this, password, false);
+						LocalCredentials creds = LocalCredentials
+								.openExistingLocalCredentials(
+										PasswordPromptActivity.this, password);
 						intent.putExtra(GetRootCapActivity.ROOTCAP, creds
 								.getRootCapability().toString());
 						intent.putExtra(CONFIGURE, false);

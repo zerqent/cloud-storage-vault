@@ -14,6 +14,7 @@ import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.CSVObject;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
 import no.ntnu.item.csv.exception.IllegalRootCapException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
@@ -39,20 +40,24 @@ public class CSVFileManager {
 	private CSVFolder currentFolder; // The current folder object visited
 	private CSVFolder sharedfolder;
 
-	public CSVFileManager(Capability rootCap, Communication connection)
+	public CSVFileManager(Capability root_cap, Communication connection)
 			throws IllegalRootCapException, RemoteFileDoesNotExistException,
-			ServerCommunicationException {
-		if (rootCap == null)
+			ServerCommunicationException, FailedToVerifySignatureException {
+		if (root_cap == null)
 			throw new IllegalRootCapException();
 
 		this.connection = connection;
 
-		CSVFolder rootFolder = this.getFolder(rootCap);
+		CSVFolder rootFolder = this.getFolder(root_cap);
 		rootFolder.decrypt();
 		this.currentFolder = rootFolder;
 
+		if (!this.currentFolder.isValid()) {
+			throw new FailedToVerifySignatureException();
+		}
+
 		this.location = new Stack<Capability>();
-		this.location.push(rootCap);
+		this.location.push(root_cap);
 
 		try {
 			sharedfolder = (CSVFolder) this.get(rootFolder, SHARE_FOLDER);
@@ -152,12 +157,11 @@ public class CSVFileManager {
 	}
 
 	public CSVObject get(CSVFolder folder, String alias)
-			throws ClientProtocolException, IOException, NoSuchAliasException {
+			throws ClientProtocolException, IOException, NoSuchAliasException,
+			FailedToVerifySignatureException {
 		Capability cap;
 		if (folder == null) {
 			folder = this.currentFolder;
-		} else {
-			System.out.println("Folder er satt.");
 		}
 
 		if ((cap = folder.getContents().get(alias)) == null) {
@@ -178,8 +182,14 @@ public class CSVFileManager {
 
 		if (cap.isFile()) {
 			file = CSVFile.createFromByteArray(resp, cap);
+			if (!file.isValid()) {
+				throw new FailedToVerifySignatureException(alias);
+			}
 		} else {
 			file = CSVFolder.createFromByteArray(resp, cap);
+			if (!file.isValid()) {
+				throw new FailedToVerifySignatureException(alias);
+			}
 		}
 		return file;
 	}
@@ -192,7 +202,7 @@ public class CSVFileManager {
 	}
 
 	public void cd(String folderAlias) throws ClientProtocolException,
-			IOException, NoSuchAliasException {
+			IOException, NoSuchAliasException, FailedToVerifySignatureException {
 		CSVObject folder;
 		if (!folderAlias.equals("..")) {
 			folder = this.get(null, folderAlias);
@@ -228,6 +238,10 @@ public class CSVFileManager {
 
 			if (folder == null)
 				return;
+
+			if (!folder.isValid()) {
+				throw new FailedToVerifySignatureException(folderAlias);
+			}
 
 			folder.decrypt();
 			this.currentFolder = (CSVFolder) folder;
@@ -307,7 +321,7 @@ public class CSVFileManager {
 
 	public static void main(String[] args) throws IOException,
 			IllegalRootCapException, RemoteFileDoesNotExistException,
-			ServerCommunicationException {
+			ServerCommunicationException, FailedToVerifySignatureException {
 		// Creating a root directory
 		// CSVFolder root = new CSVFolder();
 		// root.encrypt();
@@ -414,7 +428,8 @@ public class CSVFileManager {
 		return currentFolder;
 	}
 
-	public CSVObject getCSVObject(Capability cap) {
+	public CSVObject getCSVObject(Capability cap)
+			throws FailedToVerifySignatureException {
 		byte[] resp;
 		try {
 			resp = this.connection.get(cap.getStorageIndex());
@@ -429,8 +444,14 @@ public class CSVFileManager {
 
 		if (cap.isFile()) {
 			file = CSVFile.createFromByteArray(resp, cap);
+			if (!file.isValid()) {
+				throw new FailedToVerifySignatureException();
+			}
 		} else {
 			file = CSVFolder.createFromByteArray(resp, cap);
+			if (!file.isValid()) {
+				throw new FailedToVerifySignatureException();
+			}
 		}
 		return file;
 

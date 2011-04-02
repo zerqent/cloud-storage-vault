@@ -13,6 +13,7 @@ public class GetRootCapActivity extends Activity {
 	public static final String ROOTCAP = "ROOTCAP";
 	private static final int CONFIGURE = 1;
 	private static final int PASSWORD_PROMPT = 2;
+	private static final int ONLINE_PASSWORD_PROMPT = 3;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -24,8 +25,8 @@ public class GetRootCapActivity extends Activity {
 			startActivityForResult(intent, PASSWORD_PROMPT);
 		} else {
 			Intent intent = new Intent();
-			intent.setClass(this, FirstStartActivity.class);
-			startActivityForResult(intent, CONFIGURE);
+			intent.setClass(this, EnterOnlineCredentialsActivity.class);
+			startActivityForResult(intent, ONLINE_PASSWORD_PROMPT);
 		}
 	}
 
@@ -38,26 +39,28 @@ public class GetRootCapActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		Intent intent = new Intent();
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
+			case ONLINE_PASSWORD_PROMPT:
+				intent = data;
+				intent.setClass(this, FirstStartActivity.class);
+				startActivityForResult(intent, CONFIGURE);
+				break;
 			case PASSWORD_PROMPT: {
 
 				if (data.getBooleanExtra(PasswordPromptActivity.CONFIGURE,
 						false)) {
-					Intent intent = new Intent();
 					intent.setClass(this, FirstStartActivity.class);
 					startActivityForResult(intent, CONFIGURE);
 				} else {
-					Intent intent = new Intent();
 					intent.putExtra(ROOTCAP, data.getStringExtra(ROOTCAP));
 					setResult(RESULT_OK, intent);
 					finish();
 				}
-
 				break;
 			}
 			case CONFIGURE: {
-				Intent intent = new Intent();
 				intent.putExtra(ROOTCAP, data.getStringExtra(ROOTCAP));
 				setResult(RESULT_OK, intent);
 				finish();
@@ -75,7 +78,6 @@ public class GetRootCapActivity extends Activity {
 				File storageFile = this
 						.getFileStreamPath(LocalCredentials.save_file);
 				if (storageFile.exists()) {
-					Intent intent = new Intent();
 					intent.setClass(this, PasswordPromptActivity.class);
 					startActivityForResult(intent, PASSWORD_PROMPT);
 				} else {

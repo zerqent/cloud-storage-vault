@@ -28,7 +28,7 @@ public class FirstStartActivity extends Activity {
 	private static final int REQUEST_BARCODE = 0;
 	public static final String ROOT_CAP_STRING_KEY = "rootcapstring";
 
-	public Capability root_cap;
+	public Capability rootCapability;
 	public String rootCapString;
 
 	private TextView tv;
@@ -96,10 +96,6 @@ public class FirstStartActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				showDialog(MENU_SHOWROOTCAP);
-				// DisplayCapability.displayCapability(FirstStartActivity.this,
-				// CSVActivity.fm.getRootCap()).show();
-				// IntentIntegrator.shareText(FirstStartActivity.this,
-				// CSVActivity.fm.getRootCap().toString());
 			}
 		});
 
@@ -168,7 +164,7 @@ public class FirstStartActivity extends Activity {
 	private void done() {
 		Intent intent = getIntent();
 		if (rootCapString == null) {
-			rootCapString = root_cap.toString();
+			rootCapString = rootCapability.toString();
 		}
 		intent.putExtra(GetRootCapActivity.ROOTCAP, rootCapString);
 		setResult(RESULT_OK, intent);
@@ -212,9 +208,9 @@ public class FirstStartActivity extends Activity {
 		}
 		case SET_PASSWORD_OLD_ROOT: {
 			if (resultCode == RESULT_OK) {
-				new LocalCredentials(this,
-						CapabilityImpl.fromString(rootCapString),
-						data.getStringExtra(SetPasswordActivity.PASSWORD));
+				LocalCredentials.importExistingLocalCredentials(this,
+						data.getStringExtra(SetPasswordActivity.PASSWORD),
+						CapabilityImpl.fromString(rootCapString));
 				done();
 			}
 			return;
@@ -235,7 +231,7 @@ public class FirstStartActivity extends Activity {
 	}
 
 	public void supplyWithRootCap(Capability cap) {
-		this.root_cap = cap;
+		this.rootCapability = cap;
 		this.progress.dismiss();
 		done();
 	}

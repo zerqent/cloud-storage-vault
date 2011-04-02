@@ -1,0 +1,28 @@
+NameVirtualHost *:80
+
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+    ServerName localhost
+	DocumentRoot /var/www/static
+
+    # Aliases to static files goes here..
+
+	WSGIScriptAlias / /var/www/cloud/handler.py
+
+    # Consider WSGI in Daemon mode if using prefork_mpm:
+    # WSGIDaemonProcess examplesite processes=2 threads=25
+    # WSGIProcessGroup examplesite
+
+    <Directory /var/www/cloud>
+        Order Allow, Dany
+        Allow from all
+    </Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel debug
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

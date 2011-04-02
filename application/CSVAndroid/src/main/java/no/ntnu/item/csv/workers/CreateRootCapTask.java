@@ -2,7 +2,6 @@ package no.ntnu.item.csv.workers;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.credentials.LocalCredentials;
-import no.ntnu.item.csv.exception.IncorrectPasswordException;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -20,14 +19,8 @@ public class CreateRootCapTask extends AsyncTask<Void, Void, Capability> {
 	@Override
 	protected Capability doInBackground(Void... params) {
 		LocalCredentials creds;
-		try {
-			creds = new LocalCredentials(caller, password, true);
-			return creds.getRootCapability();
-		} catch (IncorrectPasswordException e) {
-			e.printStackTrace();
-		}
-		return null;
-
+		creds = LocalCredentials.createNewLocalCredentials(caller, password);
+		return creds.getRootCapability();
 	}
 
 	@Override

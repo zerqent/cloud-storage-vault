@@ -67,11 +67,15 @@ public class CSVFolderTest {
 				+ this.newFolder.getCipherText().length;
 		// encPrivkey + pubkey + signature + iv + Ciphertext
 		Assert.assertEquals(expectedLength, enc.length);
-		CSVFolder dec = CSVFolder.createFromByteArray(enc,
-				this.newFolder.getCapability());
+		String decCap = this.newFolder.getCapability().toString();
+		Capability newCap = CapabilityImpl.fromString(decCap);
+		CSVFolder dec = CSVFolder.createFromByteArray(enc, newCap);
 		Assert.assertArrayEquals(this.newFolder.getCipherText(),
 				dec.getCipherText());
 		Assert.assertArrayEquals(this.newFolder.getPubKey(), dec.getPubKey());
+
+		Assert.assertArrayEquals(this.newFolder.getTransferArray(),
+				dec.getTransferArray());
 		dec.decrypt();
 		dec.encrypt();
 		Assert.assertArrayEquals(this.newFolder.getPlainText(),
@@ -83,6 +87,8 @@ public class CSVFolderTest {
 				.getType());
 
 		Assert.assertEquals(enc.length, dec.getTransferArray().length);
+
+		Assert.assertTrue(dec.isValid());
 	}
 
 }

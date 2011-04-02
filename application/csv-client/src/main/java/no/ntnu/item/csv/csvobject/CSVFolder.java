@@ -118,7 +118,7 @@ public class CSVFolder implements CSVObject {
 
 	@Override
 	public boolean isValid() {
-		byte[] hash = Cryptoutil.hash(this.ciphertext, -1);
+		byte[] hash = Cryptoutil.hash(this.ciphertext, 0);
 		return Cryptoutil.signature_valid(this.signature, hash, this.pubkey);
 	}
 
@@ -199,7 +199,7 @@ public class CSVFolder implements CSVObject {
 		// transfer[0] = 1;
 
 		System.arraycopy(pub, 0, transfer, 0, pub.length);
-		System.arraycopy(this.signature, 0, transfer, 1 + pub.length,
+		System.arraycopy(this.signature, 0, transfer, pub.length,
 				this.signature.length);
 		System.arraycopy(this.iv, 0, transfer, pub.length
 				+ this.signature.length, this.iv.length);
@@ -235,6 +235,7 @@ public class CSVFolder implements CSVObject {
 				+ encPrivKey.length, cipherText, 0, cipherText.length);
 
 		CSVFolder foo = new CSVFolder(cap, cipherText, pubkey, iv, signature);
+		foo.encPrivKey = encPrivKey;
 		byte tmp[] = Cryptoutil.symECBDecrypt(encPrivKey, new SecretKeySpec(foo
 				.getCapability().getKey(), Cryptoutil.SYM_CIPHER));
 		foo.privkey = Cryptoutil.createRSAPrivateKey(tmp);
@@ -284,4 +285,11 @@ public class CSVFolder implements CSVObject {
 		return Cryptoutil.hash(to_hash, 16);
 	}
 
+	public byte[] getSignature() {
+		return this.signature;
+	}
+
+	public byte[] getEncPrivKey() {
+		return this.encPrivKey;
+	}
 }

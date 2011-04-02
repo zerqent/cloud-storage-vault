@@ -6,6 +6,7 @@ import java.io.IOException;
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.csvobject.CSVFile;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
@@ -19,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
@@ -38,6 +40,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			file = (CSVFile) CSVActivity.fm.get(null, alias);
 			System.out.println("Downloaded file");
 			FileUtils.writeFileToDisk("/sdcard/" + alias, file.getPlainText());
+
 			System.out.println("Wrote file to disk");
 			file = null;
 		} catch (ClientProtocolException e) {
@@ -49,6 +52,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			e.printStackTrace();
 			return null;
 		} catch (NoSuchAliasException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FailedToVerifySignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -65,7 +71,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
 		// Will be displayed in the top bar before opening the notification view
 		CharSequence tickerText = "File download completed";
-		int icon = R.drawable.icon;
+		int icon = R.drawable.downloaded;
 		Notification notification = new Notification(icon, tickerText,
 				System.currentTimeMillis());
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
@@ -80,8 +86,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		Intent notificationIntent = new Intent();
 		notificationIntent.setAction(android.content.Intent.ACTION_VIEW);
 		File file = new File(result);
-		// TODO: Have to figure out how to get correct MimeType.
-		notificationIntent.setDataAndType(Uri.fromFile(file), "audio/*");
+		String extension = FileUtils.getFileExtension(result);
+		notificationIntent.setDataAndType(Uri.fromFile(file), MimeTypeMap
+				.getSingleton().getMimeTypeFromExtension(extension));
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 				notificationIntent, 0);
 		notification.setLatestEventInfo(context, contentTitle, contentText,

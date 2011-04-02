@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.credentials.DisplayCapability;
 import no.ntnu.item.csv.csvobject.CSVFolder;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.guiutils.BrowseList;
 import no.ntnu.item.csv.workers.AddToShareTask;
@@ -149,6 +150,9 @@ public class RemoteBrowseActivity extends ListActivity {
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (NoSuchAliasException e) {
+						e.printStackTrace();
+					} catch (FailedToVerifySignatureException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
