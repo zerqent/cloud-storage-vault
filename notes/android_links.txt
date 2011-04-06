@@ -1,0 +1,2 @@
+Set up physical device to run APKs on:
+http://developer.android.com/guide/developing/device.html
