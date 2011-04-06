@@ -50,8 +50,7 @@ public class CreateShareActivity extends Activity {
 				// Put folder with alias in the share folder
 				completefolder.execute(alias, CSVFileManager.SHARE_FOLDER);
 
-				// TODO: Include username
-				String qr_str = "username" + ":"
+				String qr_str = CSVActivity.connection.getUsername() + ":"
 						+ folder.getCapability().toString();
 				IntentIntegrator.shareText(CreateShareActivity.this, qr_str);
 			}
