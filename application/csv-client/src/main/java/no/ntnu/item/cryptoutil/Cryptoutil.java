@@ -81,6 +81,26 @@ public class Cryptoutil {
 		return result;
 	}
 
+	public static byte[] singlehash(byte[] input, int truncate_to) {
+		byte result[] = null;
+
+		try {
+			MessageDigest md = MessageDigest
+					.getInstance(Cryptoutil.HASH_ALGORITHM);
+			md.update(input);
+			result = md.digest();
+		} catch (NoSuchAlgorithmException e) {
+			// Should already be tested
+		}
+
+		if (truncate_to > 0) {
+			byte[] tmp = new byte[truncate_to];
+			System.arraycopy(result, 0, tmp, 0, truncate_to);
+			result = tmp;
+		}
+		return result;
+	}
+
 	/**
 	 * Hash the input n number of times, output is truncated on each iteration
 	 * 

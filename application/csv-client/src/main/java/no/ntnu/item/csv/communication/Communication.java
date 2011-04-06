@@ -3,12 +3,7 @@ package no.ntnu.item.csv.communication;
 import java.io.IOException;
 import java.io.InputStream;
 
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
-import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.CSVObject;
-import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
-import no.ntnu.item.csv.exception.ServerCommunicationException;
-
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -21,6 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -94,24 +90,22 @@ public class Communication {
 		return localcontext;
 	}
 
-	public int put(CSVObject object) {
-		if (object == null)
-			throw new NullPointerException();
+	public int putInputStream(String url, InputStream is, long streamLength) {
+		InputStreamEntity entity = new InputStreamEntity(is, streamLength);
+		return putEntity(url, entity);
+	}
 
+	public int putByteArray(String url, byte[] byteArray) {
+		HttpEntity entity = new ByteArrayEntity(byteArray);
+		return putEntity(url, entity);
+	}
+
+	private int putEntity(String url, HttpEntity entity) {
 		DefaultHttpClient client = getNewBasicAuthHttpClient();
 
 		HttpPut put;
-		if (object instanceof CSVFolder) {
-			put = new HttpPut(this.SERVER_PUT
-					+ object.getCapability().getStorageIndex() + "/"
-					+ Base32.encode(object.getCapability().getWriteEnabler()));
-		} else {
-			put = new HttpPut(this.SERVER_PUT
-					+ object.getCapability().getStorageIndex());
-		}
 
-		ByteArrayEntity entity = new ByteArrayEntity(object.getTransferArray());
-
+		put = new HttpPut(this.SERVER_PUT + url);
 		put.setEntity(entity);
 
 		HttpResponse response;
@@ -131,57 +125,24 @@ public class Communication {
 		}
 
 		return code;
+
 	}
 
-	public byte[] get(String index) throws RemoteFileDoesNotExistException,
-			ServerCommunicationException {
-		if (index == null)
-			throw new NullPointerException();
-
+	public HttpResponse get(String url) {
 		HttpClient client = getNewBasicAuthHttpClient();
-		HttpGet get = new HttpGet(this.SERVER_GET + index);
+		HttpGet get = new HttpGet(this.SERVER_GET + url);
 
-		byte[] bytes = null;
-		HttpResponse response;
+		HttpResponse response = null;
 		try {
 			response = client.execute(this.serverHost, get,
 					getAuthCacheContext());
-			System.out.println("RESPONSE: "
-					+ response.getStatusLine().toString());
-			switch (response.getStatusLine().getStatusCode()) {
-			case 200:
-				break;
-			case 201:
-				break;
-			case 202:
-				break;
-			case 204:
-				break;
-			case 404:
-				throw new RemoteFileDoesNotExistException();
-			default:
-				throw new ServerCommunicationException();
-			}
-
-			InputStream is = response.getEntity().getContent();
-			int len = Integer.parseInt(response
-					.getFirstHeader("Content-Length").getValue());
-			bytes = new byte[len];
-
-			int nb;
-			for (int i = 0; (nb = is.read()) != -1; i++)
-				bytes[i] = (byte) nb;
-			is.close();
-
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			client.getConnectionManager().shutdown();
+			return null;
 		}
+		return response;
 
-		return bytes;
 	}
 
 	public String getUsername() {
@@ -207,4 +168,5 @@ public class Communication {
 	public void setPort(int port) {
 		this.port = port;
 	}
+
 }

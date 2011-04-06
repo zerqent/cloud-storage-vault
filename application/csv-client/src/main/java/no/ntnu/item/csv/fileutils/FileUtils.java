@@ -1,6 +1,8 @@
 package no.ntnu.item.csv.fileutils;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,5 +42,27 @@ public class FileUtils {
 			throw new IOException("Could not read entire file");
 		}
 		return bytes;
+	}
+
+	public static boolean filesMatch(String filepath1, String filepath2)
+			throws IOException {
+		File file1 = new File(filepath1);
+		File file2 = new File(filepath2);
+
+		byte[] content1 = FileUtils.readDataBinary(new FileInputStream(file1),
+				(int) file1.length());
+		byte[] content2 = FileUtils.readDataBinary(new FileInputStream(file2),
+				(int) file2.length());
+
+		if (content1.length != content2.length) {
+			return false;
+		}
+
+		for (int i = 0; i < content2.length; i++) {
+			if (content1[i] != content2[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
