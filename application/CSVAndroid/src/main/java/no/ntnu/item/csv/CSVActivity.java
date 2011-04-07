@@ -38,13 +38,13 @@ public class CSVActivity extends Activity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case GET_ROOTCAP: {
-				// try {
 				fm = new CSVFileManager(CapabilityImpl.fromString(data
 						.getStringExtra(GetRootCapActivity.ROOTCAP)),
 						connection);
 				Intent intent = new Intent();
 				intent.setClass(CSVActivity.this, MenuActivity.class);
 				startActivityForResult(intent, MENU);
+
 				// } catch (IllegalRootCapException e) {
 				// Toast.makeText(
 				// getApplicationContext(),
@@ -67,6 +67,14 @@ public class CSVActivity extends Activity {
 				// Toast.makeText(
 				// getApplicationContext(),
 				// "An unknown error occured. Please check your configuration.",
+				// Toast.LENGTH_LONG).show();
+				// Intent intent = new Intent();
+				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
+				// startActivityForResult(intent, GET_ROOTCAP);
+				// e.printStackTrace();
+				// } catch (FailedToVerifySignatureException e) {
+				// Toast.makeText(getApplicationContext(),
+				// "The requested root folder could not be verified",
 				// Toast.LENGTH_LONG).show();
 				// Intent intent = new Intent();
 				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);

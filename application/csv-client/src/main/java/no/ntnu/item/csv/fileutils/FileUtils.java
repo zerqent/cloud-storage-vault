@@ -65,4 +65,17 @@ public class FileUtils {
 		}
 		return true;
 	}
+
+	public static String getFileExtension(String result) {
+		if (result == null) {
+			return null;
+		}
+
+		int nDots = result.lastIndexOf(".");
+		if (nDots >= 0) {
+			return result.substring(nDots + 1);
+		} else {
+			return "";
+		}
+	}
 }

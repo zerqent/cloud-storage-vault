@@ -57,33 +57,4 @@ public class CSVFolderTest {
 		Assert.assertTrue(this.newFolder.isValid());
 	}
 
-	// @Test
-	// public void testSerialization() {
-	// CapabilityImpl cap = new CapabilityImpl(CapabilityType.RO, Cryptoutil
-	// .generateSymmetricKey().getEncoded(), null, true);
-	// this.newFolder.addContent("Foobar", cap);
-	// this.newFolder.encrypt();
-	// byte[] enc = this.newFolder.getTransferArray();
-	// int expectedLength = 272 + 132 + 128 + 16
-	// + this.newFolder.getCipherText().length;
-	// // encPrivkey + pubkey + signature + iv + Ciphertext
-	// Assert.assertEquals(expectedLength, enc.length);
-	// CSVFolder dec = CSVFolder.createFromByteArray(enc,
-	// this.newFolder.getCapability());
-	// Assert.assertArrayEquals(this.newFolder.getCipherText(),
-	// dec.getCipherText());
-	// Assert.assertArrayEquals(this.newFolder.getPubKey(), dec.getPubKey());
-	// dec.decrypt();
-	// dec.encrypt();
-	// Assert.assertArrayEquals(this.newFolder.getPlainText(),
-	// dec.getPlainText());
-	// Assert.assertTrue(dec.getContents().containsKey("Foobar"));
-	// Assert.assertArrayEquals(cap.getKey(), dec.getContents().get("Foobar")
-	// .getKey());
-	// Assert.assertEquals(cap.getType(), dec.getContents().get("Foobar")
-	// .getType());
-	//
-	// Assert.assertEquals(enc.length, dec.getTransferArray().length);
-	// }
-
 }

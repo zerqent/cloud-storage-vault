@@ -49,6 +49,9 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 		} catch (ImmutableFileExistsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			// } catch (FailedToVerifySignatureException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
 		}
 
 		return false;

@@ -31,8 +31,7 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 
 public class Communication {
-
-	private int port = 8080;
+	private int port = 443;
 
 	private HttpHost serverHost;
 	private final String SERVER_PUT = "/put/";
@@ -42,22 +41,22 @@ public class Communication {
 	private String password;
 
 	public Communication(String serverAddress, String username, String password) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "https");
 		this.username = username;
 		this.password = password;
 	}
 
 	public Communication(String serverAddress) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "http");
+		this.serverHost = new HttpHost(serverAddress, this.port, "https");
 	}
 
 	public Communication(String serverAddress, int port) {
 		this.port = port;
-		this.serverHost = new HttpHost(serverAddress, port, "http");
+		this.serverHost = new HttpHost(serverAddress, port, "https");
 	}
 
 	public boolean testLogin() throws ClientProtocolException, IOException {
-		DefaultHttpClient client = getNewBasicAuthHttpClient();
+		SecureHttpClient client = getNewSecureAuthHttpClient();
 
 		HttpGet httpget = new HttpGet("/");
 
@@ -72,8 +71,30 @@ public class Communication {
 		return responseStatus.getStatusCode() == 200;
 	}
 
-	private DefaultHttpClient getNewBasicAuthHttpClient() {
-		DefaultHttpClient client = new DefaultHttpClient();
+	// public static void main(String[] arg) {
+	// Communication cs = new Communication("create.q2s.ntnu.no", 444);
+	// SecureHttpClient client = new SecureHttpClient();
+	// HttpGet httpget = new HttpGet("/");
+	//
+	// try {
+	// HttpResponse response = client.execute(cs.serverHost, httpget,
+	// cs.getAuthCacheContext());
+	// System.out.println(EntityUtils.toString(response.getEntity()));
+	// } catch (ClientProtocolException e1) {
+	// // TODO Auto-generated catch block
+	// e1.printStackTrace();
+	// } catch (IOException e1) {
+	// // TODO Auto-generated catch block
+	// e1.printStackTrace();
+	// } finally {
+	// client.getConnectionManager().shutdown();
+	// }
+	//
+	// }
+
+	private SecureHttpClient getNewSecureAuthHttpClient() {
+		SecureHttpClient client = new SecureHttpClient();
+		addBasicAuth(client);
 
 		HttpRequestInterceptor preemptiveAuth = new HttpRequestInterceptor() {
 			@Override
@@ -99,7 +120,6 @@ public class Communication {
 			}
 		};
 
-		addBasicAuth(client);
 		client.addRequestInterceptor(preemptiveAuth, 0);
 
 		return client;
@@ -135,7 +155,7 @@ public class Communication {
 	}
 
 	private int putEntity(String url, HttpEntity entity) {
-		DefaultHttpClient client = getNewBasicAuthHttpClient();
+		DefaultHttpClient client = getNewSecureAuthHttpClient();
 
 		HttpPut put;
 
@@ -163,7 +183,7 @@ public class Communication {
 	}
 
 	public HttpResponse get(String url) {
-		HttpClient client = getNewBasicAuthHttpClient();
+		HttpClient client = getNewSecureAuthHttpClient();
 		HttpGet get = new HttpGet(this.SERVER_GET + url);
 
 		HttpResponse response = null;

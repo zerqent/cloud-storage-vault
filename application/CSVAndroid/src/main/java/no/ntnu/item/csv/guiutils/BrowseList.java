@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import no.ntnu.item.csv.CSVActivity;
+import no.ntnu.item.csv.LocalBrowseActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
 
@@ -94,15 +95,19 @@ public class BrowseList {
 		this.list.add(0, parMap);
 	}
 
-	// Creating browse list from a normal list of items
+	// Creating browse list from storage devices
 	public BrowseList(List<String> files) {
 		this.list = new ArrayList<Map<String, Object>>();
 
 		for (String alias : files) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			if (!alias.equals("..")) {
+			if (alias.equals(LocalBrowseActivity.STORAGE_INTERNAL)) {
 				map.put(TEXT, alias);
-				map.put(ICON, R.drawable.icon);
+				map.put(ICON, R.drawable.internal);
+				this.list.add(map);
+			} else {
+				map.put(TEXT, alias);
+				map.put(ICON, R.drawable.external);
 				this.list.add(map);
 			}
 		}

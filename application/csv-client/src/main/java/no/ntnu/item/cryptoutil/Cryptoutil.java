@@ -32,6 +32,7 @@ public class Cryptoutil {
 
 	// Hashing
 	public static final String HASH_ALGORITHM = "SHA-256";
+	public static final int HASH_LENGTH = 256;
 
 	// Symmetric Cipher
 	public static final String SYM_CIPHER = "AES";

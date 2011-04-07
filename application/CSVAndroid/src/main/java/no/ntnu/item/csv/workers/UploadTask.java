@@ -94,7 +94,7 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 			tickerText = "Error uploading";
 		}
 
-		int icon = R.drawable.icon;
+		int icon = R.drawable.uploaded;
 		Notification notification = new Notification(icon, tickerText,
 				System.currentTimeMillis());
 		notification.flags = Notification.FLAG_AUTO_CANCEL;

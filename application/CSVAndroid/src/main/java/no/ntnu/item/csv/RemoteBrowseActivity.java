@@ -150,6 +150,9 @@ public class RemoteBrowseActivity extends ListActivity {
 					} catch (RemoteFileDoesNotExistException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						// } catch (FailedToVerifySignatureException e) {
+						// // TODO Auto-generated catch block
+						// e.printStackTrace();
 					}
 				} else {
 					new DownloadTask(RemoteBrowseActivity.this).execute(alias);

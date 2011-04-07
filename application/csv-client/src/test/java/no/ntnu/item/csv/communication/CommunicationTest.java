@@ -6,7 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import no.ntnu.item.csv.csvobject.CSVFolder;
+import no.ntnu.item.cryptoutil.Cryptoutil;
+import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
 import org.apache.http.HttpEntity;
@@ -47,8 +48,9 @@ public class CommunicationTest {
 	}
 
 	private String getARandomUrl() {
-		CSVFolder folder = new CSVFolder();
-		return folder.getCapability().getStorageIndex();
+		String foo = "" + Math.random() * 100000;
+		byte[] tmp = Cryptoutil.hash(foo.getBytes(), 16);
+		return Base32.encode(tmp);
 	}
 
 	@Test

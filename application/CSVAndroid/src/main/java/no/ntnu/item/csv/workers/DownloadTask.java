@@ -10,6 +10,7 @@ import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
+import no.ntnu.item.csv.fileutils.FileUtils;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
@@ -49,7 +51,6 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		try {
 			file = new CSVFile(this.capability, new File("/sdcard/" + alias));
 			file = CSVActivity.fm.downloadFile(file);
-			System.out.println("Downloaded file");
 		} catch (ServerCommunicationException e) {
 			this.error = e.getMessage();
 		} catch (InvalidWriteEnablerException e) {
@@ -58,6 +59,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			this.error = e.getMessage();
 		} catch (RemoteFileDoesNotExistException e) {
 			this.error = e.getMessage();
+			// } catch (FailedToVerifySignatureException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
 		}
 
 		return "/mnt/sdcard/" + alias;
@@ -81,7 +85,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			contentText = this.error;
 		}
 
-		int icon = R.drawable.icon;
+		int icon = R.drawable.downloaded;
 		Notification notification = new Notification(icon, tickerText,
 				System.currentTimeMillis());
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
@@ -92,8 +96,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		Intent notificationIntent = new Intent();
 		notificationIntent.setAction(android.content.Intent.ACTION_VIEW);
 		File file = new File(result);
-		// TODO: Have to figure out how to get correct MimeType.
-		notificationIntent.setDataAndType(Uri.fromFile(file), "audio/*");
+		String extension = FileUtils.getFileExtension(result);
+		notificationIntent.setDataAndType(Uri.fromFile(file), MimeTypeMap
+				.getSingleton().getMimeTypeFromExtension(extension));
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 				notificationIntent, 0);
 		notification.setLatestEventInfo(context, contentTitle, contentText,
