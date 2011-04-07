@@ -69,7 +69,6 @@ public class CapabilityImplTest {
 		CapabilityImpl capimpl = new CapabilityImpl(CapabilityType.RW,
 				Cryptoutil.generateSymmetricKey().getEncoded(), null, false);
 		Assert.assertNotNull(capimpl.getWriteEnabler());
-		Assert.assertEquals(16, capimpl.getWriteEnabler().length);
 	}
 
 	public boolean isBase32(String input) {

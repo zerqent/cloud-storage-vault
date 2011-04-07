@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.Stack;
 
 import no.ntnu.item.csv.capability.Capability;
+import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.csvobject.CSVFolder;
@@ -13,6 +14,7 @@ import no.ntnu.item.csv.csvobject.CSVObject;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
 import no.ntnu.item.csv.exception.ImmutableFileExistsException;
+import no.ntnu.item.csv.exception.InsufficientPermissionException;
 import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
@@ -71,19 +73,25 @@ public class CSVFileManager {
 		} catch (ImmutableFileExistsException e) {
 		} catch (DuplicateAliasException e) {
 		} catch (IllegalFileNameException e) {
+		} catch (InsufficientPermissionException e) {
 		}
 	}
 
 	public CSVObject putObjectIntoFolder(CSVObject object, CSVFolder folder,
 			String alias) throws ServerCommunicationException,
 			InvalidWriteEnablerException, ImmutableFileExistsException,
-			DuplicateAliasException, IllegalFileNameException {
+			DuplicateAliasException, IllegalFileNameException,
+			InsufficientPermissionException {
 		if (alias.equals("") || alias.equals("..")) {
 			throw new IllegalFileNameException();
 		}
 
 		if (folder.getContents().containsKey(alias)) {
 			throw new DuplicateAliasException();
+		}
+
+		if (folder.getCapability().getType() != CapabilityType.RW) {
+			throw new InsufficientPermissionException();
 		}
 
 		CSVObject tmpObject = uploadObject(object);
@@ -96,7 +104,7 @@ public class CSVFileManager {
 	public CSVObject putObjectIntoCurrentFolder(CSVObject object, String alias)
 			throws IllegalFileNameException, DuplicateAliasException,
 			ServerCommunicationException, InvalidWriteEnablerException,
-			ImmutableFileExistsException {
+			ImmutableFileExistsException, InsufficientPermissionException {
 
 		CSVFolder currentFolder = this.location.peek();
 		return putObjectIntoFolder(object, currentFolder, alias);
@@ -180,12 +188,16 @@ public class CSVFileManager {
 	}
 
 	public CSVObject downloadObject(CSVObject object)
-			throws ServerCommunicationException, InvalidWriteEnablerException,
-			ImmutableFileExistsException, RemoteFileDoesNotExistException {
+			throws ServerCommunicationException,
+			RemoteFileDoesNotExistException {
 
 		HttpResponse response = this.connection.get(object.getCapability()
 				.getStorageIndex());
-		parseStatuscode(response.getStatusLine().getStatusCode());
+		try {
+			parseStatuscode(response.getStatusLine().getStatusCode());
+		} catch (InvalidWriteEnablerException e1) {
+		} catch (ImmutableFileExistsException e1) {
+		}
 
 		HttpEntity entity = response.getEntity();
 
@@ -258,6 +270,13 @@ public class CSVFileManager {
 
 	public CSVFolder getCurrentFolder() {
 		return this.location.peek();
+	}
+
+	public CSVFolder getRootFolder() {
+		if (this.location.size() > 0) {
+			return this.location.get(0);
+		}
+		return null;
 	}
 
 	// private CSVFolder getFolder(Capability cap)

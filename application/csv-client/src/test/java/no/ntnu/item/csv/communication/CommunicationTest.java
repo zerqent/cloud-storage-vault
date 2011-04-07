@@ -19,7 +19,8 @@ import org.junit.Test;
 
 public class CommunicationTest {
 
-	private Communication com = new Communication("create.q2s.ntnu.no", "", "");
+	private Communication com = CommunicationFactory
+			.createCommunicationFromProperties();
 
 	private final String testfile = "src/test/resources/smallloremipsum.txt";
 	private final String outputFile = "/tmp/output.txt";
@@ -29,7 +30,7 @@ public class CommunicationTest {
 
 	@Before
 	public void setUp() throws IOException {
-		Assert.assertTrue("You must set the user/password", this.com
+		Assert.assertFalse("You must set the user/password", this.com
 				.getPassword().equals("") || this.com.getUsername().equals(""));
 	}
 

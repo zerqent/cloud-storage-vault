@@ -162,12 +162,9 @@ public class CryptoStreamerTest {
 				fos.write(buffer, 0, numRead);
 			}
 			cipI.close();
-			// fos.close();
-			// cipI.close();
-			// dig.close();
 
 			byte[] tmpdigest = dig.getMessageDigest().digest();
-			System.out.println(getHex(tmpdigest));
+			// System.out.println(getHex(tmpdigest));
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -175,16 +172,12 @@ public class CryptoStreamerTest {
 		}
 
 		byte[] iv = cip.getIV();
-		// cip = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		cip.init(Cipher.DECRYPT_MODE, sk, new IvParameterSpec(iv));
 		fis = new FileInputStream("/tmp/test.txt");
 
 		fos = new FileOutputStream("/tmp/decrypted.txt");
 		DigestOutputStream digO = new DigestOutputStream(fos, md);
 		CipherOutputStream cipO = new CipherOutputStream(digO, cip);
-		// cipI = new CipherInputStream(fis, cip);
-		// md.reset();
-		// dig = new DigestInputStream(cipI, md);
 
 		buffer = new byte[2048];
 		numRead = 0;
@@ -197,8 +190,7 @@ public class CryptoStreamerTest {
 			cipO.close();
 
 			byte[] digest = dig.getMessageDigest().digest();
-			System.out.println(getHex(digest));
-			// Assert.assertArrayEquals(tmpDigest, digest);
+			// System.out.println(getHex(digest));
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

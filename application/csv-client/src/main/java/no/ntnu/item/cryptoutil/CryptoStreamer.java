@@ -1,5 +1,7 @@
 package no.ntnu.item.cryptoutil;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -112,24 +114,36 @@ public class CryptoStreamer {
 
 	public OutputStream getDecryptedAndHashedOutputStream(OutputStream os) {
 		this.md.reset();
-		DigestOutputStream digestOutputStream = new DigestOutputStream(os, md);
+		BufferedOutputStream netBuffer = new BufferedOutputStream(os);
+		DigestOutputStream digestOutputStream = new DigestOutputStream(
+				netBuffer, md);
 		this.openOutputStreams.push(digestOutputStream);
 		this.openOutputStreams.push(os);
+		BufferedOutputStream digestBuffer = new BufferedOutputStream(
+				digestOutputStream);
 		CipherOutputStream cipherOutputStream = new CipherOutputStream(
-				digestOutputStream, this.decryptCipher);
+				digestBuffer, this.decryptCipher);
 		this.md = digestOutputStream.getMessageDigest();
-		return cipherOutputStream;
+		BufferedOutputStream cryptoBuffer = new BufferedOutputStream(
+				cipherOutputStream);
+		return cryptoBuffer;
 	}
 
 	public InputStream getEncryptedAndHashedInputStream(InputStream is) {
 		md.reset();
-		DigestInputStream digestInputStream = new DigestInputStream(is, md);
-		CipherInputStream cipherInputStream = new CipherInputStream(
-				digestInputStream, this.encryptCipher);
+		BufferedInputStream filebuffer = new BufferedInputStream(is);
+		DigestInputStream digestInputStream = new DigestInputStream(filebuffer,
+				md);
+		BufferedInputStream digBuffer = new BufferedInputStream(
+				digestInputStream);
+		CipherInputStream cipherInputStream = new CipherInputStream(digBuffer,
+				this.encryptCipher);
+		BufferedInputStream readBuffer = new BufferedInputStream(
+				cipherInputStream);
 		this.md = digestInputStream.getMessageDigest();
 		this.openInputStreams.push(digestInputStream);
 		this.openInputStreams.push(is);
-		return cipherInputStream;
+		return readBuffer;
 	}
 
 	public byte[] finish() {
