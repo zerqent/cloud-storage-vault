@@ -2,6 +2,8 @@ package no.ntnu.item.csv;
 
 import java.io.IOException;
 
+import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+
 import org.apache.http.client.ClientProtocolException;
 
 import android.app.Activity;
@@ -71,7 +73,12 @@ public class EnterOnlineCredentialsActivity extends Activity {
 		CSVActivity.connection.setUsername(username);
 
 		try {
-			return CSVActivity.connection.testLogin();
+			boolean tmp = CSVActivity.connection.testLogin();
+			if (tmp) {
+				CSVActivity.fm = new CSVFileManager(CSVActivity.connection);
+			}
+			return tmp;
+
 		} catch (ClientProtocolException e) {
 			return false;
 		} catch (IOException e) {

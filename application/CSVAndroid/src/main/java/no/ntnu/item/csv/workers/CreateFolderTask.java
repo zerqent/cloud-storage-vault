@@ -1,18 +1,15 @@
 package no.ntnu.item.csv.workers;
 
-import java.io.IOException;
-
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.RemoteBrowseActivity;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
-
-import org.apache.http.client.ClientProtocolException;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,18 +22,35 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 
 	private Activity caller;
 	private String error = null;
-	private CSVFolder folder = null;
+	private CSVFolder parentFolder = null;
+	private CSVFolder createdFolder = null;
 
 	public CreateFolderTask(Activity caller) {
 		this.caller = caller;
 	}
 
-	public void setFolder(CSVFolder folder) {
-		this.folder = folder;
+	public CreateFolderTask(Activity caller, CSVFolder parentfolder,
+			CSVFolder putFolder) {
+		this.caller = caller;
+		this.parentFolder = parentfolder;
+		this.createdFolder = putFolder;
 	}
 
-	public CSVFolder getFolder() {
-		return this.folder;
+	public CreateFolderTask(Activity caller, CSVFolder parentFolder) {
+		this.caller = caller;
+		this.parentFolder = parentFolder;
+	}
+
+	public void setParentFolder(CSVFolder parentFolder) {
+		this.parentFolder = parentFolder;
+	}
+
+	public void setCreatedFolder(CSVFolder folder) {
+		this.createdFolder = folder;
+	}
+
+	public CSVFolder getCreatedFolder() {
+		return this.createdFolder;
 	}
 
 	@Override
@@ -56,36 +70,35 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 
 		if (params.length == 0 || params[0] == null) {
 			System.out.println("Lager bare keys");
-			CSVFolder folder = CSVActivity.fm.createNewFolder();
+			// CSVFolder folder = CSVActivity.fm.createNewFolder();
+			CSVFolder folder = new CSVFolder();
+			try {
+				folder = CSVActivity.fm.uploadFolder(folder);
+			} catch (ServerCommunicationException e) {
+				this.error = e.getMessage();
+			} catch (InvalidWriteEnablerException e) {
+				this.error = e.getMessage();
+			} catch (ImmutableFileExistsException e) {
+				this.error = e.getMessage();
+			}
 			return folder;
 		}
 
 		String alias = params[0];
-		String target_folder = null;
 
-		if (params.length >= 2) {
-			target_folder = params[1];
+		if (this.createdFolder == null) {
+			this.createdFolder = new CSVFolder();
 		}
 
 		try {
-			if (this.folder != null) {
-				System.out
-						.println("Laster opp mappe med predefinerte keys til "
-								+ target_folder);
-				CSVActivity.fm.mkdir(alias, target_folder, this.folder);
+			if (this.parentFolder == null) {
+				CSVActivity.fm.putObjectIntoCurrentFolder(this.createdFolder,
+						alias);
 			} else {
-				System.out.println("Lager mappe til maal: " + target_folder);
-				CSVActivity.fm.mkdir(alias, target_folder);
+				CSVActivity.fm.putObjectIntoFolder(this.createdFolder,
+						this.parentFolder, alias);
 			}
 			System.out.println("Uploaded file");
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// return null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// return null;
 		} catch (InsufficientPermissionException e) {
 			this.error = e.getMessage();
 		} catch (IllegalFileNameException e) {
@@ -94,8 +107,12 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 			this.error = e.getMessage();
 		} catch (ServerCommunicationException e) {
 			this.error = e.getMessage();
+		} catch (InvalidWriteEnablerException e) {
+			this.error = e.getMessage();
+		} catch (ImmutableFileExistsException e) {
+			this.error = e.getMessage();
 		}
-		return null;
+		return this.createdFolder;
 	}
 
 	@Override

@@ -1,17 +1,18 @@
 package no.ntnu.item.csv.workers;
 
+import java.io.File;
 import java.io.IOException;
 
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.RemoteBrowseActivity;
+import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
-
-import org.apache.http.client.ClientProtocolException;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -46,12 +47,13 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 
 		String localPath = params[0];
 		try {
-			CSVActivity.fm.put(localPath, null);
+			// CSVActivity.fm.put(localPath, null);
+			CSVFile file = new CSVFile(new File(localPath));
+			String[] alias = localPath.split("/");
+			String name = alias[alias.length - 1];
+			CSVActivity.fm.putObjectIntoCurrentFolder(file, name);
+
 			System.out.println("Uploaded file");
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// return null;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -66,6 +68,12 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 			this.error = e.getMessage();
 			return this.error;
 		} catch (ServerCommunicationException e) {
+			this.error = e.getMessage();
+			return this.error;
+		} catch (InvalidWriteEnablerException e) {
+			this.error = e.getMessage();
+			return this.error;
+		} catch (ImmutableFileExistsException e) {
 			this.error = e.getMessage();
 			return this.error;
 		}

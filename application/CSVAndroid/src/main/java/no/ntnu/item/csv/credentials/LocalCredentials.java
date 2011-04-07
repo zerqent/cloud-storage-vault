@@ -13,7 +13,10 @@ import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.IncorrectPasswordException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import android.app.Activity;
 import android.content.Context;
 
@@ -79,11 +82,24 @@ public class LocalCredentials {
 
 		rootFolder.addContent(CSVFileManager.SHARE_FOLDER,
 				shareFolder.getCapability());
-		rootFolder.encrypt();
-		shareFolder.encrypt();
+		// rootFolder.encrypt();
+		// shareFolder.encrypt();
 
-		CSVActivity.connection.put(rootFolder);
-		CSVActivity.connection.put(shareFolder);
+		// CSVActivity.connection.put(rootFolder);
+		try {
+			rootFolder = CSVActivity.fm.uploadFolder(rootFolder);
+			shareFolder = CSVActivity.fm.uploadFolder(shareFolder);
+		} catch (ServerCommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidWriteEnablerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ImmutableFileExistsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// CSVActivity.connection.put(shareFolder);
 
 		return importExistingLocalCredentials(activity, password,
 				rootFolder.getCapability());

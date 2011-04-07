@@ -143,13 +143,15 @@ public class FirstStartActivity extends Activity {
 					switch (item) {
 					case 0: {
 						IntentIntegrator.shareText(FirstStartActivity.this,
-								CSVActivity.fm.getRootCap().toString());
+								CSVActivity.fm.getRootFolder().getCapability()
+										.toString());
 						break;
 					}
 					case 1: {
 						DisplayCapability.displayCapability(
 								FirstStartActivity.this,
-								CSVActivity.fm.getRootCap()).show();
+								CSVActivity.fm.getRootFolder().getCapability())
+								.show();
 						break;
 					}
 					}

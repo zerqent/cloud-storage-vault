@@ -3,13 +3,9 @@ package no.ntnu.item.csv;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
-import no.ntnu.item.csv.exception.IllegalRootCapException;
-import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
-import no.ntnu.item.csv.exception.ServerCommunicationException;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 public class CSVActivity extends Activity {
 
@@ -22,6 +18,8 @@ public class CSVActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// deleteFile(LocalCredentials.save_file);
+		// System.exit(0);
 
 		if (initiated()) {
 			Intent intent = new Intent();
@@ -40,41 +38,41 @@ public class CSVActivity extends Activity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case GET_ROOTCAP: {
-				try {
-					fm = new CSVFileManager(CapabilityImpl.fromString(data
-							.getStringExtra(GetRootCapActivity.ROOTCAP)),
-							connection);
-					Intent intent = new Intent();
-					intent.setClass(CSVActivity.this, MenuActivity.class);
-					startActivityForResult(intent, MENU);
-				} catch (IllegalRootCapException e) {
-					Toast.makeText(
-							getApplicationContext(),
-							"You have used an illegal root capability. Please use a valid capability.",
-							Toast.LENGTH_LONG).show();
-					Intent intent = new Intent();
-					intent.setClass(CSVActivity.this, GetRootCapActivity.class);
-					startActivityForResult(intent, GET_ROOTCAP);
-					e.printStackTrace();
-				} catch (RemoteFileDoesNotExistException e) {
-					Toast.makeText(
-							getApplicationContext(),
-							"The requested root folder does not exist on this server.",
-							Toast.LENGTH_LONG).show();
-					Intent intent = new Intent();
-					intent.setClass(CSVActivity.this, GetRootCapActivity.class);
-					startActivityForResult(intent, GET_ROOTCAP);
-					e.printStackTrace();
-				} catch (ServerCommunicationException e) {
-					Toast.makeText(
-							getApplicationContext(),
-							"An unknown error occured. Please check your configuration.",
-							Toast.LENGTH_LONG).show();
-					Intent intent = new Intent();
-					intent.setClass(CSVActivity.this, GetRootCapActivity.class);
-					startActivityForResult(intent, GET_ROOTCAP);
-					e.printStackTrace();
-				}
+				// try {
+				fm = new CSVFileManager(CapabilityImpl.fromString(data
+						.getStringExtra(GetRootCapActivity.ROOTCAP)),
+						connection);
+				Intent intent = new Intent();
+				intent.setClass(CSVActivity.this, MenuActivity.class);
+				startActivityForResult(intent, MENU);
+				// } catch (IllegalRootCapException e) {
+				// Toast.makeText(
+				// getApplicationContext(),
+				// "You have used an illegal root capability. Please use a valid capability.",
+				// Toast.LENGTH_LONG).show();
+				// Intent intent = new Intent();
+				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
+				// startActivityForResult(intent, GET_ROOTCAP);
+				// e.printStackTrace();
+				// } catch (RemoteFileDoesNotExistException e) {
+				// Toast.makeText(
+				// getApplicationContext(),
+				// "The requested root folder does not exist on this server.",
+				// Toast.LENGTH_LONG).show();
+				// Intent intent = new Intent();
+				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
+				// startActivityForResult(intent, GET_ROOTCAP);
+				// e.printStackTrace();
+				// } catch (ServerCommunicationException e) {
+				// Toast.makeText(
+				// getApplicationContext(),
+				// "An unknown error occured. Please check your configuration.",
+				// Toast.LENGTH_LONG).show();
+				// Intent intent = new Intent();
+				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
+				// startActivityForResult(intent, GET_ROOTCAP);
+				// e.printStackTrace();
+				// }
 				break;
 			}
 			}
@@ -86,7 +84,12 @@ public class CSVActivity extends Activity {
 	}
 
 	public static boolean initiated() {
-		return fm != null;
+		if (fm == null) {
+			return false;
+		} else if (fm.getRootFolder() == null) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -60,7 +60,7 @@ public class BrowseList {
 			}
 		}
 
-		if (!CSVActivity.fm.inRootDir()) {
+		if (CSVActivity.fm.getCurrentFolder() != CSVActivity.fm.getRootFolder()) {
 			Map<String, Object> parMap = new HashMap<String, Object>();
 			parMap.put(TEXT, "..");
 			parMap.put(ICON, R.drawable.folder);

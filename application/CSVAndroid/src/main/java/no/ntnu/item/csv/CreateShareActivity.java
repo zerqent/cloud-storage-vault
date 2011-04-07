@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutionException;
 
 import no.ntnu.item.csv.contrib.com.google.zxing.integration.android.IntentIntegrator;
 import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.workers.CreateFolderTask;
 import android.app.Activity;
 import android.os.Bundle;
@@ -35,12 +34,13 @@ public class CreateShareActivity extends Activity {
 				CSVFolder folder = null;
 				String alias = eAlias.getText().toString();
 				CreateFolderTask completefolder = new CreateFolderTask(
-						CreateShareActivity.this);
+						CreateShareActivity.this, CSVActivity.fm
+								.getShareFolder());
 				try {
 					// Will lock UI-thread if keys are not ready, but the
 					// work should be done.
 					folder = cft.get();
-					completefolder.setFolder(folder);
+					completefolder.setCreatedFolder(folder);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
@@ -48,7 +48,7 @@ public class CreateShareActivity extends Activity {
 				}
 
 				// Put folder with alias in the share folder
-				completefolder.execute(alias, CSVFileManager.SHARE_FOLDER);
+				completefolder.execute(alias);
 
 				// TODO: Include username
 				String qr_str = "username" + ":"
