@@ -28,6 +28,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 	private Activity caller;
 	private Capability capability;
 	private String error;
+	private NotificationManager mNotificationManager;
 
 	public DownloadTask(Activity caller) {
 		this.caller = caller;
@@ -72,11 +73,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
-		String ns = Context.NOTIFICATION_SERVICE;
-		NotificationManager mNotificationManager = (NotificationManager) this.caller
-				.getSystemService(ns);
 
-		// Will be displayed in the top bar before opening the notification view
 		CharSequence tickerText = "File download completed";
 		CharSequence contentTitle = "CSV: Download Complete";
 		CharSequence contentText = "File has been downloaded to " + result;
@@ -92,8 +89,6 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 				System.currentTimeMillis());
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
 
-		Context context = this.caller.getApplicationContext();
-
 		// What to do when someone touch the intent
 		Intent notificationIntent = new Intent();
 		notificationIntent.setAction(android.content.Intent.ACTION_VIEW);
@@ -101,13 +96,14 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		String extension = FileUtils.getFileExtension(result);
 		notificationIntent.setDataAndType(Uri.fromFile(file), MimeTypeMap
 				.getSingleton().getMimeTypeFromExtension(extension));
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
-		notification.setLatestEventInfo(context, contentTitle, contentText,
-				contentIntent);
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				this.caller.getApplicationContext(), 0, notificationIntent, 0);
+		notification.setLatestEventInfo(this.caller.getApplicationContext(),
+				contentTitle, contentText, contentIntent);
 		mNotificationManager.notify(1, notification);
 
 		this.caller = null;
+		System.out.println("download complete");
 		return;
 	}
 
@@ -120,6 +116,26 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		Toast toast = Toast.makeText(this.caller.getApplicationContext(), text,
 				duration);
 		toast.show();
+
+		this.mNotificationManager = (NotificationManager) this.caller
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		int icon = R.drawable.downloaded;
+		CharSequence tickerText = "Downloading file";
+		CharSequence contentTitle = "CSV: File Download";
+		CharSequence contentText = "A file download is in progress";
+
+		Notification notification = new Notification(icon, tickerText,
+				System.currentTimeMillis());
+
+		PendingIntent contentIntent = PendingIntent.getActivity(this.caller, 0,
+				null, 0);
+		notification.setLatestEventInfo(this.caller.getApplicationContext(),
+				contentTitle, contentText, contentIntent);
+		mNotificationManager.notify(1, notification);
+
+		return;
+
 	}
 
 }
