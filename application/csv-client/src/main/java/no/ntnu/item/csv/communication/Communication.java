@@ -71,27 +71,6 @@ public class Communication {
 		return responseStatus.getStatusCode() == 200;
 	}
 
-	// public static void main(String[] arg) {
-	// Communication cs = new Communication("create.q2s.ntnu.no", 444);
-	// SecureHttpClient client = new SecureHttpClient();
-	// HttpGet httpget = new HttpGet("/");
-	//
-	// try {
-	// HttpResponse response = client.execute(cs.serverHost, httpget,
-	// cs.getAuthCacheContext());
-	// System.out.println(EntityUtils.toString(response.getEntity()));
-	// } catch (ClientProtocolException e1) {
-	// // TODO Auto-generated catch block
-	// e1.printStackTrace();
-	// } catch (IOException e1) {
-	// // TODO Auto-generated catch block
-	// e1.printStackTrace();
-	// } finally {
-	// client.getConnectionManager().shutdown();
-	// }
-	//
-	// }
-
 	private SecureHttpClient getNewSecureAuthHttpClient() {
 		SecureHttpClient client = new SecureHttpClient();
 		addBasicAuth(client);
