@@ -91,7 +91,8 @@ public class MenuActivity extends Activity {
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case MENU_IMPORTSHARE: {
-			final CharSequence[] items = { "From Barcode", "Manual" };
+			final CharSequence[] items = { "From Barcode",
+					"From Plain Input Text" };
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Choose import method");
