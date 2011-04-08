@@ -189,7 +189,7 @@ public class CryptoStreamerTest {
 			cipO.flush();
 			cipO.close();
 
-			byte[] digest = dig.getMessageDigest().digest();
+			// byte[] digest = dig.getMessageDigest().digest();
 			// System.out.println(getHex(digest));
 
 		} catch (IOException e) {

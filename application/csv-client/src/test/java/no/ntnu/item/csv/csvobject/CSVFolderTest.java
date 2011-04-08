@@ -35,7 +35,7 @@ public class CSVFolderTest {
 		Capability cap = new CapabilityImpl(CapabilityType.RO,
 				key.getEncoded(), null, false);
 		this.newFolder.addContent("Hallo", cap);
-		byte[] b = this.newFolder.upload();
+		this.newFolder.upload();
 		Assert.assertNotNull(this.newFolder.getCipherText());
 
 	}
