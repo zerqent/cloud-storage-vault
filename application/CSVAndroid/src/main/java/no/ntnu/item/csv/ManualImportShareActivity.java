@@ -5,6 +5,7 @@ import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
 import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
 import android.app.Activity;
@@ -77,6 +78,9 @@ public class ManualImportShareActivity extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (RemoteFileDoesNotExistException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (FailedToVerifySignatureException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

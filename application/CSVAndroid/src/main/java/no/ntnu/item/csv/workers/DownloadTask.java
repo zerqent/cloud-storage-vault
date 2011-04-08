@@ -6,6 +6,7 @@ import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.csvobject.CSVFile;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
@@ -47,10 +48,11 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 					.get(alias);
 		}
 
-		CSVFile file;
+		CSVFile file = null;
 		try {
 			file = new CSVFile(this.capability, new File("/sdcard/" + alias));
 			file = CSVActivity.fm.downloadFile(file);
+
 		} catch (ServerCommunicationException e) {
 			this.error = e.getMessage();
 		} catch (InvalidWriteEnablerException e) {
@@ -59,9 +61,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 			this.error = e.getMessage();
 		} catch (RemoteFileDoesNotExistException e) {
 			this.error = e.getMessage();
-			// } catch (FailedToVerifySignatureException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
+		} catch (FailedToVerifySignatureException e) {
+			file.getFile().delete();
+			this.error = e.getMessage();
 		}
 
 		return "/mnt/sdcard/" + alias;

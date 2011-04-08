@@ -3,6 +3,7 @@ package no.ntnu.item.csv.workers;
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.csvobject.CSVFolder;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
@@ -17,6 +18,8 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 	public AddToShareTask(Activity caller) {
 		this.caller = caller;
 	}
+
+	private String error;
 
 	@Override
 	protected Boolean doInBackground(String... params) {
@@ -38,20 +41,15 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 
 			return true;
 		} catch (ServerCommunicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error = e.getMessage();
 		} catch (RemoteFileDoesNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error = e.getMessage();
 		} catch (InvalidWriteEnablerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error = e.getMessage();
 		} catch (ImmutableFileExistsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// } catch (FailedToVerifySignatureException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
+			this.error = e.getMessage();
+		} catch (FailedToVerifySignatureException e) {
+			this.error = e.getMessage();
 		}
 
 		return false;
@@ -61,6 +59,9 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 	protected void onPostExecute(Boolean result) {
 		if (result) {
 			Toast.makeText(this.caller, "Folder added to share",
+					Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(this.caller, "Error adding share: " + this.error,
 					Toast.LENGTH_LONG).show();
 		}
 	}

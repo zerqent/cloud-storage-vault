@@ -10,6 +10,7 @@ import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
 import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
@@ -69,7 +70,8 @@ public class CSVFileManagerTest {
 	@Test
 	public void testFileDownload() throws ServerCommunicationException,
 			InvalidWriteEnablerException, ImmutableFileExistsException,
-			RemoteFileDoesNotExistException, IOException {
+			RemoteFileDoesNotExistException, IOException,
+			FailedToVerifySignatureException {
 		testFileUpload();
 		File myFile = new File(this.decryptedOutputFile);
 		CSVFile download = new CSVFile(csvFile.getCapability(), myFile);
@@ -103,7 +105,8 @@ public class CSVFileManagerTest {
 	@Test
 	public void testFolderDownload() throws ServerCommunicationException,
 			InvalidWriteEnablerException, ImmutableFileExistsException,
-			FileNotFoundException, RemoteFileDoesNotExistException {
+			FileNotFoundException, RemoteFileDoesNotExistException,
+			FailedToVerifySignatureException {
 		testFolderUpload();
 
 		CSVFolder newFolder = new CSVFolder(this.folder.getCapability());
@@ -118,7 +121,8 @@ public class CSVFileManagerTest {
 			throws IllegalFileNameException, DuplicateAliasException,
 			ServerCommunicationException, InvalidWriteEnablerException,
 			ImmutableFileExistsException, RemoteFileDoesNotExistException,
-			IOException, InsufficientPermissionException {
+			IOException, InsufficientPermissionException,
+			FailedToVerifySignatureException {
 		this.csvFile = new CSVFile(new File(this.testfile));
 		this.fileManager.putObjectIntoCurrentFolder(this.csvFile, "myFile");
 
@@ -145,7 +149,7 @@ public class CSVFileManagerTest {
 			IllegalFileNameException, DuplicateAliasException,
 			ServerCommunicationException, InvalidWriteEnablerException,
 			ImmutableFileExistsException, RemoteFileDoesNotExistException,
-			InsufficientPermissionException {
+			InsufficientPermissionException, FailedToVerifySignatureException {
 		CSVFolder folder = new CSVFolder();
 		this.csvFile = new CSVFile(new File(this.testfile));
 		folder.addContent("myFile", this.csvFile.getCapability());
@@ -163,7 +167,7 @@ public class CSVFileManagerTest {
 			DuplicateAliasException, ServerCommunicationException,
 			InvalidWriteEnablerException, ImmutableFileExistsException,
 			RemoteFileDoesNotExistException, NoSuchAliasException,
-			InsufficientPermissionException {
+			InsufficientPermissionException, FailedToVerifySignatureException {
 		CSVFolder folder = new CSVFolder();
 		this.fileManager.putObjectIntoCurrentFolder(folder, "myFolder");
 
@@ -173,14 +177,16 @@ public class CSVFileManagerTest {
 
 	@Test(expected = NoSuchAliasException.class)
 	public void testCDToInvalidFolder() throws ServerCommunicationException,
-			RemoteFileDoesNotExistException, NoSuchAliasException {
+			RemoteFileDoesNotExistException, NoSuchAliasException,
+			FailedToVerifySignatureException {
 		folder = this.fileManager.cd("myFolder");
 	}
 
 	@Test(expected = RemoteFileDoesNotExistException.class)
 	public void testGetInvalidFile() throws FileNotFoundException,
 			ServerCommunicationException, InvalidWriteEnablerException,
-			ImmutableFileExistsException, RemoteFileDoesNotExistException {
+			ImmutableFileExistsException, RemoteFileDoesNotExistException,
+			FailedToVerifySignatureException {
 		this.csvFile = new CSVFile(new File(this.testfile));
 		this.fileManager.downloadFile(csvFile);
 	}

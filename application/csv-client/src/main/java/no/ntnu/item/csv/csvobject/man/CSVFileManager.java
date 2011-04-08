@@ -12,6 +12,7 @@ import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.csvobject.CSVObject;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
+import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
 import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
@@ -74,6 +75,9 @@ public class CSVFileManager {
 		} catch (DuplicateAliasException e) {
 		} catch (IllegalFileNameException e) {
 		} catch (InsufficientPermissionException e) {
+		} catch (FailedToVerifySignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -170,26 +174,28 @@ public class CSVFileManager {
 
 	public CSVFile downloadFile(CSVFile file)
 			throws ServerCommunicationException, InvalidWriteEnablerException,
-			ImmutableFileExistsException, RemoteFileDoesNotExistException {
+			ImmutableFileExistsException, RemoteFileDoesNotExistException,
+			FailedToVerifySignatureException {
 		return (CSVFile) downloadObject(file);
 	}
 
 	public CSVFolder downloadFolder(CSVFolder folder)
 			throws ServerCommunicationException, InvalidWriteEnablerException,
-			ImmutableFileExistsException, RemoteFileDoesNotExistException {
+			ImmutableFileExistsException, RemoteFileDoesNotExistException,
+			FailedToVerifySignatureException {
 		return (CSVFolder) downloadObject(folder);
 	}
 
 	public CSVFolder downloadFolder(String alias, CSVFolder fromFolder)
 			throws ServerCommunicationException,
-			RemoteFileDoesNotExistException {
+			RemoteFileDoesNotExistException, FailedToVerifySignatureException {
 		Capability cap = fromFolder.getContents().get(alias);
 		return downloadFolder(cap);
 	}
 
 	public CSVObject downloadObject(CSVObject object)
 			throws ServerCommunicationException,
-			RemoteFileDoesNotExistException {
+			RemoteFileDoesNotExistException, FailedToVerifySignatureException {
 
 		HttpResponse response = this.connection.get(object.getCapability()
 				.getStorageIndex());
@@ -233,12 +239,16 @@ public class CSVFileManager {
 		} catch (IOException e) {
 			throw new ServerCommunicationException();
 		}
+		if (!object.isValid()) {
+			throw new FailedToVerifySignatureException();
+		}
+
 		return object;
 	}
 
 	public CSVFolder downloadFolder(Capability capability)
 			throws ServerCommunicationException,
-			RemoteFileDoesNotExistException {
+			RemoteFileDoesNotExistException, FailedToVerifySignatureException {
 		CSVFolder folder = new CSVFolder(capability);
 		try {
 			folder = this.downloadFolder(folder);
@@ -249,7 +259,8 @@ public class CSVFileManager {
 	}
 
 	public CSVFolder cd(String alias) throws ServerCommunicationException,
-			RemoteFileDoesNotExistException, NoSuchAliasException {
+			RemoteFileDoesNotExistException, NoSuchAliasException,
+			FailedToVerifySignatureException {
 		if (alias.equals("..")) {
 			this.location.pop();
 			return this.location.peek();
