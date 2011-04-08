@@ -239,7 +239,8 @@ public class CSVFileManager {
 		} catch (IOException e) {
 			throw new ServerCommunicationException();
 		}
-		if (!object.isValid()) {
+		if (object.getCapability().getVerificationKey() != null
+				&& !object.isValid()) {
 			throw new FailedToVerifySignatureException();
 		}
 

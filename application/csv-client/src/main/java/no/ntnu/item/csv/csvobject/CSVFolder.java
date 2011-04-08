@@ -136,10 +136,6 @@ public class CSVFolder implements CSVObject {
 		this.plainText = Cryptoutil.symDecrypt(this.ciphertext, sks,
 				new IvParameterSpec(this.iv));
 
-		if (this.pubkey != null && this.signature != null) {
-			this.isValid();
-		}
-
 		this.createContentsFromPlainText();
 	}
 
