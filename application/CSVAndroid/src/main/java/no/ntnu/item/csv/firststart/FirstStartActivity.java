@@ -210,9 +210,14 @@ public class FirstStartActivity extends Activity {
 		}
 		case SET_PASSWORD_OLD_ROOT: {
 			if (resultCode == RESULT_OK) {
+				Capability capability = CapabilityImpl
+						.fromString(rootCapString);
 				LocalCredentials.importExistingLocalCredentials(this,
 						data.getStringExtra(SetPasswordActivity.PASSWORD),
-						CapabilityImpl.fromString(rootCapString));
+						capability);
+				if (this.caller == null) {
+					CSVActivity.fm.setRootCapability(capability);
+				}
 				done();
 			}
 			return;
@@ -232,11 +237,11 @@ public class FirstStartActivity extends Activity {
 
 	}
 
-	public void supplyWithRootCap(Capability cap) {
-		this.rootCapability = cap;
+	public void supplyWithRootCap(Capability capability) {
+		this.rootCapability = capability;
 
 		if (this.caller == null) {
-			CSVActivity.fm.setRootCapability(cap);
+			CSVActivity.fm.setRootCapability(capability);
 		}
 
 		this.progress.dismiss();
