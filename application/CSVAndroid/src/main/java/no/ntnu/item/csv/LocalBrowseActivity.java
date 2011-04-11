@@ -36,7 +36,8 @@ public class LocalBrowseActivity extends ListActivity {
 																// hidden files.
 		@Override
 		public boolean accept(File dir, String name) {
-			return !name.startsWith(".");
+			File f = new File(dir, name);
+			return f.exists() && f.canRead() && !f.isHidden();
 		}
 	};
 	public static final String STORAGE_INTERNAL = "Internal Storage";
