@@ -33,7 +33,7 @@ public class CSVFileManager {
 	public static final String SHARE_FOLDER = "SHARE_FOLDER";
 
 	private final Communication connection;
-	private final Stack<CSVFolder> location;
+	private Stack<CSVFolder> location;
 
 	private CSVFolder sharedfolder;
 
@@ -54,6 +54,7 @@ public class CSVFileManager {
 		CSVFolder root;
 		try {
 			root = downloadFolder(capability);
+			this.location = new Stack<CSVFolder>();
 			this.location.push(root);
 
 			if (!root.getContents().containsKey(SHARE_FOLDER)) {

@@ -44,43 +44,6 @@ public class CSVActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(CSVActivity.this, MenuActivity.class);
 				startActivityForResult(intent, MENU);
-
-				// } catch (IllegalRootCapException e) {
-				// Toast.makeText(
-				// getApplicationContext(),
-				// "You have used an illegal root capability. Please use a valid capability.",
-				// Toast.LENGTH_LONG).show();
-				// Intent intent = new Intent();
-				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
-				// startActivityForResult(intent, GET_ROOTCAP);
-				// e.printStackTrace();
-				// } catch (RemoteFileDoesNotExistException e) {
-				// Toast.makeText(
-				// getApplicationContext(),
-				// "The requested root folder does not exist on this server.",
-				// Toast.LENGTH_LONG).show();
-				// Intent intent = new Intent();
-				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
-				// startActivityForResult(intent, GET_ROOTCAP);
-				// e.printStackTrace();
-				// } catch (ServerCommunicationException e) {
-				// Toast.makeText(
-				// getApplicationContext(),
-				// "An unknown error occured. Please check your configuration.",
-				// Toast.LENGTH_LONG).show();
-				// Intent intent = new Intent();
-				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
-				// startActivityForResult(intent, GET_ROOTCAP);
-				// e.printStackTrace();
-				// } catch (FailedToVerifySignatureException e) {
-				// Toast.makeText(getApplicationContext(),
-				// "The requested root folder could not be verified",
-				// Toast.LENGTH_LONG).show();
-				// Intent intent = new Intent();
-				// intent.setClass(CSVActivity.this, GetRootCapActivity.class);
-				// startActivityForResult(intent, GET_ROOTCAP);
-				// e.printStackTrace();
-				// }
 				break;
 			}
 			}

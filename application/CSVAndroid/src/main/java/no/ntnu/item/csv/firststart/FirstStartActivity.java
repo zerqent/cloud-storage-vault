@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class FirstStartActivity extends Activity {
 
 	private ProgressDialog progressDialog;
 
+	private ComponentName caller;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,6 +55,8 @@ public class FirstStartActivity extends Activity {
 		bCreateNew = (Button) findViewById(R.id.firstStart_new);
 		bImport = (Button) findViewById(R.id.firstStart_import);
 		bShow = (Button) findViewById(R.id.firstStart_show);
+
+		this.caller = getCallingActivity();
 
 		if (CSVActivity.initiated()) {
 			bShow.setEnabled(true);
@@ -229,6 +234,11 @@ public class FirstStartActivity extends Activity {
 
 	public void supplyWithRootCap(Capability cap) {
 		this.rootCapability = cap;
+
+		if (this.caller == null) {
+			CSVActivity.fm.setRootCapability(cap);
+		}
+
 		this.progress.dismiss();
 		done();
 	}
