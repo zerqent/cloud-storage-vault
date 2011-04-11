@@ -42,6 +42,8 @@ public class RemoteBrowseActivity extends ListActivity {
 	private CreateFolderTask newFolderTask;
 
 	private final String NEW_SHARE_ACTION = "Share with new user";
+	private final int REQUEST_NEWUSERSHARE = 0;
+	private final String REQUEST_RESULT_FOLDERALIAS = "folderalias";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,11 +78,12 @@ public class RemoteBrowseActivity extends ListActivity {
 			Intent intent = new Intent(RemoteBrowseActivity.this,
 					CreateShareActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
+			intent.putExtra(REQUEST_RESULT_FOLDERALIAS, alias);
+			startActivityForResult(intent, REQUEST_NEWUSERSHARE);
+		} else {
+			AddToShareTask atst = new AddToShareTask(this);
+			atst.execute(menu_element, alias);
 		}
-		AddToShareTask atst = new AddToShareTask(this);
-		atst.execute(menu_element, alias);
-
 		return super.onContextItemSelected(item);
 	}
 
@@ -186,6 +189,15 @@ public class RemoteBrowseActivity extends ListActivity {
 				} catch (ExecutionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+			case REQUEST_NEWUSERSHARE:
+				String folderalias = data
+						.getStringExtra(REQUEST_RESULT_FOLDERALIAS);
+				String user = data
+						.getStringExtra(CreateShareActivity.REQUEST_RESULT_USERALIAS);
+				if (folderalias != null && user != null) {
+					AddToShareTask atst = new AddToShareTask(this);
+					atst.execute(user, folderalias);
 				}
 
 			default:
