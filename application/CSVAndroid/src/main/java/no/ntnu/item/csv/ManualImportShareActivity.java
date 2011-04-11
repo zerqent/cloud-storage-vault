@@ -68,21 +68,17 @@ public class ManualImportShareActivity extends Activity {
 									.getPublicKeyHash());
 							showDialog(DIALOG_VERIFY_KEY);
 						}
-						// } catch (FailedToVerifySignatureException e) {
-						// Toast.makeText(
-						// ManualImportShareActivity.this,
-						// "The requested share folder could not be verified",
-						// Toast.LENGTH_LONG).show();
-						// e.printStackTrace();
 					} catch (ServerCommunicationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Toast.makeText(ManualImportShareActivity.this,
+								"There was an error communicating with server",
+								Toast.LENGTH_LONG).show();
 					} catch (RemoteFileDoesNotExistException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Toast.makeText(ManualImportShareActivity.this,
+								"Invalid key specified", Toast.LENGTH_LONG)
+								.show();
 					} catch (FailedToVerifySignatureException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						// Should not happen since we don't have a key to
+						// compare with
 					}
 				}
 
