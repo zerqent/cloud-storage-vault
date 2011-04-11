@@ -50,26 +50,23 @@ public class ManualCapabilityImportActivity extends Activity {
 					folder = CSVActivity.fm.downloadFolder(rootCap);
 					if (folder == null) {
 						Toast.makeText(ManualCapabilityImportActivity.this,
-								"The requested root capability does not exist",
+								"The requested capability does not exist",
 								Toast.LENGTH_LONG).show();
 					} else {
 						verifyHash = Base32.encode(folder.getPublicKeyHash());
 						showDialog(DIALOG_VERIFY_KEY);
 					}
-					// } catch (FailedToVerifySignatureException e) {
-					// Toast.makeText(ManualCapabilityImportActivity.this,
-					// "The requested root folder could not be verified",
-					// Toast.LENGTH_LONG).show();
-					// e.printStackTrace();
 				} catch (ServerCommunicationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Toast.makeText(ManualCapabilityImportActivity.this,
+							"There was an error communicating with server",
+							Toast.LENGTH_LONG).show();
 				} catch (RemoteFileDoesNotExistException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Toast.makeText(ManualCapabilityImportActivity.this,
+							"The requested capability does not exist",
+							Toast.LENGTH_LONG).show();
 				} catch (FailedToVerifySignatureException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// Should not happen since it would be impossible to verify
+					// the capability
 				}
 
 			}
