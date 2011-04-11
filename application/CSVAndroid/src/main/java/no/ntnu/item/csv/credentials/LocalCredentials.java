@@ -56,7 +56,17 @@ public class LocalCredentials {
 			KeyChain keyChain = new KeyChain(password, salt);
 			byte[] plainText = Cryptoutil.symECBDecrypt(cipherText,
 					keyChain.getKey());
+
+			if (plainText == null || plainText.length < 10) {
+				throw new IncorrectPasswordException();
+			}
+
 			String[] text = new String(plainText).split(SEPARATOR);
+
+			if (text.length < 3) {
+				throw new IncorrectPasswordException();
+			}
+
 			localCredentials.onLineUserName = text[1];
 			localCredentials.onLinePassword = text[2];
 			localCredentials.rootCapability = CapabilityImpl
