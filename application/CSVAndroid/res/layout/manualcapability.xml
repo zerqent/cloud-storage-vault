@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/widget28"
-	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical">
-	<TextView android:id="@+id/manualcapability_header"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:text="Enter Key:" android:textSize="30sp" />
-	<EditText android:id="@+id/manualcapability_keyedittext"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:textSize="18sp" android:text="MDJH4ISE34ULD7RW3TGOX7NOJU"/>
-
-	<Button android:id="@+id/manualcapability_processbutton"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:text="Process" />
+<LinearLayout
+android:id="@+id/widget28"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+>
+<TextView
+android:id="@+id/manualcapability_header"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Import Root Folder"
+android:layout_gravity="center"
+android:textStyle="bold"
+android:singleLine="true"
+android:textSize="25sp"
+>
+</TextView>
+<TextView
+android:id="@+id/manualcapability_keyhelptext"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Enter Key:"
+>
+</TextView>
+<EditText
+android:id="@+id/manualcapability_keyedittext"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+>
+</EditText>
+<Button
+android:id="@+id/manualcapability_processbutton"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:text="Process"
+>
+</Button>
 </LinearLayout>

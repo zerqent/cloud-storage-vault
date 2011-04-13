@@ -11,8 +11,10 @@ android:id="@+id/firstStart_header"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
 android:text="Configuration"
-android:textSize="25sp"
+android:layout_gravity="center"
 android:textStyle="bold"
+android:singleLine="true"
+android:textSize="25sp"
 >
 </TextView>
 <TextView
@@ -41,33 +43,7 @@ android:id="@+id/firstStart_show"
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:visibility="invisible"
-android:text="Show root Capability"
->
-</Button>
-<TextView
-android:id="@+id/firstStart_importheader"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:visibility="invisible"
-android:text="Import options"
-android:textSize="25sp"
-android:textStyle="bold"
->
-</TextView>
-<Button
-android:id="@+id/firstStart_importbarcode"
-android:layout_width="fill_parent"
-android:layout_height="wrap_content"
-android:visibility="invisible"
-android:text="Import via Barcode"
->
-</Button>
-<Button
-android:id="@+id/firstStart_importmanual"
-android:layout_width="fill_parent"
-android:layout_height="wrap_content"
-android:visibility="invisible"
-android:text="Import manualy"
+android:text="Export root keys"
 >
 </Button>
 </LinearLayout>
