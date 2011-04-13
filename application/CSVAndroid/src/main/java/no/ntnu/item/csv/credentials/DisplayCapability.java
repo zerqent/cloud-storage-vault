@@ -11,7 +11,7 @@ public class DisplayCapability {
 	public static AlertDialog displayCapability(Activity activity,
 			Capability capability) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle("Capabilities");
+		builder.setTitle("Keys");
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
 			@Override
