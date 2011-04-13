@@ -22,7 +22,6 @@ public class EnterOnlineCredentialsActivity extends Activity {
 	private EditText usernameEditText;
 	private EditText passwordEditText;
 	private Button okButton;
-	private Button cancelButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,6 @@ public class EnterOnlineCredentialsActivity extends Activity {
 		usernameEditText = (EditText) findViewById(R.id.enteronlinecredentials_username);
 		passwordEditText = (EditText) findViewById(R.id.enteronlinecredentials_password);
 		okButton = (Button) findViewById(R.id.enteronlinecredentials_ok);
-		cancelButton = (Button) findViewById(R.id.enteronlinecredentials_cancel);
 
 		okButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -52,16 +50,6 @@ public class EnterOnlineCredentialsActivity extends Activity {
 				}
 			}
 		});
-
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = getIntent();
-				setResult(RESULT_CANCELED, intent);
-				finish();
-			}
-		});
-
 	}
 
 	private boolean credentialsAreValid(String username, String password) {

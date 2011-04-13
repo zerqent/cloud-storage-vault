@@ -51,11 +51,11 @@ public class SetPasswordActivity extends Activity {
 						Toast.makeText(
 								SetPasswordActivity.this,
 								"The password must be at least 9 characters long",
-								Toast.LENGTH_LONG);
+								Toast.LENGTH_LONG).show();
 					} else {
 						Toast.makeText(SetPasswordActivity.this,
 								"The password is not confirmed corretly",
-								Toast.LENGTH_LONG);
+								Toast.LENGTH_LONG).show();
 					}
 				}
 			}
