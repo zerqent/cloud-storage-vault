@@ -271,7 +271,7 @@ public class CSVFileManagerTest {
 		CSVFile file = new CSVFile(new File(this.testfile));
 		this.fileManager.putObjectIntoFolder(file, oldRoot, "afile");
 
-		this.fileManager.replaceCurrentFolder();
+		CSVFolder newRoot = this.fileManager.replaceCurrentFolder();
 		Assert.assertFalse(oldRoot
 				.getCapability()
 				.toString()
@@ -279,6 +279,8 @@ public class CSVFileManagerTest {
 						.toString()));
 		Assert.assertTrue(this.fileManager.getRootFolder().getContents()
 				.containsKey("afile"));
+		Assert.assertFalse(this.fileManager.getRootFolder() == oldRoot);
+		Assert.assertTrue(newRoot == this.fileManager.getRootFolder());
 	}
 
 }
