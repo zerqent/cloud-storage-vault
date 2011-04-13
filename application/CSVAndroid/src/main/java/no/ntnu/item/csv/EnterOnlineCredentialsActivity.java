@@ -45,7 +45,7 @@ public class EnterOnlineCredentialsActivity extends Activity {
 					finish();
 				} else {
 					Toast.makeText(EnterOnlineCredentialsActivity.this,
-							"Username and/or password is invalid",
+							"Wrong Username and/or Password.",
 							Toast.LENGTH_LONG).show();
 				}
 			}
