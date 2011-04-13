@@ -1,8 +1,10 @@
-package no.ntnu.item.csv.csvobject.man;
+package no.ntnu.item.csv.filemanager;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Stack;
 
 import no.ntnu.item.csv.capability.Capability;
@@ -283,6 +285,54 @@ public class CSVFileManager {
 
 	public CSVFolder getCurrentFolder() {
 		return this.location.peek();
+	}
+
+	public CSVFolder getParentFolder() {
+		if (this.location == null || this.location.size() < 2) {
+			return null;
+		}
+		return this.location.get(this.location.size() - 2);
+	}
+
+	public CSVFolder replaceCurrentFolder()
+			throws ServerCommunicationException, InvalidWriteEnablerException,
+			InsufficientPermissionException {
+		CSVFolder folder = new CSVFolder();
+		CSVFolder current = this.getCurrentFolder();
+		String currentAlias = this.getAliasOfCurrentFolder();
+		CSVFolder parent = this.getParentFolder();
+
+		folder.getContents().putAll(current.getContents());
+		try {
+			putObjectIntoFolder(folder, parent, currentAlias);
+			current.getContents().clear();
+			uploadFolder(current);
+		} catch (ImmutableFileExistsException e) {
+		} catch (DuplicateAliasException e) {
+		} catch (IllegalFileNameException e) {
+		}
+
+		return null;
+	}
+
+	protected String getAliasOfCurrentFolder() {
+		if (this.location == null || this.location.size() < 2) {
+			return null;
+		}
+
+		CSVFolder parent = this.getParentFolder();
+		Set<String> aliases = parent.getContents().keySet();
+		String compareTo = this.getCurrentFolder().getCapability()
+				.getStorageIndex();
+
+		for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext();) {
+			String key = iterator.next();
+			if (parent.getContents().get(key).getStorageIndex()
+					.equals(compareTo)) {
+				return key;
+			}
+		}
+		return null;
 	}
 
 	public CSVFolder getRootFolder() {

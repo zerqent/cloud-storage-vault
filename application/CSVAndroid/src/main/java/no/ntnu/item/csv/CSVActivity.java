@@ -2,7 +2,7 @@ package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.communication.Communication;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.filemanager.CSVFileManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

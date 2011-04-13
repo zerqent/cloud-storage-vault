@@ -2,7 +2,7 @@ package no.ntnu.item.csv;
 
 import java.io.IOException;
 
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.filemanager.CSVFileManager;
 
 import org.apache.http.client.ClientProtocolException;
 

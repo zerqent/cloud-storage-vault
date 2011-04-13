@@ -1,4 +1,4 @@
-package no.ntnu.item.csv.man;
+package no.ntnu.item.csv.filemanager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,7 +8,6 @@ import java.io.IOException;
 import no.ntnu.item.csv.communication.Communication;
 import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
@@ -18,6 +17,7 @@ import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
+import no.ntnu.item.csv.filemanager.CSVFileManager;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
 import org.junit.Assert;
@@ -189,6 +189,39 @@ public class CSVFileManagerTest {
 			FailedToVerifySignatureException {
 		this.csvFile = new CSVFile(new File(this.testfile));
 		this.fileManager.downloadFile(csvFile);
+	}
+
+	@Test
+	public void testGetParentFolder() throws FileNotFoundException,
+			IllegalFileNameException, DuplicateAliasException,
+			ServerCommunicationException, InvalidWriteEnablerException,
+			ImmutableFileExistsException, InsufficientPermissionException,
+			RemoteFileDoesNotExistException, NoSuchAliasException,
+			FailedToVerifySignatureException {
+		CSVFolder folder = new CSVFolder();
+
+		this.fileManager.putObjectIntoCurrentFolder(folder, "omg");
+
+		this.fileManager.cd("omg");
+
+		folder = this.fileManager.getParentFolder();
+
+		Assert.assertTrue(folder.getContents().containsKey("omg"));
+
+		// CSVFile file = new CSVFile(new File(this.testfile));
+		// this.fileManager.putObjectIntoFolder(file, folder, "afile");
+	}
+
+	@Test
+	public void testGetAliasOfCurrentFolder() throws IllegalFileNameException,
+			DuplicateAliasException, ServerCommunicationException,
+			InvalidWriteEnablerException, ImmutableFileExistsException,
+			InsufficientPermissionException, RemoteFileDoesNotExistException,
+			NoSuchAliasException, FailedToVerifySignatureException {
+		CSVFolder folder = new CSVFolder();
+		this.fileManager.putObjectIntoCurrentFolder(folder, "alias");
+		this.fileManager.cd("alias");
+		Assert.assertEquals("alias", this.fileManager.getAliasOfCurrentFolder());
 	}
 
 }

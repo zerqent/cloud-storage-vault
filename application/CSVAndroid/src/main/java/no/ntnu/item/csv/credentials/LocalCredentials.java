@@ -12,11 +12,11 @@ import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
 import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.IncorrectPasswordException;
 import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
+import no.ntnu.item.csv.filemanager.CSVFileManager;
 import android.app.Activity;
 import android.content.Context;
 
