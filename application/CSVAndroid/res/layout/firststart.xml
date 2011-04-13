@@ -1,16 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
-	<TextView android:text="Configuration" android:id="@+id/firstStart_header" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:textStyle="bold" android:singleLine="true" android:textSize="25sp"></TextView>
-	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_new" android:text="Create new root Capability" android:layout_width="fill_parent"/>
-	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_import" android:text="Import root Capability" android:layout_width="fill_parent"></Button>
-	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_show" android:text="Show root Capability" android:layout_width="fill_parent" android:enabled="false" android:visibility="invisible"></Button>
-<TextView android:text="Import options" android:id="@+id/firstStart_importheader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:textStyle="bold" android:singleLine="true" android:textSize="25sp" android:enabled="false" android:visibility="invisible"></TextView>
-	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_importbarcode" android:text="Import via Barcode" android:layout_width="fill_parent" android:enabled="false" android:visibility="invisible"/>
-	<Button android:layout_height="wrap_content" android:id="@+id/firstStart_importmanual" android:text="Import manualy" android:layout_width="fill_parent" android:enabled="false" android:visibility="invisible"></Button>
-
-
+android:id="@+id/widget27"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+>
+<TextView
+android:id="@+id/firstStart_header"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Configuration"
+android:textSize="25sp"
+android:textStyle="bold"
+>
+</TextView>
+<TextView
+android:id="@+id/configuration_roottext"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Root directory:"
+>
+</TextView>
+<Button
+android:id="@+id/firstStart_new"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:text="Create new root directory"
+>
+</Button>
+<Button
+android:id="@+id/firstStart_import"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:text="Import existing root directory"
+>
+</Button>
+<Button
+android:id="@+id/firstStart_show"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:visibility="invisible"
+android:text="Show root Capability"
+>
+</Button>
+<TextView
+android:id="@+id/firstStart_importheader"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:visibility="invisible"
+android:text="Import options"
+android:textSize="25sp"
+android:textStyle="bold"
+>
+</TextView>
+<Button
+android:id="@+id/firstStart_importbarcode"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:visibility="invisible"
+android:text="Import via Barcode"
+>
+</Button>
+<Button
+android:id="@+id/firstStart_importmanual"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:visibility="invisible"
+android:text="Import manualy"
+>
+</Button>
 </LinearLayout>
