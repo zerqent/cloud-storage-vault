@@ -297,21 +297,28 @@ public class CSVFileManager {
 	public CSVFolder replaceCurrentFolder()
 			throws ServerCommunicationException, InvalidWriteEnablerException,
 			InsufficientPermissionException {
-		CSVFolder folder = new CSVFolder();
-		CSVFolder current = this.getCurrentFolder();
-		String currentAlias = this.getAliasOfCurrentFolder();
-		CSVFolder parent = this.getParentFolder();
-		parent.getContents().remove(currentAlias);
-
-		folder.getContents().putAll(current.getContents());
 		try {
-			uploadFolder(parent);
-			putObjectIntoFolder(folder, parent, currentAlias);
+			CSVFolder folder = new CSVFolder();
+			CSVFolder current = this.getCurrentFolder();
+			folder.getContents().putAll(current.getContents());
 			current.getContents().clear();
 			uploadFolder(current);
+
+			String currentAlias = this.getAliasOfCurrentFolder();
+			CSVFolder parent = this.getParentFolder();
+			if (parent != null) {
+				parent.getContents().remove(currentAlias);
+				uploadFolder(parent);
+				putObjectIntoFolder(folder, parent, currentAlias);
+				this.location.pop();
+			} else {
+				uploadFolder(folder);
+			}
 			this.location.pop();
-			this.location.pop();
-			this.location.push(parent);
+
+			if (parent != null) {
+				this.location.push(parent);
+			}
 			this.location.push(folder);
 			return folder;
 		} catch (ImmutableFileExistsException e) {

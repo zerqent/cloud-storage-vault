@@ -262,4 +262,23 @@ public class CSVFileManagerTest {
 
 	}
 
+	@Test
+	public void testReplaceRootFolder() throws ServerCommunicationException,
+			InvalidWriteEnablerException, InsufficientPermissionException,
+			FileNotFoundException, ImmutableFileExistsException,
+			DuplicateAliasException, IllegalFileNameException {
+		CSVFolder oldRoot = this.fileManager.getRootFolder();
+		CSVFile file = new CSVFile(new File(this.testfile));
+		this.fileManager.putObjectIntoFolder(file, oldRoot, "afile");
+
+		this.fileManager.replaceCurrentFolder();
+		Assert.assertFalse(oldRoot
+				.getCapability()
+				.toString()
+				.equals(this.fileManager.getRootFolder().getCapability()
+						.toString()));
+		Assert.assertTrue(this.fileManager.getRootFolder().getContents()
+				.containsKey("afile"));
+	}
+
 }
