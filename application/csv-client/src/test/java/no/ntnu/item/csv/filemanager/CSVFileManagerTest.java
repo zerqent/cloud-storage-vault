@@ -17,7 +17,6 @@ import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
-import no.ntnu.item.csv.filemanager.CSVFileManager;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
 import org.junit.Assert;
@@ -207,9 +206,6 @@ public class CSVFileManagerTest {
 		folder = this.fileManager.getParentFolder();
 
 		Assert.assertTrue(folder.getContents().containsKey("omg"));
-
-		// CSVFile file = new CSVFile(new File(this.testfile));
-		// this.fileManager.putObjectIntoFolder(file, folder, "afile");
 	}
 
 	@Test
@@ -222,6 +218,48 @@ public class CSVFileManagerTest {
 		this.fileManager.putObjectIntoCurrentFolder(folder, "alias");
 		this.fileManager.cd("alias");
 		Assert.assertEquals("alias", this.fileManager.getAliasOfCurrentFolder());
+	}
+
+	@Test
+	public void testReplaceCurrentFolder() throws FileNotFoundException,
+			ServerCommunicationException, InvalidWriteEnablerException,
+			ImmutableFileExistsException, DuplicateAliasException,
+			IllegalFileNameException, InsufficientPermissionException,
+			RemoteFileDoesNotExistException, NoSuchAliasException,
+			FailedToVerifySignatureException {
+		CSVFolder old = new CSVFolder();
+		this.fileManager.putObjectIntoCurrentFolder(old, "alias");
+		CSVFile file = new CSVFile(new File(this.testfile));
+		this.fileManager.putObjectIntoFolder(file, old, "afile");
+
+		Assert.assertTrue(this.fileManager.getCurrentFolder().getContents()
+				.containsKey("alias"));
+		this.fileManager.cd("alias");
+		Assert.assertTrue(this.fileManager.getCurrentFolder().getContents()
+				.containsKey("afile"));
+
+		CSVFolder folder = this.fileManager.replaceCurrentFolder();
+		Assert.assertArrayEquals(folder.getPublicKeyHash(), this.fileManager
+				.getCurrentFolder().getPublicKeyHash());
+		Assert.assertEquals("alias", this.fileManager.getAliasOfCurrentFolder());
+		Assert.assertTrue(this.fileManager.getCurrentFolder().getContents()
+				.containsKey("afile"));
+
+		this.fileManager.cd("..");
+		Assert.assertTrue(this.fileManager.getCurrentFolder().getContents()
+				.containsKey("alias"));
+		this.fileManager.cd("alias");
+		Assert.assertTrue(this.fileManager.getCurrentFolder().getContents()
+				.containsKey("afile"));
+
+		Assert.assertFalse(this.fileManager.getCurrentFolder().getCapability()
+				.toString().equals(old.getCapability().toString()));
+
+		// Check that old object has been emptied
+		CSVFolder newCopyOfOld = this.fileManager.downloadFolder(old
+				.getCapability());
+		Assert.assertTrue(newCopyOfOld.getContents().size() == 0);
+
 	}
 
 }

@@ -301,12 +301,19 @@ public class CSVFileManager {
 		CSVFolder current = this.getCurrentFolder();
 		String currentAlias = this.getAliasOfCurrentFolder();
 		CSVFolder parent = this.getParentFolder();
+		parent.getContents().remove(currentAlias);
 
 		folder.getContents().putAll(current.getContents());
 		try {
+			uploadFolder(parent);
 			putObjectIntoFolder(folder, parent, currentAlias);
 			current.getContents().clear();
 			uploadFolder(current);
+			this.location.pop();
+			this.location.pop();
+			this.location.push(parent);
+			this.location.push(folder);
+			return folder;
 		} catch (ImmutableFileExistsException e) {
 		} catch (DuplicateAliasException e) {
 		} catch (IllegalFileNameException e) {
