@@ -7,23 +7,32 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 android:orientation="vertical"
 >
 <TextView
+android:id="@+id/createshare_header"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Create share"
+android:layout_gravity="center"
+android:textStyle="bold"
+android:singleLine="true"
+android:textSize="25sp"
+>
+</TextView>
+<TextView
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
-android:padding="5px"
-android:text="Nickname of share:"
+android:text="Nickname:"
 >
 </TextView>
 <EditText
 android:id="@+id/CreateShareAlias"
 android:layout_width="fill_parent"
-android:layout_height="47px"
-android:textSize="18sp"
+android:layout_height="wrap_content"
 >
 </EditText>
 <Button
 android:id="@+id/CreateShareConfirm"
 android:layout_width="fill_parent"
-android:layout_height="51px"
+android:layout_height="wrap_content"
 android:text="Create Share"
 >
 </Button>
