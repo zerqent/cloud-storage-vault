@@ -21,7 +21,6 @@ public class NewFolderActivity extends Activity {
 		setContentView(R.layout.newfolder);
 		bCancel = (Button) findViewById(R.id.nf_cancel);
 		bOk = (Button) findViewById(R.id.nf_ok);
-
 		tv = (TextView) findViewById(R.id.newFile);
 
 		bCancel.setOnClickListener(new View.OnClickListener() {
