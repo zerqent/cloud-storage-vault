@@ -33,7 +33,6 @@ public class GetRootCapActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
 	}
 
 	@Override

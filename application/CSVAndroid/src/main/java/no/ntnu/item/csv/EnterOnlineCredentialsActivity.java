@@ -19,6 +19,7 @@ public class EnterOnlineCredentialsActivity extends Activity {
 
 	public static String REQUEST_RESPONSE_USERNAME;
 	public static String REQUEST_RESPONSE_PASSWORD;
+	public static String REQUEST_RESPONSE_URI;
 
 	private EditText usernameEditText;
 	private EditText passwordEditText;
@@ -38,8 +39,9 @@ public class EnterOnlineCredentialsActivity extends Activity {
 		okButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Uri url = Uri.parse(urlEditText.getText().toString()
-						.toLowerCase().trim());
+				String rawUri = urlEditText.getText().toString().toLowerCase()
+						.trim();
+				Uri url = Uri.parse(rawUri);
 
 				if (!urlIsValid(url)) {
 					Toast.makeText(EnterOnlineCredentialsActivity.this,
@@ -55,6 +57,7 @@ public class EnterOnlineCredentialsActivity extends Activity {
 					Intent intent = getIntent();
 					intent.putExtra(REQUEST_RESPONSE_USERNAME, username);
 					intent.putExtra(REQUEST_RESPONSE_PASSWORD, password);
+					intent.putExtra(REQUEST_RESPONSE_URI, rawUri);
 					setResult(RESULT_OK, intent);
 					finish();
 				} else {
