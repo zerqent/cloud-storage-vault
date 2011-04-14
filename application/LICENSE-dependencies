@@ -1,0 +1,10 @@
+Dependencies in this project under licenses:
+
+csv-client/src/main/java/no/ntnu/item/csv/contrib/com/bitzi/util/Base32.java
+Released in the public domain
+
+CSVAndroid/src/main/java/no/ntnu/item/csv/contrib/com/google/zxing/integration/android/*
+Released under the Apache License 2.0
+
+Dependencies not published in this repositoy but required for building the
+project might have other licenses.
