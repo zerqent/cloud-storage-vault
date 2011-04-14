@@ -32,27 +32,47 @@ import org.apache.http.protocol.HttpContext;
 
 public class Communication {
 	private int port = 443;
+	private String scheme = "https";
 
 	private HttpHost serverHost;
 	private final String SERVER_PUT = "/put/";
 	private final String SERVER_GET = "/get/";
 
+	private String hostname;
+
 	private String username;
 	private String password;
 
-	public Communication(String serverAddress, String username, String password) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "https");
+	public Communication(String hostname, String username, String password) {
+		this.serverHost = new HttpHost(hostname, this.port, this.scheme);
+		this.hostname = hostname;
 		this.username = username;
 		this.password = password;
 	}
 
-	public Communication(String serverAddress) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "https");
+	public Communication(String hostname, int port, String scheme,
+			String username, String password) {
+		this.serverHost = new HttpHost(hostname, port, scheme);
+		this.hostname = hostname;
+		this.port = port;
+		this.scheme = scheme;
+		this.username = username;
+		this.password = password;
 	}
 
-	public Communication(String serverAddress, int port) {
+	public Communication(String hostname) {
+		this.serverHost = new HttpHost(hostname, this.port, this.scheme);
+		this.hostname = hostname;
+	}
+
+	public Communication() {
+
+	}
+
+	public Communication(String hostname, int port) {
+		this.serverHost = new HttpHost(hostname, port, this.scheme);
 		this.port = port;
-		this.serverHost = new HttpHost(serverAddress, port, "https");
+		this.hostname = hostname;
 	}
 
 	public boolean testLogin() throws ClientProtocolException, IOException {
@@ -106,8 +126,7 @@ public class Communication {
 
 	private void addBasicAuth(DefaultHttpClient client) {
 		client.getCredentialsProvider().setCredentials(
-				new AuthScope(this.serverHost.getHostName(),
-						this.serverHost.getPort()),
+				new AuthScope(this.getHostname(), this.getPort()),
 				new UsernamePasswordCredentials(this.username, this.password));
 		return;
 	}
@@ -199,7 +218,30 @@ public class Communication {
 	}
 
 	public void setPort(int port) {
+		if (this.hostname != null)
+			this.serverHost = new HttpHost(this.hostname, port, this.scheme);
+
 		this.port = port;
+	}
+
+	public String getScheme() {
+		return scheme;
+	}
+
+	public void setScheme(String scheme) {
+		if (this.hostname != null)
+			this.serverHost = new HttpHost(this.hostname, this.port, scheme);
+
+		this.scheme = scheme;
+	}
+
+	public String getHostname() {
+		return hostname;
+	}
+
+	public void setHostname(String hostname) {
+		this.serverHost = new HttpHost(hostname, this.port, this.scheme);
+		this.hostname = hostname;
 	}
 
 }

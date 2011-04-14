@@ -8,6 +8,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ public class EnterOnlineCredentialsActivity extends Activity {
 
 	private EditText usernameEditText;
 	private EditText passwordEditText;
+	private EditText urlEditText;
 	private Button okButton;
 
 	@Override
@@ -28,6 +30,7 @@ public class EnterOnlineCredentialsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.enteronlinecredentials);
 
+		urlEditText = (EditText) findViewById(R.id.enteronlinecredentials_url);
 		usernameEditText = (EditText) findViewById(R.id.enteronlinecredentials_username);
 		passwordEditText = (EditText) findViewById(R.id.enteronlinecredentials_password);
 		okButton = (Button) findViewById(R.id.enteronlinecredentials_ok);
@@ -35,6 +38,17 @@ public class EnterOnlineCredentialsActivity extends Activity {
 		okButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Uri url = Uri.parse(urlEditText.getText().toString()
+						.toLowerCase().trim());
+
+				if (!urlIsValid(url)) {
+					Toast.makeText(EnterOnlineCredentialsActivity.this,
+							"Invalid URL.", Toast.LENGTH_LONG).show();
+					return;
+				}
+
+				updateConnection(url.getScheme(), url.getHost(), url.getPort());
+
 				String username = usernameEditText.getText().toString();
 				String password = passwordEditText.getText().toString();
 				if (credentialsAreValid(username, password)) {
@@ -50,6 +64,24 @@ public class EnterOnlineCredentialsActivity extends Activity {
 				}
 			}
 		});
+	}
+
+	private boolean urlIsValid(Uri url) {
+		if (url.getHost() == null)
+			return false;
+
+		return true;
+	}
+
+	private void updateConnection(String scheme, String hostname, int port) {
+		if (port != -1) {
+			CSVActivity.connection.setPort(port);
+		}
+		if (scheme != null) {
+			CSVActivity.connection.setScheme(scheme);
+		}
+
+		CSVActivity.connection.setHostname(hostname);
 	}
 
 	private boolean credentialsAreValid(String username, String password) {

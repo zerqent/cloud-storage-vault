@@ -12,8 +12,7 @@ public class CSVActivity extends Activity {
 	public static final int GET_ROOTCAP = 1;
 	public static final int MENU = 2;
 	public static CSVFileManager fm;
-	public static Communication connection = new Communication(
-			"create.q2s.ntnu.no");
+	public static Communication connection = new Communication();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
