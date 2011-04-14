@@ -15,7 +15,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 
 public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
@@ -120,23 +119,26 @@ public class CreateFolderTask extends AsyncTask<String, Void, CSVFolder> {
 
 		// We notify iv something goes wrong
 		if (this.error != null) {
-			String ns = Context.NOTIFICATION_SERVICE;
 			NotificationManager mNotificationManager = (NotificationManager) this.caller
-					.getSystemService(ns);
+					.getSystemService(Context.NOTIFICATION_SERVICE);
 
 			// Will be displayed in the top bar before opening the notification
 			// view
 			CharSequence tickerText = "Error creating folder";
-			CharSequence contentTitle = "CSV: Error creating folder";
-			CharSequence contentText = this.error;
-			int icon = R.drawable.icon;
+
+			int icon = R.drawable.uploaded;
 			Notification notification = new Notification(icon, tickerText,
 					System.currentTimeMillis());
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
+
 			Context context = this.caller.getApplicationContext();
-			Intent notificationIntent = new Intent();
-			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-					notificationIntent, 0);
+
+			// Text displayed when notification view is opened
+			CharSequence contentTitle = "CSV: Error creating folder";
+			CharSequence contentText = this.error;
+
+			PendingIntent contentIntent = PendingIntent.getActivity(
+					this.caller, 0, null, 0);
 			notification.setLatestEventInfo(context, contentTitle, contentText,
 					contentIntent);
 			mNotificationManager.notify(1, notification);

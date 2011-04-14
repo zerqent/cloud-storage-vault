@@ -9,7 +9,7 @@ public class CSVException extends Exception {
 	}
 
 	public CSVException() {
-
+		super("An error occured in the application");
 	}
 
 	public CSVException(Exception e) {

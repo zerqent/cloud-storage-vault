@@ -9,7 +9,7 @@ public class InvalidWriteEnablerException extends CSVException {
 	}
 
 	public InvalidWriteEnablerException() {
-		super();
+		super("The specified write enabler is invalid");
 	}
 
 }

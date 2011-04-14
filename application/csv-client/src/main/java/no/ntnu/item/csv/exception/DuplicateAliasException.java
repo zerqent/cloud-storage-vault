@@ -7,7 +7,7 @@ public class DuplicateAliasException extends CSVException {
 	}
 
 	public DuplicateAliasException() {
-		super();
+		super("Duplicate alias");
 	}
 
 	private static final long serialVersionUID = 1L;

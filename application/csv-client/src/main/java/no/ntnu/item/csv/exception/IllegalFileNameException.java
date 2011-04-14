@@ -9,7 +9,7 @@ public class IllegalFileNameException extends CSVException {
 	}
 
 	public IllegalFileNameException() {
-		super();
+		super("The specified filename is illegal");
 	}
 
 }

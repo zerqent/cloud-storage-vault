@@ -5,7 +5,7 @@ public class ImmutableFileExistsException extends CSVException {
 	private static final long serialVersionUID = 1L;
 
 	public ImmutableFileExistsException() {
-		super();
+		super("The immutable file already exist");
 	}
 
 	public ImmutableFileExistsException(String msg) {

@@ -9,7 +9,7 @@ public class NoSuchAliasException extends CSVException {
 	}
 
 	public NoSuchAliasException() {
-		super();
+		super("The requested alias does not exist");
 	}
 
 }
