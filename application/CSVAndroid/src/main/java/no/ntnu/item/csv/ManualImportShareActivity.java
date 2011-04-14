@@ -3,7 +3,7 @@ package no.ntnu.item.csv;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;

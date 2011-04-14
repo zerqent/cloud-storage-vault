@@ -1,7 +1,7 @@
 package no.ntnu.item.csv.capability;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 
 public class CapabilityImpl implements Capability {
 

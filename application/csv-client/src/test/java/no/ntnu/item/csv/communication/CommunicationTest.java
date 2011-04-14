@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 import no.ntnu.item.csv.fileutils.FileUtils;
 
 import org.apache.http.HttpEntity;
