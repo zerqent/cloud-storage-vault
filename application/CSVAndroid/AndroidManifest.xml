@@ -28,5 +28,6 @@
 	</application>
 
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
-	<uses-sdk android:minSdkVersion="7" />
+	<uses-sdk android:minSdkVersion="7" 
+			  android:targetSdkVersion="7"/>
 </manifest> 
