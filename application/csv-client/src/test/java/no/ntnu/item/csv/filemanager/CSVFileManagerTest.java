@@ -283,4 +283,23 @@ public class CSVFileManagerTest {
 		Assert.assertTrue(newRoot == this.fileManager.getRootFolder());
 	}
 
+	@Test
+	public void testUnlinkAliasFromFolder() throws FileNotFoundException,
+			IllegalFileNameException, DuplicateAliasException,
+			ServerCommunicationException, InvalidWriteEnablerException,
+			ImmutableFileExistsException, InsufficientPermissionException,
+			RemoteFileDoesNotExistException, FailedToVerifySignatureException {
+		CSVFile file = new CSVFile(new File(this.testfile));
+		this.fileManager.putObjectIntoCurrentFolder(file, "afile");
+		Assert.assertTrue(this.fileManager.getCurrentFolder().getContents()
+				.containsKey("afile"));
+		this.fileManager.unlinkAliasFromCurrentFolder("afile");
+		Assert.assertFalse(this.fileManager.getCurrentFolder().getContents()
+				.containsKey("afile"));
+
+		CSVFolder newDownload = this.fileManager.getCurrentFolder();
+		newDownload = this.fileManager.downloadFolder(newDownload);
+		Assert.assertFalse(newDownload.getContents().containsKey("afile"));
+	}
+
 }

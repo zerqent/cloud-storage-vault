@@ -355,4 +355,23 @@ public class CSVFileManager {
 		}
 		return null;
 	}
+
+	public void unlinkAliasFromCurrentFolder(String alias)
+			throws ServerCommunicationException, InvalidWriteEnablerException,
+			ImmutableFileExistsException, RemoteFileDoesNotExistException,
+			FailedToVerifySignatureException {
+		unLinkAliasFromFolder(alias, this.getCurrentFolder());
+	}
+
+	public void unLinkAliasFromFolder(String alias, CSVFolder folder)
+			throws ServerCommunicationException, InvalidWriteEnablerException,
+			ImmutableFileExistsException, RemoteFileDoesNotExistException,
+			FailedToVerifySignatureException {
+		if (folder.getContents() == null) {
+			this.downloadFolder(folder);
+		}
+		folder.getContents().remove(alias);
+		this.uploadFolder(folder);
+
+	}
 }
