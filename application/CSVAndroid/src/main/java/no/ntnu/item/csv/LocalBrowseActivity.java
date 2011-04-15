@@ -80,7 +80,7 @@ public class LocalBrowseActivity extends ListActivity {
 					clicked = Environment.getExternalStorageDirectory();
 					break;
 				default:
-					clicked = new File("/system");
+					clicked = new File("/");
 					break;
 				}
 				location.push(clicked.getAbsolutePath());
