@@ -27,7 +27,12 @@ presentation.pdf: presentation.tex
 	pdflatex presentation.tex
 	rm -rf *.aux *.log *.toc *.out *.lof *.lot *.bbl *.blg *.dvi *.nav *.snm *.vrb
 
+show:
+	xdg-open main.pdf
+
 all: main.pdf presentation.pdf
+
+display: clean main.pdf show
 
 snapshot: main.pdf
 	cp main.pdf snapshots/report-snapshot-`date +%Y-%m-%d`.pdf
@@ -35,4 +40,4 @@ snapshot: main.pdf
 clean:
 	rm -rf *.aux *.log *.toc *.out *.lof *.lot *.bbl *.blg *.dvi *.pdf *.lol
 
-.PHONY: clean problem
+.PHONY: clean problem show
