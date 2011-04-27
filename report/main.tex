@@ -639,13 +639,23 @@ that the security features actually work as claimed.
 \subsection{Tahoe-LAFS}
 % TODO: Reference cloud security software "checklist" in Intro
 
-Tahoe-\ac{LAFS}\footnote{http://www.tahoe-lafs.org/} is an open source
-cloud storage file system which does fulfill the requirements set by our
+Tahoe-\ac{LAFS}\footnote{\url{http://www.tahoe-lafs.org/}} is an open source
+secure cloud storage file system which does fulfill the requirements set by our
 problem description in regards to security \cite{tahoe}. 
 
 In Tahoe-\ac{LAFS}, files are exclusivly encrypted client-side, before beeing
-uploaded into the cloud.  Tahoe-\ac{LAFS} also uses erasure-coding to obtain
+uploaded into the cloud. Tahoe-\ac{LAFS} also uses erasure-coding to obtain
 redundancy across multiple storage servers.
+
+\subsection{Wuala}
+
+Wuala\footnote{\url{http://www.wuala.com/}} is a closed source secure cloud
+storage file system, that seamingly operates very similar to Tahoe-\ac{LAFS}.
+
+The authors have released a paper on a cryptographic tree structure for file
+systems, called Cryptree \cite{cryptree}, and has strong focus on reliability
+by both providing central servers, in addition to a \emph{P2P cloud} of Wuala
+users that has donated capacity to the system. 
 
 %**************************************%
 \chapter{Architectural Overview}
