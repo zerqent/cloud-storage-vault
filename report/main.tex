@@ -623,7 +623,7 @@ description for this thesis. The section highlights some of them.
 
 \subsection{Dropbox}
 
-Dropbox\footnote{\url{http://www.dropbox.com}} is a popular commercial
+Dropbox\footnote{\url{http://www.dropbox.com/}} is a popular commercial
 application for storing data in the cloud, claiming more than 25 million users
 \cite{dropbox_users}. All files are saved using Amazons S3 storage service.
 
@@ -637,16 +637,15 @@ In addition, Dropbox is not Open Source, and hence one has no way of verifying
 that the security features actually work as claimed.
 
 \subsection{Tahoe-LAFS}
+% TODO: Reference cloud security software "checklist" in Intro
 
-Tahoe-\ac{LAFS}\footnote{http://www.tahoe-lafs.org} is an open source
+Tahoe-\ac{LAFS}\footnote{http://www.tahoe-lafs.org/} is an open source
 cloud storage file system which does fulfill the requirements set by our
-problem description in regards to security. In Tahoe-\ac{LAFS} files are
-exclusivly encrypted client-side, before beeing uploaded into the cloud.
-Tahoe-\ac{LAFS} also uses erasure-coding to obtain redundancy across multiple
-storage servers.
+problem description in regards to security \cite{tahoe}. 
 
-%TODO: kilde, enten paperet vi brukte i prosjektet, muligens
-% http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/about.html
+In Tahoe-\ac{LAFS}, files are exclusivly encrypted client-side, before beeing
+uploaded into the cloud.  Tahoe-\ac{LAFS} also uses erasure-coding to obtain
+redundancy across multiple storage servers.
 
 %**************************************%
 \chapter{Architectural Overview}
