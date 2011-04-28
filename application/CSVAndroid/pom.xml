@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>no.ntnu.item.csv</groupId>
-            <artifactId>csv-client</artifactId>
+            <artifactId>CSVlib</artifactId>
             <version>${project.version}</version>
         </dependency>
 

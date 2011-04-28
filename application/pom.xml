@@ -16,7 +16,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>csv-client</module>
+                <module>CSVlib</module>
                 <module>CSVAndroid</module>
             </modules>
         </profile>
