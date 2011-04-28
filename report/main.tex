@@ -666,16 +666,15 @@ users that has donated capacity to the system.
 
 The architectural solution of a secure cloud file sharing system has to convince
 its users that the functions indeed are secure, and that the concepts are easy
-to understand and accept.
-
-\section{Introduction}
-% FIXME: Can we just drop this section and include its contents in the chapter
-% intro?
+to understand and accept. 
 
 The architecture has to support various user functionality. Figure
 \ref{fig:AS:overview} exhibits Alice uploading files to the cloud, and
 thereafter transferring the necessary information to Bob so that he also can
 gain access to the files.
+
+In the following sections, we will describe how the file storage is organized,
+and take a closer look at how the different problems are solved.
 
 \begin{figure}[h!]
     \centering
@@ -683,9 +682,6 @@ gain access to the files.
     \caption{Overview of user functionality}
     \label{fig:AS:overview}
 \end{figure}
-
-In the following sections, we will describe how the file storage is organized,
-and take a closer look at how the different functionality are solved.
 
 \section{File Storage}
 \label{sec:AS:FS}
