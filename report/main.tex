@@ -155,6 +155,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{JCE}{Java Cryptographic Extensions}
 \acro{JDK}{Java Development Kit}
 \acro{JRE}{Java Runtime Environment}
+\acro{JVM}{Java Virtual Machine}
 \acro{LAFS}{Least Authority File System}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
@@ -164,6 +165,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PEP}{Python Enhancement Proposal}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
+\acro{PoC}{Proof-of-concept}
 \acro{REST}{Representational State Transfer}
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SaaS}{Software as a Service}
@@ -1311,72 +1313,115 @@ database.
 % Security vs. Usability - Rationale for GUI
 % MVC? V=Android GUI
 %
+The \ac{PoC}-client we have implemented is made for devices using the Android
+operating system, which is based on Linux. The SDK for making Android
+applications is essentially a somewhat modified version of Java. 
 
-\subsection{Structure}
+Most devices that use the Android operating system are mobile phones or
+tablets, which basically means that they are more limited in terms of speed and
+memory. The point of making the \ac{PoC}-client for such a device is that if it
+does perform well so will any faster device.
+
+\subsection{Environment}
+The \ac{PoC}-client was made on the Android plattform in the Java programming
+language, together with a set of frameworks. The rationale for these are as
+follows:
+
+\paragraph{Android} The Android operating system is made by Google and is most
+common found on mobile phones and tablets. The choice of Android was done
+because of hardware availability and familiarity with developing for the
+plattform and the programming language (Java). 
+
+\paragraph{Java} Java is a high-level, object-oriented programming language.
+Java applications runs in a \ac{JVM} which basically mean that a Java
+application can run on  almost any device which has a \ac{JVM}. The \ac{JVM} on
+Android is called Dalvik.
+
+\paragraph{HttpComponents} Apache HttpComponents are a set of libraries for
+HTTP-transport in Java. The part used in our client is called HttpClient.
+Android incorporates part of this client in its native \ac{JVM}. The use of
+this library adheres to the \ac{DRY}-principle.
+
+\paragraph{\ac{JCA}}\ac{JCA} is an archtivecture for doing cryptographic
+operations in Java. The architecture is based on principles of Implementation
+independence, implementation interoperability and algorithm extensibility.
+Basically what this means is that each implementation of the \ac{JVM} can have
+different implementations of the cryptographic primitives, but the developer
+does not need to know which implementation is available.
+
+\paragraph{ZXing Barcode Scanner} ZXing Barcode Scanner is a popular Android
+application which can be used by other Android applications to both scan and
+generate barcodes. We use this application to adhere to the \ac{DRY}-principle. 
+
+\subsection{Architectural Patterns}
+
+\paragraph{Client-server} What we have implemented is the client part of the
+overall client-server pattern.
+
+\paragraph{Pipe-and-filter} The basis of the pipe-and-filter pattern is that
+there exist a chain of processing elements, where the output of one element is
+the input of the next element. We use this for file uploads and downloads to
+limit the memory usage of the client as well as to increase performance.
+
+\paragraph{Asynchronous pattern} We use asynchronous calls to slow operations
+(e.g. file upload, key generation) extensivly, to prevent the interface from
+hanging and to deliver a smoother user experience in general.  
+
+\subsection{Implementation Details}
+
+\subsubsection{Structure}
 % Package Structure, some nice UML (?)
 % Which qualities do we wish to achive? Security, Performance, Usability
+%
+The source of our client is logically separated into two entities; csv-client
+and CSVAndroid. Csv-client is a pure Java library which contain the necessary
+functionality for cryptographic operations and server communication while
+CSVAndroid contains the Android specific code, in general mostly the User
+Interface. 
 
-\subsection{Communication with Server}
+\subsubsection{Communication with Server}
 % Do not repeat what is said in Server equivalent section
 % Apache commons, Serialization of objects
 
-\subsection{Cryptography}
-% Do not repeat previous chapter, but specific of implementation
-% JCE, Code organization, Capabilities
-% Classes, which functionality we get from them
+For \ac{HTTP} transport we utilize the Apache Software Foundations
+HttpComponents Client\footnote{ \url http://hc.apache.org/} also known as
+HttpClient. This Client offers support for authenticated requests to a server,
+and both upload and download through {\bf PUT} and {\bf GET} requests respectively.
 
-To get access to cryptographic functions in Java we need to call on what is
-known as the \ac{JCE}. Basically the \ac{JCE} was earlier an extension which
-was not part of the official Java \ac{JDK}, but has since been embedded in what
-is called the \ac{JCA}\cite{jca}.
-Basically the \ac{JCA} provides factories for accessing implementations of
-cryptographic functions from different Providers. In essence what this mean is
-that there may be more than one implementation of for instance \ac{AES}. It is
-possible to specify which provider to use, but it is also possible to make the
-\ac{JRE} choose whatever provider it sees most fit. 
+\subsubsection{Cryptographic Entities}
 
-\subsubsection{Encryption} 
+\paragraph{Capabilities}
+% TODO: API for Capabiltiies
+The implementation of Capabilities lives in csv-client and contains expose the
+API presented in Table XX. From a functional standpoint the Capability is in
+essence just a Container for encryption keys, and an identifier to locate the
+object associated with it.
 
-The {\bf javax.crypto.cipher} class in the \ac{JCA} deal with encryption and
-decryption of both asymmetric and symmetric ciphers.  It also handles the mode
-of operation and padding scheme to be used. Which scheme is used for all three
-choices depend on the String sent to the factory in the Class. A Basic example
-of how we use encryption can be seen in Listing \ref{lst:cipherexample}. It is
-also possible to specify the \ac{IV} through the {\bf init} call, if not the
-\ac{IV} is automatically generated.
+\paragraph{Folders}
+% TODO: Ref til crypt solution
+A folder is basically just a collection of aliases and their corresponding
+capabilities, and is for the most part so small that it can easily live for as
+long as needed in the memory of the client. When a folder is created or updated
+the content is serialized and encrypted before it is uploaded to the server
+directly from memory.
 
-\lstinputlisting[label=lst:cipherexample, caption=\ac{AES}
-encryption in Java]
-{listings/cipher_example.java}
+\paragraph{Files}
+While a folder is small a file can grow to a size much larger than the size of
+the devices memory which means that care must be taken to avoid this. We solved
+this problem by the use of Javas InputStream and OutputStream-objects.
+Basically the streams allow multiple streams to be nested outside or inside
+each other, and a read or write to the stream causes the data to pass through
+all streams. In the example of a file upload we need to read the data from
+disk, get a digest of the file, encrypt the file and upload the ciphertext to
+the server. All these operations can be piped together, the example of how we
+do this for a file upload is shown in Listing \ref{lst:inputstream}. We also buffer data for every
+step to prevent streams waiting for each other.
 
-\subsubsection{Key Generation}
-Key Generation is accomplished in a similar way as Encryption, but through {\bf
-javax.crypto.KeyGenerator} and {\bf javax.crypto.KeyPairGenerator} for
-symmetric and asymmetric keys respectively. Listing \ref{lst:keygenexample}
-shows how we generate these keys.
+\lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a
+file]
+{listings/fileupload_example.java}
 
-\lstinputlisting[label=lst:keygenexample, caption= \ac{AES} and
-\ac{RSA} key generation in Java]
-{listings/keygen_example.java}
 
-\subsubsection{Digital Signatures}
-Digital Signatures can be accomplished with the help of a \ac{RSA}-keypair. The
-factory used for creation of signatures as well as validation of signatures
-lives in {\bf java.security.Signature}. How we use these can be seen in Listing 
-\ref{lst:signatureexample}.
-
-\lstinputlisting[label=lst:signatureexample, caption= Digital signatures in
-Java using \ac{RSA}]
-{listings/keygen_example.java}
-
-\subsubsection{Hashing} For cryptographic hashing the \ac{JCA} is similar to
-other cryptographic operations, and the factory lives in {\bf
-java.security.MessageDigest}. However, we need double \ac{SHA}-256, which is
-not an option. The implementation we use for double \ac{SHA}-256 is shown in
-Listing 
-
-\lstinputlisting[label=lst:hashingexample, caption= Double \ac{SHA}-256 in Java]
-{listings/hashing_example.java}
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
