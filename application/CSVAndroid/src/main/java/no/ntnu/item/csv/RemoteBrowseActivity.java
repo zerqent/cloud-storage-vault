@@ -1,6 +1,5 @@
 package no.ntnu.item.csv;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -10,14 +9,14 @@ import no.ntnu.item.csv.credentials.DisplayCapability;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
 import no.ntnu.item.csv.exception.NoSuchAliasException;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import no.ntnu.item.csv.guiutils.BrowseList;
 import no.ntnu.item.csv.workers.AddToShareTask;
 import no.ntnu.item.csv.workers.CreateFolderTask;
 import no.ntnu.item.csv.workers.DownloadTask;
+import no.ntnu.item.csv.workers.UnlinkObjectTask;
 import no.ntnu.item.csv.workers.UploadTask;
-
-import org.apache.http.client.ClientProtocolException;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,11 +38,18 @@ public class RemoteBrowseActivity extends ListActivity {
 	public static final int MENU_UPLOAD_FILE = 1;
 	public static final int MENU_CREATE_FOLDER = 2;
 	public static final int MENU_SHOW_CAPABILITY = 3;
+	public static final int CONTEXTMENU_DOWNLOAD_FILE = 0;
+	public static final int CONTEXTMENU_SHARE_OBJECT = 1;
+	public static final int CONTEXTMENU_UNLINK = 2;
 
 	private static Map<String, Capability> files;
 	private CreateFolderTask newFolderTask;
 
 	private final String NEW_SHARE_ACTION = "Share with new user";
+	private final int REQUEST_NEWUSERSHARE = 0;
+	private final String REQUEST_RESULT_FOLDERALIAS = "folderalias";
+
+	private String contextMenusAreStupidAliasHolder = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -55,33 +61,67 @@ public class RemoteBrowseActivity extends ListActivity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		menu.setHeaderTitle("Share with ...");
-		for (String alias : CSVActivity.fm.getSharedfolder().getContents()
-				.keySet()) {
-			menu.add(alias);
+
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		LinearLayout ll = (LinearLayout) info.targetView;
+		String clicked_alias = ((TextView) ll.getChildAt(1)).getText()
+				.toString();
+		Capability cap = CSVActivity.fm.getCurrentFolder().getContents()
+				.get(clicked_alias);
+
+		menu.setHeaderTitle("Actions");
+		if (cap.isFile()) {
+			menu.add(0, CONTEXTMENU_DOWNLOAD_FILE, 0, "Download File");
 		}
-		menu.add(this.NEW_SHARE_ACTION);
+		menu.add(0, CONTEXTMENU_UNLINK, 0, "Unlink");
+
+		Menu sub = menu.addSubMenu("Share with...");
+		for (String alias : CSVActivity.fm.getShareFolder().getContents()
+				.keySet()) {
+			sub.add(0, CONTEXTMENU_SHARE_OBJECT, 0, alias);
+		}
+		sub.add(0, CONTEXTMENU_SHARE_OBJECT, 0, this.NEW_SHARE_ACTION);
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
-		LinearLayout ll = (LinearLayout) info.targetView;
-		String alias = ((TextView) ll.getChildAt(1)).getText().toString();
-
 		String menu_element = item.getTitle().toString();
-
-		if (menu_element.equals(this.NEW_SHARE_ACTION)) {
-			// TODO: Make this more user friendly, aka upon result, should share
-			// the folder in question.
-			Intent intent = new Intent(RemoteBrowseActivity.this,
-					CreateShareActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(intent);
+		if (info != null) {
+			LinearLayout ll = (LinearLayout) info.targetView;
+			String alias = ((TextView) ll.getChildAt(1)).getText().toString();
+			this.contextMenusAreStupidAliasHolder = alias;
 		}
-		AddToShareTask atst = new AddToShareTask(this);
-		atst.execute(menu_element, alias);
+
+		switch (item.getItemId()) {
+		case CONTEXTMENU_DOWNLOAD_FILE:
+			new DownloadTask(RemoteBrowseActivity.this)
+					.execute(this.contextMenusAreStupidAliasHolder);
+			return true;
+		case CONTEXTMENU_UNLINK:
+			UnlinkObjectTask uot = new UnlinkObjectTask(this);
+			uot.execute(this.contextMenusAreStupidAliasHolder);
+			return true;
+
+		case CONTEXTMENU_SHARE_OBJECT:
+			if (menu_element.equals(this.NEW_SHARE_ACTION)) {
+				Intent intent = new Intent(RemoteBrowseActivity.this,
+						CreateShareActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				intent.putExtra(REQUEST_RESULT_FOLDERALIAS,
+						this.contextMenusAreStupidAliasHolder);
+				startActivityForResult(intent, REQUEST_NEWUSERSHARE);
+			} else {
+				AddToShareTask atst = new AddToShareTask(this);
+				atst.execute(menu_element,
+						this.contextMenusAreStupidAliasHolder);
+				this.contextMenusAreStupidAliasHolder = null;
+			}
+
+		default:
+			break;
+		}
 
 		return super.onContextItemSelected(item);
 	}
@@ -123,7 +163,7 @@ public class RemoteBrowseActivity extends ListActivity {
 
 	public void doBrowsing() {
 		files = new HashMap<String, Capability>();
-		files.putAll(CSVActivity.fm.ls());
+		files.putAll(CSVActivity.fm.getCurrentFolder().getContents());
 		files.put("..", null);
 		BrowseList bl = new BrowseList(files);
 		SimpleAdapter sa = new SimpleAdapter(this, bl.getList(),
@@ -145,11 +185,13 @@ public class RemoteBrowseActivity extends ListActivity {
 					try {
 						CSVActivity.fm.cd(alias);
 						doBrowsing();
-					} catch (ClientProtocolException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
 					} catch (NoSuchAliasException e) {
+						e.printStackTrace();
+					} catch (ServerCommunicationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RemoteFileDoesNotExistException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (FailedToVerifySignatureException e) {
 						// TODO Auto-generated catch block
@@ -177,8 +219,8 @@ public class RemoteBrowseActivity extends ListActivity {
 						.getStringExtra(NewFolderActivity.NEW_FOLDER);
 				try {
 					CSVFolder folder = this.newFolderTask.get();
-					CreateFolderTask cft = new CreateFolderTask(this);
-					cft.setFolder(folder);
+					CreateFolderTask cft = new CreateFolderTask(this,
+							CSVActivity.fm.getCurrentFolder(), folder);
 					cft.execute(alias);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -186,6 +228,15 @@ public class RemoteBrowseActivity extends ListActivity {
 				} catch (ExecutionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+			case REQUEST_NEWUSERSHARE:
+				String folderalias = data
+						.getStringExtra(REQUEST_RESULT_FOLDERALIAS);
+				String user = data
+						.getStringExtra(CreateShareActivity.REQUEST_RESULT_USERALIAS);
+				if (folderalias != null && user != null) {
+					AddToShareTask atst = new AddToShareTask(this);
+					atst.execute(user, folderalias);
 				}
 
 			default:

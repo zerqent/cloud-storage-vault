@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/* Notice: The package-name has been changed from the original provided by ZXing */
 package no.ntnu.item.csv.contrib.com.google.zxing.integration.android;
 
 import android.app.AlertDialog;

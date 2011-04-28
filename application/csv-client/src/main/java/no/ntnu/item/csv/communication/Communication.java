@@ -3,53 +3,76 @@ package no.ntnu.item.csv.communication;
 import java.io.IOException;
 import java.io.InputStream;
 
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
-import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.CSVObject;
-import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
-import no.ntnu.item.csv.exception.ServerCommunicationException;
-
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.AuthState;
+import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
 
 public class Communication {
 	private int port = 443;
+	private String scheme = "https";
 
 	private HttpHost serverHost;
 	private final String SERVER_PUT = "/put/";
 	private final String SERVER_GET = "/get/";
 
+	private String hostname;
+
 	private String username;
 	private String password;
 
-	public Communication(String serverAddress, String username, String password) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "https");
+	public Communication(String hostname, String username, String password) {
+		this.serverHost = new HttpHost(hostname, this.port, this.scheme);
+		this.hostname = hostname;
 		this.username = username;
 		this.password = password;
 	}
 
-	public Communication(String serverAddress) {
-		this.serverHost = new HttpHost(serverAddress, this.port, "https");
+	public Communication(String hostname, int port, String scheme,
+			String username, String password) {
+		this.serverHost = new HttpHost(hostname, port, scheme);
+		this.hostname = hostname;
+		this.port = port;
+		this.scheme = scheme;
+		this.username = username;
+		this.password = password;
 	}
 
-	public Communication(String serverAddress, int port) {
+	public Communication(String hostname) {
+		this.serverHost = new HttpHost(hostname, this.port, this.scheme);
+		this.hostname = hostname;
+	}
+
+	public Communication() {
+
+	}
+
+	public Communication(String hostname, int port) {
+		this.serverHost = new HttpHost(hostname, port, this.scheme);
 		this.port = port;
-		this.serverHost = new HttpHost(serverAddress, port, "https");
+		this.hostname = hostname;
 	}
 
 	public boolean testLogin() throws ClientProtocolException, IOException {
@@ -68,45 +91,42 @@ public class Communication {
 		return responseStatus.getStatusCode() == 200;
 	}
 
-	public static void main(String[] arg) {
-		Communication cs = new Communication("create.q2s.ntnu.no", 444);
-		SecureHttpClient client = new SecureHttpClient();
-		HttpGet httpget = new HttpGet("/");
-
-		try {
-			HttpResponse response = client.execute(cs.serverHost, httpget,
-					cs.getAuthCacheContext());
-			System.out.println(EntityUtils.toString(response.getEntity()));
-		} catch (ClientProtocolException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} finally {
-			client.getConnectionManager().shutdown();
-		}
-
-	}
-
 	private SecureHttpClient getNewSecureAuthHttpClient() {
 		SecureHttpClient client = new SecureHttpClient();
 		addBasicAuth(client);
 
-		return client;
-	}
+		HttpRequestInterceptor preemptiveAuth = new HttpRequestInterceptor() {
+			@Override
+			public void process(final HttpRequest request,
+					final HttpContext context) throws HttpException,
+					IOException {
+				AuthState authState = (AuthState) context
+						.getAttribute(ClientContext.TARGET_AUTH_STATE);
+				CredentialsProvider credsProvider = (CredentialsProvider) context
+						.getAttribute(ClientContext.CREDS_PROVIDER);
+				HttpHost targetHost = (HttpHost) context
+						.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 
-	private DefaultHttpClient getNewBasicAuthHttpClient() {
-		DefaultHttpClient client = new DefaultHttpClient();
-		addBasicAuth(client);
+				if (authState.getAuthScheme() == null) {
+					AuthScope authScope = new AuthScope(
+							targetHost.getHostName(), targetHost.getPort());
+					Credentials creds = credsProvider.getCredentials(authScope);
+					if (creds != null) {
+						authState.setAuthScheme(new BasicScheme());
+						authState.setCredentials(creds);
+					}
+				}
+			}
+		};
+
+		client.addRequestInterceptor(preemptiveAuth, 0);
 
 		return client;
 	}
 
 	private void addBasicAuth(DefaultHttpClient client) {
 		client.getCredentialsProvider().setCredentials(
-				new AuthScope(this.serverHost.getHostName(),
-						this.serverHost.getPort()),
+				new AuthScope(this.getHostname(), this.getPort()),
 				new UsernamePasswordCredentials(this.username, this.password));
 		return;
 	}
@@ -122,24 +142,22 @@ public class Communication {
 		return localcontext;
 	}
 
-	public int put(CSVObject object) {
-		if (object == null)
-			throw new NullPointerException();
+	public int putInputStream(String url, InputStream is, long streamLength) {
+		InputStreamEntity entity = new InputStreamEntity(is, streamLength);
+		return putEntity(url, entity);
+	}
 
+	public int putByteArray(String url, byte[] byteArray) {
+		HttpEntity entity = new ByteArrayEntity(byteArray);
+		return putEntity(url, entity);
+	}
+
+	private int putEntity(String url, HttpEntity entity) {
 		DefaultHttpClient client = getNewSecureAuthHttpClient();
 
 		HttpPut put;
-		if (object instanceof CSVFolder) {
-			put = new HttpPut(this.SERVER_PUT
-					+ object.getCapability().getStorageIndex() + "/"
-					+ Base32.encode(object.getCapability().getWriteEnabler()));
-		} else {
-			put = new HttpPut(this.SERVER_PUT
-					+ object.getCapability().getStorageIndex());
-		}
 
-		ByteArrayEntity entity = new ByteArrayEntity(object.getTransferArray());
-
+		put = new HttpPut(this.SERVER_PUT + url);
 		put.setEntity(entity);
 
 		HttpResponse response;
@@ -159,57 +177,24 @@ public class Communication {
 		}
 
 		return code;
+
 	}
 
-	public byte[] get(String index) throws RemoteFileDoesNotExistException,
-			ServerCommunicationException {
-		if (index == null)
-			throw new NullPointerException();
-
+	public HttpResponse get(String url) {
 		HttpClient client = getNewSecureAuthHttpClient();
-		HttpGet get = new HttpGet(this.SERVER_GET + index);
+		HttpGet get = new HttpGet(this.SERVER_GET + url);
 
-		byte[] bytes = null;
-		HttpResponse response;
+		HttpResponse response = null;
 		try {
 			response = client.execute(this.serverHost, get,
 					getAuthCacheContext());
-			System.out.println("RESPONSE: "
-					+ response.getStatusLine().toString());
-			switch (response.getStatusLine().getStatusCode()) {
-			case 200:
-				break;
-			case 201:
-				break;
-			case 202:
-				break;
-			case 204:
-				break;
-			case 404:
-				throw new RemoteFileDoesNotExistException();
-			default:
-				throw new ServerCommunicationException();
-			}
-
-			InputStream is = response.getEntity().getContent();
-			int len = Integer.parseInt(response
-					.getFirstHeader("Content-Length").getValue());
-			bytes = new byte[len];
-
-			int nb;
-			for (int i = 0; (nb = is.read()) != -1; i++)
-				bytes[i] = (byte) nb;
-			is.close();
-
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			client.getConnectionManager().shutdown();
+			return null;
 		}
+		return response;
 
-		return bytes;
 	}
 
 	public String getUsername() {
@@ -233,6 +218,30 @@ public class Communication {
 	}
 
 	public void setPort(int port) {
+		if (this.hostname != null)
+			this.serverHost = new HttpHost(this.hostname, port, this.scheme);
+
 		this.port = port;
 	}
+
+	public String getScheme() {
+		return scheme;
+	}
+
+	public void setScheme(String scheme) {
+		if (this.hostname != null)
+			this.serverHost = new HttpHost(this.hostname, this.port, scheme);
+
+		this.scheme = scheme;
+	}
+
+	public String getHostname() {
+		return hostname;
+	}
+
+	public void setHostname(String hostname) {
+		this.serverHost = new HttpHost(hostname, this.port, this.scheme);
+		this.hostname = hostname;
+	}
+
 }

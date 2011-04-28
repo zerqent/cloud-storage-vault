@@ -1,17 +1,17 @@
 package no.ntnu.item.csv.workers;
 
 import java.io.File;
-import java.io.IOException;
 
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
+import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
-import no.ntnu.item.csv.exception.NoSuchAliasException;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import no.ntnu.item.csv.fileutils.FileUtils;
-
-import org.apache.http.client.ClientProtocolException;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -26,37 +26,45 @@ import android.widget.Toast;
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
 	private Activity caller;
+	private Capability capability;
+	private String error;
+	private NotificationManager mNotificationManager;
 
 	public DownloadTask(Activity caller) {
 		this.caller = caller;
+	}
+
+	public DownloadTask(Activity caller, Capability capability) {
+		this.caller = caller;
+		this.capability = capability;
 	}
 
 	@Override
 	protected String doInBackground(String... params) {
 		System.out.println("Starting download");
 		String alias = params[0];
-		CSVFile file;
-		try {
-			file = (CSVFile) CSVActivity.fm.get(null, alias);
-			System.out.println("Downloaded file");
-			FileUtils.writeFileToDisk("/sdcard/" + alias, file.getPlainText());
 
-			System.out.println("Wrote file to disk");
-			file = null;
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (NoSuchAliasException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (this.capability == null) {
+			this.capability = CSVActivity.fm.getCurrentFolder().getContents()
+					.get(alias);
+		}
+
+		CSVFile file = null;
+		try {
+			file = new CSVFile(this.capability, new File("/sdcard/" + alias));
+			file = CSVActivity.fm.downloadFile(file);
+
+		} catch (ServerCommunicationException e) {
+			this.error = e.getMessage();
+		} catch (InvalidWriteEnablerException e) {
+			this.error = e.getMessage();
+		} catch (ImmutableFileExistsException e) {
+			this.error = e.getMessage();
+		} catch (RemoteFileDoesNotExistException e) {
+			this.error = e.getMessage();
 		} catch (FailedToVerifySignatureException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			file.getFile().delete();
+			this.error = e.getMessage();
 		}
 
 		return "/mnt/sdcard/" + alias;
@@ -65,22 +73,21 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
-		String ns = Context.NOTIFICATION_SERVICE;
-		NotificationManager mNotificationManager = (NotificationManager) this.caller
-				.getSystemService(ns);
 
-		// Will be displayed in the top bar before opening the notification view
 		CharSequence tickerText = "File download completed";
+		CharSequence contentTitle = "CSV: Download Complete";
+		CharSequence contentText = "File has been downloaded to " + result;
+		// Text displayed when notification view is opened
+		if (this.error != null) {
+			tickerText = "Error downloading file";
+			contentTitle = "CSV: Error downloading";
+			contentText = this.error;
+		}
+
 		int icon = R.drawable.downloaded;
 		Notification notification = new Notification(icon, tickerText,
 				System.currentTimeMillis());
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
-
-		Context context = this.caller.getApplicationContext();
-
-		// Text displayed when notification view is opened
-		CharSequence contentTitle = "CSV: Download Complete";
-		CharSequence contentText = "File has been downloaded to " + result;
 
 		// What to do when someone touch the intent
 		Intent notificationIntent = new Intent();
@@ -89,13 +96,14 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		String extension = FileUtils.getFileExtension(result);
 		notificationIntent.setDataAndType(Uri.fromFile(file), MimeTypeMap
 				.getSingleton().getMimeTypeFromExtension(extension));
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
-		notification.setLatestEventInfo(context, contentTitle, contentText,
-				contentIntent);
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				this.caller.getApplicationContext(), 0, notificationIntent, 0);
+		notification.setLatestEventInfo(this.caller.getApplicationContext(),
+				contentTitle, contentText, contentIntent);
 		mNotificationManager.notify(1, notification);
 
 		this.caller = null;
+		System.out.println("download complete");
 		return;
 	}
 
@@ -108,6 +116,26 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 		Toast toast = Toast.makeText(this.caller.getApplicationContext(), text,
 				duration);
 		toast.show();
+
+		this.mNotificationManager = (NotificationManager) this.caller
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		int icon = R.drawable.downloaded;
+		CharSequence tickerText = "Downloading file";
+		CharSequence contentTitle = "CSV: File Download";
+		CharSequence contentText = "A file download is in progress";
+
+		Notification notification = new Notification(icon, tickerText,
+				System.currentTimeMillis());
+
+		PendingIntent contentIntent = PendingIntent.getActivity(this.caller, 0,
+				null, 0);
+		notification.setLatestEventInfo(this.caller.getApplicationContext(),
+				contentTitle, contentText, contentIntent);
+		mNotificationManager.notify(1, notification);
+
+		return;
+
 	}
 
 }

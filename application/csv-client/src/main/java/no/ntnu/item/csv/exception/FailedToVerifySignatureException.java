@@ -9,7 +9,7 @@ public class FailedToVerifySignatureException extends CSVException {
 	}
 
 	public FailedToVerifySignatureException() {
-		super();
+		super("Failed to verify the signature of object");
 	}
 
 }

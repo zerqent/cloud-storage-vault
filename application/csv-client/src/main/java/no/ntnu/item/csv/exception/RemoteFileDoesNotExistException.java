@@ -9,6 +9,6 @@ public class RemoteFileDoesNotExistException extends CSVException {
 	}
 
 	public RemoteFileDoesNotExistException() {
-		super();
+		super("The remote file does not exist");
 	}
 }

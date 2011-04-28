@@ -55,7 +55,7 @@
         <extensions>true</extensions>  
         <configuration>
           <sdk>
-            <platform>2.2</platform>
+            <platform>2.1</platform>
           </sdk>
           <deleteConflictingFiles>true</deleteConflictingFiles>
           <undeployBeforeDeploy>true</undeployBeforeDeploy>

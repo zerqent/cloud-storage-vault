@@ -12,8 +12,11 @@ import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.csvobject.CSVFolder;
-import no.ntnu.item.csv.csvobject.man.CSVFileManager;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.IncorrectPasswordException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
+import no.ntnu.item.csv.filemanager.CSVFileManager;
 import android.app.Activity;
 import android.content.Context;
 
@@ -23,6 +26,9 @@ public class LocalCredentials {
 	private Capability rootCapability;
 	private String onLineUserName;
 	private String onLinePassword;
+	private String hostname;
+	private String scheme;
+	private int port;
 
 	private LocalCredentials() {
 
@@ -53,9 +59,23 @@ public class LocalCredentials {
 			KeyChain keyChain = new KeyChain(password, salt);
 			byte[] plainText = Cryptoutil.symECBDecrypt(cipherText,
 					keyChain.getKey());
+
+			if (plainText == null || plainText.length < 10) {
+				throw new IncorrectPasswordException();
+			}
+
 			String[] text = new String(plainText).split(SEPARATOR);
+
+			if (text.length < 6) {
+				throw new IncorrectPasswordException();
+			}
+
 			localCredentials.onLineUserName = text[1];
 			localCredentials.onLinePassword = text[2];
+			localCredentials.scheme = text[3];
+			localCredentials.hostname = text[4];
+			localCredentials.port = Integer.parseInt(text[5]);
+
 			localCredentials.rootCapability = CapabilityImpl
 					.fromString(text[0]);
 
@@ -66,6 +86,9 @@ public class LocalCredentials {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		CSVActivity.connection.setPort(localCredentials.port);
+		CSVActivity.connection.setScheme(localCredentials.scheme);
+		CSVActivity.connection.setHostname(localCredentials.hostname);
 		CSVActivity.connection.setUsername(localCredentials.onLineUserName);
 		CSVActivity.connection.setPassword(localCredentials.onLinePassword);
 		return localCredentials;
@@ -79,11 +102,24 @@ public class LocalCredentials {
 
 		rootFolder.addContent(CSVFileManager.SHARE_FOLDER,
 				shareFolder.getCapability());
-		rootFolder.encrypt();
-		shareFolder.encrypt();
+		// rootFolder.encrypt();
+		// shareFolder.encrypt();
 
-		CSVActivity.connection.put(rootFolder);
-		CSVActivity.connection.put(shareFolder);
+		// CSVActivity.connection.put(rootFolder);
+		try {
+			rootFolder = CSVActivity.fm.uploadFolder(rootFolder);
+			shareFolder = CSVActivity.fm.uploadFolder(shareFolder);
+		} catch (ServerCommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidWriteEnablerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ImmutableFileExistsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// CSVActivity.connection.put(shareFolder);
 
 		return importExistingLocalCredentials(activity, password,
 				rootFolder.getCapability());
@@ -92,6 +128,9 @@ public class LocalCredentials {
 	public static LocalCredentials importExistingLocalCredentials(
 			Activity activity, String password, Capability rootCapability) {
 		LocalCredentials localCredentials = new LocalCredentials();
+		localCredentials.scheme = CSVActivity.connection.getScheme();
+		localCredentials.hostname = CSVActivity.connection.getHostname();
+		localCredentials.port = CSVActivity.connection.getPort();
 		localCredentials.onLinePassword = CSVActivity.connection.getPassword();
 		localCredentials.onLineUserName = CSVActivity.connection.getUsername();
 		localCredentials.rootCapability = rootCapability;
@@ -100,7 +139,10 @@ public class LocalCredentials {
 
 		String plainText = rootCapability.toString() + SEPARATOR
 				+ localCredentials.onLineUserName + SEPARATOR
-				+ localCredentials.onLinePassword;
+				+ localCredentials.onLinePassword + SEPARATOR
+				+ localCredentials.scheme + SEPARATOR
+				+ localCredentials.hostname + SEPARATOR
+				+ String.valueOf(localCredentials.port);
 
 		byte[] cipherText = Cryptoutil.symECBEncrypt(plainText.getBytes(),
 				keyChain.getKey());

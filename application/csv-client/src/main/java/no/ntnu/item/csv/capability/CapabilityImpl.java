@@ -1,7 +1,7 @@
 package no.ntnu.item.csv.capability;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 
 public class CapabilityImpl implements Capability {
 
@@ -107,7 +107,7 @@ public class CapabilityImpl implements Capability {
 	}
 
 	@Override
-	public byte[] getWriteEnabler() {
+	public String getWriteEnabler() {
 		// TODO: Figure out if the message is somehow important for security.
 		byte[] taggedmsg = { 't', 'h', 'i', 's', 'i', 's', 'h', 'm', 'a', 'c',
 				'f', 'o', 'r' };
@@ -115,7 +115,7 @@ public class CapabilityImpl implements Capability {
 			byte[] tmp = Cryptoutil.hmac(taggedmsg, this.key);
 			byte[] tmp2 = new byte[16];
 			System.arraycopy(tmp, 0, tmp2, 0, tmp2.length);
-			return tmp2;
+			return Base32.encode(tmp2);
 		} else {
 			return null;
 		}
@@ -129,6 +129,12 @@ public class CapabilityImpl implements Capability {
 	@Override
 	public boolean isFile() {
 		return this.isFile;
+	}
+
+	@Override
+	public void setVerification(byte[] verification) {
+		this.verification = verification;
+
 	}
 
 }

@@ -56,6 +56,7 @@ public class SecureHttpClient extends DefaultHttpClient {
 		super();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected ClientConnectionManager createClientConnectionManager() {
 		SchemeRegistry registry = new SchemeRegistry();

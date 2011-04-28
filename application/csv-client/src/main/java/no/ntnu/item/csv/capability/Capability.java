@@ -10,7 +10,7 @@ public interface Capability {
 
 	public CapabilityType getType();
 
-	public byte[] getWriteEnabler();
+	public String getWriteEnabler();
 
 	@Override
 	public String toString();
@@ -18,5 +18,7 @@ public interface Capability {
 	public boolean isFolder();
 
 	public boolean isFile();
+
+	public void setVerification(byte[] verification);
 
 }

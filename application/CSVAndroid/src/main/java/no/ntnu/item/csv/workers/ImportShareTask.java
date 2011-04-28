@@ -3,6 +3,8 @@ package no.ntnu.item.csv.workers;
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.csvobject.CSVFolder;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -25,16 +27,17 @@ public class ImportShareTask extends AsyncTask<String, Void, String> {
 
 			CSVFolder userFolder;
 			try {
-				userFolder = CSVActivity.fm.getSharedfolder();
-
-				userFolder.decrypt();
+				userFolder = CSVActivity.fm.getShareFolder();
 
 				userFolder.addContent(username, this.capability);
-				userFolder.encrypt();
 
-				CSVActivity.fm.uploadObject(userFolder);
+				CSVActivity.fm.uploadFolder(userFolder);
 				return "Share with " + username + " created";
 			} catch (ServerCommunicationException e) {
+				return e.getMessage();
+			} catch (InvalidWriteEnablerException e) {
+				return e.getMessage();
+			} catch (ImmutableFileExistsException e) {
 				return e.getMessage();
 			}
 

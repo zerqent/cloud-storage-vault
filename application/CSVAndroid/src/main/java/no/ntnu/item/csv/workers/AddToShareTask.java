@@ -1,16 +1,13 @@
 package no.ntnu.item.csv.workers;
 
-import java.io.IOException;
-
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
-import no.ntnu.item.csv.exception.NoSuchAliasException;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
-
-import org.apache.http.client.ClientProtocolException;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -21,6 +18,8 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 	public AddToShareTask(Activity caller) {
 		this.caller = caller;
 	}
+
+	private String error;
 
 	@Override
 	protected Boolean doInBackground(String... params) {
@@ -33,28 +32,24 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 
 		CSVFolder userFolder;
 		try {
-			userFolder = (CSVFolder) CSVActivity.fm.get(
-					CSVActivity.fm.getSharedfolder(), user);
-			userFolder.decrypt();
+			userFolder = CSVActivity.fm.downloadFolder(user,
+					CSVActivity.fm.getShareFolder());
 
 			userFolder.addContent(alias, cap);
-			userFolder.encrypt();
 
-			CSVActivity.fm.uploadObject(userFolder);
+			CSVActivity.fm.uploadFolder(userFolder);
 
 			return true;
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (NoSuchAliasException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (ServerCommunicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error = e.getMessage();
+		} catch (RemoteFileDoesNotExistException e) {
+			this.error = e.getMessage();
+		} catch (InvalidWriteEnablerException e) {
+			this.error = e.getMessage();
+		} catch (ImmutableFileExistsException e) {
+			this.error = e.getMessage();
 		} catch (FailedToVerifySignatureException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error = e.getMessage();
 		}
 
 		return false;
@@ -64,6 +59,9 @@ public class AddToShareTask extends AsyncTask<String, Void, Boolean> {
 	protected void onPostExecute(Boolean result) {
 		if (result) {
 			Toast.makeText(this.caller, "Folder added to share",
+					Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(this.caller, "Error adding share: " + this.error,
 					Toast.LENGTH_LONG).show();
 		}
 	}

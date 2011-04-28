@@ -1,8 +1,10 @@
 package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.credentials.LocalCredentials;
-import no.ntnu.item.csv.exception.IncorrectPasswordException;
+import no.ntnu.item.csv.workers.OpenLocalCredentialsTask;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +19,7 @@ public class PasswordPromptActivity extends Activity {
 	private Button bConf;
 	private Button bOk;
 	private TextView tv;
+	private Dialog progressDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,30 +42,32 @@ public class PasswordPromptActivity extends Activity {
 		bOk.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = getIntent();
 				String password = tv.getText().toString();
-				if (password.equals("") || password == null) {
-					Toast.makeText(getApplicationContext(), "Wrong password!",
-							Toast.LENGTH_LONG).show();
-				} else {
-					try {
-						// LocalCredentials creds = new LocalCredentials(
-						// PasswordPromptActivity.this, password, false);
-						LocalCredentials creds = LocalCredentials
-								.openExistingLocalCredentials(
-										PasswordPromptActivity.this, password);
-						intent.putExtra(GetRootCapActivity.ROOTCAP, creds
-								.getRootCapability().toString());
-						intent.putExtra(CONFIGURE, false);
-						setResult(RESULT_OK, intent);
-						finish();
-					} catch (IncorrectPasswordException e) {
-						Toast.makeText(getApplicationContext(),
-								"Wrong password!", Toast.LENGTH_LONG).show();
-					}
-				}
-
+				progressDialog = ProgressDialog.show(
+						PasswordPromptActivity.this, "", "Unlocking keyring..",
+						true);
+				OpenLocalCredentialsTask olct = new OpenLocalCredentialsTask(
+						PasswordPromptActivity.this);
+				olct.execute(password);
 			}
 		});
 	}
+
+	public void callback(LocalCredentials localCredentials) {
+		if (localCredentials != null) {
+			Intent intent = getIntent();
+
+			intent.putExtra(GetRootCapActivity.ROOTCAP, localCredentials
+					.getRootCapability().toString());
+			intent.putExtra(CONFIGURE, false);
+			setResult(RESULT_OK, intent);
+			this.progressDialog.dismiss();
+			finish();
+		} else {
+			this.progressDialog.dismiss();
+			Toast.makeText(getApplicationContext(), "Wrong password!",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
 }

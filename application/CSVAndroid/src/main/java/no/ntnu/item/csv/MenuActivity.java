@@ -2,7 +2,6 @@ package no.ntnu.item.csv;
 
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
-import no.ntnu.item.csv.credentials.LocalCredentials;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
 import no.ntnu.item.csv.workers.ImportShareTask;
 import android.app.Activity;
@@ -81,8 +80,6 @@ public class MenuActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add("Log out");
-		menu.add("Delete Capability");
 		menu.add("Exit program");
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -91,7 +88,8 @@ public class MenuActivity extends Activity {
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case MENU_IMPORTSHARE: {
-			final CharSequence[] items = { "From Barcode", "Manual" };
+			final CharSequence[] items = { "From Barcode",
+					"From Plain Input Text" };
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Choose import method");
@@ -127,14 +125,9 @@ public class MenuActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getTitle().equals("Log out")) {
-			System.exit(0);
-		} else if (item.getTitle().equals("Exit program")) {
+		if (item.getTitle().equals("Exit program")) {
 			finish();
 			return true;
-		} else if (item.getTitle().equals("Delete capability")) {
-			deleteFile(LocalCredentials.save_file);
-			System.exit(0);
 		}
 		return false;
 	}

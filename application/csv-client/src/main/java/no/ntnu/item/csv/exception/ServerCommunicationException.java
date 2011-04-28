@@ -16,6 +16,7 @@ public class ServerCommunicationException extends CSVException {
 	}
 
 	public ServerCommunicationException() {
+		super("There was an error communicating with server");
 		this.code = -1;
 	}
 

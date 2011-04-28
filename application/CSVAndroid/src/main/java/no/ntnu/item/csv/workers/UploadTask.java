@@ -1,17 +1,18 @@
 package no.ntnu.item.csv.workers;
 
+import java.io.File;
 import java.io.IOException;
 
 import no.ntnu.item.csv.CSVActivity;
 import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.RemoteBrowseActivity;
+import no.ntnu.item.csv.csvobject.CSVFile;
 import no.ntnu.item.csv.exception.DuplicateAliasException;
 import no.ntnu.item.csv.exception.IllegalFileNameException;
+import no.ntnu.item.csv.exception.ImmutableFileExistsException;
 import no.ntnu.item.csv.exception.InsufficientPermissionException;
+import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
 import no.ntnu.item.csv.exception.ServerCommunicationException;
-
-import org.apache.http.client.ClientProtocolException;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,6 +25,7 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 
 	private Activity caller;
 	private String error = null;
+	private NotificationManager mNotificationManager;
 
 	public UploadTask(Activity caller) {
 		this.caller = caller;
@@ -38,6 +40,24 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 		Toast toast = Toast.makeText(this.caller.getApplicationContext(), text,
 				duration);
 		toast.show();
+
+		this.mNotificationManager = (NotificationManager) this.caller
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		int icon = R.drawable.uploaded;
+		CharSequence tickerText = "Uploading file";
+		CharSequence contentTitle = "CSV: File Upload";
+		CharSequence contentText = "A file upload is in progress";
+
+		Notification notification = new Notification(icon, tickerText,
+				System.currentTimeMillis());
+
+		PendingIntent contentIntent = PendingIntent.getActivity(this.caller, 0,
+				null, 0);
+		notification.setLatestEventInfo(this.caller.getApplicationContext(),
+				contentTitle, contentText, contentIntent);
+		mNotificationManager.notify(1, notification);
+
 	}
 
 	@Override
@@ -46,16 +66,15 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 
 		String localPath = params[0];
 		try {
-			CSVActivity.fm.put(localPath, null);
+			CSVFile file = new CSVFile(new File(localPath));
+			String[] alias = localPath.split("/");
+			String name = alias[alias.length - 1];
+			CSVActivity.fm.putObjectIntoCurrentFolder(file, name);
+
 			System.out.println("Uploaded file");
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// return null;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// return null;
+			this.error = e.getMessage();
+			return this.error;
 		} catch (InsufficientPermissionException e) {
 			this.error = e.getMessage();
 			return this.error;
@@ -68,6 +87,12 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 		} catch (ServerCommunicationException e) {
 			this.error = e.getMessage();
 			return this.error;
+		} catch (InvalidWriteEnablerException e) {
+			this.error = e.getMessage();
+			return this.error;
+		} catch (ImmutableFileExistsException e) {
+			this.error = e.getMessage();
+			return this.error;
 		}
 
 		return "File has been uploaded";
@@ -77,7 +102,7 @@ public class UploadTask extends AsyncTask<String, Void, String> {
 	protected void onPostExecute(String result) {
 		super.onPostExecute(result);
 		String ns = Context.NOTIFICATION_SERVICE;
-		NotificationManager mNotificationManager = (NotificationManager) this.caller
+		mNotificationManager = (NotificationManager) this.caller
 				.getSystemService(ns);
 
 		// Will be displayed in the top bar before opening the notification view

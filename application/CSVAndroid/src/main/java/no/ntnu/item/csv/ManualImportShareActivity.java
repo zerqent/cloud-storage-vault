@@ -3,9 +3,11 @@ package no.ntnu.item.csv;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -55,8 +57,7 @@ public class ManualImportShareActivity extends Activity {
 				} else {
 					CSVFolder folder;
 					try {
-						folder = (CSVFolder) CSVActivity.fm
-								.getCSVObject(shareCapability);
+						folder = CSVActivity.fm.downloadFolder(shareCapability);
 						if (folder == null) {
 							Toast.makeText(
 									ManualImportShareActivity.this,
@@ -67,12 +68,17 @@ public class ManualImportShareActivity extends Activity {
 									.getPublicKeyHash());
 							showDialog(DIALOG_VERIFY_KEY);
 						}
-					} catch (FailedToVerifySignatureException e) {
-						Toast.makeText(
-								ManualImportShareActivity.this,
-								"The requested share folder could not be verified",
+					} catch (ServerCommunicationException e) {
+						Toast.makeText(ManualImportShareActivity.this,
+								"There was an error communicating with server",
 								Toast.LENGTH_LONG).show();
-						e.printStackTrace();
+					} catch (RemoteFileDoesNotExistException e) {
+						Toast.makeText(ManualImportShareActivity.this,
+								"Invalid key specified", Toast.LENGTH_LONG)
+								.show();
+					} catch (FailedToVerifySignatureException e) {
+						// Should not happen since we don't have a key to
+						// compare with
 					}
 				}
 

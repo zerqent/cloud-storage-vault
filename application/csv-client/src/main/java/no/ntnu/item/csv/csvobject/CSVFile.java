@@ -2,83 +2,41 @@ package no.ntnu.item.csv.csvobject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.io.OutputStream;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
+import no.ntnu.item.cryptoutil.CryptoStreamer;
 import no.ntnu.item.cryptoutil.Cryptoutil;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
-import no.ntnu.item.csv.fileutils.FileUtils;
 
 public class CSVFile implements CSVObject {
 
-	private IvParameterSpec iv;
-	private SecretKey secretKey;
-
 	private Capability capability;
+	private File file;
+	private CryptoStreamer cryptoStreamer;
+	private byte[] recordedDigest;
 
-	private byte[] plainText;
-	private byte[] cipherText;
-	private byte[] hash;
+	public CSVFile(File f) throws FileNotFoundException {
+		if (f == null) {
+			throw new IllegalArgumentException("File can not be null");
+		}
 
-	public CSVFile(File f) throws IOException {
-		InputStream in = new FileInputStream(f);
-		this.plainText = FileUtils.readDataBinary(in, (int) f.length());
-		this.secretKey = Cryptoutil.generateSymmetricKey();
+		this.cryptoStreamer = new CryptoStreamer();
+		this.file = f;
 		this.capability = new CapabilityImpl(CapabilityType.RO,
-				this.secretKey.getEncoded(), null, true);
-		this.iv = new IvParameterSpec(Cryptoutil.nHash(
-				this.secretKey.getEncoded(), 2, 16));
-		this.hash = Cryptoutil.hash(this.plainText, 0);
+				this.cryptoStreamer.getSecretKey().getEncoded(), null, true);
+		if (!f.exists()) {
+			throw new FileNotFoundException();
+		}
 	}
 
-	public CSVFile(Capability capability, byte[] cipherText) {
+	public CSVFile(Capability capability, File f) {
 		this.setCapability(capability);
-		this.cipherText = cipherText;
-	}
-
-	@Override
-	public void encrypt() {
-		if (this.hash == null) {
-			this.hash = Cryptoutil.hash(this.plainText, 0);
-		}
-		byte[] tmp = new byte[this.plainText.length + this.hash.length];
-		System.arraycopy(this.plainText, 0, tmp, 0, this.plainText.length);
-		System.arraycopy(this.hash, 0, tmp, this.plainText.length,
-				this.hash.length);
-		this.cipherText = Cryptoutil.symEncrypt(tmp, this.secretKey, this.iv);
-	}
-
-	@Override
-	public void decrypt() {
-		byte[] tmp = Cryptoutil.symDecrypt(this.cipherText, this.secretKey,
-				this.iv);
-		if (this.plainText == null) {
-			this.plainText = new byte[tmp.length
-					- (Cryptoutil.HASH_LENGTH / Byte.SIZE)];
-		}
-		if (this.hash == null) {
-			this.hash = new byte[Cryptoutil.HASH_LENGTH / Byte.SIZE];
-		}
-		System.arraycopy(tmp, 0, this.plainText, 0, this.plainText.length);
-		System.arraycopy(tmp, this.plainText.length, this.hash, 0,
-				this.hash.length);
-	}
-
-	private void setSecretKey(byte[] sk) {
-		SecretKeySpec sks = new SecretKeySpec(sk, Cryptoutil.SYM_CIPHER);
-		this.secretKey = sks;
-	}
-
-	public void setPlainText(File file) throws IOException {
-		InputStream in = new FileInputStream(file);
-		this.plainText = FileUtils.readDataBinary(in, (int) file.length());
+		this.file = f;
 	}
 
 	@Override
@@ -89,49 +47,73 @@ public class CSVFile implements CSVObject {
 	@Override
 	public void setCapability(Capability capability) {
 		this.capability = capability;
-		byte[] key = capability.getKey();
-		this.setSecretKey(key);
-		this.iv = new IvParameterSpec(Cryptoutil.nHash(key, 2, 16));
+		this.cryptoStreamer = new CryptoStreamer(this.capability.getKey(),
+				Cryptoutil.nHash(this.capability.getKey(), 2, 16));
 	}
 
 	@Override
 	public boolean isValid() {
-		if (this.plainText == null) {
-			this.decrypt();
+		if (this.recordedDigest == null) {
+			// Means we haven't actually read/uploaded the object yet.
+			return false;
 		}
-		long start = System.currentTimeMillis();
-		byte[] hash = Cryptoutil.hash(this.plainText, 0);
-		boolean verified = Arrays.equals(hash, this.hash);
-		System.out.println("Verifying file took "
-				+ (System.currentTimeMillis() - start) / 1000.0 + " seconds");
-		System.out.println("File size = " + this.plainText.length / 1000.0
-				+ " KB");
-		return verified;
-	}
+		byte[] calculatedDigest = this.recordedDigest;
+		int n = calculatedDigest.length;
+		byte[] storedKey = this.capability.getVerificationKey();
 
-	public byte[] getPlainText() {
-		if (this.plainText == null) {
-			decrypt();
+		for (int i = 0; i < n; i++) {
+			if (calculatedDigest[i] != storedKey[i]) {
+				return false;
+			}
 		}
-		return this.plainText;
+		return true;
 	}
 
-	@Override
-	public byte[] getTransferArray() {
-		if (this.cipherText == null) {
-			encrypt();
+	public OutputStream download() {
+		try {
+			return this.cryptoStreamer
+					.getDecryptedAndHashedOutputStream(new FileOutputStream(
+							this.file));
+		} catch (FileNotFoundException e) {
+			// Should not happen, constructor checks this
+			return null;
 		}
-		return this.cipherText;
 	}
 
-	public byte[] getCipherText() {
-		return this.cipherText;
+	public InputStream upload() {
+		try {
+			return this.cryptoStreamer
+					.getEncryptedAndHashedInputStream(new FileInputStream(
+							this.file));
+		} catch (FileNotFoundException e) {
+			// Does not matter, if we download to a non-existing file that file
+			// will be created;
+			return null;
+		}
 	}
 
-	public static CSVFile createFromByteArray(byte[] input, Capability cap) {
-		CSVFile file = new CSVFile(cap, input);
-		return file;
+	public long getContentLength() {
+		// We must predict the length of the ciphertext (blocks of 64 byte)
+		long div = this.file.length() / 16;
+		long mod = this.file.length() % 16;
+		if (mod != 0) {
+			div = div + 1;
+		}
+		return div * 16;
+	}
 
+	public void finishedUpload() {
+		this.recordedDigest = this.cryptoStreamer.finish();
+		this.capability.setVerification(this.recordedDigest);
+	}
+
+	public void finishedDownload() {
+		// this.cryptoStreamer.closeStreams();
+		this.recordedDigest = this.cryptoStreamer.finish();
+	}
+
+	public File getFile() {
+		return this.file;
 	}
 
 }

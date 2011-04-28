@@ -15,12 +15,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 public class FirstStartActivity extends Activity {
 
@@ -31,9 +31,6 @@ public class FirstStartActivity extends Activity {
 	public Capability rootCapability;
 	public String rootCapString;
 
-	private TextView tv;
-	private Button bImportManual;
-	private Button bImportBarcode;
 	private Button bCreateNew;
 	private Button bImport;
 	private Button bShow;
@@ -44,8 +41,11 @@ public class FirstStartActivity extends Activity {
 	private static final int SET_PASSWORD_OLD_ROOT = 4;
 	private static final int MENU_SHOWROOTCAP = 5;
 	private static final int REQUEST_SHOWROOTCAP = 6;
+	private static final int MENU_IMPORTROOTCAP = 7;
 
 	private ProgressDialog progressDialog;
+
+	private ComponentName caller;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +56,7 @@ public class FirstStartActivity extends Activity {
 		bImport = (Button) findViewById(R.id.firstStart_import);
 		bShow = (Button) findViewById(R.id.firstStart_show);
 
-		bImportManual = (Button) findViewById(R.id.firstStart_importmanual);
-		bImportBarcode = (Button) findViewById(R.id.firstStart_importbarcode);
-		tv = (TextView) findViewById(R.id.firstStart_importheader);
+		this.caller = getCallingActivity();
 
 		if (CSVActivity.initiated()) {
 			bShow.setEnabled(true);
@@ -79,15 +77,7 @@ public class FirstStartActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				bImport.setEnabled(false);
-				bCreateNew.setEnabled(false);
-				bShow.setEnabled(false);
-
-				tv.setVisibility(View.VISIBLE);
-				bImportManual.setEnabled(true);
-				bImportManual.setVisibility(View.VISIBLE);
-				bImportBarcode.setEnabled(true);
-				bImportBarcode.setVisibility(View.VISIBLE);
+				showDialog(MENU_IMPORTROOTCAP);
 			}
 		});
 
@@ -96,27 +86,6 @@ public class FirstStartActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				showDialog(MENU_SHOWROOTCAP);
-			}
-		});
-
-		bImportManual.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(FirstStartActivity.this,
-						ManualCapabilityImportActivity.class);
-				startActivityForResult(intent, 1);
-			}
-		});
-
-		bImportBarcode.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(
-						"com.google.zxing.client.android.SCAN");
-				intent.setPackage("com.google.zxing.client.android");
-				intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-				startActivityForResult(intent, REQUEST_BARCODE);
 			}
 		});
 
@@ -133,23 +102,56 @@ public class FirstStartActivity extends Activity {
 			return this.progressDialog;
 		}
 		case MENU_SHOWROOTCAP: {
-			final CharSequence[] items = { "Barcode", "Manual" };
+			final CharSequence[] items = { "Generate Barcode",
+					"Display in Plain Text" };
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Display");
+			builder.setTitle("Choose Display Method");
 			builder.setItems(items, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int item) {
 					switch (item) {
 					case 0: {
 						IntentIntegrator.shareText(FirstStartActivity.this,
-								CSVActivity.fm.getRootCap().toString());
+								CSVActivity.fm.getRootFolder().getCapability()
+										.toString());
 						break;
 					}
 					case 1: {
 						DisplayCapability.displayCapability(
 								FirstStartActivity.this,
-								CSVActivity.fm.getRootCap()).show();
+								CSVActivity.fm.getRootFolder().getCapability())
+								.show();
+						break;
+					}
+					}
+				}
+			});
+			return builder.create();
+		}
+		case MENU_IMPORTROOTCAP: {
+			final CharSequence[] items = { "From Barcode",
+					"From Plain Input Text" };
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose Import Method");
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int item) {
+					switch (item) {
+					case 0: {
+						Intent intent = new Intent(
+								"com.google.zxing.client.android.SCAN");
+						intent.setPackage("com.google.zxing.client.android");
+						intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+						startActivityForResult(intent, REQUEST_BARCODE);
+						break;
+					}
+					case 1: {
+						Intent intent = new Intent();
+						intent.setClass(FirstStartActivity.this,
+								ManualCapabilityImportActivity.class);
+						startActivityForResult(intent, 1);
 						break;
 					}
 					}
@@ -208,9 +210,14 @@ public class FirstStartActivity extends Activity {
 		}
 		case SET_PASSWORD_OLD_ROOT: {
 			if (resultCode == RESULT_OK) {
+				Capability capability = CapabilityImpl
+						.fromString(rootCapString);
 				LocalCredentials.importExistingLocalCredentials(this,
 						data.getStringExtra(SetPasswordActivity.PASSWORD),
-						CapabilityImpl.fromString(rootCapString));
+						capability);
+				if (this.caller == null) {
+					CSVActivity.fm.setRootCapability(capability);
+				}
 				done();
 			}
 			return;
@@ -230,8 +237,13 @@ public class FirstStartActivity extends Activity {
 
 	}
 
-	public void supplyWithRootCap(Capability cap) {
-		this.rootCapability = cap;
+	public void supplyWithRootCap(Capability capability) {
+		this.rootCapability = capability;
+
+		if (this.caller == null) {
+			CSVActivity.fm.setRootCapability(capability);
+		}
+
 		this.progress.dismiss();
 		done();
 	}

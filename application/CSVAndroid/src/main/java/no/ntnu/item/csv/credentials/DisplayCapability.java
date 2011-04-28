@@ -1,7 +1,7 @@
 package no.ntnu.item.csv.credentials;
 
 import no.ntnu.item.csv.capability.Capability;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,7 +11,7 @@ public class DisplayCapability {
 	public static AlertDialog displayCapability(Activity activity,
 			Capability capability) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle("Capabilities");
+		builder.setTitle("Keys");
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
 			@Override

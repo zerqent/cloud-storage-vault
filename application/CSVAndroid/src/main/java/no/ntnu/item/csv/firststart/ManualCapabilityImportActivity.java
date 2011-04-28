@@ -5,9 +5,11 @@ import no.ntnu.item.csv.R;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.capability.CapabilityType;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 import no.ntnu.item.csv.csvobject.CSVFolder;
 import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
+import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
+import no.ntnu.item.csv.exception.ServerCommunicationException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -45,20 +47,26 @@ public class ManualCapabilityImportActivity extends Activity {
 						false);
 				CSVFolder folder;
 				try {
-					folder = (CSVFolder) CSVActivity.fm.getCSVObject(rootCap);
+					folder = CSVActivity.fm.downloadFolder(rootCap);
 					if (folder == null) {
 						Toast.makeText(ManualCapabilityImportActivity.this,
-								"The requested root capability does not exist",
+								"The requested capability does not exist",
 								Toast.LENGTH_LONG).show();
 					} else {
 						verifyHash = Base32.encode(folder.getPublicKeyHash());
 						showDialog(DIALOG_VERIFY_KEY);
 					}
-				} catch (FailedToVerifySignatureException e) {
+				} catch (ServerCommunicationException e) {
 					Toast.makeText(ManualCapabilityImportActivity.this,
-							"The requested root folder could not be verified",
+							"There was an error communicating with server",
 							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
+				} catch (RemoteFileDoesNotExistException e) {
+					Toast.makeText(ManualCapabilityImportActivity.this,
+							"The requested capability does not exist",
+							Toast.LENGTH_LONG).show();
+				} catch (FailedToVerifySignatureException e) {
+					// Should not happen since it would be impossible to verify
+					// the capability
 				}
 
 			}

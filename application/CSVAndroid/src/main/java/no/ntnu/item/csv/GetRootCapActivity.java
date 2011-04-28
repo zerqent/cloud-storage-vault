@@ -33,7 +33,6 @@ public class GetRootCapActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
 	}
 
 	@Override
@@ -70,11 +69,11 @@ public class GetRootCapActivity extends Activity {
 		}
 		if (resultCode == RESULT_CANCELED) {
 			switch (requestCode) {
-			case PASSWORD_PROMPT: {
+			case ONLINE_PASSWORD_PROMPT:
+			case PASSWORD_PROMPT:
 				finish();
 				break;
-			}
-			case CONFIGURE: {
+			case CONFIGURE:
 				File storageFile = this
 						.getFileStreamPath(LocalCredentials.save_file);
 				if (storageFile.exists()) {
@@ -85,8 +84,6 @@ public class GetRootCapActivity extends Activity {
 				}
 				break;
 			}
-			}
 		}
 	}
-
 }

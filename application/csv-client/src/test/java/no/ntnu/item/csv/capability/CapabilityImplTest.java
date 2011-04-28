@@ -4,7 +4,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import no.ntnu.item.cryptoutil.Cryptoutil;
-import no.ntnu.item.csv.contrib.jonelo.sugar.util.Base32;
+import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -69,7 +69,6 @@ public class CapabilityImplTest {
 		CapabilityImpl capimpl = new CapabilityImpl(CapabilityType.RW,
 				Cryptoutil.generateSymmetricKey().getEncoded(), null, false);
 		Assert.assertNotNull(capimpl.getWriteEnabler());
-		Assert.assertEquals(16, capimpl.getWriteEnabler().length);
 	}
 
 	public boolean isBase32(String input) {
