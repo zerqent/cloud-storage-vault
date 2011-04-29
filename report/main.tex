@@ -871,6 +871,16 @@ This process is illustrated in Figure \ref{fig:AS:readonly}.
     \label{fig:AS:readonly}
 \end{figure}
 
+\section{Implications of User Equipment}
+
+The software should be able to run on restricted devices, i.e. equipment with
+limited memory and \ac{CPU} power, often in addition to constraints on power and
+network consumption.
+
+This has implications for the design of the software, since all cryptographic
+operations has to be performed client-side. These considerations will be
+brought up throughout the further description of the software.
+
 %**************************************%
 \chapter{Cryptographic Architecture}
 %**************************************%
