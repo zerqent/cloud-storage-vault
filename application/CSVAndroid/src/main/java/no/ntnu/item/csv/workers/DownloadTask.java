@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -51,9 +52,9 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
 		CSVFile file = null;
 		try {
-			file = new CSVFile(this.capability, new File("/sdcard/" + alias));
+			file = new CSVFile(this.capability, new File(
+					Environment.getExternalStorageDirectory(), alias));
 			file = CSVActivity.fm.downloadFile(file);
-
 		} catch (ServerCommunicationException e) {
 			this.error = e.getMessage();
 		} catch (InvalidWriteEnablerException e) {
