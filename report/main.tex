@@ -1374,11 +1374,72 @@ hanging and to deliver a smoother user experience in general.
 % Package Structure, some nice UML (?)
 % Which qualities do we wish to achive? Security, Performance, Usability
 %
-The source of our client is logically separated into two entities; csv-client
-and CSVAndroid. Csv-client is a pure Java library which contain the necessary
-functionality for cryptographic operations and server communication while
-CSVAndroid contains the Android specific code, in general mostly the User
-Interface. 
+The source of our client is logically separated into two entities; CSVlib
+and CSVAndroid. CSVlib is a pure Java library which contain the necessary
+entities, cryptographic operations and communication required for the client.
+CSVAndroid contains primarily a graphical user interface to use CSVlib on an
+Android device.
+
+\subsubsection{Cryptographic Entities}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{csvobjects.pdf}
+    \caption{Cryptographic entities and their relations}
+    \label{fig:CAP:serial}
+\end{figure}
+\paragraph{Capabilities}
+
+
+The implementation of Capabilities lives in CSVlib and is a container for
+cryptographic keys and information to identify the corresponding object. A
+capability will contain information to identify an object as either a file or a
+folder, and have the information to read, write or verify that object.
+Capabilities are stored serverside in folders, in it's serialized form shown i
+figure \ref{fig:CAP:serial}. Object Type specifices if the capability
+represents a file or a folder, with values F or D (for directory) accordingly.
+Key Type specifices the permissions the key will give on the object and can be
+either RO (Read Only), RW (Read and write) or V (Verify). The different parts
+are separated by the character ``:``. Key and verify are encoded in Base32,
+which means that the 128 bits will be repleaced by an alphabet of 32
+different symbols, namely A-Z and 2-7. This transformation is done for human
+readability. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{CapabilitySerialization.pdf}
+    \caption{Serialized form of a Capability}
+    \label{fig:CAP:serial}
+\end{figure}
+
+
+\paragraph{Folders}
+% TODO: Ref til crypt solution
+A folder is represented in the class CSVFolder. Basically a CSVFolder object is
+just a collection of aliases and their corresponding capabilities. For
+the most part the data stored in a folder is so small that it can easily live for 
+as long as needed in the memory of the client. When a folder is created or 
+updated the content is serialized and encrypted before it is uploaded to the server 
+directly from memory.
+
+\paragraph{Files}
+A file is represented in the class CSVFile. While a folder in general is small,
+a file can be of any size, even larger than the \ac{RAM} of the device itself. To
+keep the memory footprint low we use a pipe-and-filter architecture to stream
+data all the way from the cloud to the disk, or vice versa, through encryption
+and verification. An example of how we do this for uploads is shown in Listing
+\ref{lst:inputstream}. The InputStreams are chained together, with the effect
+that a read from ``readBuffer`` will trigger a read trough the whole pipe. The
+DigestInputStream will update the state of the hash function, but is
+transparent in the sense that whatever goes into the stream will also be what
+comes out. The CipherInputStream on the otter hand will output an encrypted
+stream of the data from the file. Buffers are placed between each step of the
+stream for some performance increase. 
+
+\lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a
+file]
+{listings/fileupload_example.java}
+
 
 \subsubsection{Communication with Server}
 % Do not repeat what is said in Server equivalent section
@@ -1387,42 +1448,12 @@ Interface.
 For \ac{HTTP} transport we utilize the Apache Software Foundations
 HttpComponents Client\footnote{ \url http://hc.apache.org/} also known as
 HttpClient. This Client offers support for authenticated requests to a server,
-and both upload and download through {\bf PUT} and {\bf GET} requests respectively.
-
-\subsubsection{Cryptographic Entities}
-
-\paragraph{Capabilities}
-% TODO: API for Capabiltiies
-The implementation of Capabilities lives in csv-client and contains expose the
-API presented in Table XX. From a functional standpoint the Capability is in
-essence just a Container for encryption keys, and an identifier to locate the
-object associated with it.
-
-\paragraph{Folders}
-% TODO: Ref til crypt solution
-A folder is basically just a collection of aliases and their corresponding
-capabilities, and is for the most part so small that it can easily live for as
-long as needed in the memory of the client. When a folder is created or updated
-the content is serialized and encrypted before it is uploaded to the server
-directly from memory.
-
-\paragraph{Files}
-While a folder is small a file can grow to a size much larger than the size of
-the devices memory which means that care must be taken to avoid this. We solved
-this problem by the use of Javas InputStream and OutputStream-objects.
-Basically the streams allow multiple streams to be nested outside or inside
-each other, and a read or write to the stream causes the data to pass through
-all streams. In the example of a file upload we need to read the data from
-disk, get a digest of the file, encrypt the file and upload the ciphertext to
-the server. All these operations can be piped together, the example of how we
-do this for a file upload is shown in Listing \ref{lst:inputstream}. We also buffer data for every
-step to prevent streams waiting for each other.
-
-\lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a
-file]
-{listings/fileupload_example.java}
-
-
+and both upload and download through {\bf PUT} and {\bf GET} requests
+respectively. We wrap communication with the server in two classes,
+Communication.java and CSVFileManager.java. Communication.java provides
+functions for sending and retrieving data from our servers while
+CSVFileManager.java providies specific methods for uploading the encrypted
+objects 
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to

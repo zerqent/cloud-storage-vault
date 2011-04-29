@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="26cm" height="10cm" viewBox="139 19 502 193" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #ffffff" x="140" y="40" width="271" height="170"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="140" y="40" width="271" height="170"/>
+    <rect style="fill: #ffffff" x="140" y="20" width="204.2" height="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="140" y="20" width="204.2" height="20"/>
+    <text style="fill: #000000;text-anchor:start;font-size:12.7998;font-family:monospace;font-style:normal;font-weight:normal" x="142" y="34">no.ntnu.item.csv.csvobject</text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="420" y="40" width="220" height="170"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="420" y="40" width="220" height="170"/>
+    <rect style="fill: #ffffff" x="420" y="20" width="211.9" height="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="420" y="20" width="211.9" height="20"/>
+    <text style="fill: #000000;text-anchor:start;font-size:12.7998;font-family:monospace;font-style:normal;font-weight:normal" x="422" y="34">no.ntnu.item.csv.capability</text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="143" y="119" width="78.75" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="143" y="119" width="78.75" height="28"/>
+    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:700" x="182.375" y="138">CSVFile</text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="222" y="49" width="110.1" height="44"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="222" y="49" width="110.1" height="44"/>
+    <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:monospace;font-style:normal;font-weight:normal" x="277.05" y="65">&lt;&lt;interface&gt;&gt;</text>
+    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:700" x="277.05" y="84">CSVObject</text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="280" y="120" width="102.95" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="280" y="120" width="102.95" height="28"/>
+    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:700" x="331.475" y="139">CSVFolder</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="350.336,71 400,71 400,108.5 382.95,108.5 382.95,134 "/>
+    <polygon style="fill: #ffffff" points="350.336,63 334.336,71 350.336,79 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="350.336,63 334.336,71 350.336,79 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="434" y="67" width="100.85" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="434" y="67" width="100.85" height="28"/>
+    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:700" x="484.425" y="86">Capability</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="203.764,71 182.375,71 182.375,119 "/>
+    <polygon style="fill: #ffffff" points="203.764,79 219.764,71 203.764,63 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="203.764,79 219.764,71 203.764,63 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="382.95,134 484.425,134 484.425,101.705 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="489.425,114.353 484.425,98.3526 479.425,114.353 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="182.375,147 182.375,167 534.85,167 534.85,101.705 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="539.85,114.353 534.85,98.3526 529.85,114.353 "/>
+  </g>
+</svg>
