@@ -1434,7 +1434,7 @@ DigestInputStream will update the state of the hash function, but is
 transparent in the sense that whatever goes into the stream will also be what
 comes out. The CipherInputStream on the otter hand will output an encrypted
 stream of the data from the file. Buffers are placed between each step of the
-stream for some performance increase. 
+stream for some performance increase.  
 
 \lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a
 file]
@@ -1453,14 +1453,35 @@ respectively. We wrap communication with the server in two classes,
 Communication.java and CSVFileManager.java. Communication.java provides
 functions for sending and retrieving data from our servers while
 CSVFileManager.java providies specific methods for uploading the encrypted
-objects 
+objects.
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
 % achieve sharing, securely
+% TODO: Ref til hvor vi beskriver sharing
+A shared folder is basically just a folder object which two or more people have
+the required encryption keys for. However the problem of creating a share with
+someone is that you have to verify that you are actually sharing with the same
+person. The data that will have to be shared is a serialized form of the
+capability, shown in Figure \ref{fig:CAP:serial}. The client we have
+implemented supports two methods of doing this. The most cumbersome is having
+to manually copying the key from one users client to anothers, and afterwards
+verifying that the key for the selected folder is ok. The other possiblility is
+to make use of a barcode. What this means is that one user will generate a
+barcode on his device, and the other user can scan that code using his device'
+camera. The barcode contains both the key and verification for the shared
+folder. Once two users have shared one folder they will never have to meet
+again to share something else.
+%% TODO: Sjekk device'
 
 \subsection{Adding a new client}
 % Same as sharing rationale.
+Using more clients, or different devices is almost the exact same as sharing,
+and is solved in the same manner. The only difference is that the capability
+that needs to be transfered is that of the root-folder. It is also possible to
+take any other folder and use as a the root for the new folder if that is the
+users wish.
+
 
 \subsection{User Interface}
 % goal: As easy as possible!
@@ -1473,6 +1494,8 @@ objects
 \subsection{Secure storage of files on Client}
 % Can we view files without them leaving traces on filesystem?
 % Optional/Possible?
+A problem with 
+
 
 %**************************************%
 \chapter{Results}
