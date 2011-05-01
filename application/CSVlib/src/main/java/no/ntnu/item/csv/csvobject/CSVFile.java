@@ -29,7 +29,7 @@ public class CSVFile implements CSVObject {
 		this.file = f;
 		this.capability = new CapabilityImpl(CapabilityType.RO,
 				this.cryptoStreamer.getSecretKey().getEncoded(), null, true);
-		if (!f.exists()) {
+		if (!f.exists() || !f.canRead()) {
 			throw new FileNotFoundException();
 		}
 	}
@@ -73,9 +73,10 @@ public class CSVFile implements CSVObject {
 		try {
 			return this.cryptoStreamer
 					.getDecryptedAndHashedOutputStream(new FileOutputStream(
-							this.file));
+							this.file.getAbsolutePath()));
 		} catch (FileNotFoundException e) {
-			// Should not happen, constructor checks this
+			// Should not happen, as long as we have write access to sdcard and
+			// the filename we are trying to write
 			return null;
 		}
 	}
@@ -86,8 +87,7 @@ public class CSVFile implements CSVObject {
 					.getEncryptedAndHashedInputStream(new FileInputStream(
 							this.file));
 		} catch (FileNotFoundException e) {
-			// Does not matter, if we download to a non-existing file that file
-			// will be created;
+			// Constructor should check this
 			return null;
 		}
 	}

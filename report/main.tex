@@ -139,6 +139,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{CBC}{Cipher Block Chaining}
 \acro{CG}{Credential Generator}
 \acro{CM}{Cloud Manager}
+\acro{CPU}{Central Processing Unit}
 \acro{DP}{Data Processor}
 \acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
@@ -155,6 +156,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{JCE}{Java Cryptographic Extensions}
 \acro{JDK}{Java Development Kit}
 \acro{JRE}{Java Runtime Environment}
+\acro{JVM}{Java Virtual Machine}
 \acro{LAFS}{Least Authority File System}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
@@ -164,6 +166,8 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PEP}{Python Enhancement Proposal}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
+\acro{PoC}{Proof-of-concept}
+\acro{RAM}{Random access memory}
 \acro{REST}{Representational State Transfer}
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SaaS}{Software as a Service}
@@ -657,13 +661,6 @@ systems, called Cryptree \cite{cryptree}, and has strong focus on reliability
 by both providing central servers, in addition to a \emph{P2P cloud} of Wuala
 users that has donated capacity to the system. 
 
-\subsection{Jungle Disk}
-
-
-\subsection{Ipeer}
-
-
-
 %**************************************%
 \chapter{Architectural Overview}
 %**************************************%
@@ -671,16 +668,15 @@ users that has donated capacity to the system.
 
 The architectural solution of a secure cloud file sharing system has to convince
 its users that the functions indeed are secure, and that the concepts are easy
-to understand and accept.
-
-\section{Introduction}
-% FIXME: Can we just drop this section and include its contents in the chapter
-% intro?
+to understand and accept. 
 
 The architecture has to support various user functionality. Figure
 \ref{fig:AS:overview} exhibits Alice uploading files to the cloud, and
 thereafter transferring the necessary information to Bob so that he also can
 gain access to the files.
+
+In the following sections, we will describe how the file storage is organized,
+and take a closer look at how the different problems are solved.
 
 \begin{figure}[h!]
     \centering
@@ -688,9 +684,6 @@ gain access to the files.
     \caption{Overview of user functionality}
     \label{fig:AS:overview}
 \end{figure}
-
-In the following sections, we will describe how the file storage is organized,
-and take a closer look at how the different functionality are solved.
 
 \section{File Storage}
 \label{sec:AS:FS}
@@ -706,8 +699,8 @@ A capability is a short alphanumeric string containing all information needed
 to find, get, read and write a file or folder. This includes an identifier and
 cryptographic keys.
 
-In principle, the only operations the key-value store need to support are
-\textbf{POST}, \textbf{GET}.
+In principle, the only operations the key-value store need to support, are
+\textbf{PUT} and \textbf{GET}.
 
 \subsection{Directory Structure}
 
@@ -745,12 +738,14 @@ security purposes, and are described further in Chapter \ref{chap:CS}.
 \input{tables/folder_meta}
 
 \section{ACL/Authentication Layer}
-There should be some layer present on the application which enforces \ac{ACL}s and
-authenticates users which should have access to the stored files. From a security
-standpoint this is not necessarily required. An attacker would have to be able
-to guess the storage index(key) and the corresponding encryption key for that
-index to be able to get any information out of the system. But there are however
-several reasons why we believe this layer should be implemented.
+
+There should be some layer present on the application which enforces \ac{ACL}s
+and authenticates users which should have access to the stored files. From a
+security standpoint this is not necessarily required. An attacker would have to
+be able to guess the storage index\footnote{Or the ``key''} and the
+corresponding encryption key for that index to be able to get any information
+out of the system. But there are however several reasons why we believe this
+layer should be implemented, as per described in the following sections.
 
 \subsection{Block access}
 If for whatever reason a storage index and corresponding decryption key is
@@ -761,30 +756,34 @@ for instance in the event of a stolen/lost terminal where the credentials are
 saved.
 
 \subsection{File Deletion}
-% TODO: Ref write to dir
-The way we handle folders allows a distinction between write access and read
-access. The write key can be used to deduce a secret that can be safely leaked
-to the server which in turn would be used decide if a user has permission to
-delete a folder. It could also be used for deciding if a user has permission to
-write to files, but this can be verified by the server in terms of the
-signature.
-For immutable files there is no concept of write-access, only read. It is
-both illogical and impractical to assume to read access should also yield
-delete-access. A layer which identifies which users first creates a file can
-by the same method decide who should be able to delete a file. This might also
-be in the interest of accounting and billing.
+
+The way of the proposed solution to handle folders, allows a distinction between write
+access and read access. The write key can be used to deduce a secret that can
+be safely leaked to the server which in turn would be used decide if a user has
+permission to delete a folder. It could also be used for deciding if a user has
+permission to write to files, but this can be verified by the server in terms
+of the signature.
+
+For immutable files there is no concept of write-access, only read. It is both
+illogical and impractical to assume that read access should also yield
+delete access. A layer which identifies which users first creates a file, can by
+the same method decide who should be able to delete a file. 
 
 \subsection{Accounting}
-If this application were to by run by the cloud storage provider, it is
+
+If this application were to by run by a cloud storage provider, it is
 important to be able to decide which person should be billed for the storage of
-files as well as the traffic generated by users uploading and downloading
-files. For an immutable file the storage can be decided by who created the
-file, the traffic is billed on whoever retrieved or uploaded a file.
+files, as well as the traffic generated by users uploading and downloading
+files. 
+
+For an immutable file, this can be identified by the user who created the file,
+and the traffic is billed on whoever retrieved or uploaded the file.
+
 Accounting might also be interesting for an organization using a third party
 cloud provider. For instance an employee who leaves the organization might be
 tempted to copy all the data stored on the server, the organization should then
 be able to discover what he has done. It is however worth noting that if the
-accounting happens server side there is no real way to verify that all logs
+accounting happens server side, there is no real way to verify that all logs
 stored there are correct, since the cloud provider will have access to at least
 delete them.
 
@@ -873,6 +872,16 @@ This process is illustrated in Figure \ref{fig:AS:readonly}.
     \caption{Sharing write-protected folders}
     \label{fig:AS:readonly}
 \end{figure}
+
+\section{Implications of User Equipment}
+
+The software should be able to run on restricted devices, i.e. equipment with
+limited memory and \ac{CPU} power, often in addition to constraints on power and
+network consumption.
+
+This has implications for the design of the software, since all cryptographic
+operations has to be performed client-side. These considerations will be
+brought up throughout the further description of the software.
 
 %**************************************%
 \chapter{Cryptographic Architecture}
@@ -1151,7 +1160,8 @@ security issues as long as it is used correctly.
 \chapter{Implementation}
 %**************************************%
 This chapter describes the implementation of our proof-of-concept client and
-server.
+server. The technologies and software \ac{API}s used will be described, in
+addition to implementation details that require special attention.
 
 \section{Server}
 
@@ -1318,79 +1328,174 @@ database.
 % Security vs. Usability - Rationale for GUI
 % MVC? V=Android GUI
 %
+The \ac{PoC}-client we have implemented is made for devices using the Android
+operating system, which is based on Linux. The SDK for making Android
+applications is essentially a somewhat modified version of Java. 
 
-\subsection{Structure}
+Most devices that use the Android operating system are mobile phones or
+tablets, which basically means that they are more limited in terms of speed and
+memory. The point of making the \ac{PoC}-client for such a device is that if it
+does perform well so will any faster device.
+
+\subsection{Environment}
+The \ac{PoC}-client was made on the Android plattform in the Java programming
+language, together with a set of frameworks. The rationale for these are as
+follows:
+
+\paragraph{Android} The Android operating system is made by Google and is most
+common found on mobile phones and tablets. The choice of Android was done
+because of hardware availability and familiarity with developing for the
+plattform and the programming language (Java). 
+
+\paragraph{Java} Java is a high-level, object-oriented programming language.
+Java applications runs in a \ac{JVM} which basically mean that a Java
+application can run on  almost any device which has a \ac{JVM}. The \ac{JVM} on
+Android is called Dalvik.
+
+\paragraph{HttpComponents} Apache HttpComponents are a set of libraries for
+HTTP-transport in Java. The part used in our client is called HttpClient.
+Android incorporates part of this client in its native \ac{JVM}. The use of
+this library adheres to the \ac{DRY}-principle.
+
+\paragraph{\ac{JCA}}\ac{JCA} is an archtivecture for doing cryptographic
+operations in Java. The architecture is based on principles of Implementation
+independence, implementation interoperability and algorithm extensibility.
+Basically what this means is that each implementation of the \ac{JVM} can have
+different implementations of the cryptographic primitives, but the developer
+does not need to know which implementation is available.
+
+\paragraph{ZXing Barcode Scanner} ZXing Barcode Scanner is a popular Android
+application which can be used by other Android applications to both scan and
+generate barcodes. We use this application to adhere to the \ac{DRY}-principle. 
+
+\subsection{Architectural Patterns}
+
+\paragraph{Client-server} What we have implemented is the client part of the
+overall client-server pattern.
+
+\paragraph{Pipe-and-filter} The basis of the pipe-and-filter pattern is that
+there exist a chain of processing elements, where the output of one element is
+the input of the next element. We use this for file uploads and downloads to
+limit the memory usage of the client as well as to increase performance.
+
+\paragraph{Asynchronous pattern} We use asynchronous calls to slow operations
+(e.g. file upload, key generation) extensivly, to prevent the interface from
+hanging and to deliver a smoother user experience in general.  
+
+\subsection{Implementation Details}
+
+\subsubsection{Structure}
 % Package Structure, some nice UML (?)
 % Which qualities do we wish to achive? Security, Performance, Usability
+%
+The source of our client is logically separated into two entities; CSVlib
+and CSVAndroid. CSVlib is a pure Java library which contain the necessary
+entities, cryptographic operations and communication required for the client.
+CSVAndroid contains primarily a graphical user interface to use CSVlib on an
+Android device.
 
-\subsection{Communication with Server}
+\subsubsection{Cryptographic Entities}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{csvobjects.pdf}
+    \caption{Cryptographic entities and their relations}
+    \label{fig:CAP:serial}
+\end{figure}
+\paragraph{Capabilities}
+
+
+The implementation of Capabilities lives in CSVlib and is a container for
+cryptographic keys and information to identify the corresponding object. A
+capability will contain information to identify an object as either a file or a
+folder, and have the information to read, write or verify that object.
+Capabilities are stored serverside in folders, in it's serialized form shown i
+figure \ref{fig:CAP:serial}. Object Type specifices if the capability
+represents a file or a folder, with values F or D (for directory) accordingly.
+Key Type specifices the permissions the key will give on the object and can be
+either RO (Read Only), RW (Read and write) or V (Verify). The different parts
+are separated by the character ``:``. Key and verify are encoded in Base32,
+which means that the 128 bits will be repleaced by an alphabet of 32
+different symbols, namely A-Z and 2-7. This transformation is done for human
+readability. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{CapabilitySerialization.pdf}
+    \caption{Serialized form of a Capability}
+    \label{fig:CAP:serial}
+\end{figure}
+
+
+\paragraph{Folders}
+% TODO: Ref til crypt solution
+A folder is represented in the class CSVFolder. Basically a CSVFolder object is
+just a collection of aliases and their corresponding capabilities. For
+the most part the data stored in a folder is so small that it can easily live for 
+as long as needed in the memory of the client. When a folder is created or 
+updated the content is serialized and encrypted before it is uploaded to the server 
+directly from memory.
+
+\paragraph{Files}
+A file is represented in the class CSVFile. While a folder in general is small,
+a file can be of any size, even larger than the \ac{RAM} of the device itself. To
+keep the memory footprint low we use a pipe-and-filter architecture to stream
+data all the way from the cloud to the disk, or vice versa, through encryption
+and verification. An example of how we do this for uploads is shown in Listing
+\ref{lst:inputstream}. The InputStreams are chained together, with the effect
+that a read from ``readBuffer`` will trigger a read trough the whole pipe. The
+DigestInputStream will update the state of the hash function, but is
+transparent in the sense that whatever goes into the stream will also be what
+comes out. The CipherInputStream on the otter hand will output an encrypted
+stream of the data from the file. Buffers are placed between each step of the
+stream for some performance increase.  
+
+\lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a
+file]
+{listings/fileupload_example.java}
+
+
+\subsubsection{Communication with Server}
 % Do not repeat what is said in Server equivalent section
 % Apache commons, Serialization of objects
 
-\subsection{Cryptography}
-% Do not repeat previous chapter, but specific of implementation
-% JCE, Code organization, Capabilities
-% Classes, which functionality we get from them
-
-To get access to cryptographic functions in Java we need to call on what is
-known as the \ac{JCE}. Basically the \ac{JCE} was earlier an extension which
-was not part of the official Java \ac{JDK}, but has since been embedded in what
-is called the \ac{JCA}\cite{jca}.
-Basically the \ac{JCA} provides factories for accessing implementations of
-cryptographic functions from different Providers. In essence what this mean is
-that there may be more than one implementation of for instance \ac{AES}. It is
-possible to specify which provider to use, but it is also possible to make the
-\ac{JRE} choose whatever provider it sees most fit. 
-
-\subsubsection{Encryption} 
-
-The {\bf javax.crypto.cipher} class in the \ac{JCA} deal with encryption and
-decryption of both asymmetric and symmetric ciphers.  It also handles the mode
-of operation and padding scheme to be used. Which scheme is used for all three
-choices depend on the String sent to the factory in the Class. A Basic example
-of how we use encryption can be seen in Listing \ref{lst:cipherexample}. It is
-also possible to specify the \ac{IV} through the {\bf init} call, if not the
-\ac{IV} is automatically generated.
-
-\lstinputlisting[label=lst:cipherexample, caption=\ac{AES}
-encryption in Java]
-{listings/cipher_example.java}
-
-\subsubsection{Key Generation}
-Key Generation is accomplished in a similar way as Encryption, but through {\bf
-javax.crypto.KeyGenerator} and {\bf javax.crypto.KeyPairGenerator} for
-symmetric and asymmetric keys respectively. Listing \ref{lst:keygenexample}
-shows how we generate these keys.
-
-\lstinputlisting[label=lst:keygenexample, caption= \ac{AES} and
-\ac{RSA} key generation in Java]
-{listings/keygen_example.java}
-
-\subsubsection{Digital Signatures}
-Digital Signatures can be accomplished with the help of a \ac{RSA}-keypair. The
-factory used for creation of signatures as well as validation of signatures
-lives in {\bf java.security.Signature}. How we use these can be seen in Listing 
-\ref{lst:signatureexample}.
-
-\lstinputlisting[label=lst:signatureexample, caption= Digital signatures in
-Java using \ac{RSA}]
-{listings/keygen_example.java}
-
-\subsubsection{Hashing} For cryptographic hashing the \ac{JCA} is similar to
-other cryptographic operations, and the factory lives in {\bf
-java.security.MessageDigest}. However, we need double \ac{SHA}-256, which is
-not an option. The implementation we use for double \ac{SHA}-256 is shown in
-Listing 
-
-\lstinputlisting[label=lst:hashingexample, caption= Double \ac{SHA}-256 in Java]
-{listings/hashing_example.java}
+For \ac{HTTP} transport we utilize the Apache Software Foundations
+HttpComponents Client\footnote{ \url http://hc.apache.org/} also known as
+HttpClient. This Client offers support for authenticated requests to a server,
+and both upload and download through {\bf PUT} and {\bf GET} requests
+respectively. We wrap communication with the server in two classes,
+Communication.java and CSVFileManager.java. Communication.java provides
+functions for sending and retrieving data from our servers while
+CSVFileManager.java providies specific methods for uploading the encrypted
+objects.
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
 % achieve sharing, securely
+% TODO: Ref til hvor vi beskriver sharing
+A shared folder is basically just a folder object which two or more people have
+the required encryption keys for. However the problem of creating a share with
+someone is that you have to verify that you are actually sharing with the same
+person. The data that will have to be shared is a serialized form of the
+capability, shown in Figure \ref{fig:CAP:serial}. The client we have
+implemented supports two methods of doing this. The most cumbersome is having
+to manually copying the key from one users client to anothers, and afterwards
+verifying that the key for the selected folder is ok. The other possiblility is
+to make use of a barcode. What this means is that one user will generate a
+barcode on his device, and the other user can scan that code using his device'
+camera. The barcode contains both the key and verification for the shared
+folder. Once two users have shared one folder they will never have to meet
+again to share something else.
+%% TODO: Sjekk device'
 
 \subsection{Adding a new client}
 % Same as sharing rationale.
+Using more clients, or different devices is almost the exact same as sharing,
+and is solved in the same manner. The only difference is that the capability
+that needs to be transfered is that of the root-folder. It is also possible to
+take any other folder and use as a the root for the new folder if that is the
+users wish.
+
 
 \subsection{User Interface}
 % goal: As easy as possible!
@@ -1403,6 +1508,8 @@ Listing
 \subsection{Secure storage of files on Client}
 % Can we view files without them leaving traces on filesystem?
 % Optional/Possible?
+A problem with 
+
 
 %**************************************%
 \chapter{Results}
