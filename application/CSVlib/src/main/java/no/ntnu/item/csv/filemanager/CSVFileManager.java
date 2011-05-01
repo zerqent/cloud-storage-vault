@@ -367,11 +367,16 @@ public class CSVFileManager {
 			throws ServerCommunicationException, InvalidWriteEnablerException,
 			ImmutableFileExistsException, RemoteFileDoesNotExistException,
 			FailedToVerifySignatureException {
+
 		if (folder.getContents() == null) {
 			this.downloadFolder(folder);
 		}
 		folder.getContents().remove(alias);
 		this.uploadFolder(folder);
+		if (folder.getCapability().getStorageIndex()
+				.equals(this.sharedfolder.getCapability().getStorageIndex())) {
+			this.sharedfolder = folder;
+		}
 
 	}
 }
