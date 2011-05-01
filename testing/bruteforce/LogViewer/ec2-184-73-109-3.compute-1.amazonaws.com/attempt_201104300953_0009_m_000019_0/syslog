@@ -1,0 +1,12 @@
+2011-04-30 16:23:07,609 INFO org.apache.hadoop.metrics.jvm.JvmMetrics: Initializing JVM Metrics with processName=MAP, sessionId=
+2011-04-30 16:23:07,791 INFO org.apache.hadoop.mapred.MapTask: numReduceTasks: 20
+2011-04-30 16:23:07,800 INFO org.apache.hadoop.mapred.MapTask: io.sort.mb = 100
+2011-04-30 16:23:07,919 INFO org.apache.hadoop.mapred.MapTask: data buffer = 79691776/99614720
+2011-04-30 16:23:07,919 INFO org.apache.hadoop.mapred.MapTask: record buffer = 262144/327680
+2011-04-30 16:31:34,979 INFO org.apache.hadoop.mapred.MapTask: Starting flush of map output
+2011-04-30 16:31:35,008 INFO org.apache.hadoop.util.NativeCodeLoader: Loaded the native-hadoop library
+2011-04-30 16:31:35,010 INFO org.apache.hadoop.io.compress.zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+2011-04-30 16:31:35,011 INFO org.apache.hadoop.io.compress.CodecPool: Got brand-new compressor
+2011-04-30 16:31:35,060 INFO org.apache.hadoop.mapred.MapTask: Finished spill 0
+2011-04-30 16:31:35,062 INFO org.apache.hadoop.mapred.TaskRunner: Task:attempt_201104300953_0009_m_000019_0 is done. And is in the process of commiting
+2011-04-30 16:31:35,070 INFO org.apache.hadoop.mapred.TaskRunner: Task 'attempt_201104300953_0009_m_000019_0' done.

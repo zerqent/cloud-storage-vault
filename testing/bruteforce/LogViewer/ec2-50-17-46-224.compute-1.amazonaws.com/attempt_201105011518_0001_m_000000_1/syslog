@@ -1,0 +1,11 @@
+2011-05-01 15:21:20,364 INFO org.apache.hadoop.metrics.jvm.JvmMetrics: Initializing JVM Metrics with processName=MAP, sessionId=
+2011-05-01 15:21:20,526 INFO org.apache.hadoop.mapred.MapTask: numReduceTasks: 0
+2011-05-01 15:21:21,597 WARN org.apache.hadoop.mapred.TaskTracker: Error running child
+java.lang.NullPointerException
+	at no.ntnu.item.dictionaryattack.DAMapper.map(DAMapper.java:112)
+	at no.ntnu.item.dictionaryattack.DAMapper.map(DAMapper.java:1)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:50)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:358)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:307)
+	at org.apache.hadoop.mapred.Child.main(Child.java:170)
+2011-05-01 15:21:21,601 INFO org.apache.hadoop.mapred.TaskRunner: Runnning cleanup for the task

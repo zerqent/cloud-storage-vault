@@ -1,0 +1,9 @@
+Exception in thread "dict0" java.lang.IllegalArgumentException: Empty key
+	at javax.crypto.spec.SecretKeySpec.<init>(DashoA13*..)
+	at de.rtner.security.auth.spi.MacBasedPRF.init(Unknown Source)
+	at de.rtner.security.auth.spi.PBKDF2Engine.assertPRF(Unknown Source)
+	at de.rtner.security.auth.spi.PBKDF2Engine.deriveKey(Unknown Source)
+	at no.ntnu.item.dictionaryattack.DictionaryThread.setKey(DictionaryThread.java:68)
+	at no.ntnu.item.dictionaryattack.DictionaryThread.check(DictionaryThread.java:51)
+	at no.ntnu.item.dictionaryattack.DictionaryThread.run(DictionaryThread.java:43)
+	at java.lang.Thread.run(Thread.java:662)

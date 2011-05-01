@@ -1,0 +1,324 @@
+2011-05-01 15:23:34,112 INFO org.apache.hadoop.metrics.jvm.JvmMetrics: Initializing JVM Metrics with processName=MAP, sessionId=
+2011-05-01 15:23:34,279 INFO org.apache.hadoop.mapred.MapTask: numReduceTasks: 0
+2011-05-01 15:25:11,027 INFO org.apache.hadoop.mapred.TaskRunner: Communication exception: java.io.IOException: Call to /127.0.0.1:48999 failed on local exception: java.io.IOException: Connection reset by peer
+	at org.apache.hadoop.ipc.Client.wrapException(Client.java:775)
+	at org.apache.hadoop.ipc.Client.call(Client.java:743)
+	at org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+	at org.apache.hadoop.mapred.$Proxy0.statusUpdate(Unknown Source)
+	at org.apache.hadoop.mapred.Task$TaskReporter.run(Task.java:543)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: Connection reset by peer
+	at sun.nio.ch.FileDispatcher.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:21)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:202)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:175)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:243)
+	at org.apache.hadoop.net.SocketInputStream$Reader.performIO(SocketInputStream.java:55)
+	at org.apache.hadoop.net.SocketIOWithTimeout.doIO(SocketIOWithTimeout.java:142)
+	at org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:155)
+	at org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:128)
+	at java.io.FilterInputStream.read(FilterInputStream.java:116)
+	at org.apache.hadoop.ipc.Client$Connection$PingInputStream.read(Client.java:276)
+	at java.io.BufferedInputStream.fill(BufferedInputStream.java:218)
+	at java.io.BufferedInputStream.read(BufferedInputStream.java:237)
+	at java.io.DataInputStream.readInt(DataInputStream.java:370)
+	at org.apache.hadoop.ipc.Client$Connection.receiveResponse(Client.java:501)
+	at org.apache.hadoop.ipc.Client$Connection.run(Client.java:446)
+
+2011-05-01 15:25:15,003 INFO org.apache.hadoop.hdfs.DFSClient: Could not obtain block blk_4963497497099454408_1152 from any node:  java.io.IOException: No live nodes contain current block
+2011-05-01 15:25:15,030 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 0 time(s).
+2011-05-01 15:25:16,030 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 1 time(s).
+2011-05-01 15:25:17,031 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 2 time(s).
+2011-05-01 15:25:18,031 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 3 time(s).
+2011-05-01 15:25:19,005 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 0 time(s).
+2011-05-01 15:25:19,031 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 4 time(s).
+2011-05-01 15:25:20,007 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 1 time(s).
+2011-05-01 15:25:20,032 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 5 time(s).
+2011-05-01 15:25:21,008 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 2 time(s).
+2011-05-01 15:25:21,032 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 6 time(s).
+2011-05-01 15:25:22,010 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 3 time(s).
+2011-05-01 15:25:22,032 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 7 time(s).
+2011-05-01 15:25:23,011 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 4 time(s).
+2011-05-01 15:25:23,033 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 8 time(s).
+2011-05-01 15:25:24,012 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 5 time(s).
+2011-05-01 15:25:24,033 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 9 time(s).
+2011-05-01 15:25:24,034 INFO org.apache.hadoop.mapred.TaskRunner: Communication exception: java.net.ConnectException: Call to /127.0.0.1:48999 failed on connection exception: java.net.ConnectException: Connection refused
+	at org.apache.hadoop.ipc.Client.wrapException(Client.java:767)
+	at org.apache.hadoop.ipc.Client.call(Client.java:743)
+	at org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+	at org.apache.hadoop.mapred.$Proxy0.statusUpdate(Unknown Source)
+	at org.apache.hadoop.mapred.Task$TaskReporter.run(Task.java:543)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:567)
+	at org.apache.hadoop.net.SocketIOWithTimeout.connect(SocketIOWithTimeout.java:206)
+	at org.apache.hadoop.net.NetUtils.connect(NetUtils.java:404)
+	at org.apache.hadoop.ipc.Client$Connection.setupIOstreams(Client.java:304)
+	at org.apache.hadoop.ipc.Client$Connection.access$1700(Client.java:176)
+	at org.apache.hadoop.ipc.Client.getConnection(Client.java:860)
+	at org.apache.hadoop.ipc.Client.call(Client.java:720)
+	... 4 more
+
+2011-05-01 15:25:25,014 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 6 time(s).
+2011-05-01 15:25:26,016 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 7 time(s).
+2011-05-01 15:25:27,017 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 8 time(s).
+2011-05-01 15:25:28,018 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 9 time(s).
+2011-05-01 15:25:28,021 INFO org.apache.hadoop.hdfs.DFSClient: Could not obtain block blk_4963497497099454408_1152 from any node:  java.io.IOException: No live nodes contain current block
+2011-05-01 15:25:28,035 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 0 time(s).
+2011-05-01 15:25:29,035 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 1 time(s).
+2011-05-01 15:25:30,036 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 2 time(s).
+2011-05-01 15:25:31,037 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 3 time(s).
+2011-05-01 15:25:32,023 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000. Already tried 0 time(s).
+2011-05-01 15:25:32,037 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 4 time(s).
+2011-05-01 15:25:33,038 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 5 time(s).
+2011-05-01 15:25:34,039 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 6 time(s).
+2011-05-01 15:25:35,039 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 7 time(s).
+2011-05-01 15:25:36,039 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 8 time(s).
+2011-05-01 15:25:37,040 INFO org.apache.hadoop.ipc.Client: Retrying connect to server: /127.0.0.1:48999. Already tried 9 time(s).
+2011-05-01 15:25:37,040 INFO org.apache.hadoop.mapred.TaskRunner: Communication exception: java.net.ConnectException: Call to /127.0.0.1:48999 failed on connection exception: java.net.ConnectException: Connection refused
+	at org.apache.hadoop.ipc.Client.wrapException(Client.java:767)
+	at org.apache.hadoop.ipc.Client.call(Client.java:743)
+	at org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+	at org.apache.hadoop.mapred.$Proxy0.statusUpdate(Unknown Source)
+	at org.apache.hadoop.mapred.Task$TaskReporter.run(Task.java:543)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:567)
+	at org.apache.hadoop.net.SocketIOWithTimeout.connect(SocketIOWithTimeout.java:206)
+	at org.apache.hadoop.net.NetUtils.connect(NetUtils.java:404)
+	at org.apache.hadoop.ipc.Client$Connection.setupIOstreams(Client.java:304)
+	at org.apache.hadoop.ipc.Client$Connection.access$1700(Client.java:176)
+	at org.apache.hadoop.ipc.Client.getConnection(Client.java:860)
+	at org.apache.hadoop.ipc.Client.call(Client.java:720)
+	... 4 more
+
+2011-05-01 15:25:37,045 INFO org.apache.hadoop.mapred.TaskRunner: Process Thread Dump: Communication exception
+9 active threads
+Thread 5813 (IPC Client (47) connection to ec2-50-19-38-185.compute-1.amazonaws.com/10.66.185.60:9000 from hadoopuser):
+  State: RUNNABLE
+  Blocked count: 0
+  Waited count: 0
+  Stack:
+    sun.nio.ch.EPollArrayWrapper.epollWait(Native Method)
+    sun.nio.ch.EPollArrayWrapper.poll(EPollArrayWrapper.java:210)
+    sun.nio.ch.EPollSelectorImpl.doSelect(EPollSelectorImpl.java:65)
+    sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:69)
+    sun.nio.ch.SelectorImpl.select(SelectorImpl.java:80)
+    org.apache.hadoop.net.SocketIOWithTimeout$SelectorPool.select(SocketIOWithTimeout.java:332)
+    org.apache.hadoop.net.SocketIOWithTimeout.doIO(SocketIOWithTimeout.java:157)
+    org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:155)
+    org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:128)
+    java.io.FilterInputStream.read(FilterInputStream.java:116)
+    org.apache.hadoop.ipc.Client$Connection$PingInputStream.read(Client.java:276)
+    java.io.BufferedInputStream.fill(BufferedInputStream.java:218)
+    java.io.BufferedInputStream.read(BufferedInputStream.java:237)
+    java.io.DataInputStream.readInt(DataInputStream.java:370)
+    org.apache.hadoop.ipc.Client$Connection.receiveResponse(Client.java:501)
+    org.apache.hadoop.ipc.Client$Connection.run(Client.java:446)
+Thread 22 (LeaseChecker):
+  State: WAITING
+  Blocked count: 4
+  Waited count: 125
+  Waiting on org.apache.hadoop.ipc.Client$Call@44443799
+  Stack:
+    java.lang.Object.wait(Native Method)
+    java.lang.Object.wait(Object.java:485)
+    org.apache.hadoop.ipc.Client.call(Client.java:726)
+    org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+    $Proxy1.renewLease(Unknown Source)
+    sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+    sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+    java.lang.reflect.Method.invoke(Method.java:597)
+    org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:82)
+    org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:59)
+    $Proxy1.renewLease(Unknown Source)
+    org.apache.hadoop.hdfs.DFSClient$LeaseChecker.renew(DFSClient.java:1057)
+    org.apache.hadoop.hdfs.DFSClient$LeaseChecker.run(DFSClient.java:1069)
+    java.lang.Thread.run(Thread.java:662)
+Thread 21 (Thread-10):
+  State: TIMED_WAITING
+  Blocked count: 0
+  Waited count: 123
+  Stack:
+    java.lang.Object.wait(Native Method)
+    org.apache.hadoop.hdfs.DFSClient$DFSOutputStream$DataStreamer.run(DFSClient.java:2271)
+Thread 19 (communication thread):
+  State: RUNNABLE
+  Blocked count: 32
+  Waited count: 86
+  Stack:
+    sun.management.ThreadImpl.getThreadInfo0(Native Method)
+    sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:147)
+    sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:123)
+    org.apache.hadoop.util.ReflectionUtils.printThreadInfo(ReflectionUtils.java:149)
+    org.apache.hadoop.util.ReflectionUtils.logThreadInfo(ReflectionUtils.java:203)
+    org.apache.hadoop.mapred.Task$TaskReporter.run(Task.java:565)
+    java.lang.Thread.run(Thread.java:662)
+Thread 16 (Thread for syncLogs):
+  State: TIMED_WAITING
+  Blocked count: 0
+  Waited count: 25
+  Stack:
+    java.lang.Thread.sleep(Native Method)
+    org.apache.hadoop.mapred.Child$2.run(Child.java:87)
+Thread 4 (Signal Dispatcher):
+  State: RUNNABLE
+  Blocked count: 0
+  Waited count: 0
+  Stack:
+Thread 3 (Finalizer):
+  State: WAITING
+  Blocked count: 19
+  Waited count: 20
+  Waiting on java.lang.ref.ReferenceQueue$Lock@1f98f08c
+  Stack:
+    java.lang.Object.wait(Native Method)
+    java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:118)
+    java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:134)
+    java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:159)
+Thread 2 (Reference Handler):
+  State: WAITING
+  Blocked count: 830
+  Waited count: 831
+  Waiting on java.lang.ref.Reference$Lock@3eaa2c1c
+  Stack:
+    java.lang.Object.wait(Native Method)
+    java.lang.Object.wait(Object.java:485)
+    java.lang.ref.Reference$ReferenceHandler.run(Reference.java:116)
+Thread 1 (main):
+  State: WAITING
+  Blocked count: 2179
+  Waited count: 2193
+  Waiting on org.apache.hadoop.ipc.Client$Call@33d8053c
+  Stack:
+    java.lang.Object.wait(Native Method)
+    java.lang.Object.wait(Object.java:485)
+    org.apache.hadoop.ipc.Client.call(Client.java:726)
+    org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+    $Proxy1.getBlockLocations(Unknown Source)
+    sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+    sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+    java.lang.reflect.Method.invoke(Method.java:597)
+    org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:82)
+    org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:59)
+    $Proxy1.getBlockLocations(Unknown Source)
+    org.apache.hadoop.hdfs.DFSClient.callGetBlockLocations(DFSClient.java:312)
+    org.apache.hadoop.hdfs.DFSClient.access$300(DFSClient.java:67)
+    org.apache.hadoop.hdfs.DFSClient$DFSInputStream.openInfo(DFSClient.java:1495)
+    org.apache.hadoop.hdfs.DFSClient$DFSInputStream.chooseDataNode(DFSClient.java:1824)
+    org.apache.hadoop.hdfs.DFSClient$DFSInputStream.blockSeekTo(DFSClient.java:1638)
+    org.apache.hadoop.hdfs.DFSClient$DFSInputStream.read(DFSClient.java:1767)
+    java.io.DataInputStream.read(DataInputStream.java:83)
+    org.apache.hadoop.util.LineReader.readLine(LineReader.java:134)
+
+2011-05-01 15:25:37,045 WARN org.apache.hadoop.mapred.TaskRunner: Last retry, killing attempt_201105011518_0003_m_000009_0
+2011-05-01 15:25:39,269 INFO org.apache.hadoop.hdfs.DFSClient: Could not obtain block blk_4963497497099454408_1152 from any node:  java.io.IOException: No live nodes contain current block
+2011-05-01 15:25:39,273 WARN org.apache.hadoop.hdfs.DFSClient: Problem renewing lease for DFSClient_attempt_201105011518_0003_m_000009_0
+org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot renew lease for DFSClient_attempt_201105011518_0003_m_000009_0. Name node is in safe mode.
+The ratio of reported blocks 0.0000 has not reached the threshold 0.9990. Safe mode will be turned off automatically.
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.renewLease(FSNamesystem.java:1978)
+	at org.apache.hadoop.hdfs.server.namenode.NameNode.renewLease(NameNode.java:550)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:508)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:959)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:955)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:396)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:953)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:740)
+	at org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+	at $Proxy1.renewLease(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:82)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:59)
+	at $Proxy1.renewLease(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSClient$LeaseChecker.renew(DFSClient.java:1057)
+	at org.apache.hadoop.hdfs.DFSClient$LeaseChecker.run(DFSClient.java:1069)
+	at java.lang.Thread.run(Thread.java:662)
+2011-05-01 15:25:39,288 WARN org.apache.hadoop.hdfs.DFSClient: DataStreamer Exception: org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot add block to /user/melvold/output/_temporary/_attempt_201105011518_0003_m_000009_0/part-00009. Name node is in safe mode.
+The ratio of reported blocks 0.0000 has not reached the threshold 0.9990. Safe mode will be turned off automatically.
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:1245)
+	at org.apache.hadoop.hdfs.server.namenode.NameNode.addBlock(NameNode.java:422)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:508)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:959)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:955)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:396)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:953)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:740)
+	at org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+	at $Proxy1.addBlock(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:82)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:59)
+	at $Proxy1.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream.locateFollowingBlock(DFSClient.java:2937)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream.nextBlockOutputStream(DFSClient.java:2819)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream.access$2000(DFSClient.java:2102)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream$DataStreamer.run(DFSClient.java:2288)
+
+2011-05-01 15:25:39,289 WARN org.apache.hadoop.hdfs.DFSClient: Error Recovery for block null bad datanode[0] nodes == null
+2011-05-01 15:25:39,289 WARN org.apache.hadoop.hdfs.DFSClient: Could not get block locations. Source file "/user/melvold/output/_temporary/_attempt_201105011518_0003_m_000009_0/part-00009" - Aborting...
+2011-05-01 15:25:39,289 ERROR org.apache.hadoop.hdfs.DFSClient: Exception closing file /user/melvold/output/_temporary/_attempt_201105011518_0003_m_000009_0/part-00009 : org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot add block to /user/melvold/output/_temporary/_attempt_201105011518_0003_m_000009_0/part-00009. Name node is in safe mode.
+The ratio of reported blocks 0.0000 has not reached the threshold 0.9990. Safe mode will be turned off automatically.
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:1245)
+	at org.apache.hadoop.hdfs.server.namenode.NameNode.addBlock(NameNode.java:422)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:508)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:959)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:955)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:396)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:953)
+
+org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot add block to /user/melvold/output/_temporary/_attempt_201105011518_0003_m_000009_0/part-00009. Name node is in safe mode.
+The ratio of reported blocks 0.0000 has not reached the threshold 0.9990. Safe mode will be turned off automatically.
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:1245)
+	at org.apache.hadoop.hdfs.server.namenode.NameNode.addBlock(NameNode.java:422)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:508)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:959)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:955)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:396)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:953)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:740)
+	at org.apache.hadoop.ipc.RPC$Invoker.invoke(RPC.java:220)
+	at $Proxy1.addBlock(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:82)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:59)
+	at $Proxy1.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream.locateFollowingBlock(DFSClient.java:2937)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream.nextBlockOutputStream(DFSClient.java:2819)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream.access$2000(DFSClient.java:2102)
+	at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream$DataStreamer.run(DFSClient.java:2288)

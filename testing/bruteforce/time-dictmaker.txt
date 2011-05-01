@@ -1,0 +1,17 @@
+melvold@8100-Elite:~$ time ./dictmaker.sh /home/melvold/Downloads/dict.lst 8
+
+real	13m48.424s
+user	12m48.810s
+sys	0m56.430s
+
+melvold@8100-Elite:~/Downloads$ time ./../dictmaker.sh dict.lst 400
+
+real	102m7.220s
+user	101m25.630s
+sys	0m29.050s
+
+melvold@8100-Elite:~/Downloads$ time ./../dictmaker.sh dict.lst 800
+
+real	180m54.837s
+user	179m42.180s
+sys	0m49.030s

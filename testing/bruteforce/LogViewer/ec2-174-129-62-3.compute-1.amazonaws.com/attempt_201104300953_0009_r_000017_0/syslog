@@ -1,0 +1,332 @@
+2011-04-30 16:31:26,325 INFO org.apache.hadoop.metrics.jvm.JvmMetrics: Initializing JVM Metrics with processName=SHUFFLE, sessionId=
+2011-04-30 16:31:26,557 INFO org.apache.hadoop.mapred.ReduceTask: ShuffleRamManager: MemoryLimit=130514944, MaxSingleShuffleLimit=32628736
+2011-04-30 16:31:26,572 INFO org.apache.hadoop.util.NativeCodeLoader: Loaded the native-hadoop library
+2011-04-30 16:31:26,574 INFO org.apache.hadoop.io.compress.zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+2011-04-30 16:31:26,574 INFO org.apache.hadoop.io.compress.CodecPool: Got brand-new decompressor
+2011-04-30 16:31:26,575 INFO org.apache.hadoop.io.compress.CodecPool: Got brand-new decompressor
+2011-04-30 16:31:26,575 INFO org.apache.hadoop.io.compress.CodecPool: Got brand-new decompressor
+2011-04-30 16:31:26,576 INFO org.apache.hadoop.io.compress.CodecPool: Got brand-new decompressor
+2011-04-30 16:31:26,576 INFO org.apache.hadoop.io.compress.CodecPool: Got brand-new decompressor
+2011-04-30 16:31:26,579 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Thread started: Thread for merging on-disk files
+2011-04-30 16:31:26,579 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Thread waiting: Thread for merging on-disk files
+2011-04-30 16:31:26,579 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Thread started: Thread for merging in memory files
+2011-04-30 16:31:26,581 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 21 map output(s) where 0 is already in progress
+2011-04-30 16:31:26,581 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Thread started: Thread for polling Map Completion Events
+2011-04-30 16:31:26,582 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:31:26,587 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 5 new map-outputs
+2011-04-30 16:31:29,591 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 3 new map-outputs
+2011-04-30 16:31:31,582 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 7 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:31:31,626 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 copy failed: attempt_201104300953_0009_m_000001_0 from localhost
+2011-04-30 16:31:31,627 WARN org.apache.hadoop.mapred.ReduceTask: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1485)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1139)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getInputStream(ReduceTask.java:1447)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getMapOutput(ReduceTask.java:1349)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.copyOutput(ReduceTask.java:1261)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.run(ReduceTask.java:1195)
+Caused by: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1434)
+	... 4 more
+
+2011-04-30 16:31:31,640 INFO org.apache.hadoop.mapred.ReduceTask: Task attempt_201104300953_0009_r_000017_0: Failed fetch #1 from attempt_201104300953_0009_m_000001_0
+2011-04-30 16:31:31,641 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 adding host localhost to penalty box, next contact in 4 seconds
+2011-04-30 16:31:31,641 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 map-outputs from previous failures
+2011-04-30 16:31:31,650 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000020_0, compressed len: 55, decompressed len: 49
+2011-04-30 16:31:31,652 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 49 bytes (55 raw bytes) into RAM from attempt_201104300953_0009_m_000020_0
+2011-04-30 16:31:31,656 INFO org.apache.hadoop.mapred.ReduceTask: Read 49 bytes from map-output for attempt_201104300953_0009_m_000020_0
+2011-04-30 16:31:31,652 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000013_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:31,656 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000013_0
+2011-04-30 16:31:31,652 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000008_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:31,657 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000008_0
+2011-04-30 16:31:31,651 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000005_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:31,657 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000005_0
+2011-04-30 16:31:31,651 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000004_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:31,657 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000004_0
+2011-04-30 16:31:31,673 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000004_0
+2011-04-30 16:31:31,673 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000004_0 -> (-1, -1) from domU-12-31-39-0E-65-41.compute-1.internal
+2011-04-30 16:31:31,674 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000005_0
+2011-04-30 16:31:31,674 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000005_0 -> (-1, -1) from domU-12-31-39-0F-50-71.compute-1.internal
+2011-04-30 16:31:31,674 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000008_0
+2011-04-30 16:31:31,674 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000008_0 -> (-1, -1) from domU-12-31-39-0C-3D-A1.compute-1.internal
+2011-04-30 16:31:31,675 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000013_0
+2011-04-30 16:31:31,675 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000013_0 -> (-1, -1) from domU-12-31-39-0E-58-31.compute-1.internal
+2011-04-30 16:31:31,675 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000020_0 -> (37, 8) from domU-12-31-39-0F-A5-41.compute-1.internal
+2011-04-30 16:31:31,675 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:31:31,678 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000000_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:31,678 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000000_0
+2011-04-30 16:31:31,678 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000000_0
+2011-04-30 16:31:31,678 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000000_0 -> (-1, -1) from domU-12-31-39-0F-A5-41.compute-1.internal
+2011-04-30 16:31:31,695 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000016_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:31,695 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000016_0
+2011-04-30 16:31:31,695 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000016_0
+2011-04-30 16:31:31,695 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000016_0 -> (-1, -1) from domU-12-31-39-0E-22-21.compute-1.internal
+2011-04-30 16:31:32,596 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:31:35,600 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 2 new map-outputs
+2011-04-30 16:31:36,696 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 4 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:31:36,700 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 copy failed: attempt_201104300953_0009_m_000001_0 from localhost
+2011-04-30 16:31:36,701 WARN org.apache.hadoop.mapred.ReduceTask: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1485)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1139)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getInputStream(ReduceTask.java:1447)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getMapOutput(ReduceTask.java:1349)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.copyOutput(ReduceTask.java:1261)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.run(ReduceTask.java:1195)
+Caused by: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1434)
+	... 4 more
+
+2011-04-30 16:31:36,701 INFO org.apache.hadoop.mapred.ReduceTask: Task attempt_201104300953_0009_r_000017_0: Failed fetch #2 from attempt_201104300953_0009_m_000001_0
+2011-04-30 16:31:36,701 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 adding host localhost to penalty box, next contact in 8 seconds
+2011-04-30 16:31:36,701 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 map-outputs from previous failures
+2011-04-30 16:31:36,704 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000007_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000007_0
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000018_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000007_0
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000018_0
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000007_0 -> (-1, -1) from domU-12-31-39-0F-C0-71.compute-1.internal
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000018_0
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000018_0 -> (-1, -1) from domU-12-31-39-0F-9D-C1.compute-1.internal
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000012_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:36,707 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000012_0
+2011-04-30 16:31:36,708 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000012_0
+2011-04-30 16:31:36,708 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000012_0 -> (-1, -1) from domU-12-31-39-0B-C0-24.compute-1.internal
+2011-04-30 16:31:38,604 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:31:41,607 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:31:41,709 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 2 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:31:41,715 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000019_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:41,716 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000019_0
+2011-04-30 16:31:41,716 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000019_0
+2011-04-30 16:31:41,716 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000019_0 -> (-1, -1) from ip-10-108-95-73.ec2.internal
+2011-04-30 16:31:41,716 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000003_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:41,716 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000003_0
+2011-04-30 16:31:41,717 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000003_0
+2011-04-30 16:31:41,717 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000003_0 -> (-1, -1) from ip-10-108-157-219.ec2.internal
+2011-04-30 16:31:44,611 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:31:46,717 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 2 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:31:46,722 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 copy failed: attempt_201104300953_0009_m_000001_0 from localhost
+2011-04-30 16:31:46,722 WARN org.apache.hadoop.mapred.ReduceTask: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1485)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1139)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getInputStream(ReduceTask.java:1447)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getMapOutput(ReduceTask.java:1349)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.copyOutput(ReduceTask.java:1261)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.run(ReduceTask.java:1195)
+Caused by: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1434)
+	... 4 more
+
+2011-04-30 16:31:46,723 INFO org.apache.hadoop.mapred.ReduceTask: Task attempt_201104300953_0009_r_000017_0: Failed fetch #3 from attempt_201104300953_0009_m_000001_0
+2011-04-30 16:31:46,723 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 adding host localhost to penalty box, next contact in 16 seconds
+2011-04-30 16:31:46,723 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 map-outputs from previous failures
+2011-04-30 16:31:46,727 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000010_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:46,727 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000010_0
+2011-04-30 16:31:46,728 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000010_0
+2011-04-30 16:31:46,728 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000010_0 -> (-1, -1) from ip-10-66-150-184.ec2.internal
+2011-04-30 16:31:50,617 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:31:51,729 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:31:51,737 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000009_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:51,737 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000009_0
+2011-04-30 16:31:51,737 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000009_0
+2011-04-30 16:31:51,737 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000009_0 -> (-1, -1) from ip-10-66-133-89.ec2.internal
+2011-04-30 16:31:53,620 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:31:56,738 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:31:56,746 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000017_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:31:56,746 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000017_0
+2011-04-30 16:31:56,746 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000017_0
+2011-04-30 16:31:56,746 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000017_0 -> (-1, -1) from ip-10-66-122-246.ec2.internal
+2011-04-30 16:31:59,626 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 2 new map-outputs
+2011-04-30 16:32:01,747 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 2 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:32:01,754 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000002_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:32:01,754 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000002_0
+2011-04-30 16:32:01,755 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000002_0
+2011-04-30 16:32:01,755 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000002_0 -> (-1, -1) from ip-10-108-138-32.ec2.internal
+2011-04-30 16:32:01,759 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000014_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:32:01,759 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000014_0
+2011-04-30 16:32:01,760 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000014_0
+2011-04-30 16:32:01,760 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000014_0 -> (-1, -1) from ip-10-70-226-194.ec2.internal
+2011-04-30 16:32:02,629 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:32:06,761 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 2 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:32:06,765 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 copy failed: attempt_201104300953_0009_m_000001_0 from localhost
+2011-04-30 16:32:06,765 WARN org.apache.hadoop.mapred.ReduceTask: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.reflect.GeneratedConstructorAccessor7.newInstance(Unknown Source)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1485)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1139)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getInputStream(ReduceTask.java:1447)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getMapOutput(ReduceTask.java:1349)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.copyOutput(ReduceTask.java:1261)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.run(ReduceTask.java:1195)
+Caused by: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1434)
+	... 4 more
+
+2011-04-30 16:32:06,765 INFO org.apache.hadoop.mapred.ReduceTask: Task attempt_201104300953_0009_r_000017_0: Failed fetch #4 from attempt_201104300953_0009_m_000001_0
+2011-04-30 16:32:06,765 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 adding host localhost to penalty box, next contact in 32 seconds
+2011-04-30 16:32:06,765 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 map-outputs from previous failures
+2011-04-30 16:32:06,769 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000006_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:32:06,769 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000006_0
+2011-04-30 16:32:06,769 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000006_0
+2011-04-30 16:32:06,769 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000006_0 -> (-1, -1) from ip-10-64-165-44.ec2.internal
+2011-04-30 16:32:14,640 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:32:16,770 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:32:16,780 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000015_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:32:16,780 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000015_0
+2011-04-30 16:32:16,781 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000015_0
+2011-04-30 16:32:16,781 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000015_0 -> (-1, -1) from ip-10-71-34-144.ec2.internal
+2011-04-30 16:32:26,782 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 2 map output(s) where 0 is already in progress
+2011-04-30 16:32:26,783 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:32:26,783 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:32:26,783 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 11 seconds.
+2011-04-30 16:32:35,657 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:32:36,784 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:32:36,801 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000011_0, compressed len: 14, decompressed len: 2
+2011-04-30 16:32:36,802 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000011_0
+2011-04-30 16:32:36,802 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000011_0
+2011-04-30 16:32:36,802 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000011_0 -> (-1, -1) from domU-12-31-39-01-D0-A1.compute-1.internal
+2011-04-30 16:32:41,813 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:32:41,816 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 copy failed: attempt_201104300953_0009_m_000001_0 from localhost
+2011-04-30 16:32:41,816 WARN org.apache.hadoop.mapred.ReduceTask: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.reflect.GeneratedConstructorAccessor7.newInstance(Unknown Source)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1485)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1139)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getInputStream(ReduceTask.java:1447)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getMapOutput(ReduceTask.java:1349)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.copyOutput(ReduceTask.java:1261)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.run(ReduceTask.java:1195)
+Caused by: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1434)
+	... 4 more
+
+2011-04-30 16:32:41,816 INFO org.apache.hadoop.mapred.ReduceTask: Task attempt_201104300953_0009_r_000017_0: Failed fetch #5 from attempt_201104300953_0009_m_000001_0
+2011-04-30 16:32:41,817 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 adding host localhost to penalty box, next contact in 64 seconds
+2011-04-30 16:32:41,817 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 map-outputs from previous failures
+2011-04-30 16:33:26,819 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:33:26,820 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:33:26,820 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:33:26,820 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 18 seconds.
+2011-04-30 16:33:46,821 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:33:46,824 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 copy failed: attempt_201104300953_0009_m_000001_0 from localhost
+2011-04-30 16:33:46,825 WARN org.apache.hadoop.mapred.ReduceTask: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.reflect.GeneratedConstructorAccessor7.newInstance(Unknown Source)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1485)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1139)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getInputStream(ReduceTask.java:1447)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getMapOutput(ReduceTask.java:1349)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.copyOutput(ReduceTask.java:1261)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.run(ReduceTask.java:1195)
+Caused by: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1434)
+	... 4 more
+
+2011-04-30 16:33:46,825 INFO org.apache.hadoop.mapred.ReduceTask: Task attempt_201104300953_0009_r_000017_0: Failed fetch #6 from attempt_201104300953_0009_m_000001_0
+2011-04-30 16:33:46,826 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 adding host localhost to penalty box, next contact in 128 seconds
+2011-04-30 16:33:46,826 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 map-outputs from previous failures
+2011-04-30 16:34:26,827 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:34:26,827 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:34:26,827 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:34:26,827 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 87 seconds.
+2011-04-30 16:35:26,829 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:35:26,829 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:35:26,829 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:35:26,829 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 27 seconds.
+2011-04-30 16:35:56,830 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:35:56,834 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 copy failed: attempt_201104300953_0009_m_000001_0 from localhost
+2011-04-30 16:35:56,834 WARN org.apache.hadoop.mapred.ReduceTask: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.reflect.GeneratedConstructorAccessor7.newInstance(Unknown Source)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1485)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1139)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getInputStream(ReduceTask.java:1447)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.getMapOutput(ReduceTask.java:1349)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.copyOutput(ReduceTask.java:1261)
+	at org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier.run(ReduceTask.java:1195)
+Caused by: java.io.FileNotFoundException: http://localhost:50060/mapOutput?job=job_201104300953_0009&map=attempt_201104300953_0009_m_000001_0&reduce=17
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1434)
+	... 4 more
+
+2011-04-30 16:35:56,835 INFO org.apache.hadoop.mapred.ReduceTask: Task attempt_201104300953_0009_r_000017_0: Failed fetch #7 from attempt_201104300953_0009_m_000001_0
+2011-04-30 16:35:56,835 INFO org.apache.hadoop.mapred.ReduceTask: Failed to fetch map-output from attempt_201104300953_0009_m_000001_0 even after MAX_FETCH_RETRIES_PER_MAP retries...  reporting to the JobTracker
+2011-04-30 16:35:56,835 WARN org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 adding host localhost to penalty box, next contact in 256 seconds
+2011-04-30 16:35:56,835 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 map-outputs from previous failures
+2011-04-30 16:36:05,825 INFO org.apache.hadoop.mapred.ReduceTask: Ignoring obsolete output of FAILED map-task: 'attempt_201104300953_0009_m_000001_0'
+2011-04-30 16:36:26,836 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:36:26,836 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:36:26,836 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:36:26,836 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 225 seconds.
+2011-04-30 16:37:26,838 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:37:26,838 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:37:26,838 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:37:26,838 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 165 seconds.
+2011-04-30 16:38:26,840 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:38:26,840 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:38:26,840 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:38:26,840 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 105 seconds.
+2011-04-30 16:39:26,842 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:39:26,842 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (1 slow hosts and0 dup hosts)
+2011-04-30 16:39:26,842 INFO org.apache.hadoop.mapred.ReduceTask: Penalized(slow) Hosts: 
+2011-04-30 16:39:26,843 INFO org.apache.hadoop.mapred.ReduceTask: localhost Will be considered after: 45 seconds.
+2011-04-30 16:40:26,844 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:40:26,844 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:41:26,846 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:41:26,847 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:42:26,848 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:42:26,848 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:43:26,850 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:43:26,850 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:44:26,852 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Need another 1 map output(s) where 0 is already in progress
+2011-04-30 16:44:26,852 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 0 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:44:33,247 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0: Got 1 new map-outputs
+2011-04-30 16:44:36,852 INFO org.apache.hadoop.mapred.ReduceTask: attempt_201104300953_0009_r_000017_0 Scheduled 1 outputs (0 slow hosts and0 dup hosts)
+2011-04-30 16:44:36,865 INFO org.apache.hadoop.mapred.ReduceTask: header: attempt_201104300953_0009_m_000001_1, compressed len: 14, decompressed len: 2
+2011-04-30 16:44:36,865 INFO org.apache.hadoop.mapred.ReduceTask: Shuffling 2 bytes (14 raw bytes) into RAM from attempt_201104300953_0009_m_000001_1
+2011-04-30 16:44:36,865 INFO org.apache.hadoop.mapred.ReduceTask: Read 2 bytes from map-output for attempt_201104300953_0009_m_000001_1
+2011-04-30 16:44:36,865 INFO org.apache.hadoop.mapred.ReduceTask: Rec #1 from attempt_201104300953_0009_m_000001_1 -> (-1, -1) from ip-10-71-34-144.ec2.internal
+2011-04-30 16:44:37,250 INFO org.apache.hadoop.mapred.ReduceTask: GetMapEventsThread exiting
+2011-04-30 16:44:37,250 INFO org.apache.hadoop.mapred.ReduceTask: getMapsEventsThread joined.
+2011-04-30 16:44:37,252 INFO org.apache.hadoop.mapred.ReduceTask: Closed ram manager
+2011-04-30 16:44:37,252 INFO org.apache.hadoop.mapred.ReduceTask: Interleaved on-disk merge complete: 0 files left.
+2011-04-30 16:44:37,253 INFO org.apache.hadoop.mapred.ReduceTask: In-memory merge complete: 21 files left.
+2011-04-30 16:44:37,268 INFO org.apache.hadoop.mapred.Merger: Merging 21 sorted segments
+2011-04-30 16:44:37,268 INFO org.apache.hadoop.mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 49 bytes
+2011-04-30 16:44:37,273 INFO org.apache.hadoop.io.compress.CodecPool: Got brand-new compressor
+2011-04-30 16:44:37,277 INFO org.apache.hadoop.mapred.ReduceTask: Merged 21 segments, 89 bytes to disk to satisfy reduce memory limit
+2011-04-30 16:44:37,277 INFO org.apache.hadoop.mapred.ReduceTask: Merging 1 files, 63 bytes from disk
+2011-04-30 16:44:37,278 INFO org.apache.hadoop.mapred.ReduceTask: Merging 0 segments, 0 bytes from memory into reduce
+2011-04-30 16:44:37,278 INFO org.apache.hadoop.mapred.Merger: Merging 1 sorted segments
+2011-04-30 16:44:37,282 INFO org.apache.hadoop.mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 59 bytes
+2011-04-30 16:44:37,358 INFO org.apache.hadoop.mapred.TaskRunner: Task:attempt_201104300953_0009_r_000017_0 is done. And is in the process of commiting
+2011-04-30 16:44:38,366 INFO org.apache.hadoop.mapred.TaskRunner: Task attempt_201104300953_0009_r_000017_0 is allowed to commit now
+2011-04-30 16:44:38,385 INFO org.apache.hadoop.mapred.FileOutputCommitter: Saved output of task 'attempt_201104300953_0009_r_000017_0' to hdfs://ec2-50-19-38-185.compute-1.amazonaws.com:9000/user/melvold/output
+2011-04-30 16:44:38,387 INFO org.apache.hadoop.mapred.TaskRunner: Task 'attempt_201104300953_0009_r_000017_0' done.
