@@ -38,7 +38,7 @@ public class RemoteBrowseActivity extends ListActivity {
 	public static final int MENU_UPLOAD_FILE = 1;
 	public static final int MENU_CREATE_FOLDER = 2;
 	public static final int MENU_SHOW_CAPABILITY = 3;
-	public static final int CONTEXTMENU_DOWNLOAD_FILE = 0;
+	public static final int CONTEXTMENU_DOWNLOAD_FILE = 3;
 	public static final int CONTEXTMENU_SHARE_OBJECT = 1;
 	public static final int CONTEXTMENU_UNLINK = 2;
 
