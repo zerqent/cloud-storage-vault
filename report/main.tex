@@ -135,6 +135,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \begin{acronym}
 \acro{ACL}{Access Control List}
 \acro{AES}{Advanced Encryption Standard}
+\acro{API}{Application Programming Interface}
 \acro{CA}{Certification authority}
 \acro{CBC}{Cipher Block Chaining}
 \acro{CG}{Credential Generator}
@@ -1321,10 +1322,23 @@ database.
 \lstinputlisting[language=Python,breaklines=false,label=lst:IM:get, caption=URL mapping in fileserver.py]
 {listings/fileserver.py}
 
-\subsection{ACL functionality}
+\subsubsection{\acs{ACL} functionality}
 
+The only \ac{ACL} functionality implemented, is the server-side verification
+that a client has proper access to overwrite a file, e.g. when a client wishes to
+update a folder with new contents. We call this \textbf{Write-Enabler Verification}. 
 
-\section{Client}
+When a client first uploads a new folder, it also provides a
+\emph{Write-Enabler Key}, which the server adds to the database along with the
+\emph{Storage Index} of the folder.  For every subsequent request to write to a
+file with this specific Storage Index, the server verifies that the provided
+Write-Enabler Key is equal to that in the database.
+
+If a client tries to put a file with a Storage Index that already exists, the
+server replies with an error code if the client in addition does not provide a
+valid Write-Enabler Key.
+
+\section{Client - Android}
 % Java/Android/Dalvik/JCE/Commons HTTPClient
 % Security vs. Usability - Rationale for GUI
 % MVC? V=Android GUI
