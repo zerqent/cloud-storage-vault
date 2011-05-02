@@ -1409,15 +1409,16 @@ The implementation of Capabilities lives in CSVlib and is a container for
 cryptographic keys and information to identify the corresponding object. A
 capability will contain information to identify an object as either a file or a
 folder, and have the information to read, write or verify that object.
-Capabilities are stored serverside in folders, in it's serialized form shown i
-figure \ref{fig:CAP:serial}. Object Type specifices if the capability
-represents a file or a folder, with values F or D (for directory) accordingly.
-Key Type specifices the permissions the key will give on the object and can be
-either RO (Read Only), RW (Read and write) or V (Verify). The different parts
-are separated by the character ``:``. Key and verify are encoded in Base32,
-which means that the 128 bits will be repleaced by an alphabet of 32
-different symbols, namely A-Z and 2-7. This transformation is done for human
-readability. 
+Capabilities are stored server side in folders, in it's serialized form shown i
+figure \ref{fig:CAP:serial}. Object Type specifies if the capability
+represents a file or a folder, with values F or D (for file and directory)
+accordingly.  Key Type specifies the permissions the key will give on the
+object and can be either RO (Read Only), RW (Read and write) or V (Verify). The
+different parts are separated by the character ``:``. Key and verify are
+encoded in Base32, which means that the 128 bits will be replaced by an
+alphabet of 32 different symbols, namely A-Z and 2-7. This transformation will
+give some overhead in storage (26 bytes compared to 16), but makes it possible
+to read for a human with few mistakes or misunderstandings.
 
 \begin{figure}[h!]
     \centering
@@ -1466,7 +1467,7 @@ and both upload and download through {\bf PUT} and {\bf GET} requests
 respectively. We wrap communication with the server in two classes,
 Communication.java and CSVFileManager.java. Communication.java provides
 functions for sending and retrieving data from our servers while
-CSVFileManager.java providies specific methods for uploading the encrypted
+CSVFileManager.java provides specific methods for uploading the encrypted
 objects.
 
 \subsection{Sharing}
@@ -1479,11 +1480,11 @@ someone is that you have to verify that you are actually sharing with the same
 person. The data that will have to be shared is a serialized form of the
 capability, shown in Figure \ref{fig:CAP:serial}. The client we have
 implemented supports two methods of doing this. The most cumbersome is having
-to manually copying the key from one users client to anothers, and afterwards
-verifying that the key for the selected folder is ok. The other possiblility is
+to manually copying the key from one users client to another's, and afterwards
+verifying that the key for the selected folder is correct. The other possibility is
 to make use of a barcode. What this means is that one user will generate a
-barcode on his device, and the other user can scan that code using his device'
-camera. The barcode contains both the key and verification for the shared
+barcode on his device, and the other user can scan that code using the camera
+on his device. The barcode contains both the key and verification for the shared
 folder. Once two users have shared one folder they will never have to meet
 again to share something else.
 %% TODO: Sjekk device'
@@ -1493,7 +1494,7 @@ again to share something else.
 Using more clients, or different devices is almost the exact same as sharing,
 and is solved in the same manner. The only difference is that the capability
 that needs to be transfered is that of the root-folder. It is also possible to
-take any other folder and use as a the root for the new folder if that is the
+take any other folder and use as the root for the new folder if that is the
 users wish.
 
 
