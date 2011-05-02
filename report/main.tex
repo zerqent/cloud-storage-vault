@@ -1508,10 +1508,10 @@ capability exchange again.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-barcode.png}
-    \caption{Establishing a share by using barcodes}
-    \label{fig:CSVAndroid:barcode}
+    \caption{establishing a share by using barcodes}
+    \label{fig:csvandroid:barcode}
 \end{figure}
-\subsection{Adding a new client}
+\subsection{adding a new client}
 
 % Same as sharing rationale.
 Using more clients, or different devices is almost the exact same as sharing,
@@ -1520,20 +1520,74 @@ that needs to be transfered is that of the root-folder. It is also possible to
 take any other folder and use as the root for the new folder if that is the
 users wish.
 
+\subsection{Securing the client}
+For a user to access his root folder the client will have to know the
+capability of that folder. This is clearly to much for a user to remember, so
+the capability will have to be stored on the client. However, the client might
+be stolen or broken into by some means, if the capability is stored in clear
+text it is easily stolen. We partially remedy this by the use of \ac{PBKDF2},
+which makes an encryption key from a password. This is however no defense if
+the attacker managed to read the memory while the key is unlocked. The client
+enforces that this password should be at least 9 characters long. 
 
 \subsection{User Interface}
 % goal: As easy as possible!
-
 % First start: Generate new cap/import an old one (Adding a new client section)
 % Browsing remote file(s)/folders
 % Sharing a file - first/following times - Key Distribution
 % Uploading/Downloading file
 
-\subsection{Secure storage of files on Client}
-% Can we view files without them leaving traces on filesystem?
-% Optional/Possible?
-A problem with 
+We have tried to make a user interface that is easily understandable by a
+novice user, both in terms of ``where to click`` and in terms of how we name
+cryptographic operations. For instance we never use the word ``capability`` in
+the client.
 
+\paragraph{Main Screen}The main screen of the application is shown in Figure
+\ref{fig:CSVAndroid:mainscreen}. However before the user gets to this screen he
+will have to unlock his local keyring with his password. If it is the users
+first time using the application he will have to enter his online credentials,
+and gets a choice to either import an existing root folder or to generate a new
+one. In both cases the user will have to choose a password to encrypt the root
+capability. From the main screen the most common action would be to ``Browse
+the vault`` in other words to see the files that the user has stored in the
+cloud.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-mainscreen.png}
+    \caption{Main screen of client}
+    \label{fig:CSVAndroid:mainscreen}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-remotebrowse.png}
+    \caption{Browsing the cloud from client}
+    \label{fig:CSVAndroid:remotebrowse}
+\end{figure}
+
+\paragraph{Browse the cloud} The interface for browsing the cloud is made in
+what we understand as common and understandable way of interpreting users
+actions on the android platform, and can be seen in Figure
+\ref{fig:CSVAndroid:remotebrowse}. Tapping a file will download that file, and
+tapping a folder will open that folder. An upload is treated in a similar way,
+to reveal this option the users have to press menu. The user will then be
+allowed to browse his filesystem for the file he wishes to upload, tapping that
+file start the upload. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-browsecontext.png}
+    \caption{Context menu}
+    \label{fig:CSVAndroid:remotecontext}
+\end{figure}
+
+A long press will reveal the context menu shown in Figure
+\ref{fig:CSVAndroid:remotecontext}. The least understandable action is probably
+unlink, which remove a file or a folder from the parent folder. The reason why
+it says unlink and not delete is that a file can potentially be linked in a
+number of different folders, and it is impossible in our design to reveal which
+folders the file has been linked to, except the one that we are unlinking from. 
 
 %**************************************%
 \chapter{Results}
