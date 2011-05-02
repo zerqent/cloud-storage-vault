@@ -167,6 +167,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{PoC}{Proof-of-concept}
+\acro{QR}{Quick Response}
 \acro{RAM}{Random access memory}
 \acro{REST}{Representational State Transfer}
 \acro{RSA}{Rivest, Shamir and Adleman}
@@ -1329,7 +1330,7 @@ database.
 % MVC? V=Android GUI
 %
 The \ac{PoC}-client we have implemented is made for devices using the Android
-operating system, which is based on Linux. The SDK for making Android
+operating system, which is based on Linux. The \ac{SDK} for making Android
 applications is essentially a somewhat modified version of Java. 
 
 Most devices that use the Android operating system are mobile phones or
@@ -1338,14 +1339,14 @@ memory. The point of making the \ac{PoC}-client for such a device is that if it
 does perform well so will any faster device.
 
 \subsection{Environment}
-The \ac{PoC}-client was made on the Android plattform in the Java programming
+The \ac{PoC}-client was made on the Android platform in the Java programming
 language, together with a set of frameworks. The rationale for these are as
 follows:
 
 \paragraph{Android} The Android operating system is made by Google and is most
 common found on mobile phones and tablets. The choice of Android was done
 because of hardware availability and familiarity with developing for the
-plattform and the programming language (Java). 
+platform and the programming language (Java). 
 
 \paragraph{Java} Java is a high-level, object-oriented programming language.
 Java applications runs in a \ac{JVM} which basically mean that a Java
@@ -1379,7 +1380,7 @@ the input of the next element. We use this for file uploads and downloads to
 limit the memory usage of the client as well as to increase performance.
 
 \paragraph{Asynchronous pattern} We use asynchronous calls to slow operations
-(e.g. file upload, key generation) extensivly, to prevent the interface from
+(e.g. file upload, key generation) extensively, to prevent the interface from
 hanging and to deliver a smoother user experience in general.  
 
 \subsection{Implementation Details}
@@ -1395,22 +1396,24 @@ CSVAndroid contains primarily a graphical user interface to use CSVlib on an
 Android device.
 
 \subsubsection{Cryptographic Entities}
+All the cryptographic entities, namely folders, files and capabilities are all
+part of CSVlib. Their relationship can be seen in Figure
+\ref{fig:CSVlib:overview}.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{csvobjects.pdf}
     \caption{Cryptographic entities and their relations}
-    \label{fig:CAP:serial}
+    \label{fig:CSVlib:overview}
 \end{figure}
-\paragraph{Capabilities}
 
 
-The implementation of Capabilities lives in CSVlib and is a container for
+\paragraph{Capabilities} The implementation of Capabilities is a container for
 cryptographic keys and information to identify the corresponding object. A
 capability will contain information to identify an object as either a file or a
 folder, and have the information to read, write or verify that object.
-Capabilities are stored server side in folders, in it's serialized form shown i
-figure \ref{fig:CAP:serial}. Object Type specifies if the capability
+Capabilities are stored server side in folders, in it's serialized form shown
+in Figure \ref{fig:CAP:serial}. Object Type specifies if the capability
 represents a file or a folder, with values F or D (for file and directory)
 accordingly.  Key Type specifies the permissions the key will give on the
 object and can be either RO (Read Only), RW (Read and write) or V (Verify). The
@@ -1430,12 +1433,13 @@ to read for a human with few mistakes or misunderstandings.
 
 \paragraph{Folders}
 % TODO: Ref til crypt solution
-A folder is represented in the class CSVFolder. Basically a CSVFolder object is
+A folder is represented in the class CSVFolder. A CSVFolder object is
 just a collection of aliases and their corresponding capabilities. For
 the most part the data stored in a folder is so small that it can easily live for 
 as long as needed in the memory of the client. When a folder is created or 
 updated the content is serialized and encrypted before it is uploaded to the server 
-directly from memory.
+directly from memory. The serialization for each item is a folder is simply
+alias;capability, where the capability is also serialized.
 
 \paragraph{Files}
 A file is represented in the class CSVFile. While a folder in general is small,
@@ -1466,30 +1470,49 @@ HttpClient. This Client offers support for authenticated requests to a server,
 and both upload and download through {\bf PUT} and {\bf GET} requests
 respectively. We wrap communication with the server in two classes,
 Communication.java and CSVFileManager.java. Communication.java provides
-functions for sending and retrieving data from our servers while
-CSVFileManager.java provides specific methods for uploading the encrypted
-objects.
+functionality for sending and retrieving data from our server while
+CSVFileManager.java provides specific methods for sending and receiving the
+encrypted objects, CSVFile and CSVFolder.
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
 % achieve sharing, securely
-% TODO: Ref til hvor vi beskriver sharing
+% TODO: BILDE!:w
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-manualimport.png}
+    \caption{Establishing a share by copying the key}
+    \label{fig:CSVAndroid:manualimport}
+\end{figure}
+
 A shared folder is basically just a folder object which two or more people have
 the required encryption keys for. However the problem of creating a share with
-someone is that you have to verify that you are actually sharing with the same
-person. The data that will have to be shared is a serialized form of the
-capability, shown in Figure \ref{fig:CAP:serial}. The client we have
+someone is that you have to verify that you are actually sharing with the
+correct person. The data that will have to be shared is a serialized form of
+the capability, shown in Figure \ref{fig:CAP:serial}. The client we have
 implemented supports two methods of doing this. The most cumbersome is having
-to manually copying the key from one users client to another's, and afterwards
-verifying that the key for the selected folder is correct. The other possibility is
-to make use of a barcode. What this means is that one user will generate a
-barcode on his device, and the other user can scan that code using the camera
-on his device. The barcode contains both the key and verification for the shared
-folder. Once two users have shared one folder they will never have to meet
-again to share something else.
-%% TODO: Sjekk device'
+to manually copying the key from one users client to another, and afterwards
+verifying that the key for the selected folder is correct. An example of this
+can be seen in Figure \ref{fig:CSVAndroid:manualimport}. This feature is also
+needed to support out-of-band methods for establishing a share. The other
+possibility is to make use of a \ac{QR} code, which is a matrix barcode that
+can store information. What this means is that one user will generate a barcode
+on his device, and the other user can scan that code using the camera on his
+device. Figure \ref{fig:CSVAndroid:barcode} displays how this code will look.
+The barcode contains both the key and verification for the shared folder. Once
+two users have shared a folder once, that folder can be used for all future
+shares which means that the two people will never have to meet and do the
+capability exchange again.
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-barcode.png}
+    \caption{Establishing a share by using barcodes}
+    \label{fig:CSVAndroid:barcode}
+\end{figure}
 \subsection{Adding a new client}
+
 % Same as sharing rationale.
 Using more clients, or different devices is almost the exact same as sharing,
 and is solved in the same manner. The only difference is that the capability
