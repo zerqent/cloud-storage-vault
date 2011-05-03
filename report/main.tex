@@ -1505,19 +1505,31 @@ For \ac{HTTP} transport we utilize the Apache Software Foundations
 HttpComponents Client\footnote{ \url http://hc.apache.org/} also known as
 HttpClient.
 
-This Client offers support for authenticated requests to a server,
-and both upload and download through \textbf{PUT} and \textbf{GET} requests
-respectively. We wrap communication with the server in two classes,
+This Client offers support for authenticated requests to a server, and both
+upload and download through \textbf{PUT} and \textbf{GET} requests respectively.
+We wrap communication with the server in two classes,
 \texttt{Communication.java} and \texttt{CSVFileManager.java}.
-\texttt{Communication.java} provides
-functionality for sending and retrieving data from our server, while
-\texttt{CSVFileManager.java} provides specific methods for sending and receiving the
-encrypted objects, CSVFile and CSVFolder.
+\texttt{Communication.java} provides functionality for sending and retrieving
+data from our server, while \texttt{CSVFileManager.java} provides specific
+methods for sending and receiving the encrypted objects, CSVFile and CSVFolder.
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
 % achieve sharing, securely
-% TODO: BILDE!:w
+
+A \emph{shared folder} is basically just a folder object which two or more
+people have the required encryption keys for. 
+
+The problem of creating a share with someone, is that you have to verify that
+you are actually sharing with the correct person. The data, or \emph{secret},
+that will have to be shared, is a serialized form of the capability of the
+shared folder, as shown in Figure \ref{fig:CAP:serial}.
+
+The client implemented supports two methods of doing this. The most cumbersome
+is having to manually copying the key from one users client to another, and
+afterwards verifying that the key for the selected folder is correct. An example
+of this can be seen in Figure \ref{fig:CSVAndroid:manualimport}. This feature
+is also needed to support out-of-band methods for establishing a share. 
 
 \begin{figure}[h!]
     \centering
@@ -1526,49 +1538,45 @@ encrypted objects, CSVFile and CSVFolder.
     \label{fig:CSVAndroid:manualimport}
 \end{figure}
 
-A shared folder is basically just a folder object which two or more people have
-the required encryption keys for. However the problem of creating a share with
-someone is that you have to verify that you are actually sharing with the
-correct person. The data that will have to be shared is a serialized form of
-the capability, shown in Figure \ref{fig:CAP:serial}. The client we have
-implemented supports two methods of doing this. The most cumbersome is having
-to manually copying the key from one users client to another, and afterwards
-verifying that the key for the selected folder is correct. An example of this
-can be seen in Figure \ref{fig:CSVAndroid:manualimport}. This feature is also
-needed to support out-of-band methods for establishing a share. The other
-possibility is to make use of a \ac{QR} code, which is a matrix barcode that
-can store information. What this means is that one user will generate a barcode
-on his device, and the other user can scan that code using the camera on his
-device. Figure \ref{fig:CSVAndroid:barcode} displays how this code will look.
-The barcode contains both the key and verification for the shared folder. Once
-two users have shared a folder once, that folder can be used for all future
-shares which means that the two people will never have to meet and do the
-capability exchange again.
+The other possibility is to make use of a \ac{QR} code, which is a matrix
+barcode that can store information. What this means is that one user will
+generate a barcode on his device, and the other user can scan that code using
+the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
+this code will look. The barcode contains both the key and the verification for
+the shared folder. Once two users have shared a folder once, that folder can be
+used for all future shares, which means that the two people will never have to
+meet and do the capability exchange again. The identity has thus been verified.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-barcode.png}
-    \caption{establishing a share by using barcodes}
+    \caption{Establishing a share by using barcodes}
     \label{fig:csvandroid:barcode}
 \end{figure}
-\subsection{adding a new client}
 
-% Same as sharing rationale.
-Using more clients, or different devices is almost the exact same as sharing,
+\subsection{Adding a new client}
+
+Using more clients, or different devices, is almost the exact same as sharing,
 and is solved in the same manner. The only difference is that the capability
-that needs to be transfered is that of the root-folder. It is also possible to
-take any other folder and use as the root for the new folder if that is the
-users wish.
+that needs to be transfered, is that of the \emph{root folder}. It is also
+possible to take any other folder and use as a new root for the new client if
+that is the users wish.
 
 \subsection{Securing the client}
-For a user to access his root folder the client will have to know the
+
+For a user to access his root folder, the client will have to know the
 capability of that folder. This is clearly to much for a user to remember, so
 the capability will have to be stored on the client. However, the client might
-be stolen or broken into by some means, if the capability is stored in clear
-text it is easily stolen. We partially remedy this by the use of \ac{PBKDF2},
-which makes an encryption key from a password. This is however no defense if
-the attacker managed to read the memory while the key is unlocked. The client
-enforces that this password should be at least 9 characters long. 
+be stolen or broken into by some means, and if the capability is stored in clear
+text, it is easily stolen. 
+
+We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes an
+encryption key from a password. This generated key is used to encrypt the root
+capability in a file stored on the client. We call this the encrypted key ring.
+
+These precautions are however no defense if the attacker managed to read the
+memory while the key is unlocked. The client enforces that this password should
+be at least 9 characters long. 
 
 \subsection{User Interface}
 % goal: As easy as possible!
