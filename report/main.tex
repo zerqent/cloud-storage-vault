@@ -1524,7 +1524,7 @@ you are actually sharing with the correct person. The data, or \emph{secret},
 that will have to be shared, is a serialized form of the capability of the
 shared folder, as shown in Figure \ref{fig:CAP:serial}.
 
-The client implemented supports two methods of doing this. The most cumbersome
+The client supports two methods of doing this. The most cumbersome
 is having to manually copying the key from one users client to another, and
 afterwards verifying that the key for the selected folder is correct. An example
 of this can be seen in Figure \ref{fig:CSVAndroid:manualimport}. This feature
@@ -1584,20 +1584,22 @@ be at least 9 characters long.
 % Sharing a file - first/following times - Key Distribution
 % Uploading/Downloading file
 
-We have tried to make a user interface that is easily understandable by a
-novice user, both in terms of ``where to click`` and in terms of how we name
-cryptographic operations. For instance we never use the word ``capability`` in
-the client.
+We have tried to make a user interface that is easily understandable by a novice
+user, both in terms of \emph{where to click} and in terms of how we name
+cryptographic operations. For instance we never use the word \emph{capability}
+in the client.
 
-\paragraph{Main Screen}The main screen of the application is shown in Figure
-\ref{fig:CSVAndroid:mainscreen}. However before the user gets to this screen he
-will have to unlock his local keyring with his password. If it is the users
-first time using the application he will have to enter his online credentials,
-and gets a choice to either import an existing root folder or to generate a new
-one. In both cases the user will have to choose a password to encrypt the root
-capability. From the main screen the most common action would be to ``Browse
-the vault`` in other words to see the files that the user has stored in the
-cloud.
+\paragraph{Main Screen}
+
+The main screen of the application is shown in Figure
+\ref{fig:CSVAndroid:mainscreen}. However, before the user gets to this screen,
+he will have to unlock his local keyring with his password. If it is the first
+time the user starts the application, he will have to enter his online
+credentials, and gets a choice to either import an existing root folder, or to
+generate a new one. In both cases the user will have to choose a password to
+encrypt the root capability in to the local keyring.. From the main screen the
+most common action would be to \emph{Browse the vault} -- in other words to see
+the files that the user has stored in the cloud.
 
 \begin{figure}[h!]
     \centering
@@ -1606,21 +1608,33 @@ cloud.
     \label{fig:CSVAndroid:mainscreen}
 \end{figure}
 
+\paragraph{Browse the cloud} 
+
+The interface for browsing the files stored in the cloud is made in what we
+understand as a common and understandable way of interpreting users actions on
+the android platform, and can be seen in Figure
+\ref{fig:CSVAndroid:remotebrowse}. Tapping a file will download that file, and
+tapping a folder will open that folder. 
+
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-remotebrowse.png}
-    \caption{Browsing the cloud from client}
+    \caption{Browsing the cloud storage from client}
     \label{fig:CSVAndroid:remotebrowse}
 \end{figure}
 
-\paragraph{Browse the cloud} The interface for browsing the cloud is made in
-what we understand as common and understandable way of interpreting users
-actions on the android platform, and can be seen in Figure
-\ref{fig:CSVAndroid:remotebrowse}. Tapping a file will download that file, and
-tapping a folder will open that folder. An upload is treated in a similar way,
-to reveal this option the users have to press menu. The user will then be
-allowed to browse his filesystem for the file he wishes to upload, tapping that
-file start the upload. 
+An upload is treated in a similar way. To reveal this option, the user have to
+press the \textbf{Menu}-button. The user will then be allowed to browse his
+local filesystem for the file he wishes to upload, and tapping that file will
+start the upload. 
+
+A long press on a file, or a folder item, will reveal the context menu shown in
+Figure \ref{fig:CSVAndroid:remotecontext}. The least understandable action is
+probably \emph{Unlink}, which remove a file or a folder from the parent folder.
+The reason why it says unlink and not delete, is that a file can potentially be
+linked in a number of different folders, and it is impossible by our design to
+reveal which folders the file has been linked to, except the one that we are
+unlinking from.
 
 \begin{figure}[h!]
     \centering
@@ -1628,13 +1642,6 @@ file start the upload.
     \caption{Context menu}
     \label{fig:CSVAndroid:remotecontext}
 \end{figure}
-
-A long press will reveal the context menu shown in Figure
-\ref{fig:CSVAndroid:remotecontext}. The least understandable action is probably
-unlink, which remove a file or a folder from the parent folder. The reason why
-it says unlink and not delete is that a file can potentially be linked in a
-number of different folders, and it is impossible in our design to reveal which
-folders the file has been linked to, except the one that we are unlinking from. 
 
 %**************************************%
 \chapter{Results}
