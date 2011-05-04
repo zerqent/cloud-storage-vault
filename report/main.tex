@@ -1,5 +1,4 @@
 \documentclass[pdftex,english,10pt,b5paper,twoside]{book}
-%TODO: Correct format, not a4
 \usepackage[T1]{fontenc} % In case we want special characters
 \usepackage[utf8]{inputenc} % We are all writing in UTF-8
 
@@ -135,6 +134,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \begin{acronym}
 \acro{ACL}{Access Control List}
 \acro{AES}{Advanced Encryption Standard}
+\acro{API}{Application Programming Interface}
 \acro{BC}{Bouncy Castle}
 \acro{CA}{Certification Authority}
 \acro{CBC}{Cipher Block Chaining}
@@ -171,10 +171,12 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{PoC}{Proof-of-concept}
+\acro{QR}{Quick Response}
 \acro{RAM}{Random access memory}
 \acro{REST}{Representational State Transfer}
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SaaS}{Software as a Service}
+\acro{SDK}{Software Development Kit}
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SQL}{Structured Query Language}
 \acro{SSL}{Secure Socket Layer}
@@ -1174,15 +1176,18 @@ addition to implementation details that require special attention.
 
 The server, in the most basic form, has to support two operations -- sending
 and receiving files. In addition, an \ac{ACL} layer is needed to support user
-management and access control to able to allow the deletion of files.
+management and access control to able to allow the deletion of files from the
+server.
 
 \subsection{Communication and Architectural Patterns}
 
 By definition, cloud applications are accessible over the Internet. The system
-we are creating, should be able to send and receive files and information from a
-server in the cloud. The \ac{HTTP} networking protocol is the foundation of data
-communication for the World Wide Web, and is thus chosen as the method of
-transferring information between client and server.
+we are creating, should be able to send and receive files and information from
+a server in the cloud. The \acf{HTTP} is the foundation of data communication
+for the World Wide Web, it is well tested, will pass through most firewalls and
+has a multitude of libraries in programming languages. To get a working server
+we can also use any existing web server as a foundation, which saves a lot of
+work. Thus \ac{HTTP} was chosen as our communication protocol.
 
 \subsubsection{\acs{REST}} The Web is built around an architectural style called
 \ac{REST} \cite[ch. 5]{fielding}, which is defined by four interface
@@ -1196,10 +1201,10 @@ constraints or \emph{patterns} as follows:
 \begin{description}
   \item[Client-server] \hfill \\
     The server is our server application, and the client is the various client
-    applications, either mobile or stationary.
-  
+    applications, 
+
   \item[Stateless] \hfill \\
-    Obviously, since the server is just a simple key-value file store, it does
+    Since the server is just a simple key-value file store, it does
     not need to keep state.
 
   \item[Cacheable] \hfill \\
@@ -1214,8 +1219,8 @@ constraints or \emph{patterns} as follows:
 
   \item[Uniform interface] \hfill \\
     The interface between clients and server(s) are given by the URI scheme in
-    Table \ref{tbl:IM:restinterface}.
-
+    Table \ref{tbl:IM:restinterface}. When a folder is uploaded a Write Enabler
+    must also be provided together with the storage index..
 \end{description}
 
 \begin{figure}[h!]
@@ -1244,11 +1249,13 @@ In this context, resources are the encrypted files, and the architectural
 constraints of \ac{REST} also matches that of our system as a
 whole. Thus, the server application are designed in a \acs{REST}ful manner.
 
-\subsubsection{Network Security} Since we are utilizing \ac{HTTP}, we can easily
-add an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more difficult
-for potential attackers to intercept messages, and also provides protection
-against the most basic form of \ac{MITM} attacks. The top-most layer of Figure
-\ref{fig:IM:layers} thus refers to \ac{TLS}.
+\subsubsection{Network Security} Since we are utilizing \ac{HTTP}, we can
+easily add an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more
+difficult for potential attackers to intercept messages, and also provides
+protection against the most basic form of \ac{MITM} attacks. It also provides
+protection against eavesdropping, which would have revealed the Write Enabler
+for folders and could be used by an attacker to delete user files. The top-most
+layer of Figure \ref{fig:IM:layers} thus refers to \ac{TLS}.
 
 \subsection{Environment}
 
@@ -1257,7 +1264,7 @@ platform, together with a set of applications, interfaces and micro frameworks.
 The rationale for each of these follows.
 
 \paragraph{Python} Python is a high-level general-purpose programming language.
-It was chosen to work with due to previous knowledge and experience by the
+It was chosen due to previous knowledge and experience by the
 authors, in addition to its simplicity.
 
 \paragraph{Apache} The Apache HTTP Server is a well tested and used web
@@ -1327,104 +1334,120 @@ database.
 \lstinputlisting[language=Python,breaklines=false,label=lst:IM:get, caption=URL mapping in fileserver.py]
 {listings/fileserver.py}
 
-\subsection{ACL functionality}
+\subsubsection{\acs{ACL} functionality}
 
+The only \ac{ACL} functionality implemented, is the server-side verification
+that a client has proper access to overwrite a file, e.g. when a client wishes to
+update a folder with new contents. We call this \textbf{Write-Enabler Verification}. 
 
-\section{Client}
+When a client first uploads a new folder, it also provides a
+\emph{Write-Enabler Key}, which the server adds to the database along with the
+\emph{Storage Index} of the folder.  For every subsequent request to write to a
+file with this specific Storage Index, the server verifies that the provided
+Write-Enabler Key is equal to that in the database.
+
+If a client tries to put a file with a Storage Index that already exists, the
+server replies with an error code if the client in addition does not provide a
+valid Write-Enabler Key.
+
+\section{Client - Android}
 % Java/Android/Dalvik/JCE/Commons HTTPClient
 % Security vs. Usability - Rationale for GUI
 % MVC? V=Android GUI
 %
-The \ac{PoC}-client we have implemented is made for devices using the Android
-operating system, which is based on Linux. The SDK for making Android
-applications is essentially a somewhat modified version of Java. 
+The \ac{PoC} client we have implemented, is made for devices using the Android
+operating system, which is based on Linux. The \ac{SDK} for making Android
+applications, is essentially a somewhat modified version of Java. 
 
 Most devices that use the Android operating system are mobile phones or
-tablets, which basically means that they are more limited in terms of speed and
-memory. The point of making the \ac{PoC}-client for such a device is that if it
-does perform well so will any faster device.
+tablets, which implies that they are limited in terms of speed and
+memory. The point of making the \ac{PoC} client for such a device, i.e. a
+\emph{smart phone}, is the growing availability, and the flexibility these
+devices provide. A user carries the device everywhere, it has a network
+connections, and it is always on.
+
+A nice side effect of developing on a smart phone platform, is that if the
+software performs well on a constrained device, it will almost certainly also
+have good performance on any faster device as well. 
 
 \subsection{Environment}
-The \ac{PoC}-client was made on the Android plattform in the Java programming
+The \ac{PoC} client was made on the Android platform in the Java programming
 language, together with a set of frameworks. The rationale for these are as
-follows:
+follows.
 
-\paragraph{Android} The Android operating system is made by Google and is most
-common found on mobile phones and tablets. The choice of Android was done
-because of hardware availability and familiarity with developing for the
-plattform and the programming language (Java). 
+\paragraph{Android} The Android operating system is made by Google, and is most
+commonly found on mobile phones and tablets. The platform choice of Android was done
+based on hardware availability and familiarity with developing on the
+platform and the programming language (Java). 
 
 \paragraph{Java} Java is a high-level, object-oriented programming language.
-Java applications runs in a \ac{JVM} which basically mean that a Java
-application can run on  almost any device which has a \ac{JVM}. The \ac{JVM} on
+Applications written in Java runs in a \ac{JVM}, which implies that a Java
+application can run on almost any device which has a \ac{JVM}. The \ac{JVM} on
 Android is called Dalvik.
 
 \paragraph{HttpComponents} Apache HttpComponents are a set of libraries for
-HTTP-transport in Java. The part used in our client is called HttpClient.
-Android incorporates part of this client in its native \ac{JVM}. The use of
-this library adheres to the \ac{DRY}-principle.
+\ac{HTTP} transport in Java. The part used in our client is called HttpClient.
+Android incorporates parts of this client in its native \ac{JVM}. The use of
+this library adheres to the \ac{DRY} principles.
 
-\paragraph{\ac{JCA}}\ac{JCA} is an archtivecture for doing cryptographic
-operations in Java. The architecture is based on principles of Implementation
+\paragraph{\ac{JCA}} \ac{JCA} is an architecture for doing cryptographic
+operations in Java. The architecture is based on principles of implementation
 independence, implementation interoperability and algorithm extensibility.
-Basically what this means is that each implementation of the \ac{JVM} can have
+Basically what this means, is that each implementation of the \ac{JVM} can have
 different implementations of the cryptographic primitives, but the developer
 does not need to know which implementation is available.
 
 \paragraph{ZXing Barcode Scanner} ZXing Barcode Scanner is a popular Android
 application which can be used by other Android applications to both scan and
-generate barcodes. We use this application to adhere to the \ac{DRY}-principle. 
+generate barcodes. By the use of this application, we adhere to the \ac{DRY}
+principles, by not creating our own code to generate barcodes.
 
 \subsection{Architectural Patterns}
 
-\paragraph{Client-server} What we have implemented is the client part of the
-overall client-server pattern.
+\paragraph{Client-server} It should be obvious that the client we have
+implemented is the client part of the overall client-server pattern.
 
-\paragraph{Pipe-and-filter} The basis of the pipe-and-filter pattern is that
+\paragraph{Pipe-and-Filter} The basis of the pipe-and-filter pattern is that
 there exist a chain of processing elements, where the output of one element is
 the input of the next element. We use this for file uploads and downloads to
-limit the memory usage of the client as well as to increase performance.
+limit the memory usage of the client, as well as to increase performance.
 
 \paragraph{Asynchronous pattern} We use asynchronous calls to slow operations
-(e.g. file upload, key generation) extensivly, to prevent the interface from
-hanging and to deliver a smoother user experience in general.  
+-- e.g. file upload and key generation -- extensively, to prevent the interface
+from hanging and to deliver a smoother user experience in general.  
 
 \subsection{Implementation Details}
 
 \subsubsection{Structure}
 % Package Structure, some nice UML (?)
 % Which qualities do we wish to achive? Security, Performance, Usability
-%
-The source of our client is logically separated into two entities; CSVlib
-and CSVAndroid. CSVlib is a pure Java library which contain the necessary
-entities, cryptographic operations and communication required for the client.
-CSVAndroid contains primarily a graphical user interface to use CSVlib on an
-Android device.
+ 
+The source of our client is logically separated into two entities --
+\textbf{CSVlib} and \textbf{CSVAndroid}. CSVlib is a pure Java library which
+contain the necessary entities, cryptographic operations and communication
+calls required for the client. CSVAndroid contains primarily a graphical user
+interface to make use of CSVlib on an Android device.
 
 \subsubsection{Cryptographic Entities}
+All the cryptographic entities -- namely folders, files and capabilities -- are all
+part of CSVlib. Their relationship can be seen in Figure \ref{fig:CSVlib:overview}.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{csvobjects.pdf}
     \caption{Cryptographic entities and their relations}
-    \label{fig:CAP:serial}
+    \label{fig:CSVlib:overview}
 \end{figure}
-\paragraph{Capabilities}
 
-
-The implementation of Capabilities lives in CSVlib and is a container for
-cryptographic keys and information to identify the corresponding object. A
+\paragraph{Capabilities} Capabilities are containers for
+cryptographic keys and information to identify a corresponding object. A
 capability will contain information to identify an object as either a file or a
 folder, and have the information to read, write or verify that object.
-Capabilities are stored serverside in folders, in it's serialized form shown i
-figure \ref{fig:CAP:serial}. Object Type specifices if the capability
-represents a file or a folder, with values F or D (for directory) accordingly.
-Key Type specifices the permissions the key will give on the object and can be
-either RO (Read Only), RW (Read and write) or V (Verify). The different parts
-are separated by the character ``:``. Key and verify are encoded in Base32,
-which means that the 128 bits will be repleaced by an alphabet of 32
-different symbols, namely A-Z and 2-7. This transformation is done for human
-readability. 
+
+Capabilities are stored server side in folders, in it's serialized form shown
+in Figure \ref{fig:CAP:serial}. \emph{Object Type} specifies if the capability
+represents a file or a folder, with values \emph{F} or \emph{D} 
+respectively.
 
 \begin{figure}[h!]
     \centering
@@ -1433,34 +1456,52 @@ readability.
     \label{fig:CAP:serial}
 \end{figure}
 
+\emph{Key Type} specifies the permissions the key will grant on the object and
+can be either \emph{RO} (Read Only), \emph{RW} (Read and write) or \emph{V}
+(Verify).
+
+The different parts are separated by the character \textbf{:}. The key and
+verify string are encoded in Base32, which means that the 128 bits these
+strings are represented by, will be replaced by an alphabet of 32 different
+symbols, namely A-Z and 2-7. This transformation will give some overhead in
+storage and transfer (26 bytes compared to 16), but makes it possible to read for a human
+with few mistakes or misunderstandings.
 
 \paragraph{Folders}
-% TODO: Ref til crypt solution
-A folder is represented in the class CSVFolder. Basically a CSVFolder object is
-just a collection of aliases and their corresponding capabilities. For
-the most part the data stored in a folder is so small that it can easily live for 
-as long as needed in the memory of the client. When a folder is created or 
-updated the content is serialized and encrypted before it is uploaded to the server 
-directly from memory.
+
+A folder is represented by the class \textbf{CSVFolder}. A CSVFolder object is
+a collection of aliases and their corresponding capabilities. For
+the most part, the data stored in a folder is so small that it can easily live for 
+as long as needed in the memory of the client. 
+
+When a folder is created or updated, the content is serialized and encrypted,
+before it is uploaded to the server directly from memory. The serialization for
+each item in a folder is simply \textbf{alias;capability}, where the capability
+itself is also serialized.
 
 \paragraph{Files}
-A file is represented in the class CSVFile. While a folder in general is small,
-a file can be of any size, even larger than the \ac{RAM} of the device itself. To
-keep the memory footprint low we use a pipe-and-filter architecture to stream
-data all the way from the cloud to the disk, or vice versa, through encryption
-and verification. An example of how we do this for uploads is shown in Listing
-\ref{lst:inputstream}. The InputStreams are chained together, with the effect
-that a read from ``readBuffer`` will trigger a read trough the whole pipe. The
-DigestInputStream will update the state of the hash function, but is
-transparent in the sense that whatever goes into the stream will also be what
-comes out. The CipherInputStream on the otter hand will output an encrypted
-stream of the data from the file. Buffers are placed between each step of the
-stream for some performance increase.  
 
-\lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a
-file]
+A file is represented by the class \textbf{CSVFile}. While a folder in general is small,
+a file can be of any size, even larger than the space the \ac{RAM} on the
+device itself represents. 
+
+To keep the memory footprint low, we use the pipe-and-filter architectural
+pattern to stream data all the way from the cloud to the disk, or vice versa,
+through encryption and verification. 
+
+An example of how we do this for uploads is shown in Listing
+\ref{lst:inputstream}. 
+
+\lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a file]
 {listings/fileupload_example.java}
 
+The \emph{InputStreams} are chained together, with the effect that a read from
+\emph{readBuffer} will trigger a read trough the whole pipe. The
+\emph{DigestInputStream} will update the state of the hash function, but is
+transparent in the sense that whatever goes into the stream will also be what
+comes out. The \emph{CipherInputStream} on the other hand, will output an encrypted
+stream of the data from the file. Buffers are placed between each step of the
+stream for some performance increase.
 
 \subsubsection{Communication with Server}
 % Do not repeat what is said in Server equivalent section
@@ -1468,55 +1509,146 @@ file]
 
 For \ac{HTTP} transport we utilize the Apache Software Foundations
 HttpComponents Client\footnote{ \url http://hc.apache.org/} also known as
-HttpClient. This Client offers support for authenticated requests to a server,
-and both upload and download through {\bf PUT} and {\bf GET} requests
-respectively. We wrap communication with the server in two classes,
-Communication.java and CSVFileManager.java. Communication.java provides
-functions for sending and retrieving data from our servers while
-CSVFileManager.java providies specific methods for uploading the encrypted
-objects.
+HttpClient.
+
+This Client offers support for authenticated requests to a server, and both
+upload and download through \textbf{PUT} and \textbf{GET} requests respectively.
+We wrap communication with the server in two classes,
+\texttt{Communication.java} and \texttt{CSVFileManager.java}.
+\texttt{Communication.java} provides functionality for sending and retrieving
+data from our server, while \texttt{CSVFileManager.java} provides specific
+methods for sending and receiving the encrypted objects, CSVFile and CSVFolder.
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
 % achieve sharing, securely
-% TODO: Ref til hvor vi beskriver sharing
-A shared folder is basically just a folder object which two or more people have
-the required encryption keys for. However the problem of creating a share with
-someone is that you have to verify that you are actually sharing with the same
-person. The data that will have to be shared is a serialized form of the
-capability, shown in Figure \ref{fig:CAP:serial}. The client we have
-implemented supports two methods of doing this. The most cumbersome is having
-to manually copying the key from one users client to anothers, and afterwards
-verifying that the key for the selected folder is ok. The other possiblility is
-to make use of a barcode. What this means is that one user will generate a
-barcode on his device, and the other user can scan that code using his device'
-camera. The barcode contains both the key and verification for the shared
-folder. Once two users have shared one folder they will never have to meet
-again to share something else.
-%% TODO: Sjekk device'
+
+A \emph{shared folder} is basically just a folder object which two or more
+people have the required encryption keys for. 
+
+The problem of creating a share with someone, is that you have to verify that
+you are actually sharing with the correct person. The data, or \emph{secret},
+that will have to be shared, is a serialized form of the capability of the
+shared folder, as shown in Figure \ref{fig:CAP:serial}.
+
+The client supports two methods of doing this. The most cumbersome
+is having to manually copying the key from one users client to another, and
+afterwards verifying that the key for the selected folder is correct. An example
+of this can be seen in Figure \ref{fig:CSVAndroid:manualimport}. This feature
+is also needed to support out-of-band methods for establishing a share. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-manualimport.png}
+    \caption{Establishing a share by copying the key}
+    \label{fig:CSVAndroid:manualimport}
+\end{figure}
+
+The other possibility is to make use of a \ac{QR} code, which is a matrix
+barcode that can store information. What this means is that one user will
+generate a barcode on his device, and the other user can scan that code using
+the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
+this code will look. The barcode contains both the key and the verification for
+the shared folder. Once two users have shared a folder once, that folder can be
+used for all future shares, which means that the two people will never have to
+meet and do the capability exchange again. The identity has thus been verified.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-barcode.png}
+    \caption{Establishing a share by using barcodes}
+    \label{fig:csvandroid:barcode}
+\end{figure}
 
 \subsection{Adding a new client}
-% Same as sharing rationale.
-Using more clients, or different devices is almost the exact same as sharing,
-and is solved in the same manner. The only difference is that the capability
-that needs to be transfered is that of the root-folder. It is also possible to
-take any other folder and use as a the root for the new folder if that is the
-users wish.
 
+Using more clients, or different devices, is almost the exact same as sharing,
+and is solved in the same manner. The only difference is that the capability
+that needs to be transfered, is that of the \emph{root folder}. It is also
+possible to take any other folder and use as a new root for the new client if
+that is the users wish.
+
+\subsection{Securing the client}
+
+For a user to access his root folder, the client will have to know the
+capability of that folder. This is clearly to much for a user to remember, so
+the capability will have to be stored on the client. However, the client might
+be stolen or broken into by some means, and if the capability is stored in clear
+text, it is easily stolen. 
+
+We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes an
+encryption key from a password. This generated key is used to encrypt the root
+capability in a file stored on the client. We call this the encrypted key ring.
+
+These precautions are however no defense if the attacker managed to read the
+memory while the key is unlocked. The client enforces that this password should
+be at least 9 characters long. 
 
 \subsection{User Interface}
 % goal: As easy as possible!
-
 % First start: Generate new cap/import an old one (Adding a new client section)
 % Browsing remote file(s)/folders
 % Sharing a file - first/following times - Key Distribution
 % Uploading/Downloading file
 
-\subsection{Secure storage of files on Client}
-% Can we view files without them leaving traces on filesystem?
-% Optional/Possible?
-A problem with 
+We have tried to make a user interface that is easily understandable by a novice
+user, both in terms of \emph{where to click} and in terms of how we name
+cryptographic operations. For instance we never use the word \emph{capability}
+in the client.
 
+\paragraph{Main Screen}
+
+The main screen of the application is shown in Figure
+\ref{fig:CSVAndroid:mainscreen}. However, before the user gets to this screen,
+he will have to unlock his local keyring with his password. If it is the first
+time the user starts the application, he will have to enter his online
+credentials, and gets a choice to either import an existing root folder, or to
+generate a new one. In both cases the user will have to choose a password to
+encrypt the root capability in to the local keyring.. From the main screen the
+most common action would be to \emph{Browse the vault} -- in other words to see
+the files that the user has stored in the cloud.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-mainscreen.png}
+    \caption{Main screen of client}
+    \label{fig:CSVAndroid:mainscreen}
+\end{figure}
+
+\paragraph{Browse the cloud} 
+
+The interface for browsing the files stored in the cloud is made in what we
+understand as a common and understandable way of interpreting users actions on
+the android platform, and can be seen in Figure
+\ref{fig:CSVAndroid:remotebrowse}. Tapping a file will download that file, and
+tapping a folder will open that folder. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-remotebrowse.png}
+    \caption{Browsing the cloud storage from client}
+    \label{fig:CSVAndroid:remotebrowse}
+\end{figure}
+
+An upload is treated in a similar way. To reveal this option, the user have to
+press the \textbf{Menu}-button. The user will then be allowed to browse his
+local filesystem for the file he wishes to upload, and tapping that file will
+start the upload. 
+
+A long press on a file, or a folder item, will reveal the context menu shown in
+Figure \ref{fig:CSVAndroid:remotecontext}. The least understandable action is
+probably \emph{Unlink}, which remove a file or a folder from the parent folder.
+The reason why it says unlink and not delete, is that a file can potentially be
+linked in a number of different folders, and it is impossible by our design to
+reveal which folders the file has been linked to, except the one that we are
+unlinking from.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.4]{client-browsecontext.png}
+    \caption{Context menu}
+    \label{fig:CSVAndroid:remotecontext}
+\end{figure}
 
 %**************************************%
 \chapter{Experimental Procedures}
