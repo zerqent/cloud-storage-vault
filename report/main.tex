@@ -1665,6 +1665,7 @@ taken to measure the application's security.
 \section{Security}
 
 \subsection{Brute Force Local Keyring}
+\label{sec:BFLK}
 The locally stored and encrypted keyring can be viewed as a weak link, considering lost or hacked user
 equipment. Although the keyring is encrypted with a user password, it is still
 vulnerable to the old fashion brute force and dictionary attacks. The format of
@@ -1866,7 +1867,35 @@ slave was capable of running 8 threads in parallel.
 %**************************************%
 \chapter{Results}
 %**************************************%
+\section{Brute Force Local Keyring}
+In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
+by implementing and executing two different programs. The first program, named
+BruteForce, was designed to run on a single computer, and supports both brute force and
+dictionary attacks. The second program, named Cluster Dictionary Attack (CDA), was created to run in a
+computational cluster. However, the CDA attack does only support dictionary attacks. The results for
+both programs are given below.
 
+\subsection{BruteForce}
+With BruteForce we executed both a brute force and a dictionary attack to estimate the
+amount of passwords we could brute force within a second. The brute force
+and dictionary attacks achieved approximately the same results. However, for
+each measurement, the brute force attack turned out to achieve about 50
+passwords more per seconds than the dictionary attack. The results for both
+attacks are illustrated in Figure \ref{fig:bfres}.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.55]{bf.png}
+\caption{Results from running brute force and dictionary attacks against a local
+keyring. The histogram shows how many passwords per second we were able to brute
+force against different amounts of iterations used in PBKDF2.}
+\label{fig:bfres}
+\end{figure}
+\subsection{Cluster Dictionary Attack (CDA)}
+In the CDA attack, each node of the cluster achieved approximately the same results as a single computer
+running a dictionary attack with BruteForce. With 20 nodes in the cluster we
+were able to brute force around 35 000 passwords per second, given PBKDF2 with
+1000 iterations.
 %**************************************%
 \chapter{Discussion}
 %**************************************%
@@ -1912,7 +1941,7 @@ or folder relies on, if the confidentiality of this folder is breached, all
 files are effectively compromised.
 
 \subsubsection{Brute Force attacks}
-
+%TODO: Discuss findings with experimental procedure.
 \subsubsection{RSA attacks}
 
 \subsubsection{AES attacks}
@@ -1955,9 +1984,48 @@ without the users knowledge.
 % Appendix goes here
 \chapter{Relevant Implementations}
 \label{ap:RI}
+This chapter will study implementation details from applications that were
+created, but not a part of the thesis' main topic. Applications considered are 
+BruteForce and the Cluster Dictionary Attack (CDA).
 
 \section{BruteForce}
+BruteForce includes a plain brute force attack and a dictionary attack against
+a users encrypted keyring. Details about the implementation follows.
+
+\subsection{Implementation Details}
+BruteForce is written in Java and utilize the javax.crypto library with Bouncy
+Castle version 1.34 as JCE provider to decrypt the encrypted keyring. The Bouncy
+Castle JCE provider seems to be necessary as Android 2.2 uses it by default to encrypt
+the keyring. To enable PBKDF2 before decryption, BruteForce utilize a PBKDF2
+Java library available at \cite{pbkdf2}. The program is divided into two attack
+functions named bruteForceAttack and dictionaryAttack. The bruteForceAttack
+function is shown in Listing \ref{lst:bffunc}.
+
+\lstinputlisting[language=java, label=lst:bffunc, caption=bruteForceAttack
+function]{listings/bruteForceAttack.java} 
+
+\noindent bruteForceAttack starts a number of BruteForceThread threads. The
+function continues after all BruteForceThreads are initialized and ready to
+start their task. It then enters a while-loop. The while-loop executes a pushWord function for each iteration.
+The task of pushWord is to simply create and push all possible words of a given length onto
+a stack of words. The length of the words to push are given by its integer
+argument. The bruteForceAttack function is based on letting the main thread
+push words onto a stack of words, while the remaining BruteForceThreads are
+popping words from the stack. The BruteForceThreads are further trying to
+decrypt the encrypted keyring by using each word as a possible password. In this
+way, the main thread and all of the BruteForceThreads are simultaneously
+cooperating to find the correct password. Once a BruteForceThread finds the
+correct password, the program will print out the password and exit.\\
+
+\noindent The dictionaryAttack function is shown in Listing \ref{lst:dafunc}.
+
+\lstinputlisting[language=java, label=lst:dafunc, caption=dictionaryAttack
+function]{listings/dictionaryAttack.java}
+
+
 
 \section{Cluster Dictionary Attack}
+\subsection{Environment}
+\subsection{Implementation Details} 
 
 \end{document}
