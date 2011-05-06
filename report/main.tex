@@ -1997,9 +1997,10 @@ BruteForce is written in Java and utilize the javax.crypto library with Bouncy
 Castle version 1.34 as JCE provider to decrypt the encrypted keyring. The Bouncy
 Castle JCE provider seems to be necessary as Android 2.2 uses it by default to encrypt
 the keyring. To enable PBKDF2 before decryption, BruteForce utilize a PBKDF2
-Java library available at \cite{pbkdf2}. The program is divided into two attack
-functions named bruteForceAttack and dictionaryAttack. The bruteForceAttack
-function is shown in Listing \ref{lst:bffunc}.
+Java library available at \cite{pbkdf2}. The program is divided into two
+functions named bruteForceAttack and dictionaryAttack that correspondingly executes a brute
+force and dictionary attack. The bruteForceAttack function is shown in Listing
+\ref{lst:bffunc}.
 
 \lstinputlisting[language=java, label=lst:bffunc, caption=bruteForceAttack
 function]{listings/bruteForceAttack.java} 
@@ -2009,23 +2010,87 @@ function continues after all BruteForceThreads are initialized and ready to
 start their task. It then enters a while-loop. The while-loop executes a pushWord function for each iteration.
 The task of pushWord is to simply create and push all possible words of a given length onto
 a stack of words. The length of the words to push are given by its integer
-argument. The bruteForceAttack function is based on letting the main thread
-push words onto a stack of words, while the remaining BruteForceThreads are
-popping words from the stack. The BruteForceThreads are further trying to
-decrypt the encrypted keyring by using each word as a possible password. In this
-way, the main thread and all of the BruteForceThreads are simultaneously
-cooperating to find the correct password. Once a BruteForceThread finds the
-correct password, the program will print out the password and exit.\\
+argument. The whole attack is based on letting the main thread create and 
+push words onto a stack, while the BruteForceThreads are
+pulling words from the stack. When a word is pulled from the stack it is
+subject to PBKDF2, where the result is used to decrypt the ciphertext. If
+decryption results in a given plaintext, the password is found.\\
 
 \noindent The dictionaryAttack function is shown in Listing \ref{lst:dafunc}.
 
 \lstinputlisting[language=java, label=lst:dafunc, caption=dictionaryAttack
 function]{listings/dictionaryAttack.java}
 
-
+dictionaryAttack reads an input dictionary file into a BufferedReader. It then starts
+a given number of DictionaryThreads. The DictionaryThreads will read
+from the BufferedReader in a synchronized way. When a word is read from a
+DictionaryThread it will be subject to PBKDF2, where the result is used to
+decrypt the ciphertext. If decryption results in a given
+plaintext, the password is found.
 
 \section{Cluster Dictionary Attack}
-\subsection{Environment}
-\subsection{Implementation Details} 
+The CDA is written in Java and is built around the same procedure as the
+dictionary attack in BruteForce. However, the difference lays in the cooperation
+of multiple computers. To enable a cluster of computers to cooperate, we used
+the following environment.
 
+\subsection{Environment}
+The environment is based upon a software framework from Apache called Hadoop. The
+main functionality of Hadoop is described below.
+
+\subsubsection{Apache Hadoop}
+Apache Hadoop makes it possible for multiple machines to cooperate
+and run computational work together. Hadoop also provides a distributed filesystem
+\ac{HDFS} that can store data across multiple cooperating machines \cite{hadoop}. The
+computational work in Hadoop is organized and distributed using MapReduce.
+The concept of MapReduce is explained below.
+
+\paragraph{MapReduce} is a programming paradigm introduced by Google. It is designed to
+process and generate large sets of data using a cluster of machines \cite{mapred}.
+In MapReduce, a large set of input data is divided into multiple key/value
+pairs. The key/value pairs are further distributed to multiple MapReduce tasks
+running on multiple machines. A MapReduce task is divided into
+a mapper and a reducer. The task of a mapper is to perform an operation on a
+key/value pair and return a key/value pair as a result to the reducer. The
+reducer collects key/value pairs from multiple mappers and combine the results
+into one or more output files.
+
+\subsection{Implementation Details} 
+The CDA attack is implemented as a MapReduce problem, with a large dictionary
+file as the data input set. The dictionary is split into separate
+key/value pairs, where each value is a single line in the dictionary and the key
+corresponds to the line's offset within the dictionary.\\ 
+
+\noindent The key/value pairs are handled by a map function implemented in CDAMapper. The map function has the
+responsibility of checking every word on a single dictionary line. Each line in
+the dictionary should contain a certain amount of words. This is to enable the
+map function to run multiple threads at the same time, where each thread checks
+one or more words. With multiple threads the attack is able to utilize more CPU power
+for each running machine in the cluster. A detailed view of the map function is
+given in Listing \ref{lst:mapfunc}. 
+
+\lstinputlisting[language=java, label=lst:mapfunc, caption=Mapper function in 
+CDAMapper]{listings/mapper.java}
+
+When receiving a key/value pair, the map function first splits the input line
+into an array of words called line. It then creates a given number of
+DictionaryThread threads and serves each thread a sub array of words from the
+line array. Each DictionaryThread will check all of its incoming words similar
+to the DictionaryThread in BruteForce. If the correct password is found, the
+password will be written to the sysout folder in the machine where the mapper is
+running.\\
+
+\noindent A class named Processor initializes the CDA attack by configuring the mapper and
+reducer tasks. The number of mappers is set equal to the number of nodes
+used in the cluster. This is to ensure that each machine only runs one mapper at
+a time. The number of reducers are set to zero, because their behavior in
+MapReduce is not needed.
+
+
+\paragraph{Notice:} The for-loop at line 10 in Listing \ref{lst:mapfunc} requires the number of words
+per line, in the dictionary, to be equal to a multiple of the number of threads in use. It is
+recommended that the input dictionary follows this requirement. In this
+occasion, we have created a Bash script, named dictmaker.sh, that changes a regular dictionary into
+an N words-per-line dictionary. The script can be found in the attached CD-ROM.
+ 
 \end{document}
