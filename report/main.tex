@@ -222,21 +222,21 @@ service is any processing or communication service that enhances the security of
 the data processing systems and the information transfers of any organization
 \cite[p. 12]{stallings}.
 
-\paragraph{Confidentiality} is the art of keeping a message secret from
-unauthorized parties \cite[p. 18]{stallings}. This can typically be done by
-either preventing other parties access to the message at all, or making the
-contents unreadable, for instance by the use of encryption.
+\paragraph{Confidentiality} Confidentiality is the act of keeping a message
+secret from unauthorized parties \cite[p. 18]{stallings}. This can typically be
+done by either preventing other parties access to the message at all, or making
+the contents unreadable, for instance by the use of encryption.
 
-\paragraph{Integrity} in a security perspective deals with detecting,
+\paragraph{Integrity} Integrity in a security perspective deals with detecting,
 preventing or recovering a message being changed by an unauthorized party
 \cite{stallings}.
 
-\paragraph{Authentication} is the act for a user, service or similar to prove
-that he is what he claims to be \cite{stallings}.
+\paragraph{Authentication} Authentication is the act for a user, service or
+similar to prove that he is what he claims to be \cite{stallings}.
 
-\paragraph{Nonrepudiation} prevents both sender and receiver of a message
-from denying a transmitted message, in other words one party can prove the
-other parties involvement \cite{stallings}.
+\paragraph{Nonrepudiation} Nonrepudiation prevents both sender and receiver of
+a message from denying a transmitted message, in other words one party can
+prove the other parties involvement \cite{stallings}.
 
 \section{Cryptographic Primitives}
 
@@ -244,15 +244,15 @@ This section explains the low level security primitives used in this thesis.
 
 \subsection{Encryption}
 
-Encryption is the process of transforming some
-information into an unreadable form. Encryption is primarily used to enforce
-Confidentially, but can also be used for other purposes such as authentication.
-In a very basic form an encryption scheme consist of an encryption algorithm,
-the \emph{cipher}, a key and a message, the \emph{plaintext}, that is all used
-to create an encrypted message, the \emph{ciphertext}. If a good cipher is
-used, knowledge of the cipher, plaintext and ciphertext should not be enough to
-obtain the key.
-% TODO: Kilde: schneier?
+Encryption is the process of transforming some information into an unreadable
+form. Encryption is primarily used to enforce Confidentially, but can also be
+used for other purposes such as authentication.  In a very basic form an
+encryption scheme consist of an encryption algorithm, the \emph{cipher}, a key
+and a message, the \emph{plaintext}, that is all used to create an encrypted
+message, the \emph{ciphertext}. If a good cipher is used, knowledge of the
+cipher, multiple plaintext and multiple ciphertext should not be enough to
+obtain the key or decrypt ciphertext with a corresponding unknown
+plaintext\cite[p. 30]{stallings}.
 
 \paragraph{Block-cipher and Stream-cipher} are classifications on how a cipher
 treats data\cite[p. 32]{stallings}. A block cipher will encrypt a block of data
@@ -274,8 +274,7 @@ the ciphertext will leak, i.e. the same plaintext will always be the same
 ciphertext. A more usefull way is \emph{\ac{CBC}}. In \ac{CBC} you will need an
 \ac{IV} which should be non-predictable, and not reused. The \ac{IV} is XORed
 with the first block of plaintext, which again is encrypted with \ac{AES}. The
-resulting ciphertext is used as an \ac{IV} for the next block.
-%TODO: kilde: scheiner?
+resulting ciphertext is used as an \ac{IV} for the next block\cite[p. 183]{stallings}.
 
 \paragraph{Asymmetric encryption} is an encryption scheme where a different key
 is used for encryption than decryption\cite[p. 259]{stallings}. An asymmetric
@@ -336,7 +335,6 @@ network\cite{stallings}. It does so by a combination of different algorithms
 and primitives, but a digital certificate is required for authentication.
 
 \subsection{PBKDF2}
-%TODO: See if we actually use this.
 \label{sec:PBKDF2}
 \ac{PBKDF2} is a key derivation function to create an encryption key based on
 a password. The point of this is that a password is often something that should
@@ -357,25 +355,26 @@ where a passive attack attempts to learn or make use of information from the
 system but does not affect system resources. An active attack attempts to alter
 system resources or affect their operation.
 
-\paragraph{Traffic analysis} is the art of capturing communication sent between
-two parties. This information might contain secrets or might for instance leak
-enough information about an encryption key to make it breakable.
+\paragraph{Traffic analysis} Traffic Analysis is the act of capturing
+communication sent between two parties. This information might contain secrets
+or might for instance leak enough information about an encryption key to make
+it breakable.
 
-\paragraph{Masquerade} is an active attack where the attacker pretends to be
+\paragraph{Masquerade} Masquerade is an active attack where the attacker pretends to be
 one of the legit parties.
 
-\paragraph{Replay} is an active attack where the attacker capture some data in
+\paragraph{Replay} Replay is an active attack where the attacker capture some data in
 a communication session and subsequently retransmit that information.
 
-\paragraph{Modification of messages} is an active attack where the attacker
+\paragraph{Modification of messages} Modification of messages is an active attack where the attacker
 alters some of the contents of a message sent between two communicating
 parties.
 
-\paragraph{Denial of Service} is an active attack where the attacker seeks to
+\paragraph{Denial of Service} Denial of Service is an active attack where the attacker seeks to
 make resources unavailable for legit users, i.e. by overloading an application
 by sending it lots of traffic.
 
-\paragraph{\acl{MITM}} is an attack where an attacker intercepts messages
+\paragraph{\acl{MITM}} \ac{MITM} is an attack where an attacker intercepts messages
 between the communicating parties and then either relay or substitute the
 intercepted message.
 
@@ -386,9 +385,12 @@ both flaws and be used in an incorrect fashion.
 \paragraph{Cryptanalysis attack} is an attempt to deduce a specific plaintext
 or to deduce the key being used in a ciphertext.
 
-\paragraph{Brute-force attack} is an attack where you try to obtain a secret by
-testing the algorithm with up to all possible inputs. The secret might be an
-encryption key or the data fed into a cryptographic hash function.
+\paragraph{Brute-force attack} In a brute-force attack an attacker tries
+to obtain a secret by testing the algorithm with up to all possible inputs. The
+secret might be an encryption key or the data fed into a cryptographic hash
+function. A related attack is the \emph{Dictionary attack} where the attacker
+tries to obtain a secret by trying a subset of all known inputs, the ones
+defines in his dictionary.  
 
 \section{Cloud Computing}
 In a draft\cite{cloud_nistdef} \ac{NIST} defines cloud computing as:
