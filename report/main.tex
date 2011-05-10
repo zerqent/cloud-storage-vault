@@ -151,6 +151,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ECB}{Electronic Codeboo}
 \acro{ETE}{External Trusted Entity}
 \acro{FAQ}{Frequently Asked Questions}
+\acro{GPU}{Graphics Processing Unit}
 \acro{HDFS}{Hadoop Distributed File System}
 \acro{HTTP}{Hypertext Transfer Protocol}
 \acro{HTTPS}{Hypertext Transfer Protocol Secure}
@@ -1868,6 +1869,7 @@ slave was capable of running 8 threads in parallel.
 \chapter{Results}
 %**************************************%
 \section{Brute Force Local Keyring}
+\label{sec:R:BFLK}
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
 by implementing and executing two different programs. The first program, named
 BruteForce, was designed to run on a single computer, and supports both brute force and
@@ -1880,7 +1882,8 @@ With BruteForce we executed both a brute force and a dictionary attack to estima
 amount of passwords we could brute force within a second. The brute force
 and dictionary attacks achieved approximately the same results. However, for
 each measurement, the brute force attack turned out to achieve about 50
-passwords more per seconds than the dictionary attack. The results for both
+passwords more per seconds than the dictionary attack. This is believed to
+exist due to the file reading overhead in the dictionary attack. The results for both
 attacks are illustrated in Figure \ref{fig:bfres}.
 
 \begin{figure}[!h]
@@ -1893,9 +1896,13 @@ force against different amounts of iterations used in PBKDF2.}
 \end{figure}
 \subsection{Cluster Dictionary Attack (CDA)}
 In the CDA attack, each node of the cluster achieved approximately the same results as a single computer
-running a dictionary attack with BruteForce. With 20 nodes in the cluster we
-were able to brute force around 35 000 passwords per second, given PBKDF2 with
-1000 iterations.
+running a dictionary attack with BruteForce. We found a small difference where
+the local computer achieved about 200 passwords per second more than each
+instance in the cluster. With respect to difference in CPU power between the
+local computer and a single cluster instance \cite{cpubench}, this is an expected
+result. With 20 nodes in the cluster we were able to brute force around 35 000
+passwords per second, given PBKDF2 with 1000 iterations.
+
 %**************************************%
 \chapter{Discussion}
 %**************************************%
@@ -1915,6 +1922,12 @@ were able to brute force around 35 000 passwords per second, given PBKDF2 with
 
 \subsection{Sharing}
 
+\section{Performance}
+% 1 mappe med 100 filer i, tar ikke mye lenger tid å åpne enn en mappe med 3
+% filer i
+
+\subsection{Compared with Other Solutions}
+
 \section{Security}
 % Hvordan angripe?
 % ACL lag bare ekstra sikkerhet, man kan ikke cracke noe uten keyen!
@@ -1933,15 +1946,69 @@ of both files and folders relies primarily on the symmetric cipher used to
 encrypt the data. But for folders one can obtain this key if one manages to
 obtain the asymmetric private key belonging to the folder. In other words a
 folder is attackable both trough the asymmetric and the symmetric cipher used.
-If the confidentiality of a folder is breached this will also lead to the
-attacker being able to decrypt and subfolders or filer, in contrast the breach
-of confidentiality of a file will only compromise that specific file. It is
+If the confidentiality of a folder is breached it will additionally enable the
+attacker to decrypt all of the corresponding sub-folders and files. In contrast,
+cracking the confidentiality of a file will only compromise that specific file. It is
 also important to note that users will use a root folder which any other file
 or folder relies on, if the confidentiality of this folder is breached, all
 files are effectively compromised.
 
-\subsubsection{Brute Force attacks}
-%TODO: Discuss findings with experimental procedure.
+\subsubsection{Brute Force Local Keyring}
+The confidentiality of the root folder can be breached by brute forcing a user's
+locally stored keyring. This was experienced in Section \ref{sec:BFLK}. From the
+results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
+that the choice of iterations in PBKDF2 were conclusive to the efficiency of a
+brute force attack against the local keyring. By doubling the number of
+iterations in PBKDF2, the efficiency of a brute force attack would decrease by
+half of it's value. The PBKDF2 standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
+recommends the minimum number of iterations to be 1000. With 1000 iterations in
+PBKDF2 we were able to achieve a brute force efficiency around 1800 passwords
+per second for a single computer, and 35 000 passwords per second running the
+CDA attack on 20 Amazon EC2 high-CPU extra large instances. Given a password
+with length 5 and containing only small letters, the CDA attack will use 5
+minutes and 39 seconds to check all possible values. By using a cluster of 200
+nodes the CDA attack is able to crack a similar password of length 6 within 14 minutes
+and 42 seconds in worst case.\\
+
+\noindent It is important to notice that both the CDA and BruteForce
+attack were written in Java. With this in mind, it is reasonable to believe
+that general performance can be improved by using lower-layer
+programming languages, such as C, to implement the attacks. Another way to
+increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.\\
+
+\noindent Regarding CDA, the use of cloud computing to execute a brute force
+attack is not a new idea \cite{bfpgp, rothsha, rothwpa}. Newly on Black Hat DC 2011, a
+security researcher named Thomas Roth, showed that it was possible to brute
+force WPA passwords with a speed of 47 000 passwords per second on a single EC2
+cluster GPU instance \cite{rothwpa}. Amazon allows a user to execute up to 8
+cluster GPU instances, without the need of a special request. This indicate that
+anyone can crack WPA passwords at almost 400 000 passwords per second, and that
+Amazon can achieve even higher and unknown speed for WPA password cracking. With
+this in mind, we should consider that our own keyring can be subject to a lot
+more efficient brute force attacks compared to our own findings.\\
+
+\noindent To reduce vulnerability from plain brute force attacks, we decided to
+use 4000 iterations in PBKDF2. In addition, we designed the Cloud Storage Vault
+to force users to utilize more advanced and sophisticated passwords. Password
+requirements for the Cloud Storage Vault are given below:
+
+\begin{itemize}
+\item Password length >= 9.
+\item Password must include at least one capital letter, one small letter and
+one number.
+\end{itemize}
+
+\noindent With the password requirements above and with 4000 iterations in PBKDF2, it will
+be extremely hard to perform a plain brute force attack against the local
+keyring. Figure \ref{fig:bfres} indicates that when using PBKDF2 with 4000
+iterations, the local test computer running BruteForce is only able to check
+around 400 passwords per second. Given a cluster of 200 such computers, it will
+take 2683 years on average to brute force a password following the syntax above
+with a length of 9.\\
+
+\noindent Even though the keyring is secured against a plain brute force attack, it is
+still, to a certain degree,  vulnerable to a dictionary attack.
+
 \subsubsection{RSA attacks}
 
 \subsubsection{AES attacks}
@@ -1958,9 +2025,6 @@ Given enough users, at some point there will be a users who looses his
 terminal, for instance a mobile phone, a terminal might also be broken into
 without the users knowledge.
 
-\section{Performance}
-% 1 mappe med 100 filer i, tar ikke mye lenger tid å åpne enn en mappe med 3
-% filer i
 
 \section{Omitted features}
 % Ting vi ikke har lagt inn
@@ -1968,7 +2032,7 @@ without the users knowledge.
 % - Hvem 'eier' en directory
 % - Garbage collection? (vanskelig)
 
-\section{Compared with Other Solutions}
+
 %**************************************%
 \chapter{Conclusion and Future Work}
 %**************************************%
@@ -2077,7 +2141,7 @@ into an array of words called line. It then creates a given number of
 DictionaryThread threads and serves each thread a sub array of words from the
 line array. Each DictionaryThread will check all of its incoming words similar
 to the DictionaryThread in BruteForce. If the correct password is found, the
-password will be written to the sysout folder in the machine where the mapper is
+password will be written to the sysout folder on the machine where the mapper is
 running.\\
 
 \noindent A class named Processor initializes the CDA attack by configuring the mapper and
