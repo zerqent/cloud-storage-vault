@@ -1663,6 +1663,35 @@ The chapter will complete by further explaining the experimental procedures
 taken to measure the application's security.
 
 \section{Performance}
+We have tested the application on two Android phones, a HTC Desire and a HTC
+Hero. We have also tested the Java libraries on desktop computer. The
+specifications for HTC Desire can be seen in Table \ref{tbl:devices:desire},
+for HTC Hero in Table \ref{tbl:devices:hero} and the computer in Table
+\ref{table:devices:computer}.
+
+\input{tables/exp_desire.tex}
+\input{tables/exp_hero.tex}
+\input{tables/exp_computer.tex}
+
+\subsection{Eliminating bottlenecks on Android devices}
+On the Android devices we identify three possible bottlenecks that we might be
+able to control: The Network, our application and the memory card. The mobile
+phones will normally obtain their network connection through a wireless
+protocol, normally 3G, EDGE or WLAN. While these protocols works just fine,
+form a performance standpoint we want to have a fast and stable connection. Our
+solution was therefore to connect the Android devices to the test computer, and
+use the computers network.
+
+The other bottleneck might be the memory card. The class of a memory will
+identify the lowest speed that the card might give on reads. The class number X
+represents this guarantee in y MB, so a class 2 card guarantees 2 MB/s. There
+are however the possibility of the card performing significantly better than
+what the class indicates.
+
+\subsection{What is measured}
+% Upload and Download of files (speed/bandwidth). Wget speed, folder creation
+% etc
+% TODO
 
 \section{Security}
 
