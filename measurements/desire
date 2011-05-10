@@ -1,0 +1,18 @@
+
+Wired:
+File Upload UNEncrypted (w/ssl) (CSVClient): 2,62 MB/s (dønn stabilt)
+File Download UnEncrypted (w/ssl) (CSVClient): 2,3 MB/s (svingende)
+
+File Download Encrypted CSVclient: 1,25 MB/s litt svingende
+File Upload Encrypted CSVclient: 715 kB/s stabilt
+
+Without hashing - only encryption/decryption
+D: 1,37 MB/s
+U: 746 kB/s
+
+Without encryption - only hashing
+D: 2,35 MB/s
+U: 2,36 MB/s dønn stabilt
+
+Android 2.2 (no hashing)
+Ingen forskjell
