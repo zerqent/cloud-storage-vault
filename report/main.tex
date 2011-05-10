@@ -205,6 +205,22 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 
 \section{Outline}
 
+% TODO: This has to be placed somewhere, and maybe rewritten.
+\subsection{Security considerations}
+
+There are some considerations when using
+cloud services from an external provider, as opposed to self controlled
+hardware, software and platforms. Most notably is that you loose the control of
+selecting the people which will have physical and digital access to the
+infrastructure. In essence this means that the provider can read every data
+sent to and from the cloud as well as the data saved in the cloud.
+
+Another risk is that information might be leaked to other users of the same
+cloud. For instance it might be able possible for a \ac{VM} to leak information
+to other \ac{VM}s on the same host.
+%TODO: Find a source for these acquisitions.
+
+
 The work is presented as per the following chapters:
 
 \paragraph{Chapter 2} provides background knowledge of the technologies and
@@ -217,143 +233,182 @@ software used.
 
 \section{Security Services}
 
-This section explains certain security services used in this thesis. A security
+This section explains the security services and technology used in this thesis. A security
 service is any processing or communication service that enhances the security of
-the data processing systems and the information transfers of any organization
-\cite[p. 12]{stallings}.
+the data processing systems and the information transfers of any organization,
+as defined by \citet[p. 12]{stallings}.
 
 \paragraph{Confidentiality} Confidentiality is the act of keeping a message
 secret from unauthorized parties \cite[p. 18]{stallings}. This can typically be
-done by either preventing other parties access to the message at all, or making
+done by either preventing other parties access to the message at all, or by making
 the contents unreadable, for instance by the use of encryption.
 
-\paragraph{Integrity} Integrity in a security perspective deals with detecting,
+\paragraph{Integrity} Integrity in a security perspective, deals with detecting,
 preventing or recovering a message being changed by an unauthorized party
 \cite{stallings}.
 
-\paragraph{Authentication} Authentication is the act for a user, service or
+\paragraph{Authentication} Authentication is the act of a user, service or
 similar to prove that he is what he claims to be \cite{stallings}.
 
-\paragraph{Nonrepudiation} Nonrepudiation prevents both sender and receiver of
-a message from denying a transmitted message, in other words one party can
-prove the other parties involvement \cite{stallings}.
+\paragraph{Non-repudiation} Non-repudiation prevents both the sender and the receiver of
+a message from denying a transmitted message. In other words, one party can
+prove the involvement of the other party \cite{stallings}.
 
 \section{Cryptographic Primitives}
 
-This section explains the low level security primitives used in this thesis.
+This section describes the low level security primitives used in the results of
+this thesis.
 
 \subsection{Encryption}
 
 Encryption is the process of transforming some information into an unreadable
-form. Encryption is primarily used to enforce Confidentially, but can also be
-used for other purposes such as authentication.  In a very basic form an
-encryption scheme consist of an encryption algorithm, the \emph{cipher}, a key
-and a message, the \emph{plaintext}, that is all used to create an encrypted
-message, the \emph{ciphertext}. If a good cipher is used, knowledge of the
-cipher, multiple plaintext and multiple ciphertext should not be enough to
-obtain the key or decrypt ciphertext with a corresponding unknown
-plaintext\cite[p. 30]{stallings}.
+form. It is primarily used to enforce confidentiality, but can also be
+used for other purposes, e.g. authentication. 
 
-\paragraph{Block-cipher and Stream-cipher} are classifications on how a cipher
-treats data\cite[p. 32]{stallings}. A block cipher will encrypt a block of data
-of a specific size. If the data is larger than the block size used by the
-application a \emph{mode of operation} is needed. In a stream cipher the
-plaintext will usually be combined with a pseudorandom key stream to generate
-the plaintext.
+In its very basic form, an encryption scheme consist of an encryption algorithm
+(the \emph{cipher}), a key and a message (the \emph{plaintext}), that is all
+used to create an encrypted message, i.e. the \emph{ciphertext}. If a strong
+cipher is used, knowledge of the cipher, or multiple plaintext and multiple
+ciphertext, should not be enough to obtain the key or decrypt ciphertext with a
+corresponding unknown plaintext \cite[p. 30]{stallings}.
 
-\paragraph{Symmetric encryption} is an encryption scheme where the same key is
-used for both encryption and decryption\cite[p. 32]{stallings}. \ac{AES} is a
-block cipher and is the current standard for symmetric encryption. \ac{AES}
-works on a block of 128-bit and support keys of 128, 192 and 256-bit.
+\paragraph{Block cipher and Stream cipher} There are different classifications
+on how a cipher treats data \cite[p. 32]{stallings}. A \emph{block cipher} will
+encrypt a block of data of a specific size. If the data is larger than the
+block size used by the application, a \emph{mode of operation} is needed. In a
+\emph{stream cipher}, the plaintext will usually be combined with a pseudorandom key
+stream to generate the ciphertext.
 
-\paragraph{The mode of operation} used for a symmetric encryption enables
-subsequent safe use of the same key. In a simple scenario this could be to
-encrypt the normal data block-by-block with pure \ac{AES}, which is called the
-\ac{ECB} mode of operation. The problem with this is that some information of
-the ciphertext will leak, i.e. the same plaintext will always be the same
-ciphertext. A more usefull way is \emph{\ac{CBC}}. In \ac{CBC} you will need an
-\ac{IV} which should be non-predictable, and not reused. The \ac{IV} is XORed
-with the first block of plaintext, which again is encrypted with \ac{AES}. The
-resulting ciphertext is used as an \ac{IV} for the next block\cite[p. 183]{stallings}.
+\paragraph{Symmetric encryption} Symmetric-key encryption is an encryption scheme
+where the same key is used for both encryption and decryption \cite[p.
+32]{stallings}. The \ac{AES} is a block cipher and is the current standard for
+symmetric encryption. The \ac{AES} works on a block of 128 bits at a time,
+and support keys with length of 128, 192 and 256 bits.
 
-\paragraph{Asymmetric encryption} is an encryption scheme where a different key
-is used for encryption than decryption\cite[p. 259]{stallings}. An asymmetric
-encryption scheme is often called a public-key encryption scheme, where one key
-is defined as private and the other as public. The public key is shared to
-allow other parties to encrypt messages for the owner of the private key. The
-downside of asymmetric encryption compared to symmetric is that it requires a
-larger key and has a larger computational overhead to obtain the same level of
-confidentiality. The probably best known asymmetric cipher is \ac{RSA}.
+\paragraph{The Mode of Operation} The mode of operation used for a
+symmetric-key encryption enables subsequent safe use of the same key.
+
+In a simple scenario, this could be to encrypt the normal data block-by-block
+with pure \ac{AES}, which is called the \ac{ECB} mode of operation. The problem
+with this is that some information of the plaintext will leak, i.e. the same
+plaintext will always be encrypted as the same ciphertext.
+
+An other mode is \emph{\ac{CBC}}. In \ac{CBC}, a non-predictable and not reused
+\ac{IV} is used. The \ac{IV} is XORed with the first block of plaintext, which
+again is encrypted with \ac{AES}. The resulting ciphertext is used as an
+``\ac{IV}'' for the next block \cite[p. 183]{stallings}, and so on.
+
+\paragraph{Asymmetric encryption} Asymmetric key encryption is an encryption scheme
+where different keys are used for encryption and decryption 
+\cite[p. 259]{stallings}. 
+
+An asymmetric encryption scheme is often called a \emph{public-key
+encryption} scheme, where one key is defined as private and the other as public.
+The public key is shared to allow other parties to encrypt messages that only the
+owner of the private key can decrypt.
+
+The downside of asymmetric encryption compared to symmetric is that it requires
+a larger key, and that it has a larger computational overhead to obtain the
+same level of confidentiality as comparable symmetric-key encryption. The
+probably best known asymmetric cipher is \ac{RSA}.
 
 \subsection{Cryptographic hash functions}
-A cryptographic hash function is a deterministic mathematical procedure which
-takes an arbitrary block of data and outputs a fixed-size bit string. The output
-is referred to as the hash value, message digest or simply digest.
-Another property of a cryptographic hash function is that the smallest change in
-the input data (e.g. one bit) should completely change the output of the hash
-function. In other words it should be infeasible to find the reverse of a
-cryptographic hash function \cite[p. 335]{stallings}. It should also be infeasible to
-find two blocks of data which produce the same hash value (a \emph{collision}).
 
-The standard for cryptographic hash functions today are \ac{SHA}-1 and the
+A cryptographic hash function is a deterministic mathematical procedure, which
+takes an arbitrary block of data and outputs a fixed size bit string. The
+output is referred to as the \emph{hash value}, \emph{message digest} or simply
+\emph{digest}.
+
+Another property of a cryptographic hash function, is that the
+smallest change in the input data, e.g. one bit, should completely change the
+output of the hash function. In other words, it should be infeasible to find the
+reverse of a cryptographic hash function \cite[p. 335]{stallings}. It should
+also be infeasible to find two blocks of data which produce the same hash value
+(a \emph{collision}).
+
+The standard for cryptographic hash functions today, are \ac{SHA}-1 and the
 \ac{SHA}-2 family.
 
-\section{Applications of cryptographic primitives}
+\section{Applications of Cryptographic Primitives}
 
 \subsection{Digital Signatures}
-A digital signature is the digital equivalent of a normal signature, it
-verifies that an entity approves with or has written a message, the date the
-signature was made and it should be verifiable by a third party \cite[p.
-379]{stallings}. It should logically not be possible or at least unfeasible to
-fake a digital signature. It is possible to create digital signatures with
-\ac{RSA} there is also a standard for digital signatures called \ac{DSS} which
-uses \ac{DSA} as the actual algorithm.
 
-\subsection{Digital Certificates and PKI} A digital certificate is the pairing
-of a digital signature and a public key\cite{stallings}.  By this scheme the
-services confidentiality, authentication and nonrepudiation can be achieved.
-Basically a person or other entity has a certificate with some clues about the
-identity in it, e.g. the e-mail, together with a public key. This certificate
-can then be signed using digital signatures to verify that some other entity
-trusts this certificate. In practise the entity which signs certificates is the
-\ac{CA} which all clients have the public key information for, and trusts. The
-\ac{CA} will also contain information about which certificates has been
-revoked, i.e. should not be trusted in use. Such a scheme is usually referred
-to as a \ac{PKI}.
+A digital signature is the digital equivalent of a normal signature, i.e. it
+verifies that an entity approves with or has written a message. It can also
+verify the date the signature was made. In addition, it should be verifiable by
+a third party \cite[p.  379]{stallings}. 
 
-\subsubsection{PGP} \ac{PGP} is a scheme similar to \ac{PKI} but with no
-\ac{CA} that all users trusts\cite{stallings}. Instead trust is made between
-users by somehow verifying their public key, for instance by meeting face to
-face. A user can then sign another users key, set a trust level for the user
-and publish this information to a keyserver. Another user can then calculate a
-trust to an unknown person based on the trust set by peoples that he trusts.
+It should logically not be possible, or at least unfeasible, to fake a digital
+signature.
+
+The \ac{RSA} cipher can be used to generate signatures. In addition, there is also a
+standard for digital signatures, called \ac{DSS}, which uses \ac{DSA} as the
+underlying algorithm.
+
+\subsection{Digital Certificates and PKI}
+
+A digital certificate is the pairing of a digital signature and a public key
+\cite{stallings}. By this scheme, the services confidentiality, authentication
+and non-repudiation can be achieved. 
+
+For example, a person has a certificate with some clues about the identity
+in it, e.g. the e-mail, together with a public key. This certificate can then
+be signed using digital signatures, to verify that some other entity trusts this
+certificate.
+
+In practice, the entity which signs certificates is the \ac{CA}, which all
+clients have the public key information for, and trusts. The \ac{CA} will also
+contain information about which certificates has been revoked, i.e. should not
+be trusted in use. Such a scheme is usually referred to as a \ac{PKI}.
+
+\subsubsection{PGP}
+
+\ac{PGP} is a scheme similar to \ac{PKI}, but with no \ac{CA} that all users
+trust \cite{stallings}. Instead, trust is made between users by somehow
+verifying their public key, for instance by meeting face to face. A user can
+then sign another users key, set a trust level for the user, and publish this
+information to a key server.
+
+Another user can then calculate a trust on an unknown person, based on the trust
+set by peoples that he trusts, from information located on publicly
+available key servers.
 
 \subsection{SSL/TLS}
-\ac{TLS} and its predecessor \ac{SSL} are techniques for obtaining
-confidentiality, integrity for transfer of files over a
-network\cite{stallings}. It does so by a combination of different algorithms
+
+\ac{TLS}, and its predecessor \ac{SSL}, are technologies for obtaining
+confidentiality, integrity and authentication for transfer of files over a
+network \cite{stallings}. It does so by a combination of different algorithms
 and primitives, but a digital certificate is required for authentication.
+
+To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
+\ac{HTTPS}. 
 
 \subsection{PBKDF2}
 \label{sec:PBKDF2}
-\ac{PBKDF2} is a key derivation function to create an encryption key based on
-a password. The point of this is that a password is often something that should
-be memorable to a person, but what is memorable to a person might be a to short
-phrase to withstand a brute force attack. What \ac{PBKDF2} does is make the
-process of deriving the key from the password an expensive process in terms of
-computational power, to make it more resistant to brute force attacks. A feature
-known as key stretching. The efficiency of the key derivation is dependent on the
-number of process iterations chosen for the function.
+
+\ac{PBKDF2} is a key derivation function used to create an encryption key based
+on a password. The key point of this, is that a password is often something
+that a person has to be able to recall from memory. But, a password phrase that
+is memorable to a person, might be too short to withstand a dictionary or even
+a brute force attack.
+
+What \ac{PBKDF2} does, is to make the process of deriving the key from the password
+an expensive process in terms of computational power, to make it more resistant
+to brute force attacks. This feature is known as \emph{key stretching}. 
+
+The efficiency of the key derivation, is dependent on the number of process
+iterations chosen in the implementation of the function.
 
 \section{Security Attacks}
-This section briefly list security attacks relevant to this thesis, as defined
-by \citeauthor{stallings}.
-%TODO: Mulig man skal bruke en annen måte å refere kilden på her
 
-\paragraph{Active and passive attacks} are classifications of security attacks,
-where a passive attack attempts to learn or make use of information from the
-system but does not affect system resources. An active attack attempts to alter
-system resources or affect their operation.
+This section briefly list security attacks relevant to this thesis, as defined
+by \citet[Ch. 1.3]{stallings}.
+
+\paragraph{Active and passive attacks} Two general classifications of security
+attacks exist, where a \emph{passive attack} attempts to learn or make use of
+information from the system, but does not affect system resources. An
+\emph{active attack} attempts to alter system resources or affect their
+operation.
 
 \paragraph{Traffic analysis} Traffic Analysis is the act of capturing
 communication sent between two parties. This information might contain secrets
@@ -366,93 +421,86 @@ one of the legit parties.
 \paragraph{Replay} Replay is an active attack where the attacker capture some data in
 a communication session and subsequently retransmit that information.
 
-\paragraph{Modification of messages} Modification of messages is an active attack where the attacker
-alters some of the contents of a message sent between two communicating
-parties.
+\paragraph{Modification of Messages} Modification of messages is an active
+attack where the attacker alters some of the contents of a message sent between
+two communicating parties.
 
-\paragraph{Denial of Service} Denial of Service is an active attack where the attacker seeks to
-make resources unavailable for legit users, i.e. by overloading an application
-by sending it lots of traffic.
+\paragraph{Denial of Service} Denial of Service is an active attack where the
+attacker seeks to make resources unavailable for legit users, i.e. by
+overloading an application by sending it lots of traffic.
 
 \paragraph{\acl{MITM}} \ac{MITM} is an attack where an attacker intercepts messages
 between the communicating parties and then either relay or substitute the
 intercepted message.
 
-\subsection{Attacks on cryptographic primitives}
+\subsection{Attacks on Cryptographic Primitives}
 Even though cryptographic primitives are designed to be secure, they might have
 both flaws and be used in an incorrect fashion.
 
-\paragraph{Cryptanalysis attack} is an attempt to deduce a specific plaintext
-or to deduce the key being used in a ciphertext.
+\paragraph{Cryptanalysis attack} A cryptanalysis attack is an attempt to deduce
+a specific plaintext or to deduce the key being used in a ciphertext.
 
-\paragraph{Brute-force attack} In a brute-force attack an attacker tries
+\paragraph{Brute-force attack} In a brute-force attack, an attacker tries
 to obtain a secret by testing the algorithm with up to all possible inputs. The
-secret might be an encryption key or the data fed into a cryptographic hash
-function. A related attack is the \emph{Dictionary attack} where the attacker
+secret might be an encryption key, or the data fed into a cryptographic hash
+function.
+
+A related attack is the \emph{Dictionary attack}, where the attacker
 tries to obtain a secret by trying a subset of all known inputs, the ones
-defines in his dictionary.  
+defines in his dictionary.
 
 \section{Cloud Computing}
-In a draft\cite{cloud_nistdef} \ac{NIST} defines cloud computing as:
-\begin{quote}
-Cloud computing is a model for enabling ubiquitous, convenient,
+
+In a draft \cite{cloud_nistdef}, the \ac{NIST} defines cloud computing as:
+\begin{quote}\it
+``Cloud computing is a model for enabling ubiquitous, convenient,
 on-demand network access to a shared pool of configurable computing resources
 (e.g., networks, servers, storage, applications, and services) that can be
 rapidly provisioned and released with minimal management effort or service
-provider interaction.
+provider interaction.''
 \end{quote}
 
 \subsection{Service Models}
-\ac{NIST} also defines three service models which deals with what kind of
-service the consumer is able to rent from a provider.
+The \ac{NIST} also defines three service models which deals with what kind of
+service the consumer can rent from a provider.
 
-\paragraph{\ac{SaaS}} is the capability for a consumer to run the provider's
+\paragraph{\ac{SaaS}} The capability for a consumer to run the provider's
 application running on cloud infrastructure, using a thin-client, browser or
-similar. Gmail\footnote{\url{http://www.gmail.com}} can be seen as an example
-of this.
+similar, is called \ac{SaaS}. The web-based email service
+GMail\footnote{\url{http://www.gmail.com}} can be seen as an example of this.
 
-\paragraph{\ac{PaaS}} is the capability for a consumer to deploy software onto
+\paragraph{\ac{PaaS}} The capability for a consumer to deploy software onto
 the cloud, but without actually controlling the underlying platform, operating
-system etc.
+system and so on, is called \ac{PaaS}.
 
-\paragraph{\ac{IaaS}} is the capability provided to the consumer to provision
+\paragraph{\ac{IaaS}} The capability provided to the consumer to provision
 processing, storage, networks and other fundamental computing resources where
-he can run arbitrary software, including operating systems and applications. An
-example is hiring a \ac{VM}.
+he can run arbitrary software, including operating systems and applications, is
+called \ac{IaaS}. An example is when renting a \ac{VM}.
 
 \subsection{Deployment Models}
-The \ac{NIST} draft also lists several Deployment Models which deals with how
-the cloud is organized in terms of where it is hosted and who has access to it.
 
-\paragraph{Private Cloud} is a cloud infrastructure operated solely for an
-organization. Which party manages the cloud and where it is located is not
-given.
+The \ac{NIST} draft \cite{cloud_nistdef} also lists several deployment models
+which deals with how the cloud is organized in terms of where it is hosted, and
+who has access to it.
 
-\paragraph{Community Cloud} is a cloud infrastructure is shared by several
-organizations to serve a common concern. Where it is located and who manages it
-is not given.
+\paragraph{Private Cloud} A private cloud is a cloud infrastructure operated
+solely for an organization. Which party manages the cloud, and where it is
+located is not defined.
 
-\paragraph{Public Cloud} is a cloud infrastructure where basically everyone or
-at least a large group can have access, and is owned by a external provider of
-cloud services.
+\paragraph{Community Cloud} A community cloud is a cloud infrastructure is
+shared by several organizations to serve a common concern. Where it is located
+and who manages it is not given.
 
-\paragraph{Hybrid Cloud} is a cloud infrastructure composed of two or more
-clouds of any other model.
+\paragraph{Public Cloud} A public cloud is a cloud infrastructure where
+everyone, or at least a large group, can have access, and is owned by an external
+provider of cloud services.
 
-\subsection{Security considerations}
-There are some considerations when using cloud services from an external provider
-as opposed to self controlled hardware, software and plattforms. Most notably
-is that you loose the control of selecting the people which will have physical
-and digital access to the infrastructure. In essence this means that the
-provider can read every data sent to and from the cloud as well as the data
-saved in the cloud.
-
-Another risk is that information might be leaked to other users of the same
-cloud. For instance it might be able possible for a \ac{VM} to leak information
-to other \ac{VM}s on the same host.
-%TODO: kilde
+\paragraph{Hybrid Cloud} A hybrid cloud is a cloud infrastructure composed of
+two or more clouds of any other model.
 
 \section{Research}
+
 This section will elaborate on previous research concerning privacy within cloud
 computing. Previous research can be divided into proactive solutions that
 either reduce or prevent the risk of leaking privacy related information. The
