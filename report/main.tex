@@ -1797,16 +1797,14 @@ what the class indicates.
 % Upload and Download of files (speed/bandwidth). Wget speed, folder creation
 % etc
 % TODO
-For \textbf{files} we measure the bandwidth the client get when uploading and
+For \textbf{files} we measure the bandwidth the client uses when uploading and
 downloading a file. We do this simply by measuring the network traffic on the
 server, and record this. For reference we also deactived the encryption and
-hashing of a file. For folders we recorded the time it takes to create and
-update a folder with different amount of children to understand how this will
-scale.
+hashing of a file. 
 
-\textbf{Folders} are relatively small in size, so the network should not be a
+Folders are relatively small in size, so the network should not be a
 bottleneck. However the different cryptographic operations might take some
-time. For folders we therefore measured:
+time. For folders we measured:
 
 \begin{enumerate}
     \item The average time it takes to create a folder
@@ -1823,7 +1821,7 @@ time. For folders we therefore measured:
 \label{sec:BFLK}
 The locally stored and encrypted keyring can be viewed as a weak link, considering lost or hacked user
 equipment. Although the keyring is encrypted with a user password, it is still
-vulnerable to the old fashion brute force and dictionary attacks. The format of
+vulnerable to the brute force and dictionary attacks. The format of
 the encrypted keyring is given in Figure \ref{fig:KeyringFormat}. 
 
 \begin{figure}[h!]
@@ -1833,10 +1831,11 @@ the encrypted keyring is given in Figure \ref{fig:KeyringFormat}.
     \label{fig:KeyringFormat}
 \end{figure}
 
-\noindent By brute forcing a keyring, a malicious person can retrieve a user's password and server
-access data. This will result in a complete failure of security. This section
-explains the procedures taken to test the keyring's resistance against brute
-force and dictionary attacks. It will start by describing the fundamental procedure for
+\noindent By brute forcing a keyring, a malicious person can retrieve a user's
+password and server access data as well as all the data the user has stored.
+This will result in a complete failure of security. This section explains the
+procedures taken to test the resistance of the keyring to brute force and
+dictionary attacks. It will start by describing the fundamental procedure for
 both attacks, and further explain how the attacks were carried out.
 
 \subsubsection{General Procedure}
@@ -1852,13 +1851,13 @@ considered to be the correct password.In our brute force and dictionary
 attacks, we recognized a correct plaintext to contain three ``:'', and with the
 first byte set to ``D''.
 
-\subsubsection{Implemented Attacks}
-We created two programs designed to crack the keyring password. The first program,
-named BruteForce, was designed for a single computer, to test the keyring's
-resistance against brute force and dictionary attacks. The second program, named
-\ac{CDA} was designed to perform dictionary attacks by a cluster of cooperating
-servers. The corresponding source code and .jar file for both programs can be found in the
-attached CD-ROM. Implementation details are given in Appendix \ref{ap:RI}.
+\subsubsection{Implemented Attacks} We created two programs designed to crack
+the keyring password. The first program, named BruteForce, was designed for a
+single computer while the second program, named \ac{CDA}, was designed to
+perform dictionary attacks by a cluster of cooperating servers. Both use
+dictionary attacks to attack the keyring. The source code and .jar files for
+both programs can be found in the attached CD-ROM. Implementation details are
+given in Appendix \ref{ap:RI}.
 
 \subsubsection{Configuration}
 To run BruteForce we have to preconfigure the attacking computer. First of
@@ -2040,6 +2039,8 @@ hashing disabled.
 \subsection{Folders}
 
 \input{tables/result_perf_updatefolder}
+\input{tables/result_perf_serializefolder}
+\input{tables/result_perf_encryptsignfolder}
 
 \section{Brute Force Local Keyring}
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
