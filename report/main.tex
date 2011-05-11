@@ -151,6 +151,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ECB}{Electronic Codebook}
 \acro{ETE}{External Trusted Entity}
 \acro{FAQ}{Frequently Asked Questions}
+\acro{FEC}{Forward Error Correction} 
 \acro{HDFS}{Hadoop Distributed File System}
 \acro{HTTP}{Hypertext Transfer Protocol}
 \acro{HTTPS}{Hypertext Transfer Protocol Secure}
@@ -208,6 +209,10 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \subsection{Criteria for a Secure Cloud Storage Service}
 \label{sec:criteria}
 % TODO: Write this section, and find out where it should be.
+\begin{enumerate}
+  \item Open Source
+  \item Encryption locally
+\end{enumerate}
 
 % TODO: This has to be placed somewhere, and maybe rewritten.
 \subsection{Security considerations}
@@ -693,27 +698,79 @@ application for storing data in the cloud, claiming more than 25 million users
 The company boasts strong encryption and strict access control
 \cite{dropbox_security}, but has received criticism for its lack of security
 \cite{dropbox_concerns}. Among these concerns, is the \emph{Forgotten Password}
-feature, which implies that Dropbox can read the users files if they really want
-to, and that the encryption is performed server side.
+feature, which implies that Dropbox can read the users files if they really
+want to -- because they have the password -- and that the encryption is
+performed server-side.
 
 In addition, Dropbox is not Open Source, and hence one has no way of verifying
 that the security features actually work as claimed.
 
 \subsection{Tahoe-LAFS}
-% TODO: Reference cloud security software "checklist" in Intro
 
-Tahoe-\ac{LAFS}\footnote{\url{http://www.tahoe-lafs.org/}} is an open source
-secure cloud storage file system which does fulfill the requirements set by our
-problem description in regards to security \cite{tahoe}. 
+Tahoe-\ac{LAFS}\footnote{\url{http://www.tahoe-lafs.org/}} is an open source,
+distributed and secure cloud storage file system, which does fulfill
+the criteria set in Section \ref{sec:criteria}. 
+The integrity and confidentiality of the
+files are guaranteed by the algorithms used on the client, and is independent
+of the storage servers, which may be operated by untrusted people.
+This is defined as \emph{provider-independent security} \cite{tahoe}.
 
-In Tahoe-\ac{LAFS}, files are exclusivly encrypted client-side, before beeing
-uploaded into the cloud. Tahoe-\ac{LAFS} also uses erasure-coding to obtain
-redundancy across multiple storage servers.
+In Tahoe-\ac{LAFS}, files are exclusively encrypted client-side, then split up
+using \emph{Erasure-coding}, before being uploaded into the cloud\footnote{The
+\emph{cloud} in the Tahoe-\ac{LAFS} sense, often refers to other nodes in a so
+called \emph{friend net}.}, as illustrated in Figure \ref{fig:B:tahoe}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{Tahoe-newfile.pdf}
+    \caption{Tahoe-LAFS: Insertion of a new file}
+    \label{fig:B:tahoe}
+\end{figure}
+
+
+\subsubsection{Architecture of Tahoe-LAFS}
+
+Tahoe-\ac{LAFS} has a three layer architecture: the key-value store, the filesystem, and
+the application \cite{tahoe}.
+
+The \textbf{key-value store}, is the lowest layer and is implemented by a grid
+of Tahoe-LAFS storage servers. Data is kept on the storage servers in the form
+of \emph{shares}, which are encrypted and encoded parts of files. Capabilities
+are short ASCII strings, containing information on where to find a file, and
+how to verify it.  Nodes in the grid learn about each other through an
+\emph{introducer}.
+
+The \textbf{filesystem} layer is responsible for mapping human-meaningful
+pathnames to pieces of data. Each directory contains a table of capabilities
+for its children, i.e. subdirectories or files. Two forms of capabilities is
+available for each file, read-only and read-write, and these can be distributed
+to e.g. share a file with friends.
+
+Since it is not practical for users to remember strings containing random
+characters, the \textbf{application} layer is used for providing a user-friendly
+interface to the directories and files.
+
+\paragraph{File types.}
+
+There are two kinds of files in the Tahoe-\ac{LAFS} -- \textbf{immutable} and
+\textbf{mutable} files. An immutable file is created exactly once, i.e. it
+cannot be modified, and can be read repeatedly. Mutable files can be modified,
+and everyone who has access to the signing key can make new versions of
+the mutable file. Directories are implemented as mutable files.
+
+\paragraph{Erasure Coding}
+
+Erasure-coding with the Solomon-Reed scheme, enables Tahoe-\ac{LAFS} to recover
+a file using only a predefined subset of the parts distributed to the storage
+servers. Erasure coding is a type of \ac{FEC} code, which extends a message
+with $C$ characters into a longer message with $N$ symbols
+\cite{t_reed-solomon}. The original $C$ characters can then be recovered from a
+subset of the $N$ symbols.
 
 \subsection{Wuala}
 
 Wuala\footnote{\url{http://www.wuala.com/}} is a closed source secure cloud
-storage file system, that seamingly operates very similar to Tahoe-\ac{LAFS}.
+storage file system, that seemingly operates very similar to Tahoe-\ac{LAFS}.
 
 The authors have released a paper on a cryptographic tree structure for file
 systems, called Cryptree \cite{cryptree}, and has strong focus on reliability
