@@ -172,6 +172,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{PoC}{Proof-of-concept}
+\acro{PRNG}{Pseudorandom Number Generator}
 \acro{QR}{Quick Response}
 \acro{RAM}{Random access memory}
 \acro{REST}{Representational State Transfer}
@@ -266,7 +267,16 @@ prove the involvement of the other party \cite{stallings}.
 \section{Cryptographic Primitives}
 
 This section describes the low level security primitives used in the results of
-this thesis.
+this thesis. 
+
+\emph{Randomness} is a basic property that multiple of the cryptographic
+primitives rely on, and hence deserves an explanation. Random data is
+informally defined as unpredictable to the attacker, even if he is taking
+active steps to defeat the randomness \cite[p. 137]{schneier}.  
+
+A \emph{Cryptographic \ac{PRNG}} deterministically produce numbers based on a
+seed, and it should be infeasible to determine the next number without knowing
+the seed \cite[p. 140]{schneier}.
 
 \subsection{Encryption}
 
