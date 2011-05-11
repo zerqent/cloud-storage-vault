@@ -217,7 +217,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \end{enumerate}
 
 % TODO: This has to be placed somewhere, and maybe rewritten.
-\subsection{Security considerations}
+\subsection{Security Considerations}
 
 There are some considerations when using
 cloud services from an external provider, as opposed to self controlled
@@ -228,9 +228,7 @@ sent to and from the cloud as well as the data saved in the cloud.
 
 Another risk is that information might be leaked to other users of the same
 cloud. For instance it might be able possible for a \ac{VM} to leak information
-to other \ac{VM}s on the same host.
-%TODO: Find a source for these acquisitions.
-
+to other \ac{VM}s on the same host \cite{cloud_getoff}.
 
 The work is presented as per the following chapters:
 
@@ -264,16 +262,22 @@ secret from unauthorized parties \cite[p. 18]{stallings}. This can typically be
 done by either preventing other parties access to the message at all, or by making
 the contents unreadable, for instance by the use of encryption.
 
-\paragraph{Integrity} Integrity in a security perspective, deals with detecting,
-preventing or recovering a message being changed by an unauthorized party
-\cite{stallings}.
+\paragraph{Integrity} Integrity implies that a message cannot be altered
+without the receiving part noticing. In a security perspective, integrity deals
+with detecting, preventing and recovering a message being changed by an
+attacker \cite{stallings}.
+
+\paragraph{Availability} The property of a system being accessible and usable
+upon demand by an authorized system entity, are defined by the availability
+service \cite{stallings}. 
 
 \paragraph{Authentication} Authentication is the act of a user, service or
 similar to prove that he is what he claims to be \cite{stallings}.
 
-\paragraph{Non-repudiation} Non-repudiation prevents both the sender and the receiver of
-a message from denying a transmitted message. In other words, one party can
-prove the involvement of the other party \cite{stallings}.
+\paragraph{Non-repudiation} Non-repudiation prevents both the sender and the
+receiver of a message from refuting the authenticity of transmitted message. In
+other words, one party can prove the involvement of the other party
+\cite{stallings}.
 
 \section{Cryptographic Primitives}
 
@@ -299,8 +303,8 @@ In its very basic form, an encryption scheme consist of an encryption algorithm
 (the \emph{cipher}), a key and a message (the \emph{plaintext}), that is all
 used to create an encrypted message, i.e. the \emph{ciphertext}. If a strong
 cipher is used, knowledge of the cipher, or multiple plaintext and multiple
-ciphertext, should not be enough to obtain the key or decrypt ciphertext with a
-corresponding unknown plaintext \cite[p. 30]{stallings}.
+ciphertext, should not be enough to obtain the key, or to decrypt ciphertext
+with a corresponding unknown plaintext \cite{schneier}.
 
 \paragraph{Block cipher and Stream cipher} There are different classifications
 on how a cipher treats data \cite[p. 32]{stallings}. A \emph{block cipher} will
@@ -440,16 +444,16 @@ information from the system, but does not affect system resources. An
 \emph{active attack} attempts to alter system resources or affect their
 operation.
 
-\paragraph{Traffic analysis} Traffic Analysis is the act of capturing
-communication sent between two parties. This information might contain secrets
-or might for instance leak enough information about an encryption key to make
-it breakable.
+\paragraph{Traffic analysis} Traffic Analysis is the act of capturing and
+examining communication data sent between two parties. This information might
+contain secrets or for instance leak enough information about an encryption key
+to make it breakable.
 
 \paragraph{Masquerade} Masquerade is an active attack where the attacker pretends to be
-one of the legit parties.
+one of the legitimate parties.
 
-\paragraph{Replay} Replay is an active attack where the attacker capture some data in
-a communication session and subsequently retransmit that information.
+\paragraph{Replay} Replay is an active attack where the attacker capture some
+data in a communication session and subsequently retransmit that information.
 
 \paragraph{Modification of Messages} Modification of messages is an active
 attack where the attacker alters some of the contents of a message sent between
@@ -476,8 +480,8 @@ secret might be an encryption key, or the data fed into a cryptographic hash
 function.
 
 A related attack is the \emph{Dictionary attack}, where the attacker
-tries to obtain a secret by trying a subset of all known inputs, the ones
-defines in his dictionary.
+tries to obtain a secret by trying a subset of all known inputs, i.e. a
+predefined dictionary of words.
 
 \section{Cloud Computing}
 
