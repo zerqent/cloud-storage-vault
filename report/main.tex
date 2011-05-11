@@ -1665,9 +1665,9 @@ taken to measure the application's security.
 \section{Performance}
 We have tested the application on two Android phones, a HTC Desire and a HTC
 Hero. We have also tested the Java libraries on desktop computer. The
-specifications for HTC Desire can be seen in Table \ref{tbl:devices:desire},
-for HTC Hero in Table \ref{tbl:devices:hero} and the computer in Table
-\ref{table:devices:computer}.
+specifications for HTC Desire can be seen in Table \ref{tbl:device:desire},
+for HTC Hero in Table \ref{tbl:device:hero} and the computer in Table
+\ref{tbl:device:computer}.
 
 \input{tables/exp_desire.tex}
 \input{tables/exp_hero.tex}
@@ -1692,6 +1692,25 @@ what the class indicates.
 % Upload and Download of files (speed/bandwidth). Wget speed, folder creation
 % etc
 % TODO
+For \textbf{files} we measure the bandwidth the client get when uploading and
+downloading a file. We do this simply by measuring the network traffic on the
+server, and record this. For reference we also deactived the encryption and
+hashing of a file. For folders we recorded the time it takes to create and
+update a folder with different amount of children to understand how this will
+scale.
+
+\textbf{Folders} are relatively small in size, so the network should not be a
+bottleneck. However the different cryptographic operations might take some
+time. For folders we therefore measured:
+
+\begin{enumerate}
+    \item The average time it takes to create a folder
+    \item The time it takes to encrypt and sign a folder, with varying amount
+    of data
+    \item The time it takes to verify a newly downloaded folder, with varying
+    amount of data
+    \item The time it takes to serialize a folder, with varying amount of data
+\end{enumerate}
 
 \section{Security}
 
@@ -1898,6 +1917,25 @@ slave was capable of running 8 threads in parallel.
 %**************************************%
 \chapter{Results}
 %**************************************%
+\section{Client Performance}
+This section displays the results of the client benchmarking and highlights the
+most important results.
+
+\subsection{Files} The following results shows the network speed obtained when
+uploading and downloading files. Table \ref{tbl:files:encrypted} shows the
+speed when using the unmodified client, while Table \ref{tbl:files:unencrypted}
+shows the speed obtained when using the same client but with encryption and
+hashing disabled.
+
+
+% Kanskje en tabell her, som viser søyler med ukryptert bak og kryptert forann?
+\input{tables/performance_files.tex}
+\input{tables/performance_files_unencrypted.tex}
+
+\subsection{Folders}
+
+\input{tables/result_perf_updatefolder}
+
 \section{Brute Force Local Keyring}
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
 by implementing and executing two different programs. The first program, named
