@@ -1819,10 +1819,26 @@ time. For folders we measured:
 
 \subsection{Brute Force Local Keyring}
 \label{sec:BFLK}
-The locally stored and encrypted keyring can be viewed as a weak link, considering lost or hacked user
-equipment. Although the keyring is encrypted with a user password, it is still
-vulnerable to the brute force and dictionary attacks. The format of
-the encrypted keyring is given in Figure \ref{fig:KeyringFormat}. 
+The locally stored and encrypted keyring can be considered a security risk if
+it somehow end up in malicious hands, either by a device being lost or a person
+hacking in to a device. Even though it is encrypted it might be weak to a brute
+force or dictionary attack. This section explains the procedure taken by us
+attack a keyring.
+
+\subsubsection{Impact}
+If an attacker is able to decrypt the keyring he will obtain the information to
+access a users root folder. This is potentially enough for the attacker to
+access every file stored by the user. 
+
+\subsubsection{Keyring Format} The format of the encrypted keyring is given in
+Figure \ref{fig:KeyringFormat}.  It is encrypted with 128-bit \ac{AES} in
+\ac{ECB} mode, but the key is not randomly generated.  The key is made by the
+key strengthening function \ac{PBKDF2} but is based on a password set by the
+user, which is why this key is potentially weaker than the keys for files and
+folders. An attacker will also know some of the plaintext for the keyring. The
+serialization of Capability for a writeable folder will make a plaintext that
+starts with ``D:RW:`` followed by 16-byte of Base32-encoded data, another ``:``
+and then 16 more bytes of Base32-encoded data. 
 
 \begin{figure}[h!]
     \centering
@@ -1831,100 +1847,80 @@ the encrypted keyring is given in Figure \ref{fig:KeyringFormat}.
     \label{fig:KeyringFormat}
 \end{figure}
 
-\noindent By brute forcing a keyring, a malicious person can retrieve a user's
-password and server access data as well as all the data the user has stored.
-This will result in a complete failure of security. This section explains the
-procedures taken to test the resistance of the keyring to brute force and
-dictionary attacks. It will start by describing the fundamental procedure for
-both attacks, and further explain how the attacks were carried out.
-
-\subsubsection{General Procedure}
-The keyring is encrypted with 128-bit AES in ECB mode. The corresponding
-encryption key is generated from a user password using PBKDF2 prior to
-encryption.\\
-
-\noindent To perform a brute force or dictionary attack against the encrypted
-keyring, one must decrypt the keyring for each password guessed. The decryption
-involves both key derivation with PBKDF2 and decryption with 128-bit AES in ECB
-mode. If a guessed password results in the correct plaintext, it is
-considered to be the correct password.In our brute force and dictionary
-attacks, we recognized a correct plaintext to contain three ``:'', and with the
-first byte set to ``D''.
+\subsubsection{General Procedure} To perform a brute force or dictionary attack
+on the encrypted keyring, one must decrypt the keyring for each password
+guessed. The decryption involves both key derivation with \ac{PBKDF2} and decryption
+with 128-bit \ac{AES} in \ac{ECB} mode. We verified a successful attack by our
+knowledge of the serialization of the Capability.
 
 \subsubsection{Implemented Attacks} We created two programs designed to crack
 the keyring password. The first program, named BruteForce, was designed for a
 single computer while the second program, named \ac{CDA}, was designed to
-perform dictionary attacks by a cluster of cooperating servers. Both use
+perform dictionary attacks by a cluster of cooperating computers. Both use
 dictionary attacks to attack the keyring. The source code and .jar files for
 both programs can be found in the attached CD-ROM. Implementation details are
 given in Appendix \ref{ap:RI}.
 
-\subsubsection{Configuration}
-To run BruteForce we have to preconfigure the attacking computer. First of
-all, the computer is required to have the Java(TM) Cryptography Extension (JCE)
-Jurisdiction Policy Files installed with Java. The second and last requirement is that
-the computer is configured with \ac{BC} as its primary JCE provider.
-A computer will most likely not be able to correctly decryption the encrypted
-keyring, without any of these requirements. The policy files and BC provider are
-required because the keyring is encrypted using BC version 1.34\footnote{BC version
-1.34 is used by default in Android 2.2.}.\\
+\subsubsection{Configuration} BruteForce requires Java with \ac{JCE} and
+Jurisdiction Policy files installed.  It also requires Java to be configure to
+use \ac{BC} as its primary \ac{JCE} provider. The policy files and \ac{BC}
+provider are required because the keyring is encrypted using BC version
+1.34\footnote{BC version 1.34 is used by default in Android 2.2.}.\\
 %TODO: Confirm that BC v.1.34 is default!!!1
 
-\noindent The CDA requires the exact same configuration as the BruteForce
-attack, but for each node in the cluster. Another important requirement for CDA
-is that the cluster must be configured with Apache Hadoop.\\
+\noindent \ac{CDA} requires almost the same configuration as the BruteForce
+attack, but for each node in the cluster. Another important requirement for
+\ac{CDA} is that the cluster must be configured with Apache Hadoop.\\
 
-\noindent A guide to install Java(TM) Cryptography Extension (JCE) Jurisdiction
-Policy Files and a BC provider can be found at \cite{jce+bc}. A simple guide for
-running Apache Hadoop in a Multi-Node Cluster using Ubuntu servers can be found
-at \cite{cluster}.
+\noindent The steps we performed to set up Java with \ac{BC} and the
+Jurisdifction Policiy files can be seen in \cite{jce+bc}. The guide we used for
+using Apache Hadoop in a Cluster using Ubuntu Server can be found at
+\cite{cluster}.
 
-\subsubsection{Hardware Specifications}
-The hardware specification for the BruteForce attack on a single computer is
-given in Table \ref{tab:hwbf}.
+\subsubsection{Hardware Specifications} The hardware specification for the
+BruteForce attack  we ran is given in Table \ref{tab:hwbf}.The \ac{CDA} attack
+was executed over a cluster of Amazon \ac{EC2} instances. All instances used
+were categorized by Amazon as ``high-CPU extra large instances``. The hardware
+specification for a single instance, used in the \ac{CDA} attack, is given in
+Table \ref{tab:hwcda}. We used 20 of these instances.
+
 \begin{table}[!h]
     \centering
-    \caption{Hardware specifications for computer executing the BruteForce
-    attack.}
+    \caption{Hardware specifications for computer executing BruteForce}
     \label{tab:hwbf}
     \begin{tabular}{| l | l |}
 	\hline
-	Product		    &HP Compaq 8100 Elite SFF PC \\
+	Product		        &HP Compaq 8100 Elite SFF PC \\
 	\hline
-	CPU		    &Intel(R) Core(TM) i7 CPU 860 @ 2.80GHz\\
+	CPU		            &Intel(R) Core(TM) i7 CPU 860 @ 2.80GHz\\
 	\hline
 	CPU Architecture    &x86\_64\\
 	\hline
-	RAM		    &4GiB\\
+	RAM		            &4GiB\\
 	\hline
-	OS		    &Ubuntu 10.10 (Maverick Meerkat)\\
+	OS		            &Ubuntu 10.10 (Maverick Meerkat)\\
 	\hline
 	Kernel Version	    &2.6.35-28-generic\\
 	\hline
     \end{tabular}
 \end{table}
 
-\noindent The CDA attack, however, was executed over a cluster of Amazon \ac{EC2}
-instances. All instances used were categorized by Amazon as high-CPU extra large
-instances. The hardware specification for a single instance, used in the CDA
-attack, is given in Table \ref{tab:hwcda}.
-
-    \begin{table}[!h]
+\begin{table}[!h]
     \centering
-    \caption{Hardware specifications for cluster instances executing the CDA
-    attack.}
+    \caption{Hardware specifications for cluster instances executing the
+    \ac{CDA}}
     \label{tab:hwcda}
     \begin{tabular}{| l | l |}
 	\hline
-	Instance Type	    &High-CPU Extra Large Instance\\
+	Instance Type       &High-CPU Extra Large Instance\\
 	\hline
-	CPU		    &Intel(R) Xeon(R) CPU E5410 @ 2.33GHz\\
+	CPU		            &Intel(R) Xeon(R) CPU E5410 @ 2.33GHz\\
 	\hline
 	CPU Architecture    &x86\_64\\
 	\hline
-	RAM		    &7GiB\\
+	RAM		            &7GiB\\
 	\hline
-	OS		    &Ubuntu 10.10 (Maverick Meerkat)\\
+	OS		            &Ubuntu 10.10 (Maverick Meerkat)\\
 	\hline
 	Kernel Version	    &2.6.35-24-virtual\\
 	\hline
@@ -1932,54 +1928,51 @@ attack, is given in Table \ref{tab:hwcda}.
 	\hline
     \end{tabular}
 \end{table}
-\subsubsection{Running a Local Brute Force Attack}
-The following command was used to execute a brute force
-attack:
+
+\subsubsection{Running BruteForce}
+The command used for executing a dictionary attack with the tool BruteForce
+can be seen in Listing \ref{lst:bf}. The parameter \textbf{m} is the maximum
+password length to try, and the \textbf{t} parameter is the number of threads to
+execute.
 
 \lstset{label=lst:bf, caption=Running local brute force attack}
 \begin{lstlisting}
 $ java -jar BruteForce.jar /path/to/keyring m t
 \end{lstlisting}
 
-\noindent In the above command, m is the maximum word length to brute force and t
-is the number of threads to use. The ``\$'' sign indicates that the command is
-executed by a normal user on a local computer.\\
-
 \noindent As described in Section \ref{sec:PBKDF2}, PBKDF2 can be configured to run a desired
 amount of iterations, to slow down/speed up the key derivation. With this
 feature, we were able to test the efficiency of brute force attacks against
 different amounts of iterations in PBKDF2. Iteration values of 500, 1000, 2000
-and 4000 were tested.
+and 4000 were tested
+%FIXME: Skal flyttes.
 
 \subsubsection{Running a Local Dictionary Attack}
-The local dictionary attack was a part of the brute force program above, and was
-executed with the following command:
+The local dictionary attack was also executed by the tool BruteForce. The
+command used to execute this is shown in Listing \ref{lst:da}, where the
+parameter \textbf{t} is the number of threads to execute.
 
 \lstset{label=lst:da, caption=Running local dictionary attack}
 \begin{lstlisting}
 $ java -jar BruteForce.jar /path/to/keyring /path/to/dictionary t
 \end{lstlisting}
-\noindent where t equals the number of computing threads to use. The ``\$'' sign
-indicates that the command is executed by a normal user on a local computer.\\
 
 \noindent The dictionary attack was also tested against different amounts of iterations in
 PBKDF2. Iteration values of 500, 1000, 2000 and 4000 were tested.
+% FIXME: flytt
 
-\subsubsection{Running a Dictionary Attack in the Cloud}
-The CDA attack was carried out over 20 Amazon EC2 high-CPU extra large
-instances. One instance was configured as both a Hadoop master and Hadoop slave node, while the
-19 remaining instances behaved as slaves. The commands executed
-to start the Hadoop master, slaves and their corresponding \ac{HDFS} are shown
-in Listing \ref{lst:hadoop}.
-
-\paragraph{Note:}For all upcoming Bash commands, the ``\$'' sign indicates a command
-executed from an attackers local computer, while the ``\%'' sign indicates a
-remote command executed from the cluster's master node.
+\subsubsection{Cloud Dictionary Attack with \ac{CDA}} The attack using \ac{CDA}
+was carried out over 20 Amazon EC2 ``high-CPU extra large instances``. One
+instance was configured as both a Hadoop master and slave node, while the 19
+other instances were configured only as slaves. The commands executed to start
+the Hadoop master, slaves and their corresponding \ac{HDFS} are shown in
+Listing \ref{lst:hadoop}. The last command enables the existing Hadoop cluster
+to support MapReduce. This is necessary as the \ac{CDA} attack is implemented
+as a map-reduce problem. Details about MapReduce and the implementation of
+\ac{CDA} are given in Appendix \ref{ap:RI}.\\
 
 \lstset{language=bash, label=lst:hadoop, caption=Starting Hadoop cluster with HDFS}
 \begin{lstlisting}
-# Logg into the master node
-$ ssh -i ec2-key-pair.pem ubuntu@[master_public_hostname]
 
 # Change into Hadoop directory on master node
 % cd /path/to/Hadoop/directory
@@ -1990,34 +1983,24 @@ $ ssh -i ec2-key-pair.pem ubuntu@[master_public_hostname]
 # Start a MapReduce cluster from the master node
 % bin/start-mapred.sh
 \end{lstlisting}
-The last command enables the existing
-Hadoop cluster to support MapReduce. This is necessary as the CDA
-attack is implemented as a map-reduce problem. Details about MapReduce and the
-implementation of CDA are given in Appendix \ref{ap:RI}.\\
 
-\noindent When the cluster is correctly up and running, the attacker must
-upload the CDA.jar file, a desired dictionary file and the target keyring to the
-master node. This can be done using Bash commands such as sftp or scp.\\
-
-\noindent The last requirement, before executing the CDA attack, is to copy the
-desired dictionary file and keyring into the HDFS. Copying files from the master
-node to the HDFS is done with the following command.
+\noindent The last requirement, before executing the attack, is to copy the
+desired dictionary file and keyring into the \ac{HDFS}. Copying files from the master
+node to the \ac{HDFS} is done with the following command shown in Listing
+\ref{lst:cpHDFS}. The attack can then be started on the master node with the
+command shown in Listing \ref{lst:CDA}. The parameter \textbf{s} is the number
+of slaves to use in the cluser, \textbf{t} is the number of threads to execute
+per slave. In our attack we used 20 nodes with 8 threads each.
 
 \lstset{language=bash, label=lst:cpHDFS, caption=Copying files into HDFS}
 \begin{lstlisting}
 % bin/hadoop dfs -put /path/to/file /path/to/file/in/HDFS
 \end{lstlisting}
 
-\noindent The CDA attack was further executed on the master node as follows.
-
 \lstset{language=bash, label=lst:CDA, caption=Executing the CDA attack}
 \begin{lstlisting}
 % bin/hadoop jar /path/to/CDA.jar /HDFSpath/to/dictionary /HDFSpath/to/output/file /HDFSpath/to/keyring s t
 \end{lstlisting}
-In the above command, ``s'' equals the number of slaves to use in the cluster
-and ``t'' equals the number of processing threads to use per slave. In our
-experiment we used s=20 and t=8 as there were 20 slaves in the cluster, and each
-slave was capable of running 8 threads in parallel.
 %**************************************%
 \chapter{Results}
 %**************************************%
