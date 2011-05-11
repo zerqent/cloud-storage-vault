@@ -1809,7 +1809,7 @@ what the class indicates.
 % TODO
 For \textbf{files} we measure the bandwidth the client uses when uploading and
 downloading a file. We do this simply by measuring the network traffic on the
-server, and record this. For reference we also deactived the encryption and
+server, and record this. For reference we also deactivated the encryption and
 hashing of a file. 
 
 Folders are relatively small in size, so the network should not be a
@@ -1827,18 +1827,14 @@ time. For folders we measured:
 
 \section{Security}
 
-\subsection{Brute Force Local Keyring}
-\label{sec:BFLK}
-The locally stored and encrypted keyring can be considered a security risk if
-it somehow end up in malicious hands, either by a device being lost or a person
-hacking in to a device. Even though it is encrypted it might be weak to a brute
-force or dictionary attack. This section explains the procedure taken by us
-attack a keyring.
-
-\subsubsection{Impact}
-If an attacker is able to decrypt the keyring he will obtain the information to
-access a users root folder. This is potentially enough for the attacker to
-access every file stored by the user. 
+\subsection{Brute Force Local Keyring} \label{sec:BFLK} The locally stored and
+encrypted keyring can be considered a security risk if it somehow end up in
+malicious hands, either by a device being lost or a person hacking in to a
+device. Even though the keyring is encrypted it might be weak to a brute force
+or dictionary attack. If an attacker is able to decrypt the keyring he will
+obtain the information to access a users root folder. This is potentially
+enough for the attacker to access every file stored by the user. This section
+describes our approach to attack the keyring.
 
 \subsubsection{Keyring Format} The format of the encrypted keyring is given in
 Figure \ref{fig:KeyringFormat}.  It is encrypted with 128-bit \ac{AES} in
@@ -1859,27 +1855,31 @@ and then 16 more bytes of Base32-encoded data.
 
 \subsubsection{General Procedure} To perform a brute force or dictionary attack
 on the encrypted keyring, one must decrypt the keyring for each password
-guessed. The decryption involves both key derivation with \ac{PBKDF2} and decryption
-with 128-bit \ac{AES} in \ac{ECB} mode. We verified a successful attack by our
-knowledge of the serialization of the Capability.
+guessed. The decryption involves both key derivation with \ac{PBKDF2} and
+decryption with 128-bit \ac{AES} in \ac{ECB} mode. We verified a successful
+attack by our knowledge of the serialization of the Capability. \ac{PBKDF2} is
+also a function that can be used with a varying number of iterations, our
+attacks are tested on 500, 1000, 2000 and 4000 iterations.
 
 \subsubsection{Implemented Attacks} We created two programs designed to crack
 the keyring password. The first program, named BruteForce, was designed for a
 single computer while the second program, named \ac{CDA}, was designed to
-perform dictionary attacks by a cluster of cooperating computers. Both use
-dictionary attacks to attack the keyring. The source code and .jar files for
-both programs can be found in the attached CD-ROM. Implementation details are
-given in Appendix \ref{ap:RI}.
+perform attacks by a cluster of cooperating computers. Both use dictionary
+attacks, but BruteForce is also capable of a pure brute force attack. The
+source code and .jar files for both programs can be found in the attached
+CD-ROM. Implementation details are given in Appendix \ref{ap:RI}.
 
 \subsubsection{Configuration} BruteForce requires Java with \ac{JCE} and
-Jurisdiction Policy files installed.  It also requires Java to be configure to
-use \ac{BC} as its primary \ac{JCE} provider. The policy files and \ac{BC}
-provider are required because the keyring is encrypted using BC version
-1.34\footnote{BC version 1.34 is used by default in Android 2.2.}.\\
+Jurisdiction Policy files\footnote{The policy files enables Java to use
+stronger encryption than what is allowed by US export law} installed.  It also
+requires Java to be configure to use \ac{BC} as its primary \ac{JCE} provider.
+The policy files and \ac{BC} provider are required because the keyring is
+encrypted using BC version 1.34\footnote{BC version 1.34 is used by default in
+Android 2.2.}.\\
 %TODO: Confirm that BC v.1.34 is default!!!1
 
 \noindent \ac{CDA} requires almost the same configuration as the BruteForce
-attack, but for each node in the cluster. Another important requirement for
+attack, but for each node in the cluster. Another requirement for
 \ac{CDA} is that the cluster must be configured with Apache Hadoop.\\
 
 \noindent The steps we performed to set up Java with \ac{BC} and the
@@ -1888,11 +1888,12 @@ using Apache Hadoop in a Cluster using Ubuntu Server can be found at
 \cite{cluster}.
 
 \subsubsection{Hardware Specifications} The hardware specification for the
-BruteForce attack  we ran is given in Table \ref{tab:hwbf}.The \ac{CDA} attack
-was executed over a cluster of Amazon \ac{EC2} instances. All instances used
-were categorized by Amazon as ``high-CPU extra large instances``. The hardware
-specification for a single instance, used in the \ac{CDA} attack, is given in
-Table \ref{tab:hwcda}. We used 20 of these instances.
+attacks with the tool BruteForce we ran is given in Table \ref{tab:hwbf}. The
+\ac{CDA} attack was executed over a cluster of Amazon \ac{EC2} instances. All
+instances used were categorized by Amazon as ``high-CPU extra large
+instances``. The hardware specification for a single instance, used in the
+\ac{CDA} attack, is given in Table \ref{tab:hwcda}. We used 20 of these
+instances.
 
 \begin{table}[!h]
     \centering
@@ -1940,36 +1941,21 @@ Table \ref{tab:hwcda}. We used 20 of these instances.
 \end{table}
 
 \subsubsection{Running BruteForce}
-The command used for executing a dictionary attack with the tool BruteForce
-can be seen in Listing \ref{lst:bf}. The parameter \textbf{m} is the maximum
-password length to try, and the \textbf{t} parameter is the number of threads to
-execute.
+The command used for executing a brute force attack with the tool BruteForce
+can be seen in Listing \ref{lst:bf}. The command for running a dictionary
+attack is seen in Listing \ref{lst:da}. 
 
 \lstset{label=lst:bf, caption=Running local brute force attack}
 \begin{lstlisting}
-$ java -jar BruteForce.jar /path/to/keyring m t
+$ java -jar BruteForce.jar /path/to/keyring  \
+    maximum_password_length number_of_threads
 \end{lstlisting}
-
-\noindent As described in Section \ref{sec:PBKDF2}, PBKDF2 can be configured to run a desired
-amount of iterations, to slow down/speed up the key derivation. With this
-feature, we were able to test the efficiency of brute force attacks against
-different amounts of iterations in PBKDF2. Iteration values of 500, 1000, 2000
-and 4000 were tested
-%FIXME: Skal flyttes.
-
-\subsubsection{Running a Local Dictionary Attack}
-The local dictionary attack was also executed by the tool BruteForce. The
-command used to execute this is shown in Listing \ref{lst:da}, where the
-parameter \textbf{t} is the number of threads to execute.
 
 \lstset{label=lst:da, caption=Running local dictionary attack}
 \begin{lstlisting}
-$ java -jar BruteForce.jar /path/to/keyring /path/to/dictionary t
+$ java -jar BruteForce.jar /path/to/keyring \
+    /path/to/dictionary number_of_threads
 \end{lstlisting}
-
-\noindent The dictionary attack was also tested against different amounts of iterations in
-PBKDF2. Iteration values of 500, 1000, 2000 and 4000 were tested.
-% FIXME: flytt
 
 \subsubsection{Cloud Dictionary Attack with \ac{CDA}} The attack using \ac{CDA}
 was carried out over 20 Amazon EC2 ``high-CPU extra large instances``. One
@@ -1983,33 +1969,31 @@ as a map-reduce problem. Details about MapReduce and the implementation of
 
 \lstset{language=bash, label=lst:hadoop, caption=Starting Hadoop cluster with HDFS}
 \begin{lstlisting}
-
-# Change into Hadoop directory on master node
-% cd /path/to/Hadoop/directory
-
 # Start HDFS and initialize master and slave nodes
-% bin/start-dfs.sh
+$ /path/to/Hadoop/bin/start-dfs.sh
 
 # Start a MapReduce cluster from the master node
-% bin/start-mapred.sh
+$ /path/to/Hadoop/bin/start-mapred.sh
 \end{lstlisting}
 
 \noindent The last requirement, before executing the attack, is to copy the
-desired dictionary file and keyring into the \ac{HDFS}. Copying files from the master
-node to the \ac{HDFS} is done with the following command shown in Listing
+desired dictionary file and keyring into the \ac{HDFS}. Copying files from the
+master node to the \ac{HDFS} is done with the command shown in Listing
 \ref{lst:cpHDFS}. The attack can then be started on the master node with the
-command shown in Listing \ref{lst:CDA}. The parameter \textbf{s} is the number
-of slaves to use in the cluser, \textbf{t} is the number of threads to execute
-per slave. In our attack we used 20 nodes with 8 threads each.
+command shown in Listing \ref{lst:CDA}. 
 
 \lstset{language=bash, label=lst:cpHDFS, caption=Copying files into HDFS}
 \begin{lstlisting}
-% bin/hadoop dfs -put /path/to/file /path/to/file/in/HDFS
+$ /path/to/Hadoop/bin/hadoop dfs -put /path/to/file \
+    /path/to/file/in/HDFS
 \end{lstlisting}
 
 \lstset{language=bash, label=lst:CDA, caption=Executing the CDA attack}
 \begin{lstlisting}
-% bin/hadoop jar /path/to/CDA.jar /HDFSpath/to/dictionary /HDFSpath/to/output/file /HDFSpath/to/keyring s t
+$ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
+    /HDFSpath/to/dictionary /HDFSpath/to/output/file \
+    /HDFSpath/to/keyring number_of_slaves \
+    number_of_threads_per_slave
 \end{lstlisting}
 %**************************************%
 \chapter{Results}
