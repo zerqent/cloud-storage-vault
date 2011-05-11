@@ -697,8 +697,9 @@ and take a closer look at how the different problems are solved.
 \label{sec:AS:FS}
 
 The solution proposed in this thesis, is that only a simple key-value store is
-needed on the server side. This may be extended with an \ac{ACL} layer to
-support user access and other features.
+needed on the server side. The key works as a lookup index for a specific value,
+while the corresponding value equals an encrypted file object. The solution may
+be extended with an \ac{ACL} layer to support user access and other features.
 
 Two types of files exist: immutable and mutable files. The mutable files are used
 as directories, in the sense that they contain the information needed to access
@@ -708,9 +709,15 @@ to find, get, read and write a file or folder. This includes an identifier and
 cryptographic keys.
 
 In principle, the only operations the key-value store need to support, are
-\textbf{PUT} and \textbf{GET}.
+PUT and GET.
 
 \subsection{Directory Structure}
+
+
+The file and directory structure can be seen as a directed graph, as illustrated
+in Figure \ref{fig:AS:filesystem}, where users can link in folders and files as
+desired. This provides a flexible and space-conservative structure that is easily
+extendible.
 
 \begin{figure}[h!]
     \centering
@@ -719,26 +726,21 @@ In principle, the only operations the key-value store need to support, are
     \label{fig:AS:filesystem}
 \end{figure}
 
-The file and directory structure can be seen as a directed graph, as illustrated
-in Figure \ref{fig:AS:filesystem}, and users can link in folders and files as
-wanted. This provides a flexible and space-conservative structure that is easily
-extendible.
-
 Each client\footnote{I.e. the different user terminals.} keeps a local copy of
 the identity and write key to the users root folder in a password
-protected keychain. In the event of loss of one of the clients, a user can change
+protected keyring. In case a user's client is lost, the user can change
 encryption keys (and identifier) for the root folder, and hence effectively
-block out the compromised clients.
-
-\input{tables/folder_entries}
+block out the compromised client.
 
 A directory contains two types of data. It contains meta data about it self and
 in addition zero or more entries. Table \ref{tbl:folder:contents} exhibits the
 structure of the folder entries. The \emph{Alias} field is the name of a
-specific child. The \emph{storage index} is the look-up value of the
+specific child. The \emph{storage index} is the look-up key of the
 corresponding child.
 
-The meta data are described in Table \ref{tbl:folder:meta}. The \emph{Storage
+\input{tables/folder_entries}
+
+The meta data is described in Table \ref{tbl:folder:meta}. The \emph{Storage
 Index} is a unique value derived from a directory's read key and serves as an
 identifier for the directory in question. The other elements are used for
 security purposes, and are described further in Chapter \ref{chap:CS}.
@@ -749,17 +751,17 @@ security purposes, and are described further in Chapter \ref{chap:CS}.
 
 There should be some layer present on the application which enforces \ac{ACL}s
 and authenticates users which should have access to the stored files. From a
-security standpoint this is not necessarily required. An attacker would have to
-be able to guess the storage index\footnote{Or the ``key''} and the
-corresponding encryption key for that index to be able to get any information
-out of the system. But there are however several reasons why we believe this
-layer should be implemented, as per described in the following sections.
+security standpoint this is not necessarily required. Even without an ACL layer,
+an attacker would need to guess a storage index and the corresponding
+encryption key to be able to get any information out of the system. But there are
+however several reasons why we believe this layer should be implemented, as per
+described in the following sections.
 
 \subsection{Block access}
 If for whatever reason a storage index and corresponding decryption key is
 leaked to some third-party, but not to the cloud provider, the layer can
 prevent an unauthenticated user from retrieving the file. The possibility of
-also denying authenticated users from retrieving files is also a wanted feature
+also denying authenticated users from retrieving files is also a wanted feature,
 for instance in the event of a stolen/lost terminal where the credentials are
 saved.
 
@@ -767,25 +769,25 @@ saved.
 
 The way of the proposed solution to handle folders, allows a distinction between write
 access and read access. The write key can be used to deduce a secret that can
-be safely leaked to the server which in turn would be used decide if a user has
+be safely leaked to the server which in turn would be used to decide if a user has
 permission to delete a folder. It could also be used for deciding if a user has
 permission to write to files, but this can be verified by the server in terms
 of the signature.
 
 For immutable files there is no concept of write-access, only read. It is both
 illogical and impractical to assume that read access should also yield
-delete access. A layer which identifies which users first creates a file, can by
-the same method decide who should be able to delete a file. 
+delete access. A layer that identifies the creators of a file, can by
+the same method decide who should have the rights to delete it. 
 
 \subsection{Accounting}
 
-If this application were to by run by a cloud storage provider, it is
-important to be able to decide which person should be billed for the storage of
-files, as well as the traffic generated by users uploading and downloading
-files. 
+If the server side of the application is held by a cloud storage provider, it is
+important to be able to decide which users should be billed for the file storage
+and generated network traffic. 
 
-For an immutable file, this can be identified by the user who created the file,
-and the traffic is billed on whoever retrieved or uploaded the file.
+In the case of an immutable file, the storage costs can be billed to the user
+creating the file. The costs of network traffic can further be charged to the
+users retrieving or uploading the file.
 
 Accounting might also be interesting for an organization using a third party
 cloud provider. For instance an employee who leaves the organization might be
@@ -797,29 +799,34 @@ delete them.
 
 \section{User scenarios}
 
-The various user scenarios the software has to support, provides a logic way to
+The various user scenarios supported by the software, provides a logical way to
 describe the external properties of the system. The fundamental operations are
 \emph{downloading}, \emph{uploading} and \emph{sharing} of files.
 
-\subsection{Download file}
+\subsection{Download File}
 
-When a user wishes to download a file or directory, all that is needed is the
-password to unlock the local keychain on the user terminal, as depicted in Figure
-\ref{fig:AS:download}. The client sends a GET request with the identifier in
-question, and the server responds with the encrypted folder. This contains the
-capabilities needed to locate and decrypt the underlying files and folders.
-After decrypting the contents, the client again queries the server with the
-identifier of the wanted file, and there after decrypts it, before displaying it
-to the user.
+Before downloading a file or directory, a user is initially requested for a
+password to unlock the local encrypted keyring stored at the user's
+terminal. The download procedure is depicted in Figure \ref{fig:AS:download}.
+The client sends a GET request with the identifier of the root directory, which
+was obtained from the encrypted keyring. The server will further respond with the
+encrypted root directory. Similar to all directories in the file system, the
+root directory contains the capabilities needed to locate and decrypt its
+underlying files and folders. After decrypting the root directory, the user will
+choose an underlying file or folder to be downloaded. The client
+further queries the server with the identifier of the chosen file or folder.
+A received file or folder is further decrypted before it is displayed to the
+user. The cryptographic details of downloading a file can be found in Section
+\ref{sec:CS:OF}.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureDownload.pdf}
-    \caption{Scenario: Downloading of files}
+    \caption{Scenario: Downloading a file}
     \label{fig:AS:download}
 \end{figure}
 
-\subsection{Upload Files}
+\subsection{Upload File}
 
 Figure \ref{fig:AS:upload} shows the process of uploading new files. The only
 information the server in the cloud receives, are identifiers and encrypted
@@ -829,21 +836,22 @@ identifiers and capabilities to other users.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureUpload.pdf}
-    \caption{Scenario: Uploading of files}
+    \caption{Scenario: Uploading a file}
     \label{fig:AS:upload}
 \end{figure}
 
 Before uploading, the client has to find, download and decrypt the directory the
 files are to be placed in. This process was described in the previous section.
-The cryptographic details of the Upload Operation can be found in Section
-\ref{sec:CS:UF}.
+The cryptographic details of uploading a file can be found in Section
+\ref{sec:CS:CF}.
 
-\subsection{Share files}
+\subsection{Share Files}
 
 As shown in Figure \ref{fig:AS:sharing}, for Alice to be able to share files
-with Bob, she first has to create a new directory. After the capabilities to
-this directory has been shared with Bob, this directory is going to be the
-secure channel where they can share folders and files.
+with Bob, she first has to create a new directory that will contain these
+files. Alice is then required to share a capability of the new directory with
+Bob. When the capability is shared, the new directory will work as a secure
+channel where Bob and Alice can share their own folders and files.
 
 Before transferring the capabilities to Bob, Alice links the shared directory to
 a parent directory, so she can easily find it again at a later time. She can
@@ -858,21 +866,26 @@ also link files to the shared directory.
 
 The capability distribution is a key design issue, and has to be performed in a
 secure manner. This can be solved in a variety of ways, and the solutions
-proposed in this thesis will be described in Chapter TODO.
+proposed in this thesis are discussed in Section \ref{sec:DI:keydist}.
 
 After receiving the capabilities for the shared folder from Alice, Bob requests
 and receives the encrypted shared directory, in addition to linking it with a
 parent directory for future usage. He can then download shared files as if they
 where his own.
 
-\paragraph{Read-Only shares.}
+\paragraph{Read-Only Shares.}
 
-If Alice wants to share a directory in Read Only Mode with Bob, she can simply
+If Alice wants to share a directory in Read-Only mode, she can simply
 not include the write capability in the parent directory. This will work as
-intended until Alice wants to write to the folder, thus the write capability has to
-be stored another place. We will implement this as a special folder under the
-root folder, and link in all such folders and files the ``normal'' way here.
-This process is illustrated in Figure \ref{fig:AS:readonly}.
+intended until Alice wants to write to the directory her self (missing the write
+capability). A simple solution is to enable Alice to store the write capability
+individually among her private files, while storing the read capability in the
+shared parent directory.
+
+The solution can easily be implemented by using a specialized \emph{write key
+folder} under Alice's root folder. The write key folder will then contain
+write capabilities to every folder that Alice has shared in Read-Only mode.
+The idea behind the write key folder is illustrated in Figure \ref{fig:AS:readonly}.
 
 \begin{figure}[h!]
     \centering
@@ -1082,6 +1095,7 @@ This section describes the elementary file operations supported by the
 application. The ``create file'' and ``open file'' operations are considered.
 
 \subsection{Create File}
+\label{sec:CS:CF}
 In the create file operation, a file must be created locally on the user's terminal
 prior to upload. The operation is depicted in Figure \ref{fig:CS:CF} and
 described as follows.
@@ -1108,7 +1122,8 @@ value added to the new file is an encrypted hash value of the encrypted content.
 The hash value is encrypted using the file's write key. Both the file content
 and hash value are encrypted using \ac{AES} in \ac{CBC} mode.
 
-\subsection{Open File} 
+\subsection{Open File}
+\label{sec:CS:OF}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{CryptoOpenFile.pdf}
@@ -1895,7 +1910,7 @@ force against different amounts of iterations used in PBKDF2.}
 \subsection{Cluster Dictionary Attack (CDA)}
 In the CDA attack, each node of the cluster achieved approximately the same results as a single computer
 running a dictionary attack with BruteForce. We found a small difference where
-the local computer achieved about 200 passwords per second more than each
+the local computer achieved about 100 passwords per second more than each
 instance in the cluster. With respect to difference in CPU power between the
 local computer and a single cluster instance \cite{cpubench}, this is an expected
 result. With 20 nodes in the cluster we were able to brute force around 35 000
@@ -1913,7 +1928,7 @@ passwords per second, given PBKDF2 with 1000 iterations.
 %Vår løsning VS relatert research og existing solutions
 
 \subsection{Keys}
-
+%Type of keys, what distribution scheme was chosen
 \subsection{Files}
 
 \subsection{Folders}
@@ -1933,6 +1948,11 @@ This thesis is written with the basis that we are hiring storage from an
 untrusted provider, and the security of the application should primarily
 reflect that. With this starting point we can assume that all data stored on
 the server is obtainable by the provider.
+
+\subsection{Key Distribution}
+\label{sec:DI:keydist}
+%Describe possible key distributions schemes
+%Argue why we chose our scheme
 
 \subsection{Passive attacks}
 % Avhengig av cryptographic primitives
