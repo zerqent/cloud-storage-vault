@@ -1817,7 +1817,7 @@ Storage Vault. It will start by explaining the
 procedures taken to measure the application's performance. The Performance is
 further checked against efficiency of similar existing applications.
 The chapter will complete by further explaining the experimental procedures
-taken to measure the application's security.
+taken to measure some aspects of the application's security.
 
 \section{Performance}
 We have tested the application on two Android phones, a HTC Desire and a HTC
@@ -2055,12 +2055,20 @@ hashing disabled.
 \input{tables/performance_files.tex}
 \input{tables/performance_files_unencrypted.tex}
 
-\subsection{Folders}
+\subsection{Folders} Table \ref{tbl:folder:createblank} shows the average time
+it takes to create an empty folder on the different devices. The Tables
+\ref{tbl:folder:serializefolder} and \ref{tbl:folder:encryptsign} shows the
+time it takes to serialize and encrypt and sign the folder respectively. These
+two actions are what has to be performed every time a folder is changed, while
+the creation of a blank folder is added if the content should be added to a new
+folder. Table \ref{tbl:folder:verify} displays the time the devices used to
+verify an existing folder, a step which is taken by the client every time a
+folder is opened.
 
-\input{tables/result_perf_verifyfolder}
+\input{tables/result_perf_createblankfolder}
 \input{tables/result_perf_serializefolder}
 \input{tables/result_perf_encryptsignfolder}
-\input{tables/result_perf_createblankfolder}
+\input{tables/result_perf_verifyfolder}
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
