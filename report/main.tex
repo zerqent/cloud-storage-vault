@@ -876,7 +876,9 @@ by both providing central servers, in addition to a \emph{P2P cloud} of Wuala
 users that has donated capacity to the system.
 
 %**************************************%
-\chapter{Architectural Overview}
+\chapter{Technical Procedure}
+%**************************************%
+\section{Architectural Overview}
 %**************************************%
 \label{chap:AS}
 
@@ -899,7 +901,7 @@ and take a closer look at how the different problems are solved.
     \label{fig:AS:overview}
 \end{figure}
 
-\section{File Storage}
+\subsection{File Storage}
 \label{sec:AS:FS}
 
 The solution proposed in this thesis, is that only a simple key-value store is
@@ -917,7 +919,7 @@ cryptographic keys.
 In principle, the only operations the key-value store need to support, are
 PUT and GET.
 
-\subsection{Directory Structure}
+\subsubsection{Directory Structure}
 
 
 The file and directory structure can be seen as a directed graph, as illustrated
@@ -953,7 +955,7 @@ security purposes, and are described further in Chapter \ref{chap:CS}.
 
 \input{tables/folder_meta}
 
-\section{ACL/Authentication Layer}
+\subsection{ACL/Authentication Layer}
 
 There should be some layer present on the application which enforces \ac{ACL}s
 and authenticates users which should have access to the stored files. From a
@@ -963,7 +965,7 @@ encryption key to be able to get any information out of the system. But there ar
 however several reasons why we believe this layer should be implemented, as per
 described in the following sections.
 
-\subsection{Block access}
+\subsubsection{Block access}
 If for whatever reason a storage index and corresponding decryption key is
 leaked to some third-party, but not to the cloud provider, the layer can
 prevent an unauthenticated user from retrieving the file. The possibility of
@@ -971,7 +973,7 @@ also denying authenticated users from retrieving files is also a wanted feature,
 for instance in the event of a stolen/lost terminal where the credentials are
 saved.
 
-\subsection{File Deletion}
+\subsubsection{File Deletion}
 
 The way of the proposed solution to handle folders, allows a distinction between write
 access and read access. The write key can be used to deduce a secret that can
@@ -985,7 +987,7 @@ illogical and impractical to assume that read access should also yield
 delete access. A layer that identifies the creators of a file, can by
 the same method decide who should have the rights to delete it.
 
-\subsection{Accounting}
+\subsubsection{Accounting}
 
 If the server side of the application is held by a cloud storage provider, it is
 important to be able to decide which users should be billed for the file storage
@@ -1003,13 +1005,13 @@ accounting happens server side, there is no real way to verify that all logs
 stored there are correct, since the cloud provider will have access to at least
 delete them.
 
-\section{User Scenarios}
+\subsection{User Scenarios}
 
 The various user scenarios supported by the software, provides a logical way to
 describe the external properties of the system. The fundamental operations are
 \emph{downloading}, \emph{uploading} and \emph{sharing} of files.
 
-\subsection{Download File}
+\subsubsection{Download File}
 
 Before downloading a file or directory, a user is initially requested for a
 password to unlock the local encrypted keyring stored at the user's
@@ -1032,7 +1034,7 @@ user. The cryptographic details of downloading a file can be found in Section
     \label{fig:AS:download}
 \end{figure}
 
-\subsection{Upload File}
+\subsubsection{Upload File}
 
 Figure \ref{fig:AS:upload} shows the process of uploading new files. The only
 information the server in the cloud receives, are identifiers and encrypted
@@ -1051,7 +1053,7 @@ files are to be placed in. This process was described in the previous section.
 The cryptographic details of uploading a file can be found in Section
 \ref{sec:CS:CF}.
 
-\subsection{Share Files}
+\subsubsection{Share Files}
 
 As shown in Figure \ref{fig:AS:sharing}, for Alice to be able to share files
 with Bob, she first has to create a new directory that will contain these
@@ -1100,7 +1102,7 @@ The idea behind the write key folder is illustrated in Figure \ref{fig:AS:readon
     \label{fig:AS:readonly}
 \end{figure}
 
-\section{Implications of User Equipment}
+\subsection{Implications of User Equipment}
 
 The software should be able to run on restricted devices, i.e. equipment with
 limited memory and \ac{CPU} power, often in addition to constraints on power and
@@ -1111,10 +1113,10 @@ operations has to be performed client-side. These considerations will be
 brought up throughout the further description of the software.
 
 %**************************************%
-\chapter{Cryptographic Architecture}
+\section{Cryptographic Architecture}
 %**************************************%
 \label{chap:CS}
-This chapter will elaborate on the cryptographic solutions applied to the
+This section will elaborate on the cryptographic solutions applied to the
 architectural scheme in Chapter \ref{chap:AS}. We will take a closer look at
 how confidentiality, integrity and authentication can be integrated into the
 proposed architecture.
@@ -1129,7 +1131,7 @@ the cryptographic solutions adapted. The cryptographic solutions are revealed
 in terms of file and directory operations performed by the application. The
 chapter ends with a description of a users keychain.
 
-\section{Security Concept}
+\subsection{Security Concept}
 
 The basic security concept of the application is to keep a user's remote storage
 confidential to a third-party storage provider. To solve this, the application
@@ -1145,14 +1147,14 @@ the local user possess one or more cryptographic keys, we can continue with a
 more comprehensive description of the complete cryptographic solution. The
 details are explained in terms of the following directory and file operations.
 
-\section{Directory Operations}
+\subsection{Directory Operations}
 \label{sec:CS:DO}
 
 This section presents the two basic directory operations used by the
 application. The ``create directory'' and ``open directory'' operations are
 explained as follows.
 
-\subsection{Create Directory}
+\subsubsection{Create Directory}
 
 The create directory operation is divided into two subsequent parts. First, the
 directory must be created locally at the user's terminal. Second, the directory
@@ -1214,7 +1216,7 @@ stored on the server except for the user's root directory. The keys to the
 root directory are stored in the user's local keyring. The keyring is explained
 in Section \ref{KEYRING}.
 
-\subsection{Open Directory}
+\subsubsection{Open Directory}
 
 This section describes the procedure for opening a directory. Opening a
 directory involves both downloading, verifying and decrypting the directory. The
@@ -1276,7 +1278,7 @@ fetched from the directory prior to decryption.
     \label{fig:CS:OD}
 \end{figure}
 
-\subsection{Modify Directory}
+\subsubsection{Modify Directory}
 In addition to read the content of a directory, the user might want to write to it as well.
 To be able to modify a downloaded directory, the user must be in possession of
 the directory's write key. The write key is needed to obtain the directory's
@@ -1296,11 +1298,11 @@ The user fetches the encrypted signing key and decrypts it with the
 write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
 
-\section{File Operations}
+\subsection{File Operations}
 This section describes the elementary file operations supported by the
 application. The ``create file'' and ``open file'' operations are considered.
 
-\subsection{Create File}
+\subsubsection{Create File}
 \label{sec:CS:CF}
 In the create file operation, a file must be created locally on the user's terminal
 prior to upload. The operation is depicted in Figure \ref{fig:CS:CF} and
@@ -1328,7 +1330,7 @@ value added to the new file is an encrypted hash value of the encrypted content.
 The hash value is encrypted using the file's write key. Both the file content
 and hash value are encrypted using \ac{AES} in \ac{CBC} mode.
 
-\subsection{Open File}
+\subsubsection{Open File}
 \label{sec:CS:OF}
 \begin{figure}[h!]
     \centering
@@ -1346,7 +1348,7 @@ decrypted with the write key, if these two outputs match the ciphertext has not
 been tampered with. The ciphertext is then decrypted using the write key and
 \ac{IV} to obtain the file contents.
 
-\section{Keychain}
+\subsection{Keychain}
 
 As stated, each client keeps a local copy of the identity and write key to the
 personal root folder in a password protected keychain. This is done to be able
@@ -1364,9 +1366,8 @@ compromise the root folder keys. As an precaution for this, we will use
 value to create additional computational work for the process of unlocking the
 keychain. This method is known as key stretching \cite{keystretch}.
 
+\subsection{Choice of Cryptographic Primitives}
 
-
-\section{Choice of Cryptographic Primitives}
 The scheme which has been described in this section requires three primitives;
 a cryptographic hash function, a symmetric cipher and an asymmetric cipher
 which can be used for digital signatures. The choices should reflect the
@@ -1379,20 +1380,20 @@ possible attacker has access to vast quantities of computing power.
     \item It should be infeasible to break integrity for any file or folder
 \end{enumerate}
 
-\subsection{Symmetric Cipher}
+\subsubsection{Symmetric Cipher}
 For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is
 a standard, has been around for a long time, and does not have any serious
 security issues as long as it is used correctly.
 % Kilder kilder TODO
 
-%**************************************%
-\chapter{Implementation}
-%**************************************%
-This chapter describes the implementation of our proof-of-concept client and
-server. The technologies and software \ac{API}s used will be described, in
-addition to implementation details that require special attention.
+%%**************************************%
+%\chapter{Implementation}
+%%**************************************%
+%This chapter describes the implementation of our proof-of-concept client and
+%server. The technologies and software \ac{API}s used will be described, in
+%addition to implementation details that require special attention.
 
-\section{Server}
+\section{Server Implementation}
 
 The server, in the most basic form, has to support two operations -- sending
 and receiving files. In addition, an \ac{ACL} layer is needed to support user
@@ -1570,7 +1571,7 @@ If a client tries to put a file with a Storage Index that already exists, the
 server replies with an error code if the client in addition does not provide a
 valid Write-Enabler Key.
 
-\section{Client - Android}
+\section{Client Implementation - Android}
 % Java/Android/Dalvik/JCE/Commons HTTPClient
 % Security vs. Usability - Rationale for GUI
 % MVC? V=Android GUI
@@ -1871,7 +1872,7 @@ unlinking from.
 \end{figure}
 
 %**************************************%
-\chapter{Experimental Procedures}
+\chapter{Experimental Procedure}
 %**************************************%
 This chapter will explain the experimental procedures performed towards the Cloud
 Storage Vault. It will start by explaining the
