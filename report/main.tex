@@ -281,7 +281,7 @@ service \cite{stallings}.
 \paragraph{Authentication} Authentication is the act of a user, service or
 similar to prove that he is what he claims to be \cite{stallings}.
 
-\paragraph{Non-repudiation} Non-repudiation prevents both the sender and the
+\paragraph{Non-Repudiation} Non-repudiation prevents both the sender and the
 receiver of a message from refuting the authenticity of transmitted message. In
 other words, one party can prove the involvement of the other party
 \cite{stallings}.
@@ -313,14 +313,14 @@ cipher is used, knowledge of the cipher, or multiple plaintext and multiple
 ciphertext, should not be enough to obtain the key, or to decrypt ciphertext
 with a corresponding unknown plaintext \cite{schneier}.
 
-\paragraph{Block cipher and Stream cipher} There are different classifications
+\paragraph{Block Cipher and Stream Cipher} There are different classifications
 on how a cipher treats data \cite[p. 32]{stallings}. A \emph{block cipher} will
 encrypt a block of data of a specific size. If the data is larger than the
 block size used by the application, a \emph{mode of operation} is needed. In a
 \emph{stream cipher}, the plaintext will usually be combined with a pseudorandom key
 stream to generate the ciphertext.
 
-\paragraph{Symmetric encryption} Symmetric-key encryption is an encryption scheme
+\paragraph{Symmetric Encryption} Symmetric-key encryption is an encryption scheme
 where the same key is used for both encryption and decryption \cite[p.
 32]{stallings}. The \ac{AES} is a block cipher and is the current standard for
 symmetric encryption. The \ac{AES} works on a block of 128 bits at a time,
@@ -339,7 +339,7 @@ An other mode is \emph{\ac{CBC}}. In \ac{CBC}, a non-predictable and not reused
 again is encrypted with \ac{AES}. The resulting ciphertext is used as an
 ``\ac{IV}'' for the next block \cite[p. 183]{stallings}, and so on.
 
-\paragraph{Asymmetric encryption} Asymmetric key encryption is an encryption scheme
+\paragraph{Asymmetric Encryption} Asymmetric key encryption is an encryption scheme
 where different keys are used for encryption and decryption
 \cite[p. 259]{stallings}.
 
@@ -353,7 +353,7 @@ a larger key, and that it has a larger computational overhead to obtain the
 same level of confidentiality as comparable symmetric-key encryption. The
 probably best known asymmetric cipher is \ac{RSA}.
 
-\subsection{Cryptographic hash functions}
+\subsection{Cryptographic Hash Functions}
 
 A cryptographic hash function is a deterministic mathematical procedure, which
 takes an arbitrary block of data and outputs a fixed size bit string. The
@@ -445,13 +445,13 @@ iterations chosen in the implementation of the function.
 This section briefly list security attacks relevant to this thesis, as defined
 by \citet[Ch. 1.3]{stallings}.
 
-\paragraph{Active and passive attacks} Two general classifications of security
+\paragraph{Active and Passive Attacks} Two general classifications of security
 attacks exist, where a \emph{passive attack} attempts to learn or make use of
 information from the system, but does not affect system resources. An
 \emph{active attack} attempts to alter system resources or affect their
 operation.
 
-\paragraph{Traffic analysis} Traffic Analysis is the act of capturing and
+\paragraph{Traffic Analysis} Traffic Analysis is the act of capturing and
 examining communication data sent between two parties. This information might
 contain secrets or for instance leak enough information about an encryption key
 to make it breakable.
@@ -480,10 +480,10 @@ Even though cryptographic primitives are designed to be secure, they might have
 implementation flaws and be used in an improper fashion, e.g. by using wrong
 parameters.
 
-\paragraph{Cryptanalysis attack} A cryptanalysis attack is an attempt to deduce
+\paragraph{Cryptanalysis Attack} A cryptanalysis attack is an attempt to deduce
 a specific plaintext or to deduce the key being used in a ciphertext.
 
-\paragraph{Brute-force attack} In a brute-force attack, an attacker tries
+\paragraph{Brute-Force Attack} In a brute-force attack, an attacker tries
 to obtain a secret by testing the algorithm with up to all possible inputs. The
 secret might be an encryption key, or the data fed into a cryptographic hash
 function.
@@ -825,7 +825,7 @@ Since it is not practical for users to remember strings containing random
 characters, the \textbf{application} layer is used for providing a user-friendly
 interface to the directories and files.
 
-\paragraph{File types.}
+\paragraph{File Types}
 
 There are two kinds of files in the Tahoe-\ac{LAFS} -- \textbf{immutable} and
 \textbf{mutable} files. An immutable file is created exactly once, i.e. it
@@ -980,7 +980,7 @@ accounting happens server side, there is no real way to verify that all logs
 stored there are correct, since the cloud provider will have access to at least
 delete them.
 
-\section{User scenarios}
+\section{User Scenarios}
 
 The various user scenarios supported by the software, provides a logical way to
 describe the external properties of the system. The fundamental operations are
@@ -1056,7 +1056,7 @@ and receives the encrypted shared directory, in addition to linking it with a
 parent directory for future usage. He can then download shared files as if they
 where his own.
 
-\paragraph{Read-Only Shares.}
+\paragraph{Read-Only Shares}
 
 If Alice wants to share a directory in Read-Only mode, she can simply
 not include the write capability in the parent directory. This will work as
@@ -1122,7 +1122,7 @@ the local user possess one or more cryptographic keys, we can continue with a
 more comprehensive description of the complete cryptographic solution. The
 details are explained in terms of the following directory and file operations.
 
-\section{Directory operations}
+\section{Directory Operations}
 \label{sec:CS:DO}
 
 This section presents the two basic directory operations used by the
@@ -1253,7 +1253,7 @@ fetched from the directory prior to decryption.
     \label{fig:CS:OD}
 \end{figure}
 
-\subsection{Modify directory}
+\subsection{Modify Directory}
 In addition to read the content of a directory, the user might want to write to it as well.
 To be able to modify a downloaded directory, the user must be in possession of
 the directory's write key. The write key is needed to obtain the directory's
@@ -1343,7 +1343,7 @@ keychain. This method is known as key stretching \cite{keystretch}.
 
 
 
-\section{Choice of cryptographic primitives}
+\section{Choice of Cryptographic Primitives}
 The scheme which has been described in this section requires three primitives;
 a cryptographic hash function, a symmetric cipher and an asymmetric cipher
 which can be used for digital signatures. The choices should reflect the
@@ -1601,7 +1601,7 @@ principles, by not creating our own code to generate barcodes.
 
 \subsection{Architectural Patterns}
 
-\paragraph{Client-server} It should be obvious that the client we have
+\paragraph{Client-Server} It should be obvious that the client we have
 implemented is the client part of the overall client-server pattern.
 
 \paragraph{Pipe-and-Filter} The basis of the pipe-and-filter pattern is that
@@ -1609,7 +1609,7 @@ there exist a chain of processing elements, where the output of one element is
 the input of the next element. We use this for file uploads and downloads to
 limit the memory usage of the client, as well as to increase performance.
 
-\paragraph{Asynchronous pattern} We use asynchronous calls to slow operations
+\paragraph{Asynchronous Pattern} We use asynchronous calls to slow operations
 -- e.g. file upload and key generation -- extensively, to prevent the interface
 from hanging and to deliver a smoother user experience in general.
 
@@ -1757,7 +1757,7 @@ meet and do the capability exchange again. The identity has thus been verified.
     \label{fig:csvandroid:barcode}
 \end{figure}
 
-\subsection{Adding a new client}
+\subsection{Adding a New Client}
 
 Using more clients, or different devices, is almost the exact same as sharing,
 and is solved in the same manner. The only difference is that the capability
@@ -1765,7 +1765,7 @@ that needs to be transfered, is that of the \emph{root folder}. It is also
 possible to take any other folder and use as a new root for the new client if
 that is the users wish.
 
-\subsection{Securing the client}
+\subsection{Securing the Client}
 
 For a user to access his root folder, the client will have to know the
 capability of that folder. This is clearly to much for a user to remember, so
@@ -1812,7 +1812,7 @@ the files that the user has stored in the cloud.
     \label{fig:CSVAndroid:mainscreen}
 \end{figure}
 
-\paragraph{Browse the cloud}
+\paragraph{Browse the Cloud}
 
 The interface for browsing the files stored in the cloud is made in what we
 understand as a common and understandable way of interpreting users actions on
@@ -1868,7 +1868,7 @@ for HTC Hero in Table \ref{tbl:device:hero} and the computer in Table
 \input{tables/exp_hero.tex}
 \input{tables/exp_computer.tex}
 
-\subsection{Eliminating bottlenecks on Android devices}
+\subsection{Eliminating Bottlenecks on Android Devices}
 On the Android devices we identify three possible bottlenecks that we might be
 able to control: The Network, our application and the memory card. The mobile
 phones will normally obtain their network connection through a wireless
@@ -1883,7 +1883,7 @@ represents this guarantee in y MB, so a class 2 card guarantees 2 MB/s. There
 are however the possibility of the card performing significantly better than
 what the class indicates.
 
-\subsection{What is measured}
+\subsection{What is Measured}
 % Upload and Download of files (speed/bandwidth). Wget speed, folder creation
 % etc
 % TODO
@@ -1905,7 +1905,7 @@ time, as will the serialization of folders. For folders we measured:
     \item The time it takes to serialize a folder, with varying amount of data
 \end{enumerate}
 
-\subsection{Error sources}
+\subsection{Error Sources}
 The trouble with measuring performance on operations that are relatively quick
 is that they are very vulnerable to noise from the system. The Android system
 comes with a lot of built in services that runs sporadically, which means that
@@ -2202,7 +2202,7 @@ the server is obtainable by the provider.
 %Describe possible key distributions schemes
 %Argue why we chose our scheme
 
-\subsection{Passive attacks}
+\subsection{Passive Attacks}
 % Avhengig av cryptographic primitives
 % Confidentiality den største utfordringen
 % Her trengs det gode kilder
@@ -2292,7 +2292,7 @@ terminal, for instance a mobile phone, a terminal might also be broken into
 without the users knowledge.
 
 
-\section{Omitted features}
+\section{Omitted Features}
 % Ting vi ikke har lagt inn
 % - Cascading deletes? Loops.
 % - Hvem 'eier' en directory
@@ -2417,7 +2417,7 @@ a time. The number of reducers are set to zero, because their behavior in
 MapReduce is not needed.
 
 
-\paragraph{Notice:} The for-loop at line 10 in Listing \ref{lst:mapfunc} requires the number of words
+\paragraph{Notice} The for-loop at line 10 in Listing \ref{lst:mapfunc} requires the number of words
 per line, in the dictionary, to be equal to a multiple of the number of threads in use. It is
 recommended that the input dictionary follows this requirement. In this
 occasion, we have created a Bash script, named dictmaker.sh, that changes a regular dictionary into
