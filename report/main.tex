@@ -175,7 +175,8 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PoC}{Proof-of-concept}
 \acro{PRNG}{Pseudorandom Number Generator}
 \acro{QR}{Quick Response}
-\acro{RAM}{Random access memory}
+\acro{RAM}{Random Access Memory}
+\acro{ROM}{Read Only Memory}
 \acro{REST}{Representational State Transfer}
 \acro{RSA}{Rivest, Shamir and Adleman}
 \acro{SaaS}{Software as a Service}
@@ -535,92 +536,103 @@ two or more clouds of any other model.
 
 \section{Research}
 
-This section will elaborate on previous research concerning privacy within cloud
-computing. Previous research can be divided into proactive solutions that
-either reduce or prevent the risk of leaking privacy related information. The
-latter type of solutions are discussed.
+This section will elaborate on selected previous research concerning privacy
+within cloud computing. The research on this subject can be divided into
+proactive solutions that either reduce, or prevent the risk of leaking privacy
+related information. Only the latter type of solutions are further discussed.
 
 \subsection{Privacy as a Service}
-A concept entitled \ac{PasS} was suggested in 2009
-\cite{PasS}. PasS is a set of security protocols ensuring privacy of customer
-data in cloud computing architectures. The main design goal with PasS is to
-maximize the user's control over his/her sensitive data both processed and stored
-within a cloud.
 
-To be operational, PasS is dependent on a fundamental system and trust model. The
-system model consists of 3 communicating parties, namely a cloud provider, a
-cloud customer and a \ac{TTP}. The PasS system model is shown
-in Figure \ref{fig:RW:PasS}. 
+A concept entitled \ac{PasS}, was suggested in 2009 \cite{PasS}. \ac{PasS} is a set
+of security protocols ensuring privacy of customer data in cloud computing
+architectures. The main design goal with \ac{PasS}, is to maximize the user's control
+over his sensitive data, both processed and stored within a cloud.
+
+To be operational, \ac{PasS} is based on a fundamental system model and trust
+model. The system model consists of three communicating parties, namely a
+\emph{cloud provider}, a \emph{cloud customer} and a \emph{\ac{TTP}}. The
+\ac{PasS} system model is shown in Figure \ref{fig:RW:PasS}. 
+
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{ArchitecturePasS.pdf}
     \caption{System model of PasS}
     \label{fig:RW:PasS}
 \end{figure}
-It is important to notice that the PasS system model is dependent on
-pre-installed cryptographic coprocessors in the cloud. A cryptographic
-coprocessor is a small hardware card, including a processor, RAM, ROM, backup
-battery, persistent storage and an Ethernet network card. A coprocessor interfaces
-with a server in the cloud and provides a safe environment for processing of
-a customer's sensitive/private data. The cryptographic coprocessors are used in the
-cloud because they are tamper-proof against physical attacks. The coprocessors
-are pre-configured by the TTP before they are installed in the cloud. In this
-way, the TTP provides a safe computational environment for the cloud customer,
-which is kept secret from the cloud provider.
 
-The main task of the TTP is to compute a set of public/private key pairs, load
-them into the co-processor's persistent storage in the cloud, and
-further send them to the customer. The TTP also loads its own secret key into
-the coprocessor. This key distribution ensures secure communication between the
-TTP, coprocessors and the cloud customer. The customer's key pair is sent through a
-secure communication channel.
+It is important to notice that the \ac{PasS} system model is dependent on
+pre-installed cryptographic coprocessors in the hardware running the cloud
+service.
+
+A cryptographic coprocessor is a small hardware card, including a processor,
+\ac{RAM}, \ac{ROM}, backup battery, persistent storage and an Ethernet network
+card. A coprocessor interfaces with a server in the cloud, and provides a safe
+environment for processing of a customer's sensitive data. 
+
+The cryptographic coprocessors are used in the cloud because they are
+tamper-proof against physical attacks. The coprocessors are pre-configured by
+the \ac{TTP} before they are installed. By using this procedure, the \ac{TTP}
+provides a safe computational environment for the cloud customer, which is kept
+secret from the cloud provider.
+
+The main task of the \ac{TTP} is to compute a set of public/private key pairs,
+load them into the persistent storage of the co-processor, and further send
+them to the customer. The \ac{TTP} also loads its own secret key into the
+coprocessor. This key distribution ensures secure communication between the
+\ac{TTP}, coprocessors and the cloud customer. The customer's key pair is sent
+through a secure communication channel.
 
 With cryptographic coprocessors in the cloud and a secure communication, the
-cloud customer can choose between 3 different levels of privacy towards the
-cloud provider. The customer can choose between no privacy, privacy with trusted
-provider and privacy with none-trusted provider.
+cloud customer can choose between three different levels of privacy towards the
+cloud provider -- no privacy, privacy with a trusted provider and privacy with
+a none-trusted provider.
 
-No privacy equals storing data as clear text in the cloud. Privacy with trusted
-provider involves storing encrypted data in the cloud. This data is encrypted by
-the cloud provider and only achievable by the customer or cloud provider.
-In the case of privacy with non-trusted provider, the customer encrypts the
-private data before uploading it to the cloud provider. The key used for
-encryption is shared with the cryptographic co-processor, through an
+\emph{No privacy} implies storing data as clear text in the cloud.
+\emph{Privacy with a trusted provider} involves storing encrypted data in the
+cloud. This data is encrypted by the cloud provider and only achievable by the
+customer or cloud provider. 
+
+In the case of \emph{privacy with a non-trusted provider}, the customer
+encrypts the private data before uploading it to the cloud provider. The key
+used for encryption is shared with the cryptographic co-processor, through an
 authenticated version of the Diffie-Hellman key management protocol. The
 co-processor can further process the encrypted data and store it in the cloud
 facility. The stored data is encrypted and unknown to the cloud provider.
 
 \subsection{Privacy Manager}
-In 2009, HP Labs proposed a way to manage and control a user's private data stored and
-processed in a cloud facility \cite{privacymanager}. Their solution was partially implemented
-as a software program called a privacy manager.
 
-The privacy manager uses a feature/method called obfuscation, which is quite similar to
-encryption. However, the obfuscation method is different from encryption, in the
-sense that the obfuscated data can be processed in the cloud, without the cloud
-provider knowing the encryption key or the original data. \cite{privacymanager} mention the following
-obfuscation methods:
+In 2009, HP Labs proposed a way to manage and control a user's private data,
+stored and processed in a cloud facility \cite{privacymanager}. Their solution
+was partially implemented as a software program called a \emph{privacy manager}.
+
+The privacy manager uses a feature called \emph{obfuscation}, which is quite
+similar to encryption. However, the obfuscation method is different from
+encryption in the sense that the obfuscated data can be processed in the
+cloud, without the cloud provider knowing the encryption key or the original
+data. \citet{privacymanager} mention the following obfuscation methods:
+
 \begin{itemize}
 \item Yao's protocol for secure two-party computation \cite{yao}
 \item Gentry's homomorphic encryption scheme \cite{gentry}
 \item Narayanan and Schmatikov's obfuscation method \cite{obfuscationmethod}
 \end{itemize}
+
 Due to better efficiency, the privacy manager uses the latter alternative. However,
 Narayanan and Schmatikov's obfuscation method does not provide complete
 confidentiality to the cloud provider \cite{obfuscationmethod}.
 
-In addition to installing a privacy manager at the user's terminal, HP Labs suggests
-the use of trusted computing solutions to address the lower-level protection of
-data. The \ac{TCG} is an example of an organization
-developing and providing trusted computing solutions \cite{tcg}. HP Labs
-suggests using a tamper-proof piece of hardware called a \ac{TPM}, which is
-designed by TCG. The TPM is installed in the machine running the
-privacy manager to ensure that processes carried out by the privacy manager can be
-fully trusted.
+In addition to installing a privacy manager at the user's terminal, HP Labs
+suggests the use of trusted computing solutions to address the lower-level
+protection of data. The \ac{TCG} is an example of an organization developing
+and providing trusted computing solutions \cite{tcg}. A tamper-proof piece of
+hardware called a \ac{TPM} is recommended \cite{privacymanager}, which is
+designed by \ac{TCG}. The \ac{TPM} is installed in the machine running the
+privacy manager, to ensure that processes carried out by the privacy manager can
+be fully trusted.
 
-The privacy manager is suggested to work in 3 different use cases. It can be
-implemented to support a single client, the use of hybrid clouds and/or the use of an
-infomediary within the cloud.
+The privacy manager is suggested to work in three different use cases. It can
+be implemented to support a \emph{single client}, the use of \emph{hybrid
+clouds} and/or the use of an \emph{infomediary} within the cloud.
 
 %Regarding applications in the cloud where users have to upload unobfuscated
 %private data, the privacy manager includes two additional features called
