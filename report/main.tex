@@ -150,7 +150,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ECB}{Electronic Codebook}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{GPU}{Graphics Processing Unit}
-\acro{FEC}{Forward Error Correction} 
+\acro{FEC}{Forward Error Correction}
 \acro{HDFS}{Hadoop Distributed File System}
 \acro{HTTP}{Hypertext Transfer Protocol}
 \acro{HTTPS}{Hypertext Transfer Protocol Secure}
@@ -213,7 +213,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 
 \section{Scope and Objectives}
 
-% Sum up problem description and concretize the goals. 
+% Sum up problem description and concretize the goals.
 
 \subsection{Criteria for a Secure Cloud Storage Service}
 \label{sec:criteria}
@@ -276,7 +276,7 @@ attacker \cite{stallings}.
 
 \paragraph{Availability} The property of a system being accessible and usable
 upon demand by an authorized system entity, are defined by the availability
-service \cite{stallings}. 
+service \cite{stallings}.
 
 \paragraph{Authentication} Authentication is the act of a user, service or
 similar to prove that he is what he claims to be \cite{stallings}.
@@ -289,12 +289,12 @@ other words, one party can prove the involvement of the other party
 \section{Cryptographic Primitives}
 
 This section describes the low level security primitives used in the results of
-this thesis. 
+this thesis.
 
 \emph{Randomness} is a basic property that multiple of the cryptographic
 primitives rely on, and hence deserves an explanation. Random data is
 informally defined as unpredictable to the attacker, even if he is taking
-active steps to defeat the randomness \cite[p. 137]{schneier}.  
+active steps to defeat the randomness \cite[p. 137]{schneier}.
 
 A \emph{Cryptographic \ac{PRNG}} deterministically produce numbers based on a
 seed, and it should be infeasible to determine the next number without knowing
@@ -304,7 +304,7 @@ the seed \cite[p. 140]{schneier}.
 
 Encryption is the process of transforming some information into an unreadable
 form. It is primarily used to enforce confidentiality, but can also be
-used for other purposes, e.g. authentication. 
+used for other purposes, e.g. authentication.
 
 In its very basic form, an encryption scheme consist of an encryption algorithm
 (the \emph{cipher}), a key and a message (the \emph{plaintext}), that is all
@@ -340,8 +340,8 @@ again is encrypted with \ac{AES}. The resulting ciphertext is used as an
 ``\ac{IV}'' for the next block \cite[p. 183]{stallings}, and so on.
 
 \paragraph{Asymmetric encryption} Asymmetric key encryption is an encryption scheme
-where different keys are used for encryption and decryption 
-\cite[p. 259]{stallings}. 
+where different keys are used for encryption and decryption
+\cite[p. 259]{stallings}.
 
 An asymmetric encryption scheme is often called a \emph{public-key
 encryption} scheme, where one key is defined as private and the other as public.
@@ -377,7 +377,7 @@ The standard for cryptographic hash functions today, are \ac{SHA}-1 and the
 A digital signature is the digital equivalent of a normal signature, i.e. it
 verifies that an entity approves with or has written a message. It can also
 verify the date the signature was made. In addition, it should be verifiable by
-a third party \cite[p.  379]{stallings}. 
+a third party \cite[p.  379]{stallings}.
 
 It should logically not be possible, or at least unfeasible, to fake a digital
 signature.
@@ -390,7 +390,7 @@ underlying algorithm.
 
 A digital certificate is the pairing of a digital signature and a public key
 \cite{stallings}. By this scheme, the services confidentiality, authentication
-and non-repudiation can be achieved. 
+and non-repudiation can be achieved.
 
 For example, a person has a certificate with some clues about the identity
 in it, e.g. the e-mail, together with a public key. This certificate can then
@@ -422,7 +422,7 @@ network \cite{stallings}. It does so by a combination of different algorithms
 and primitives, but a digital certificate is required for authentication.
 
 To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
-\ac{HTTPS}. 
+\ac{HTTPS}.
 
 \subsection{PBKDF2}
 \label{sec:PBKDF2}
@@ -435,7 +435,7 @@ a brute force attack.
 
 What \ac{PBKDF2} does, is to make the process of deriving the key from the password
 an expensive process in terms of computational power, to make it more resistant
-to brute force attacks. This feature is known as \emph{key stretching}. 
+to brute force attacks. This feature is known as \emph{key stretching}.
 
 The efficiency of the key derivation, is dependent on the number of process
 iterations chosen in the implementation of the function.
@@ -572,7 +572,7 @@ over his sensitive data, both processed and stored within a cloud.
 To be operational, \ac{PasS} is based on a fundamental system model and trust
 model. The system model consists of three communicating parties, namely a
 \emph{cloud provider}, a \emph{cloud customer} and a \emph{\ac{TTP}}. The
-\ac{PasS} system model is shown in Figure \ref{fig:RW:PasS}. 
+\ac{PasS} system model is shown in Figure \ref{fig:RW:PasS}.
 
 \begin{figure}[h!]
     \centering
@@ -588,7 +588,7 @@ service.
 A cryptographic coprocessor is a small hardware card, including a processor,
 \ac{RAM}, \ac{ROM}, backup battery, persistent storage and an Ethernet network
 card. A coprocessor interfaces with a server in the cloud, and provides a safe
-environment for processing of a customer's sensitive data. 
+environment for processing of a customer's sensitive data.
 
 The cryptographic coprocessors are used in the cloud because they are
 tamper-proof against physical attacks. The coprocessors are pre-configured by
@@ -611,7 +611,7 @@ a none-trusted provider.
 \emph{No privacy} implies storing data as clear text in the cloud.
 \emph{Privacy with a trusted provider} involves storing encrypted data in the
 cloud. This data is encrypted by the cloud provider and only achievable by the
-customer or cloud provider. 
+customer or cloud provider.
 
 In the case of \emph{privacy with a non-trusted provider}, the customer
 encrypts the private data before uploading it to the cloud provider. The key
@@ -666,7 +666,7 @@ Equal to \acl{PasS} and the privacy manager, \emph{\ac{TCCP}} was proposed as a
 solution to provide secure computations and storage within a non-trusted cloud
 provider \cite{tccp}. As opposed to the previous solutions, \ac{TCCP} is
 directed against secure execution of guest \acp{VM} outsourced to \ac{IaaS}
-providers. 
+providers.
 
 The original infrastructure, before adding \ac{TCCP}, is assumed to
 consist of a \emph{cloud manager}, which manages a cluster of nodes running one or more
@@ -688,7 +688,7 @@ The \ac{TCCP} system architecture is illustrated in Figure \ref{fig:RW:TCCP}.
 The trusted computing base of \ac{TCCP} includes a \emph{trusted coordinator}
 and a \emph{trusted virtual machine monitor}. The coordinator manages the
 trusted nodes within a cluster. To be trusted, a node must be located within a
-security perimeter and run a trusted virtual machine monitor. 
+security perimeter and run a trusted virtual machine monitor.
 
 \begin{figure}[h!]
     \centering
@@ -702,7 +702,7 @@ perimeter, and use remote attestation to ensure nodes are trusted. Each trusted
 node in a cluster contains a \ac{TPM} chip and a corresponding trusted monitor.
 The main task of the trusted monitor, is to enforce a local closed box
 protection of a client's running \ac{VM}. Details about the design of the
-trusted \ac{VM} monitor, are given by \citet{tccp}. 
+trusted \ac{VM} monitor, are given by \citet{tccp}.
 
 Each trusted virtual machine monitor cooperates with a trusted coordinator to
 protect the transmission of \acp{VM} between trusted nodes, and to ensure that
@@ -752,7 +752,7 @@ enterprise architecture is shown in Figure \ref{fig:RW:CCS:EA}.\\
   tampered with.
   \item[\ac{TG}] \hfill \\Generates tokens that enable the cloud provider to
   retrieve segments of customer data.
-  \item[\ac{CG}] \hfill \\Responsible for creating and distributing access 
+  \item[\ac{CG}] \hfill \\Responsible for creating and distributing access
   policies.
 \end{description}
 
@@ -784,7 +784,7 @@ that the security features actually work as claimed.
 
 Tahoe-\ac{LAFS}\footnote{\url{http://www.tahoe-lafs.org/}} is an open source,
 distributed and secure cloud storage file system, which does fulfill
-the criteria set in Section \ref{sec:criteria}. 
+the criteria set in Section \ref{sec:criteria}.
 The integrity and confidentiality of the
 files are guaranteed by the algorithms used on the client, and is independent
 of the storage servers, which may be operated by untrusted people.
@@ -850,7 +850,7 @@ storage file system, that seemingly operates very similar to Tahoe-\ac{LAFS}.
 The authors have released a paper on a cryptographic tree structure for file
 systems, called Cryptree \cite{cryptree}, and has strong focus on reliability
 by both providing central servers, in addition to a \emph{P2P cloud} of Wuala
-users that has donated capacity to the system. 
+users that has donated capacity to the system.
 
 %**************************************%
 \chapter{Architectural Overview}
@@ -859,7 +859,7 @@ users that has donated capacity to the system.
 
 The architectural solution of a secure cloud file sharing system has to convince
 its users that the functions indeed are secure, and that the concepts are easy
-to understand and accept. 
+to understand and accept.
 
 The architecture has to support various user functionality. Figure
 \ref{fig:AS:overview} exhibits Alice uploading files to the cloud, and
@@ -960,13 +960,13 @@ of the signature.
 For immutable files there is no concept of write-access, only read. It is both
 illogical and impractical to assume that read access should also yield
 delete access. A layer that identifies the creators of a file, can by
-the same method decide who should have the rights to delete it. 
+the same method decide who should have the rights to delete it.
 
 \subsection{Accounting}
 
 If the server side of the application is held by a cloud storage provider, it is
 important to be able to decide which users should be billed for the file storage
-and generated network traffic. 
+and generated network traffic.
 
 In the case of an immutable file, the storage costs can be billed to the user
 creating the file. The costs of network traffic can further be charged to the
@@ -1150,7 +1150,7 @@ Before creating a new directory it is necessary to generate an RSA key-pair. The
 key-pair is specific to the new directory and consists of a public and private
 signing key. The signing key is further used to derive a write and a read key
 for the corresponding directory. The read key is a hashed value of the write
-key, while the write key equals the hashed value of the signing  key. 
+key, while the write key equals the hashed value of the signing  key.
 
 % TODO: Will we use counter IV?
 After key generation, the public key is directly added to the new directory. The
@@ -1254,10 +1254,10 @@ fetched from the directory prior to decryption.
 \end{figure}
 
 \subsection{Modify directory}
-In addition to read the content of a directory, the user might want to write to it as well. 
+In addition to read the content of a directory, the user might want to write to it as well.
 To be able to modify a downloaded directory, the user must be in possession of
 the directory's write key. The write key is needed to obtain the directory's
-signing key and write enabler. 
+signing key and write enabler.
 
 The signing key is needed by the user to correctly sign the
 modified directory. Remember that a directory can only be read by users if it
@@ -1274,7 +1274,7 @@ write key. This is illustrated in Figure \ref{fig:CS:OD}.
 
 
 \section{File Operations}
-This section describes the elementary file operations supported by the 
+This section describes the elementary file operations supported by the
 application. The ``create file'' and ``open file'' operations are considered.
 
 \subsection{Create File}
@@ -1398,7 +1398,7 @@ constraints or \emph{patterns} as follows:
 \begin{description}
   \item[Client-server] \hfill \\
     The server is our server application, and the client is the various client
-    applications, 
+    applications,
 
   \item[Stateless] \hfill \\
     Since the server is just a simple key-value file store, it does
@@ -1473,7 +1473,7 @@ experience and its superb documentation.
 interface between a web server and a Python application. It is defined in
 \ac{PEP} 3333\footnote{\url{http://www.python.org/dev/peps/pep-3333/}}, and
 specifies both sides of the interface -- the \emph{application} and the
-\emph{server}. The server side is implemented in the form of an Apache 
+\emph{server}. The server side is implemented in the form of an Apache
 module, namely \texttt{mod\_wsgi}, and the application is where we put our
 code.
 
@@ -1535,7 +1535,7 @@ database.
 
 The only \ac{ACL} functionality implemented, is the server-side verification
 that a client has proper access to overwrite a file, e.g. when a client wishes to
-update a folder with new contents. We call this \textbf{Write-Enabler Verification}. 
+update a folder with new contents. We call this \textbf{Write-Enabler Verification}.
 
 When a client first uploads a new folder, it also provides a
 \emph{Write-Enabler Key}, which the server adds to the database along with the
@@ -1554,7 +1554,7 @@ valid Write-Enabler Key.
 %
 The \ac{PoC} client we have implemented, is made for devices using the Android
 operating system, which is based on Linux. The \ac{SDK} for making Android
-applications, is essentially a somewhat modified version of Java. 
+applications, is essentially a somewhat modified version of Java.
 
 Most devices that use the Android operating system are mobile phones or
 tablets, which implies that they are limited in terms of speed and
@@ -1565,7 +1565,7 @@ connections, and it is always on.
 
 A nice side effect of developing on a smart phone platform, is that if the
 software performs well on a constrained device, it will almost certainly also
-have good performance on any faster device as well. 
+have good performance on any faster device as well.
 
 \subsection{Environment}
 The \ac{PoC} client was made on the Android platform in the Java programming
@@ -1575,7 +1575,7 @@ follows.
 \paragraph{Android} The Android operating system is made by Google, and is most
 commonly found on mobile phones and tablets. The platform choice of Android was done
 based on hardware availability and familiarity with developing on the
-platform and the programming language (Java). 
+platform and the programming language (Java).
 
 \paragraph{Java} Java is a high-level, object-oriented programming language.
 Applications written in Java runs in a \ac{JVM}, which implies that a Java
@@ -1611,14 +1611,14 @@ limit the memory usage of the client, as well as to increase performance.
 
 \paragraph{Asynchronous pattern} We use asynchronous calls to slow operations
 -- e.g. file upload and key generation -- extensively, to prevent the interface
-from hanging and to deliver a smoother user experience in general.  
+from hanging and to deliver a smoother user experience in general.
 
 \subsection{Implementation Details}
 
 \subsubsection{Structure}
 % Package Structure, some nice UML (?)
 % Which qualities do we wish to achive? Security, Performance, Usability
- 
+
 The source of our client is logically separated into two entities --
 \textbf{CSVlib} and \textbf{CSVAndroid}. CSVlib is a pure Java library which
 contain the necessary entities, cryptographic operations and communication
@@ -1643,7 +1643,7 @@ folder, and have the information to read, write or verify that object.
 
 Capabilities are stored server side in folders, in it's serialized form shown
 in Figure \ref{fig:CAP:serial}. \emph{Object Type} specifies if the capability
-represents a file or a folder, with values \emph{F} or \emph{D} 
+represents a file or a folder, with values \emph{F} or \emph{D}
 respectively.
 
 \begin{figure}[h!]
@@ -1668,8 +1668,8 @@ with few mistakes or misunderstandings.
 
 A folder is represented by the class \textbf{CSVFolder}. A CSVFolder object is
 a collection of aliases and their corresponding capabilities. For
-the most part, the data stored in a folder is so small that it can easily live for 
-as long as needed in the memory of the client. 
+the most part, the data stored in a folder is so small that it can easily live for
+as long as needed in the memory of the client.
 
 When a folder is created or updated, the content is serialized and encrypted,
 before it is uploaded to the server directly from memory. The serialization for
@@ -1680,14 +1680,14 @@ itself is also serialized.
 
 A file is represented by the class \textbf{CSVFile}. While a folder in general is small,
 a file can be of any size, even larger than the space the \ac{RAM} on the
-device itself represents. 
+device itself represents.
 
 To keep the memory footprint low, we use the pipe-and-filter architectural
 pattern to stream data all the way from the cloud to the disk, or vice versa,
-through encryption and verification. 
+through encryption and verification.
 
 An example of how we do this for uploads is shown in Listing
-\ref{lst:inputstream}. 
+\ref{lst:inputstream}.
 
 \lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a file]
 {listings/fileupload_example.java}
@@ -1721,7 +1721,7 @@ methods for sending and receiving the encrypted objects, CSVFile and CSVFolder.
 % achieve sharing, securely
 
 A \emph{shared folder} is basically just a folder object which two or more
-people have the required encryption keys for. 
+people have the required encryption keys for.
 
 The problem of creating a share with someone, is that you have to verify that
 you are actually sharing with the correct person. The data, or \emph{secret},
@@ -1732,7 +1732,7 @@ The client supports two methods of doing this. The most cumbersome
 is having to manually copying the key from one users client to another, and
 afterwards verifying that the key for the selected folder is correct. An example
 of this can be seen in Figure \ref{fig:CSVAndroid:manualimport}. This feature
-is also needed to support out-of-band methods for establishing a share. 
+is also needed to support out-of-band methods for establishing a share.
 
 \begin{figure}[h!]
     \centering
@@ -1771,7 +1771,7 @@ For a user to access his root folder, the client will have to know the
 capability of that folder. This is clearly to much for a user to remember, so
 the capability will have to be stored on the client. However, the client might
 be stolen or broken into by some means, and if the capability is stored in clear
-text, it is easily stolen. 
+text, it is easily stolen.
 
 We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes an
 encryption key from a password. This generated key is used to encrypt the root
@@ -1779,7 +1779,7 @@ capability in a file stored on the client. We call this the encrypted key ring.
 
 These precautions are however no defense if the attacker managed to read the
 memory while the key is unlocked. The client enforces that this password should
-be at least 9 characters long. 
+be at least 9 characters long.
 
 \subsection{User Interface}
 % goal: As easy as possible!
@@ -1812,13 +1812,13 @@ the files that the user has stored in the cloud.
     \label{fig:CSVAndroid:mainscreen}
 \end{figure}
 
-\paragraph{Browse the cloud} 
+\paragraph{Browse the cloud}
 
 The interface for browsing the files stored in the cloud is made in what we
 understand as a common and understandable way of interpreting users actions on
 the android platform, and can be seen in Figure
 \ref{fig:CSVAndroid:remotebrowse}. Tapping a file will download that file, and
-tapping a folder will open that folder. 
+tapping a folder will open that folder.
 
 \begin{figure}[h!]
     \centering
@@ -1830,7 +1830,7 @@ tapping a folder will open that folder.
 An upload is treated in a similar way. To reveal this option, the user have to
 press the \textbf{Menu}-button. The user will then be allowed to browse his
 local filesystem for the file he wishes to upload, and tapping that file will
-start the upload. 
+start the upload.
 
 A long press on a file, or a folder item, will reveal the context menu shown in
 Figure \ref{fig:CSVAndroid:remotecontext}. The least understandable action is
@@ -1912,7 +1912,7 @@ comes with a lot of built in services that runs sporadically, which means that
 they will affect the measurements. However, the small and quick operations are
 not necessarily what is interesting, the interesting thing to see is how their
 performance is affected when the amount of data is increased. The goal of the
-client is to deliver a quick and smooth experience for the user. 
+client is to deliver a quick and smooth experience for the user.
 
 Other error sources is that we cannot explicitly tell what the speed of either
 the network is or the memory card. But comparing the speed for file operations
@@ -1937,7 +1937,7 @@ user, which is why this key is potentially weaker than the keys for files and
 folders. An attacker will also know some of the plaintext for the keyring. The
 serialization of Capability for a writeable folder will make a plaintext that
 starts with ``D:RW:`` followed by 16-byte of Base32-encoded data, another ``:``
-and then 16 more bytes of Base32-encoded data. 
+and then 16 more bytes of Base32-encoded data.
 
 \begin{figure}[h!]
     \centering
@@ -2036,7 +2036,7 @@ instances.
 \subsubsection{Running BruteForce}
 The command used for executing a brute force attack with the tool BruteForce
 can be seen in Listing \ref{lst:bf}. The command for running a dictionary
-attack is seen in Listing \ref{lst:da}. 
+attack is seen in Listing \ref{lst:da}.
 
 \lstset{label=lst:bf, caption=Running local brute force attack}
 \begin{lstlisting}
@@ -2073,7 +2073,7 @@ $ /path/to/Hadoop/bin/start-mapred.sh
 desired dictionary file and keyring into the \ac{HDFS}. Copying files from the
 master node to the \ac{HDFS} is done with the command shown in Listing
 \ref{lst:cpHDFS}. The attack can then be started on the master node with the
-command shown in Listing \ref{lst:CDA}. 
+command shown in Listing \ref{lst:CDA}.
 
 \lstset{language=bash, label=lst:cpHDFS, caption=Copying files into HDFS}
 \begin{lstlisting}
@@ -2315,7 +2315,7 @@ without the users knowledge.
 \chapter{Relevant Implementations}
 \label{ap:RI}
 This chapter will study implementation details from applications that were
-created, but not a part of the thesis' main topic. Applications considered are 
+created, but not a part of the thesis' main topic. Applications considered are
 BruteForce and the Cluster Dictionary Attack (CDA).
 
 \section{BruteForce}
@@ -2333,14 +2333,14 @@ force and dictionary attack. The bruteForceAttack function is shown in Listing
 \ref{lst:bffunc}.
 
 \lstinputlisting[language=java, label=lst:bffunc, caption=bruteForceAttack
-function]{listings/bruteForceAttack.java} 
+function]{listings/bruteForceAttack.java}
 
 \noindent bruteForceAttack starts a number of BruteForceThread threads. The
 function continues after all BruteForceThreads are initialized and ready to
 start their task. It then enters a while-loop. The while-loop executes a pushWord function for each iteration.
 The task of pushWord is to simply create and push all possible words of a given length onto
 a stack of words. The length of the words to push are given by its integer
-argument. The whole attack is based on letting the main thread create and 
+argument. The whole attack is based on letting the main thread create and
 push words onto a stack, while the BruteForceThreads are
 pulling words from the stack. When a word is pulled from the stack it is
 subject to PBKDF2, where the result is used to decrypt the ciphertext. If
@@ -2385,11 +2385,11 @@ key/value pair and return a key/value pair as a result to the reducer. The
 reducer collects key/value pairs from multiple mappers and combine the results
 into one or more output files.
 
-\subsection{Implementation Details} 
+\subsection{Implementation Details}
 The CDA attack is implemented as a MapReduce problem, with a large dictionary
 file as the data input set. The dictionary is split into separate
 key/value pairs, where each value is a single line in the dictionary and the key
-corresponds to the line's offset within the dictionary.\\ 
+corresponds to the line's offset within the dictionary.\\
 
 \noindent The key/value pairs are handled by a map function implemented in CDAMapper. The map function has the
 responsibility of checking every word on a single dictionary line. Each line in
@@ -2397,9 +2397,9 @@ the dictionary should contain a certain amount of words. This is to enable the
 map function to run multiple threads at the same time, where each thread checks
 one or more words. With multiple threads the attack is able to utilize more CPU power
 for each running machine in the cluster. A detailed view of the map function is
-given in Listing \ref{lst:mapfunc}. 
+given in Listing \ref{lst:mapfunc}.
 
-\lstinputlisting[language=java, label=lst:mapfunc, caption=Mapper function in 
+\lstinputlisting[language=java, label=lst:mapfunc, caption=Mapper function in
 CDAMapper]{listings/mapper.java}
 
 When receiving a key/value pair, the map function first splits the input line
@@ -2422,5 +2422,5 @@ per line, in the dictionary, to be equal to a multiple of the number of threads 
 recommended that the input dictionary follows this requirement. In this
 occasion, we have created a Bash script, named dictmaker.sh, that changes a regular dictionary into
 an N words-per-line dictionary. The script can be found in the attached CD-ROM.
- 
+
 \end{document}
