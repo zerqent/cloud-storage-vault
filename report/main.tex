@@ -140,7 +140,6 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{CBC}{Cipher Block Chaining}
 \acro{CDA}{Cluster Dictionary Attack}
 \acro{CG}{Credential Generator}
-\acro{CM}{Cloud Manager}
 \acro{CPU}{Central Processing Unit}
 \acro{DP}{Data Processor}
 \acro{DRY}{Don't Repeat Yourself}
@@ -149,7 +148,6 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{DV}{Data Verifier}
 \acro{EC2}{Elastic Compute Cloud}
 \acro{ECB}{Electronic Codebook}
-\acro{ETE}{External Trusted Entity}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{GPU}{Graphics Processing Unit}
 \acro{FEC}{Forward Error Correction} 
@@ -184,18 +182,15 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{SHA}{Secure Hash Algorithm}
 \acro{SQL}{Structured Query Language}
 \acro{SSL}{Secure Socket Layer}
-\acro{TC}{Trusted Coordinator}
 \acro{TCCP}{Trusted Cloud Computing Platform}
 \acro{TCG}{Trusted Computing Group}
 \acro{TG}{Token Generator}
 \acro{TLS}{Transport Layer Security}
 \acro{TPM}{Trusted Platform Module}
 \acro{TTP}{Trusted Third Party}
-\acro{TVMM}{Trusted Virtual Machine Monitor}
 \acro{URI}{Uniform Resource Indetifier}
 \acro{URL}{Uniform Resource Locator}
 \acro{VM}{Virtual Machine}
-\acro{VMM}{Virtual Machine Monitor}
 \acro{WSGI}{Web Server Gateway Interface}
 \end{acronym}
 
@@ -640,54 +635,66 @@ clouds} and/or the use of an \emph{infomediary} within the cloud.
 %and cloud provider, and are therefore irrelevant to our development.
 
 \subsection{Trusted Cloud Computing Platform}
-Equal to PasS and the privacy manager, \ac{TCCP} was proposed as a solution to
-provide secure computations (and storage) within a non-trusted cloud provider
-\cite{tccp}. As opposed to the previous solutions, TCCP is directed against secure
-execution of guest VMs outsourced to IaaS providers. 
 
-The original IaaS structure, before adding TCCP, is assumed to consist of a
-\ac{CM}, which manages a cluster of nodes running one or more VMs. Among
-multiple tasks, the CM is responsible for loading VM images into its own nodes.
-Each node has a \ac{VMM} which will further launch and monitor VMs from the
-received VM images.
+Equal to \acl{PasS} and the privacy manager, \emph{\ac{TCCP}} was proposed as a
+solution to provide secure computations and storage within a non-trusted cloud
+provider \cite{tccp}. As opposed to the previous solutions, \ac{TCCP} is
+directed against secure execution of guest \acp{VM} outsourced to \ac{IaaS}
+providers. 
 
-TCCP is based upon the fundamental TPM chip designed by the TCG. The TPM
-contains a private/public key pair that uniquely identifies the TPM. The public
-key is additionally signed by the manufacturer to guarantee correctness of
-the TPM chip. With this in mind, TCCP is based upon a remote attestation scheme.
-The remote attestation scheme enables a network entity to verify whether another
-remote entity runs a TPM or not. A detailed description of the remote
-attestation scheme is given in \cite{tccp}.
+The original infrastructure, before adding \ac{TCCP}, is assumed to
+consist of a \emph{cloud manager}, which manages a cluster of nodes running one or more
+\acp{VM}. Among multiple tasks, the cloud manager is responsible for loading \ac{VM}
+images into its own nodes.  Each node has a \emph{\ac{VM} monitor} which will further
+launch and monitor \acp{VM} from the received corresponding images.
+
+\ac{TCCP} is based upon the \acf{TPM} chip designed by the \acl{TCG}. The
+\ac{TPM} contains a private/public key pair that it uses to uniquely identify
+itself. The public key is additionally signed by the manufacturer to guarantee
+correctness of the \ac{TPM} chip.
+
+With this in mind, \ac{TCCP} is based upon a \emph{remote attestation scheme}.
+The scheme enables a network entity to verify whether another remote entity
+runs a \ac{TPM} chip or not. A detailed description of the remote attestation scheme
+is given by \citet{tccp}.
+
+The \ac{TCCP} system architecture is illustrated in Figure \ref{fig:RW:TCCP}.
+The trusted computing base of \ac{TCCP} includes a \emph{trusted coordinator}
+and a \emph{trusted virtual machine monitor}. The coordinator manages the
+trusted nodes within a cluster. To be trusted, a node must be located within a
+security perimeter and run a trusted virtual machine monitor. 
+
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{ArchitectureTCCP.pdf}
     \caption{System architecture of TCCP}
     \label{fig:RW:TCCP}
 \end{figure}
-The TCCP system architecture is illustrated in Figure \ref{fig:RW:TCCP}. The
-trusted computing base of TCCP includes a \ac{TC} and a \ac{TVMM}. The TC
-manages the trusted nodes within a cluster. To be trusted, a node must be
-located within a security perimeter and run a TVMM. The TC maintains a record of
-the nodes located in the security perimeter and use remote attestation to ensure
-nodes are trusted. Each trusted node in a cluster contains a TPM and a
-corresponding TVMM. The main task of a TVMM is to enforce a local closed box
-protection of a client's running VM. Details about the TVMM design are given in
-\cite{tvmm}. 
 
-Each TVMM cooperates with a TC to protect the transmission of VMs between
-trusted nodes and to ensure that VMs are executed by trusted nodes. In this
-context, the TCCP specifies several protocols for both launching and migrating
-VMs inside the cloud. These protocols are described in \cite{tccp}.
+The coordinator maintains a record of the nodes located in the security
+perimeter, and use remote attestation to ensure nodes are trusted. Each trusted
+node in a cluster contains a \ac{TPM} chip and a corresponding trusted monitor.
+The main task of the trusted monitor, is to enforce a local closed box
+protection of a client's running \ac{VM}. Details about the design of the
+trusted \ac{VM} monitor, are given by \citet{tvmm}. 
 
-The TC is installed in an \ac{ETE}, maintained by a trusted third party, to prevent illegal tampering
-from the IaaS provider. A client can further use remote attestation to the TC to
-verify that the IaaS provider secures its computation.
+Each trusted virtual machine monitor cooperates with a trusted coordinator to
+protect the transmission of \acp{VM} between trusted nodes, and to ensure that
+\acp{VM} are executed by trusted nodes. In this context, the \ac{TCCP}
+specifies several protocols for both launching and migrating \acp{VM} inside
+the cloud. These protocols are described by \citet{tccp}.
 
-With TCCP the client interacts with the IaaS provider as usual. The difference
-is that the trusted nodes and their TC communicates to ensure a secure environment for executing
-the client's VM.
+The trusted coordinator-part is installed in servers operated and maintained by a
+trusted third party, to prevent unwanted tampering from the \ac{IaaS} provider.
+A client can further use remote attestation to the coordinator to verify that the
+\ac{IaaS} provider secures its computation.
+
+With \ac{TCCP}, the client interacts with the \ac{IaaS} provider as usual. The
+difference is that the trusted nodes and their trusted coordinator communicates
+to ensure a secure environment for executing the client's \ac{VM}.
 
 \subsection{Cryptographic Cloud Storage}
+
 In 2010, researchers at Microsoft were looking at the problem of building a secure
 cloud storage service on top of a non-trusted cloud storage provider
 \cite{microsoftresearch}. They described architectural solutions related to both consumers and
