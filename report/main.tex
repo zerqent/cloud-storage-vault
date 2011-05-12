@@ -1867,6 +1867,19 @@ time, as will the serialization of folders. For folders we measured:
     \item The time it takes to serialize a folder, with varying amount of data
 \end{enumerate}
 
+\subsection{Error sources}
+The trouble with measuring performance on operations that are relatively quick
+is that they are very vulnerable to noise from the system. The Android system
+comes with a lot of built in services that runs sporadically, which means that
+they will affect the measurements. However, the small and quick operations are
+not necessarily what is interesting, the interesting thing to see is how their
+performance is affected when the amount of data is increased. The goal of the
+client is to deliver a quick and smooth experience for the user. 
+
+Other error sources is that we cannot explicitly tell what the speed of either
+the network is or the memory card. But comparing the speed for file operations
+in CSV with the modified version with encryption and hashing disabled should
+give us an inclination about how quick the software can be.
 \section{Security}
 
 \subsection{Brute Force Local Keyring} \label{sec:BFLK} The locally stored and
@@ -2050,10 +2063,14 @@ speed when using the unmodified client, while Table \ref{tbl:files:unencrypted}
 shows the speed obtained when using the same client but with encryption and
 hashing disabled.
 
-
 % Kanskje en tabell her, som viser søyler med ukryptert bak og kryptert forann?
 \input{tables/performance_files.tex}
 \input{tables/performance_files_unencrypted.tex}
+
+We observe that the Android devices performance for uploads is severely lower
+for uploads than downloads, and that this is not the case for the computer. We
+also observe that the speed with encryption and hashing enabled is severely
+higher for all three devices.
 
 \subsection{Folders} Table \ref{tbl:folder:createblank} shows the average time
 it takes to create an empty folder on the different devices. The Tables
@@ -2069,6 +2086,10 @@ folder is opened.
 \input{tables/result_perf_serializefolder}
 \input{tables/result_perf_encryptsignfolder}
 \input{tables/result_perf_verifyfolder}
+
+We observe that that the slow part of folders operations are the initial key
+generation and more important the serialization speed. Verification, encryption
+and signing is pretty fast for all devices.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
