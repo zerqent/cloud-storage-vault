@@ -6,7 +6,6 @@ import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.crypto.spec.IvParameterSpec;
@@ -27,10 +26,11 @@ public class CSVFolder implements CSVObject {
 	private Map<String, Capability> contents;
 
 	private byte[] ciphertext;
-	private byte[] plainText;
+	public byte[] plainText;
 	private byte[] iv;
 
 	private byte[] signature;
+	public boolean hack_do_not_create_plaintext = false;
 
 	public CSVFolder() {
 		generateKeys();
@@ -96,20 +96,24 @@ public class CSVFolder implements CSVObject {
 		this.capability = writecap;
 	}
 
-	private void sign() {
+	public void sign() {
 		assert this.ciphertext != null;
 		byte[] hash = Cryptoutil.hash(this.ciphertext, -1);
 		this.signature = Cryptoutil.signature(hash, this.privkey);
 	}
 
-	private void encrypt() {
+	public void encrypt() {
 		byte[] read;
 		if (this.capability.getType() == CapabilityType.RW) {
 			read = Cryptoutil.hash(this.capability.getKey(), 16);
 		} else {
 			read = this.capability.getKey();
 		}
-		this.createPlainText();
+		// 1
+		if (!this.hack_do_not_create_plaintext) {
+			this.createPlainText();
+		}
+
 		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
 		this.iv = Cryptoutil.generateIV();
 		this.ciphertext = Cryptoutil.symEncrypt(this.plainText, sks,
@@ -237,15 +241,16 @@ public class CSVFolder implements CSVObject {
 		this.contents = contents;
 	}
 
-	protected void createPlainText() {
+	public void createPlainText() {
 		if (this.contents != null) {
 			String plaintext = "";
-			for (Iterator<String> iterator = this.getContents().keySet()
-					.iterator(); iterator.hasNext();) {
-				String key = iterator.next();
-				Capability cap = this.getContents().get(key);
-				plaintext += key + ";" + cap.toString() + "\n";
+
+			for (Map.Entry<String, Capability> entry : this.getContents()
+					.entrySet()) {
+				plaintext += entry.getKey() + ";" + entry.getValue().toString()
+						+ "\n";
 			}
+
 			this.plainText = plaintext.getBytes();
 		}
 	}
