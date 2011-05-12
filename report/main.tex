@@ -212,19 +212,6 @@ Eirik Haver, Eivind Melvold and Pål Ruud
   \item Encryption locally
 \end{enumerate}
 
-% TODO: This has to be placed somewhere, and maybe rewritten.
-\subsection{Security Considerations}
-
-There are some considerations when using
-cloud services from an external provider, as opposed to self controlled
-hardware, software and platforms. Most notably is that you loose the control of
-selecting the people which will have physical and digital access to the
-infrastructure. In essence this means that the provider can read every data
-sent to and from the cloud as well as the data saved in the cloud.
-
-Another risk is that information might be leaked to other users of the same
-cloud. For instance it might be able possible for a \ac{VM} to leak information
-to other \ac{VM}s on the same host \cite{cloud_getoff}.
 
 The work is presented as per the following chapters:
 
@@ -530,6 +517,19 @@ provider of cloud services.
 
 \paragraph{Hybrid Cloud} A hybrid cloud is a cloud infrastructure composed of
 two or more clouds of any other model.
+
+\subsection{Security Considerations in Cloud Computing}
+
+There are some considerations when using cloud services from an external
+provider, as opposed to self controlled hardware, software and platforms. Most
+notably is that you loose the control of selecting the people which will have
+physical and digital access to the infrastructure \cite{cloud_getoff}. In
+essence, this means that the provider can read every data sent to and from the
+cloud as well as the data saved in the cloud.
+
+Another risk is that information might be leaked to other users of the same
+cloud. For instance it might be able possible for a \ac{VM} to leak information
+to other \acp{VM} on the same host \cite{cloud_getoff}.
 
 \section{Research}
 
