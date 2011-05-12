@@ -1,0 +1,502 @@
+From 3b5a11f6617efd33f7d6c30d60b5b63debadcf29 Mon Sep 17 00:00:00 2001
+From: Eirik Haver <eiriha@gmail.com>
+Date: Thu, 12 May 2011 13:16:56 +0200
+Subject: [PATCH] Testing util for A/CSVlib
+
+---
+ .../main/java/no/ntnu/item/csv/MenuActivity.java   |   34 +++
+ .../no/ntnu/item/csv/workers/Benchmarkworker.java  |   32 ++
+ .../java/no/ntnu/item/csv/csvobject/CSVFolder.java |   27 +-
+ .../item/csv/foldertest/TestSpeedOfFolders.java    |  299 ++++++++++++++++++++
+ .../src/main/resources/configuration.properties    |    3 +
+ 5 files changed, 384 insertions(+), 11 deletions(-)
+ create mode 100644 application/CSVAndroid/src/main/java/no/ntnu/item/csv/workers/Benchmarkworker.java
+ create mode 100644 application/CSVlib/src/main/java/no/ntnu/item/csv/foldertest/TestSpeedOfFolders.java
+ create mode 100644 application/CSVlib/src/main/resources/configuration.properties
+
+diff --git a/application/CSVAndroid/src/main/java/no/ntnu/item/csv/MenuActivity.java b/application/CSVAndroid/src/main/java/no/ntnu/item/csv/MenuActivity.java
+index 632d59e..be6fc7a 100644
+--- a/application/CSVAndroid/src/main/java/no/ntnu/item/csv/MenuActivity.java
++++ b/application/CSVAndroid/src/main/java/no/ntnu/item/csv/MenuActivity.java
+@@ -3,6 +3,7 @@ package no.ntnu.item.csv;
+ import no.ntnu.item.csv.capability.Capability;
+ import no.ntnu.item.csv.capability.CapabilityImpl;
+ import no.ntnu.item.csv.firststart.FirstStartActivity;
++import no.ntnu.item.csv.workers.Benchmarkworker;
+ import no.ntnu.item.csv.workers.ImportShareTask;
+ import android.app.Activity;
+ import android.app.AlertDialog;
+@@ -81,6 +82,7 @@ public class MenuActivity extends Activity {
+ 	@Override
+ 	public boolean onCreateOptionsMenu(Menu menu) {
+ 		menu.add("Exit program");
++		menu.add("Benchmark");
+ 		return super.onCreateOptionsMenu(menu);
+ 	}
+ 
+@@ -128,6 +130,11 @@ public class MenuActivity extends Activity {
+ 		if (item.getTitle().equals("Exit program")) {
+ 			finish();
+ 			return true;
++		} else if (item.getTitle().equals("Benchmark")) {
++			// TestSpeedOfFolders tsof = new TestSpeedOfFolders(CSVActivity.fm);
++			// tsof.doIt();
++			Benchmarkworker worker = new Benchmarkworker(this, CSVActivity.fm);
++			worker.execute((Void[]) null);
+ 		}
+ 		return false;
+ 	}
+@@ -159,4 +166,31 @@ public class MenuActivity extends Activity {
+ 		}
+ 		super.onActivityResult(requestCode, resultCode, data);
+ 	}
++
++	public void foo(String s) {
++		// final Intent emailIntent = new Intent(
++		// android.content.Intent.ACTION_SEND);
++		// emailIntent.setType("text");
++		// emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
++		// new String[] { "eiriha@stud.ntnu.no" });
++		// emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
++		// "Results");
++		// emailIntent.putExtra(android.content.Intent.EXTRA_TEXT,
++		// "Her er litt text");
++		// startActivity(Intent.createChooser(emailIntent, "Send mail..."));
++		final Intent emailIntent = new Intent(
++				android.content.Intent.ACTION_SEND);
++
++		emailIntent.setType("message/rfc822");
++
++		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
++				new String[] { "eiriha@stud.ntnu.no" });
++
++		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
++				"Results from device");
++
++		emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, s);
++
++		startActivity(Intent.createChooser(emailIntent, "Send mail..."));
++	}
+ }
+diff --git a/application/CSVAndroid/src/main/java/no/ntnu/item/csv/workers/Benchmarkworker.java b/application/CSVAndroid/src/main/java/no/ntnu/item/csv/workers/Benchmarkworker.java
+new file mode 100644
+index 0000000..64071bd
+--- /dev/null
++++ b/application/CSVAndroid/src/main/java/no/ntnu/item/csv/workers/Benchmarkworker.java
+@@ -0,0 +1,32 @@
++package no.ntnu.item.csv.workers;
++
++import no.ntnu.item.csv.MenuActivity;
++import no.ntnu.item.csv.filemanager.CSVFileManager;
++import no.ntnu.item.csv.foldertest.TestSpeedOfFolders;
++import android.app.Activity;
++import android.os.AsyncTask;
++
++public class Benchmarkworker extends AsyncTask<Void, Void, Void> {
++
++	private TestSpeedOfFolders test;
++	private Activity caller;
++	private String s;
++
++	public Benchmarkworker(Activity caller, CSVFileManager manager) {
++		test = new TestSpeedOfFolders(manager);
++		this.caller = caller;
++	}
++
++	@Override
++	protected Void doInBackground(Void... params) {
++		this.s = test.getIt();
++		return null;
++	}
++
++	@Override
++	protected void onPostExecute(Void result) {
++		MenuActivity ac = (MenuActivity) caller;
++		ac.foo(this.s);
++	}
++
++}
+diff --git a/application/CSVlib/src/main/java/no/ntnu/item/csv/csvobject/CSVFolder.java b/application/CSVlib/src/main/java/no/ntnu/item/csv/csvobject/CSVFolder.java
+index e4ed5dc..d47f169 100644
+--- a/application/CSVlib/src/main/java/no/ntnu/item/csv/csvobject/CSVFolder.java
++++ b/application/CSVlib/src/main/java/no/ntnu/item/csv/csvobject/CSVFolder.java
+@@ -6,7 +6,6 @@ import java.security.PublicKey;
+ import java.security.interfaces.RSAPrivateKey;
+ import java.security.interfaces.RSAPublicKey;
+ import java.util.HashMap;
+-import java.util.Iterator;
+ import java.util.Map;
+ 
+ import javax.crypto.spec.IvParameterSpec;
+@@ -27,10 +26,11 @@ public class CSVFolder implements CSVObject {
+ 	private Map<String, Capability> contents;
+ 
+ 	private byte[] ciphertext;
+-	private byte[] plainText;
++	public byte[] plainText;
+ 	private byte[] iv;
+ 
+ 	private byte[] signature;
++	public boolean hack_do_not_create_plaintext = false;
+ 
+ 	public CSVFolder() {
+ 		generateKeys();
+@@ -96,20 +96,24 @@ public class CSVFolder implements CSVObject {
+ 		this.capability = writecap;
+ 	}
+ 
+-	private void sign() {
++	public void sign() {
+ 		assert this.ciphertext != null;
+ 		byte[] hash = Cryptoutil.hash(this.ciphertext, -1);
+ 		this.signature = Cryptoutil.signature(hash, this.privkey);
+ 	}
+ 
+-	private void encrypt() {
++	public void encrypt() {
+ 		byte[] read;
+ 		if (this.capability.getType() == CapabilityType.RW) {
+ 			read = Cryptoutil.hash(this.capability.getKey(), 16);
+ 		} else {
+ 			read = this.capability.getKey();
+ 		}
+-		this.createPlainText();
++		// 1
++		if (!this.hack_do_not_create_plaintext) {
++			this.createPlainText();
++		}
++
+ 		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
+ 		this.iv = Cryptoutil.generateIV();
+ 		this.ciphertext = Cryptoutil.symEncrypt(this.plainText, sks,
+@@ -237,15 +241,16 @@ public class CSVFolder implements CSVObject {
+ 		this.contents = contents;
+ 	}
+ 
+-	protected void createPlainText() {
++	public void createPlainText() {
+ 		if (this.contents != null) {
+ 			String plaintext = "";
+-			for (Iterator<String> iterator = this.getContents().keySet()
+-					.iterator(); iterator.hasNext();) {
+-				String key = iterator.next();
+-				Capability cap = this.getContents().get(key);
+-				plaintext += key + ";" + cap.toString() + "\n";
++
++			for (Map.Entry<String, Capability> entry : this.getContents()
++					.entrySet()) {
++				plaintext += entry.getKey() + ";" + entry.getValue().toString()
++						+ "\n";
+ 			}
++
+ 			this.plainText = plaintext.getBytes();
+ 		}
+ 	}
+diff --git a/application/CSVlib/src/main/java/no/ntnu/item/csv/foldertest/TestSpeedOfFolders.java b/application/CSVlib/src/main/java/no/ntnu/item/csv/foldertest/TestSpeedOfFolders.java
+new file mode 100644
+index 0000000..9727f42
+--- /dev/null
++++ b/application/CSVlib/src/main/java/no/ntnu/item/csv/foldertest/TestSpeedOfFolders.java
+@@ -0,0 +1,299 @@
++package no.ntnu.item.csv.foldertest;
++
++import java.io.BufferedReader;
++import java.io.DataInputStream;
++import java.io.FileOutputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.InputStreamReader;
++import java.io.OutputStream;
++import java.util.HashMap;
++
++import no.ntnu.item.cryptoutil.Cryptoutil;
++import no.ntnu.item.csv.capability.Capability;
++import no.ntnu.item.csv.capability.CapabilityImpl;
++import no.ntnu.item.csv.capability.CapabilityType;
++import no.ntnu.item.csv.communication.Communication;
++import no.ntnu.item.csv.communication.CommunicationFactory;
++import no.ntnu.item.csv.contrib.com.bitzi.util.Base32;
++import no.ntnu.item.csv.csvobject.CSVFolder;
++import no.ntnu.item.csv.exception.FailedToVerifySignatureException;
++import no.ntnu.item.csv.exception.ImmutableFileExistsException;
++import no.ntnu.item.csv.exception.InvalidWriteEnablerException;
++import no.ntnu.item.csv.exception.RemoteFileDoesNotExistException;
++import no.ntnu.item.csv.exception.ServerCommunicationException;
++import no.ntnu.item.csv.filemanager.CSVFileManager;
++
++public class TestSpeedOfFolders {
++
++	private CSVFileManager manager;
++	private int[] points = { 1, 5, 10, 50, 100, 250, 500, 750, 1000, 2500,
++			5000, 7500 };
++
++	private String log = new String();
++	// private HashMap<String, Capability> testData = new HashMap<String,
++	// Capability>();
++	private String[] aliases = new String[10000];
++	private Capability[] caps = new Capability[10000];
++
++	// private int[] points = { 10000 };
++
++	public TestSpeedOfFolders(CSVFileManager manager) {
++		this.manager = manager;
++	}
++
++	private void readTestData() throws IOException {
++		InputStream is = getClass().getResourceAsStream("/data.txt");
++		DataInputStream in = new DataInputStream(is);
++		BufferedReader br = new BufferedReader(new InputStreamReader(in));
++		String strLine;
++		String tmp[];
++		int i = 0;
++		while ((strLine = br.readLine()) != null
++				&& i < points[points.length - 1]) {
++			tmp = strLine.split(";");
++			caps[i] = CapabilityImpl.fromString(tmp[1]);
++			aliases[i] = tmp[0];
++			i++;
++		}
++
++	}
++
++	public void doIt() {
++
++		try {
++			readTestData();
++			this.testSizeOfFakeAlias();
++			testBlankFolderCreation();
++			testUpdateFolder();
++			verifyFolder();
++			serializeFolder();
++			System.out.println(log);
++		} catch (ServerCommunicationException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (InvalidWriteEnablerException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (ImmutableFileExistsException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (RemoteFileDoesNotExistException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (FailedToVerifySignatureException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (IOException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		}
++	}
++
++	public String getIt() {
++		try {
++			readTestData();
++			this.testSizeOfFakeAlias();
++			testBlankFolderCreation();
++			testUpdateFolder();
++			verifyFolder();
++			serializeFolder();
++			return log;
++		} catch (ServerCommunicationException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (InvalidWriteEnablerException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (ImmutableFileExistsException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (RemoteFileDoesNotExistException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (FailedToVerifySignatureException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		} catch (IOException e) {
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		}
++		return null;
++	}
++
++	public void testBlankFolderCreation() {
++		int n = 10;
++		CSVFolder folder;
++		long before = System.currentTimeMillis();
++		for (int i = 0; i < n; i++) {
++			folder = new CSVFolder();
++		}
++		long after = System.currentTimeMillis();
++		long diff = after - before;
++		double avg = diff / n;
++		log += "BlankFolder AVG: " + avg + "\n";
++	}
++
++	public void testUpdateFolder() throws ServerCommunicationException,
++			InvalidWriteEnablerException, ImmutableFileExistsException,
++			RemoteFileDoesNotExistException, FailedToVerifySignatureException {
++		System.out.println("running test: Update folder");
++		log += "Running test: Update folder (lines, timetotal)\n";
++
++		CSVFolder folder;
++		// this.manager.uploadFolder(folder);
++		// folder = this.manager.downloadFolder(folder.getCapability());
++
++		// int[] points = { 1, 10, 50, 100, 500, 750, 1000, 5000, 10000 };
++		HashMap<String, Capability> fakeAliases;
++
++		for (int i = 0; i < points.length; i++) {
++			folder = new CSVFolder();
++			folder.hack_do_not_create_plaintext = true;
++			// fakeAliases = generateFakeAliases(points[i]);
++			// folder.getContents().putAll(fakeAliases);
++
++			for (int j = 0; j < points[i]; j++) {
++				folder.addContent(aliases[j], caps[j]);
++			}
++
++			// Time Encryption/Signing
++			folder.createPlainText();
++			long before = System.currentTimeMillis();
++			// byte[] tmp = folder.upload();
++			folder.encrypt();
++			folder.sign();
++			long after = System.currentTimeMillis();
++			long diff = after - before;
++			System.out.println("Updatefolder point: " + points[i] + " time: "
++					+ diff);
++			log += points[i] + " " + diff + "\n";
++			// folder = this.manager.downloadFolder(folder.getCapability());
++
++		}
++
++	}
++
++	public void testSizeOfFakeAlias() {
++		HashMap<String, Capability> fakeAliases = generateFakeAliases(1);
++		String alias = fakeAliases.keySet().iterator().next();
++		String cap = fakeAliases.get(alias).toString();
++		String tot = alias + ";" + cap + "\n";
++		log += "The sizer of 1 entry is: " + tot.getBytes().length + "bytes\n";
++	}
++
++	public void serializeFolder() {
++		log += "Running test: Serialize folder (lines, timetotal)";
++		System.out.println("running test: serialize folder");
++		CSVFolder folder;
++		// this.manager.uploadFolder(folder);
++		// folder = this.manager.downloadFolder(folder.getCapability());
++
++		// int[] points = { 1, 10, 50, 100, 500, 750, 1000, 5000, 10000 };
++		HashMap<String, Capability> fakeAliases;
++
++		for (int i = 0; i < points.length; i++) {
++			folder = new CSVFolder();
++			folder.hack_do_not_create_plaintext = true;
++			// fakeAliases = generateFakeAliases(points[i]);
++			// folder.getContents().putAll(fakeAliases);
++			// Time Encryption/Signing
++			for (int j = 0; j < points[i]; j++) {
++				folder.addContent(aliases[j], caps[j]);
++			}
++
++			long before = System.currentTimeMillis();
++			// byte[] tmp = folder.upload();
++			// folder.encrypt();
++			// folder.sign();
++			folder.createPlainText();
++			long after = System.currentTimeMillis();
++			long diff = after - before;
++			System.out.println("Updatefolder point: " + points[i] + " time: "
++					+ diff);
++			log += points[i] + " " + diff + "\n";
++			// folder = this.manager.downloadFolder(folder.getCapability());
++
++		}
++	}
++
++	public void verifyFolder() throws ServerCommunicationException,
++			RemoteFileDoesNotExistException, FailedToVerifySignatureException,
++			InvalidWriteEnablerException, ImmutableFileExistsException {
++		log += "Running test: Verify folder (lines, timetotal)\n";
++		System.out.println("running test: Verify folder");
++		CSVFolder folder = new CSVFolder();
++
++		HashMap<String, Capability> fakeAliases;
++
++		for (int i = 0; i < points.length; i++) {
++			folder = new CSVFolder();
++
++			// fakeAliases = generateFakeAliases(points[i]);
++			// folder.getContents().putAll(fakeAliases);
++			for (int j = 0; j < points[i]; j++) {
++				folder.addContent(aliases[j], caps[j]);
++			}
++
++			this.manager.uploadFolder(folder);
++			folder = this.manager.downloadFolder(folder.getCapability());
++
++			long before = System.currentTimeMillis();
++			boolean b = folder.isValid();
++			long after = System.currentTimeMillis();
++			long diff = after - before;
++			if (b == false) {
++				System.out.println("OMG FAILED VERIFY!");
++			}
++			System.out.println("VerifyFolder point: " + points[i] + " time: "
++					+ diff);
++			log += points[i] + " " + diff + "\n";
++		}
++
++	}
++
++	private HashMap<String, Capability> generateFakeAliases(int n) {
++
++		Capability cap;
++		String alias;
++		HashMap<String, Capability> fakeAliases = new HashMap<String, Capability>();
++
++		for (int i = 0; i < n; i++) {
++			alias = Base32.encode(random16bytes());
++			cap = new CapabilityImpl(CapabilityType.RO, random16bytes(),
++					random16bytes(), true);
++			fakeAliases.put(alias, cap);
++		}
++		return fakeAliases;
++
++	}
++
++	private byte[] random16bytes() {
++		String foo = "" + Math.random() * 100000;
++		byte[] tmp = Cryptoutil.hash(foo.getBytes(), 16);
++		return tmp;
++	}
++
++	public static void main(String[] args) throws IOException {
++		Communication com = CommunicationFactory
++				.createCommunicationFromProperties();
++		CSVFileManager manager = new CSVFileManager(com);
++		TestSpeedOfFolders tsof = new TestSpeedOfFolders(manager);
++		// tsof.createTestData();
++		tsof.doIt();
++	}
++
++	public void createTestData() throws IOException {
++		OutputStream os = new FileOutputStream("/tmp/data.txt");
++		int highvalue = 10000;
++		HashMap<String, Capability> foo = generateFakeAliases(highvalue);
++		CSVFolder folder = new CSVFolder();
++		folder.getContents().putAll(foo);
++
++		folder.createPlainText();
++		os.write(folder.plainText);
++		os.flush();
++		os.close();
++	}
++
++}
+-- 
+1.7.1
+
