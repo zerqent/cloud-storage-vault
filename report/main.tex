@@ -1838,13 +1838,13 @@ what the class indicates.
 % etc
 % TODO
 For \textbf{files} we measure the bandwidth the client uses when uploading and
-downloading a file. We do this simply by measuring the network traffic on the
-server, and record this. For reference we also deactivated the encryption and
-hashing of a file. 
+downloading a file. We do this by measuring the network traffic on the
+server, and record this. For comparison we also deactivated hashing and
+encryption in the pipeline and recorded the network traffic.
 
 Folders are relatively small in size, so the network should not be a
 bottleneck. However the different cryptographic operations might take some
-time. For folders we measured:
+time, as will the serialization of folders. For folders we measured:
 
 \begin{enumerate}
     \item The average time it takes to create a folder
@@ -2045,9 +2045,10 @@ hashing disabled.
 
 \subsection{Folders}
 
-\input{tables/result_perf_updatefolder}
+\input{tables/result_perf_verifyfolder}
 \input{tables/result_perf_serializefolder}
 \input{tables/result_perf_encryptsignfolder}
+\input{tables/result_perf_createblankfolder}
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
