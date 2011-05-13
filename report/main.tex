@@ -7,9 +7,15 @@
 \usepackage[printonlyused]{acronym} % Package to handle the acronym list
 \usepackage{graphicx} % We *may* use images
 \graphicspath{{images/}} % and it is clean to put them in a separate dir
-\usepackage{hyperref} % Internal and external links is nice
-\hypersetup{pdfborder=0 0 0} % ..especially without red borders
 \usepackage{amstext} % To support \text in math mode
+\usepackage{hyperref} % Internal and external links is nice
+\hypersetup{
+    pdfborder=0 0 0, % ..especially without red borders
+    pdftitle={Cloud Storage Vault},
+    pdfauthor={Haver, Melvold and Ruud},
+    pdfsubject={Secure Storage in the Cloud},
+    pdfkeywords={NTNU, thesis, secure, cloud, cryptographic, sharing}
+}
 
 % Packages and settings for code listings
 \usepackage{listings}
@@ -154,7 +160,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \chapter*{Acronyms}
 \addcontentsline{toc}{chapter}{Acronyms}
 
-\begin{acronym}
+\begin{acronym}[PBKDF2]
 \acro{ACL}{Access Control List}
 \acro{AES}{Advanced Encryption Standard}
 \acro{API}{Application Programming Interface}
@@ -228,11 +234,52 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \section{Motivation}
 
 % What is different with this solution, than the other on the market?
+% (Hva vi får ut av dette)
+In the last decade, the supply of storing data remotely in the cloud has
+increased considerable. Storing private data at a third party cloud provider
+in contrast to self owned storage devices has proven to be preferable due to low
+storage costs and high reliability, scalability and capacity.
+
+However, storing data at a remote location prevents users from physically
+protecting their storage medium. With this in mind, there is no guarantee that a
+customer's data is kept private/secure from an untrusted storage provider.
+
+To solve this issue, there has lately been introduced numerous of applications
+providing solutions to ensure privacy and integrity of customer data stored at a
+third party cloud provider. However, all of these alternative applications are
+missing one or more features towards being, as we define, a completely secure
+storage solution. %Open source, privacy, integrity, 
+
+This situation has given motivation to implement a proof of concept
+application, that provides what we define as a secure cloud storage service.
+%TODO: presiser/skriv om motivasjonene under
+The task will additionally give us more experience within software development,
+development methodologies, team work, security and cryptography.
+
 
 \section{Related Work}
 
 % Summary of corresponding section in Background ch., and especially weight
 % Tahoe.
+
+In the later years, there has been quite a lot of research done in the field of
+security in cloud computing. The problems that arise, are fundamentally not
+different from those revealed by classic information security scenarios. The
+key point, is that when using a service hosted by someone you do not know if
+you can trust, you have to treat that \emph{someone} as untrusted and as a
+possible attacker. Generally speaking, you loose control over the hosting
+environment, and hence has to deal with the security issues this implies.
+
+In Section \ref{sec:research}, we present four papers \cite{PasS,
+privacymanager, tccp, microsoftresearch} which try to solve security issues in
+a shared hosting environment. Common to all of these, is that they either rely
+on special, secure and tamper-proof hardware and/or a trusted third party.
+
+Another way of providing a solution to the same problem, is to give the
+responsibility of the security operations to the client, i.e. in an environment
+that the user has control of. In Section \ref{sec:existing}, we present three
+commercially and publicly available software services that relates to this way
+of thinking.
 
 \section{Scope and Objectives}
 
@@ -579,6 +626,7 @@ cloud. For instance it might be able possible for a \ac{VM} to leak information
 to other \acp{VM} on the same host \cite{cloud_getoff}.
 
 \section{Research}
+\label{sec:research}
 
 This section will elaborate on selected previous research concerning privacy
 within cloud computing. The research on this subject can be divided into
@@ -592,8 +640,8 @@ of security protocols ensuring privacy of customer data in cloud computing
 architectures. The main design goal with \ac{PasS}, is to maximize the user's control
 over his sensitive data, both processed and stored within a cloud.
 
-To be operational, \ac{PasS} is based on a fundamental system model and trust
-model. The system model consists of three communicating parties, namely a
+The \ac{PasS} concept is based on a fundamental \emph{system model} and \emph{trust
+model}. The system model consists of three communicating parties, namely a
 \emph{cloud provider}, a \emph{cloud customer} and a \emph{\ac{TTP}}. The
 \ac{PasS} system model is shown in Figure \ref{fig:RW:PasS}.
 
@@ -783,6 +831,8 @@ The core components are suggested to support \emph{searchable encryption},
 \emph{attribute-based encryption} and a \emph{proofs of storage} protocol.
 
 \section{Existing Solutions}
+\label{sec:existing}
+
 There are a number of existing solutions for storing data in the cloud,
 with more or less of the functionality required to fulfill the problem
 description for this thesis. The section highlights some of them.
