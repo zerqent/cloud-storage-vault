@@ -240,6 +240,25 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 % Summary of corresponding section in Background ch., and especially weight
 % Tahoe.
 
+In the later years, there has been quite a lot of research done in the field of
+security in cloud computing. The problems that arise, are fundamentally not
+different from those revealed by classic information security scenarios. The
+key point, is that when using a service hosted by someone you do not know if
+you can trust, you have to treat that \emph{someone} as untrusted and as a
+possible attacker. Generally speaking, you loose control over the hosting
+environment, and hence has to deal with the security issues this implies.
+
+In Section \ref{sec:research}, we present four papers \cite{PasS,
+privacymanager, tccp, microsoftresearch} which try to solve security issues in
+a shared hosting environment. Common to all of these, is that they either rely
+on special, secure and tamper-proof hardware and/or a trusted third party.
+
+Another way of providing a solution to the same problem, is to give the
+responsibility of the security operations to the client, i.e. in an environment
+that the user has control of. In Section \ref{sec:existing}, we present three
+commercially and publicly available software services that relates to this way
+of thinking.
+
 \section{Scope and Objectives}
 
 % Sum up problem description and concretize the goals.
@@ -585,6 +604,7 @@ cloud. For instance it might be able possible for a \ac{VM} to leak information
 to other \acp{VM} on the same host \cite{cloud_getoff}.
 
 \section{Research}
+\label{sec:research}
 
 This section will elaborate on selected previous research concerning privacy
 within cloud computing. The research on this subject can be divided into
@@ -789,6 +809,8 @@ The core components are suggested to support \emph{searchable encryption},
 \emph{attribute-based encryption} and a \emph{proofs of storage} protocol.
 
 \section{Existing Solutions}
+\label{sec:existing}
+
 There are a number of existing solutions for storing data in the cloud,
 with more or less of the functionality required to fulfill the problem
 description for this thesis. The section highlights some of them.
