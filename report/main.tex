@@ -253,7 +253,7 @@ storage solution. %Open source, privacy, integrity,
 This situation has given motivation to implement a proof of concept
 application, that provides what we define as a secure cloud storage service.
 %TODO: presiser/skriv om motivasjonene under
-The task will additionally give us more experience within software development,
+We do also see this as a golden opportunity to learn more about software development,
 development methodologies, team work, security and cryptography.
 
 
@@ -284,15 +284,30 @@ of thinking.
 \section{Scope and Objectives}
 
 % Sum up problem description and concretize the goals.
-
-\subsection{Criteria for a Secure Cloud Storage Service}
+There are two main objectives of this thesis. The first objective is to create a
+cryptographic scheme that can provide secure storage of data by using an untrusted
+cloud storage provider. We define secure storage by the following criteria.
 \label{sec:criteria}
-% TODO: Complete this list and section and section
-
 \begin{enumerate}
-  \item Open Source
-  \item Encryption locally
+  \item Data should be encrypted in a safe environment trusted by the owner,
+  before it is stored.
+  \item It should be possible to verify the integrity of the stored data.
+  \item Only authorized people should have access to the data.
+  \item The storage scheme should be documented in detail, such that users can
+  easily understand the scheme and accept/reject it on that basis. 
+  \item An implementation of the storage scheme should be Open Source.
 \end{enumerate}
+
+The cryptographic scheme should, in addition to the mentioned security, provide
+the possibility of sharing stored data between multiple customers. The security
+requirements above should also be valid for the shared data. The underlying scheme for
+sharing data must be applicable for both enterprise and regular customer
+scenarios.
+
+The second main objective is to implement the proposed scheme as part of a
+proof of concept application for Android devices. The application should be
+suitable for regular customers, although the underlying cryptographic scheme
+should support an enterprise scenario.
 
 \section{Limitations}
 
