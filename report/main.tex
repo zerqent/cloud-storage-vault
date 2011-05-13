@@ -1192,10 +1192,24 @@ files and folders.
 \subsection{Capabilities}
 
 Capabilities are containers which contain the necessary information to locate,
-encrypt, decrypt, verify and possibly write file objects. The layout of the
-information in a Capability is shown in figure XX. How this information is
+encrypt, decrypt, verify and possibly write file objects. The contents is
+summarized in Table \ref{tbl:capability}. How this information is
 created is somewhat different for files and folders and is shown is the
 subsequent sections. 
+
+\input{tables/capability.tex}
+
+\subsection{Cryptographic Primitives}
+
+The illustrations in the following sections included our chosen cryptographic
+primitives, it is however important to note that this cryptographic solution
+could work with other primitives. Any symmetric cipher could work instead of
+\ac{AES}, any signing function that uses both a private and public key could be
+used, any \ac{MAC} could be used instead of H\ac{MAC}-\ac{SHA}1 and any
+cryptographic hash function could be used instead of \ac{SHA}-256. The security
+of the system does however rely on these choices, the rationale for our choices
+can be found in % TODO REF.
+%% TODO: Tenk deg litt om
 
 \subsection{File Operations}
 This section describes the elementary file operations supported by the
@@ -1303,18 +1317,20 @@ the encrypted contents is then uploaded to the server along with the write
 enabler which is deduced in the same way as for a new folder.
 
 \subsection{Keychain}
-As stated, each client keeps a local copy of the identity and write key to the
-personal root folder in a password protected keychain. This is done to be able
-to encrypt the root folder with a key that is not based on a password, but
-completely randomly generated. In addition, this means that no special scheme is
-needed for the root folder, as we can use the same procedures as for ``normal''
-folders as defined in the previous sections.
+Every user will need to keep a copy of his or hers root Capability stored
+somehwere. The Capability contains both an encryption key and verification data
+that a user will need to safely access his files. This amount of data will be
+hard for a person to remember, and therefore the Capability will have to be
+stored on the terminal which runs the client application. Since it might happen
+that this terminal is either broken in to, lost or stolen, precautions should
+be taken to protect the Capability on the device. The normal approach to this
+is a password. 
 
 The strength of a password is related to its length and its randomness
 properties. Passwords shorter than 10 characters are usually considered to be
-weak \cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
-keychain, a potential attacker can use fast password cracking attacks to try to
-compromise the root folder keys. As an precaution for this, we will use
+weak \cite{pbkdf_nist}. In the event of loosing one of the clients, and thus
+the keychain, a potential attacker can use fast password cracking attacks to
+try to compromise the root folder keys. As an precaution for this, we will use
 \ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a salt
 value to create additional computational work for the process of unlocking the
 keychain. This method is known as key stretching \cite{keystretch}.
