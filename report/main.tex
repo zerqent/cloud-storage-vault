@@ -882,17 +882,17 @@ users that has donated capacity to the system.
 %**************************************%
 \label{chap:AS}
 
-The architectural solution of a secure cloud file sharing system has to convince
-its users that the functions indeed are secure, and that the concepts are easy
-to understand and accept.
+The architectural solution of a secure cloud file sharing system has to
+convince its users that the functions indeed are secure, and that the concepts
+are easy to understand and accept. The following sections will elaborate on the
+architecture designed by us, favouring simplicity and familiar concept such as
+files and directories. We also introduce the concept of a \textbf{Capability}.
 
-The architecture has to support various user functionality. Figure
-\ref{fig:AS:overview} exhibits Alice uploading files to the cloud, and
-thereafter transferring the necessary information to Bob so that he also can
-gain access to the files.
-
-In the following sections, we will describe how the file storage is organized,
-and take a closer look at how the different problems are solved.
+Figure \ref{fig:AS:overview} represents an overview of the functionality that
+the architecture must support. The Figure exhibits a user uploading a file to
+the cloud, and adding this to a parent directory. After he has done this it is
+possible for him to distribute the Capability to other users to realize sharing
+of files or directories.
 
 \begin{figure}[h!]
     \centering
@@ -906,26 +906,38 @@ and take a closer look at how the different problems are solved.
 
 The solution proposed in this thesis, is that only a simple key-value store is
 needed on the server side. The key works as a lookup index for a specific value,
-while the corresponding value equals an encrypted file object. The solution may
-be extended with an \ac{ACL} layer to support user access and other features.
+while the corresponding value equals an encrypted file object. The server will
+be required to support the operations of uploading and downloading files from
+this store.
 
-Two types of files exist: immutable and mutable files. The mutable files are used
-as directories, in the sense that they contain the information needed to access
-other directories or files in the form of capabilities.
-A capability is a short alphanumeric string containing all information needed
-to find, get, read and write a file or folder. This includes an identifier and
-cryptographic keys.
+From the users perspective a file object can however have multiple forms, it
+can either be a mutable or immutable file. A mutable file can be changed, and
+is what a user will see as a directory, while an immutable file is what a users
+would see as a normal file.  
 
-In principle, the only operations the key-value store need to support, are
-PUT and GET.
-
-\subsubsection{Directory Structure}
+A user will need certain information to be able to reach and read a file
+object, we define these properties as the \emph{Capability} of a file object.
+For now the Capability represents the ability to find, read, verify that a file
+has not been tampered with and possibly write to the file object.
 
 
-The file and directory structure can be seen as a directed graph, as illustrated
-in Figure \ref{fig:AS:filesystem}, where users can link in folders and files as
-desired. This provides a flexible and space-conservative structure that is easily
-extendible.
+\subsubsection{Directory Structure} 
+
+The contents of a directory are files or other directories. More specifically a
+directory contains the means to find files or directories, namely the
+Capabilities of these file objects. In addition there exist a human readable
+name, an \emph{Alias}, for each entry in a directory. This design gives a
+flexible and space-conservative structure, since any file object may be found
+from multiple directory, but does only exist once in the cloud.
+
+A user will have to have some way of storing the Capabilities of his file
+objects. This could potentially be done client side, but a problem arises if
+the user wants to use several terminals. Therefore we introduce the \emph{root
+folder}, a folder from which all other files and folders can be reached.  The
+user will then only need to know of one single Capability to reach all his
+stored data. This capability needs to be stored and protected by the client in
+a password protected \emph{keyring}. The resulting structure is a directed
+graph illustrated in Figure \ref{fig:AS:filesystem}.
 
 \begin{figure}[h!]
     \centering
@@ -934,58 +946,37 @@ extendible.
     \label{fig:AS:filesystem}
 \end{figure}
 
-Each client\footnote{I.e. the different user terminals.} keeps a local copy of
-the identity and write key to the users root folder in a password
-protected keyring. In case a user's client is lost, the user can change
-encryption keys (and identifier) for the root folder, and hence effectively
-block out the compromised client.
-
-A directory contains two types of data. It contains meta data about it self and
-in addition zero or more entries. Table \ref{tbl:folder:contents} exhibits the
-structure of the folder entries. The \emph{Alias} field is the name of a
-specific child. The \emph{storage index} is the look-up key of the
-corresponding child.
-
-\input{tables/folder_entries}
-
-The meta data is described in Table \ref{tbl:folder:meta}. The \emph{Storage
-Index} is a unique value derived from a directory's read key and serves as an
-identifier for the directory in question. The other elements are used for
-security purposes, and are described further in Chapter \ref{chap:CS}.
-
-\input{tables/folder_meta}
-
 \subsection{ACL/Authentication Layer}
 
-There should be some layer present on the application which enforces \ac{ACL}s
-and authenticates users which should have access to the stored files. From a
-security standpoint this is not necessarily required. Even without an ACL layer,
-an attacker would need to guess a storage index and the corresponding
-encryption key to be able to get any information out of the system. But there are
-however several reasons why we believe this layer should be implemented, as per
-described in the following sections.
+The possession of a Capability gives a user access to read a file or read or
+write a folder. However there are some properties that The server provider
+might want or needs that can not be given by the Capability. Therefore a layer
+implementing authentication and possibly more access control could be
+preferable.
 
-\subsubsection{Block access}
-If for whatever reason a storage index and corresponding decryption key is
-leaked to some third-party, but not to the cloud provider, the layer can
-prevent an unauthenticated user from retrieving the file. The possibility of
-also denying authenticated users from retrieving files is also a wanted feature,
-for instance in the event of a stolen/lost terminal where the credentials are
-saved.
+\subsubsection{Block access to encrypted data}
 
-\subsubsection{File Deletion}
+The capability for a file or folder might be intentionally or unintentionally
+leaked by a user. In this case it would be preferable that the server can block
+access to a particular object. The server could also potentially enforce access
+right on all encrypted objects based on who a user has shared a file with.
+This does however require the client to notify a server every time he shares a
+file object with a new person, and is strictly not necessary from a security
+standpoint.
 
-The way of the proposed solution to handle folders, allows a distinction between write
-access and read access. The write key can be used to deduce a secret that can
-be safely leaked to the server which in turn would be used to decide if a user has
-permission to delete a folder. It could also be used for deciding if a user has
-permission to write to files, but this can be verified by the server in terms
-of the signature.
+\subsubsection{Modification and deletion of objects} 
+
+For each directory there exist a different Capability for read and write
+operations, however the read Capability can be deduced from the write
+Capability. From the write Capability it is possible to deduce another secret,
+the \emph{Write Enabler} which the server also knows of.  Knowledge of the
+write enabler is needed for the server to grant access to modify or delete a
+folder. 
 
 For immutable files there is no concept of write-access, only read. It is both
-illogical and impractical to assume that read access should also yield
-delete access. A layer that identifies the creators of a file, can by
-the same method decide who should have the rights to delete it.
+illogical and impractical to assume that read access should also yield delete
+access. A layer that identifies the creators of a file, can by the same method
+decide who should have the rights to delete it.
 
 \subsubsection{Accounting}
 
@@ -995,7 +986,7 @@ and generated network traffic.
 
 In the case of an immutable file, the storage costs can be billed to the user
 creating the file. The costs of network traffic can further be charged to the
-users retrieving or uploading the file.
+users retrieving the file.
 
 Accounting might also be interesting for an organization using a third party
 cloud provider. For instance an employee who leaves the organization might be
@@ -1013,19 +1004,15 @@ describe the external properties of the system. The fundamental operations are
 
 \subsubsection{Download File}
 
-Before downloading a file or directory, a user is initially requested for a
-password to unlock the local encrypted keyring stored at the user's
-terminal. The download procedure is depicted in Figure \ref{fig:AS:download}.
-The client sends a GET request with the identifier of the root directory, which
-was obtained from the encrypted keyring. The server will further respond with the
-encrypted root directory. Similar to all directories in the file system, the
-root directory contains the capabilities needed to locate and decrypt its
-underlying files and folders. After decrypting the root directory, the user will
-choose an underlying file or folder to be downloaded. The client
-further queries the server with the identifier of the chosen file or folder.
-A received file or folder is further decrypted before it is displayed to the
-user. The cryptographic details of downloading a file can be found in Section
-\ref{sec:CS:OF}.
+The download procedure is depicted in Figure \ref{fig:AS:download}.  The client
+sends a download request with the identifier of a folder which he possesses the
+Capability of. The server will respond with the encrypted directory. The user
+will use the Capability to decrypt the directory. In the directory the user
+finds the aliases and necessary Capabilities to gain access to the children of
+that folder. If the user now wants to download a file from the opened folder he
+obtains the identifier for this file from the files Capability, and requests
+the server for this file. Once downloaded the Capability provides means of
+decrypting and verifying that the file has not been tampered with.
 
 \begin{figure}[h!]
     \centering
@@ -1036,10 +1023,10 @@ user. The cryptographic details of downloading a file can be found in Section
 
 \subsubsection{Upload File}
 
-Figure \ref{fig:AS:upload} shows the process of uploading new files. The only
-information the server in the cloud receives, are identifiers and encrypted
-containers. The user is also given the opportunity to transfer the corresponding
-identifiers and capabilities to other users.
+Figure \ref{fig:AS:upload} shows the process of uploading new files. The
+Capability for the new file is generated by the client, and used to encrypt the
+file. The file is then uploaded to the cloud, and the Capability and an alias
+is linked in to the parent folder of the file. 
 
 \begin{figure}[h!]
     \centering
@@ -1047,11 +1034,6 @@ identifiers and capabilities to other users.
     \caption{Scenario: Uploading a file}
     \label{fig:AS:upload}
 \end{figure}
-
-Before uploading, the client has to find, download and decrypt the directory the
-files are to be placed in. This process was described in the previous section.
-The cryptographic details of uploading a file can be found in Section
-\ref{sec:CS:CF}.
 
 \subsubsection{Share Files}
 
@@ -1083,17 +1065,21 @@ where his own.
 
 \paragraph{Read-Only Shares}
 
-If Alice wants to share a directory in Read-Only mode, she can simply
-not include the write capability in the parent directory. This will work as
-intended until Alice wants to write to the directory her self (missing the write
-capability). A simple solution is to enable Alice to store the write capability
-individually among her private files, while storing the read capability in the
-shared parent directory.
+If Alice wants to share a directory in Read-Only mode, she can simply share the
+read Capability with Bob instead of the write Capability. This will work as
+intended but might prove somewhat irritating for Alice. If Alice wants to write
+to the directory she has shared with Bob she can not enter it through the
+parent folder shared with Bob, since this will only grant her the read
+Capability. The implication is that Alice will have to find the directory
+another place in her directory tree, which might be cumbersome. 
 
-The solution can easily be implemented by using a specialized \emph{write key
-folder} under Alice's root folder. The write key folder will then contain
-write capabilities to every folder that Alice has shared in Read-Only mode.
-The idea behind the write key folder is illustrated in Figure \ref{fig:AS:readonly}.
+A more simple solution is to enable Alice to store the write capability
+individually among her private files, while storing the read capability in the
+shared parent directory. The solution can easily be implemented by using a
+specialized \emph{write key folder} under Alice's root folder. The write key
+folder will then contain write capabilities to every folder that Alice has
+shared in Read-Only mode.  The idea behind the write key folder is illustrated
+in Figure \ref{fig:AS:readonly}.
 
 \begin{figure}[h!]
     \centering
