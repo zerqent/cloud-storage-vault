@@ -191,6 +191,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{JRE}{Java Runtime Environment}
 \acro{JVM}{Java Virtual Machine}
 \acro{LAFS}{Least Authority File System}
+\acro{MAC}{Message Autentication Code}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
@@ -957,8 +958,8 @@ of files or directories.
 The solution proposed in this thesis, is that only a simple key-value store is
 needed on the server side. The key works as a lookup index for a specific value,
 while the corresponding value equals an encrypted file object. The server will
-be required to support the operations of uploading and downloading files from
-this store.
+be required to support the operations of uploading and downloading key-value
+pairs to this store.
 
 From the users perspective a file object can however have multiple forms, it
 can either be a mutable or immutable file. A mutable file can be changed, and
@@ -1151,198 +1152,57 @@ brought up throughout the further description of the software.
 %**************************************%
 \section{Cryptographic Architecture}
 %**************************************%
-\label{chap:CS}
-This section will elaborate on the cryptographic solutions applied to the
-architectural scheme in Chapter \ref{chap:AS}. We will take a closer look at
-how confidentiality, integrity and authentication can be integrated into the
+\label{chap:CS} 
+
+This section elaborates on the cryptographic solutions applied to the
+architectural scheme in Chapter \ref{chap:AS}. We take a closer look at how
+confidentiality, integrity and authentication can be integrated into the
 proposed architecture.
 
 %A fundamental scheme for key distribution is needed to realize the desired
 %security features, hence an appropriate solution for key distribution will
 %also be given.
 
-The first section is a brief introduction explaining the basic
-security concept used by the application. Following is a detailed description of
-the cryptographic solutions adapted. The cryptographic solutions are revealed
-in terms of file and directory operations performed by the application. The
-chapter ends with a description of a users keychain.
+The first section is a brief introduction explaining the basic security concept
+used by the application. Following is a detailed description of the
+cryptographic solutions adapted. The cryptographic solutions are revealed in
+terms of file and directory operations performed by the application. The
+chapter ends with a description of a users encrypted keyring.
 
 \subsection{Security Concept}
 
-The basic security concept of the application is to keep a user's remote storage
-confidential to a third-party storage provider. To solve this, the application
-encrypt files locally at the users terminal before uploading them to the
-third-party storage provider. When accessing a file, the application first
-download the encrypted file and further decrypt it locally. To enable this
-simple encryption scheme, the user terminal is required to possess at least one
-cryptographic key. Cryptographic keys are stored in a single keychain at the user
-terminal.
+The basic security concept of the application is to keep a user's remote
+storage confidential to a third-party storage provider. To solve this, the
+application encrypt files locally at the users terminal before uploading them
+to the third-party storage provider. When accessing a file, the application
+first download the encrypted file and further decrypt it locally. To enable
+this simple encryption scheme, a users terminal is required to possess the
+knowledge of at least one Capability, which in it contains cryptographic keys
+to decrypt and verify the contents of the root folder. The root folder will in
+turn contain the Capabilities for its own children, which enables the client to
+decrypt files and folders stored in the root folder. The other folders work in
+the same manner.
 
 By initially knowing that files are placed encrypted on a remote server and that
 the local user possess one or more cryptographic keys, we can continue with a
 more comprehensive description of the complete cryptographic solution. The
-details are explained in terms of the following directory and file operations.
+details are explained in terms of Capabilities and the operations conducted on
+files and folders.
 
-\subsection{Directory Operations}
-\label{sec:CS:DO}
+\subsection{Capabilities}
 
-This section presents the two basic directory operations used by the
-application. The ``create directory'' and ``open directory'' operations are
-explained as follows.
-
-\subsubsection{Create Directory}
-
-The create directory operation is divided into two subsequent parts. First, the
-directory must be created locally at the user's terminal. Second, the directory
-must further be uploaded to the remote server.  Uploading a file or directory is
-possible only if the user is authenticated.
-
-Creating and uploading a directory from the user terminal is illustrated in
-Figure \ref{fig:CS:CD}.
-
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=\columnwidth]{CryptoCreateFolder.pdf}
-	    \caption{Creating and uploading a directory.}
-    \label{fig:CS:CD}
-\end{figure}
-
-Before creating a new directory it is necessary to generate an RSA key-pair. The
-key-pair is specific to the new directory and consists of a public and private
-signing key. The signing key is further used to derive a write and a read key
-for the corresponding directory. The read key is a hashed value of the write
-key, while the write key equals the hashed value of the signing  key.
-
-% TODO: Will we use counter IV?
-After key generation, the public key is directly added to the new directory. The
-directory's storage index is further added as a hash value of the directory's
-read key. The next value added to the directory is the initialization vector
-\ac{IV}. The IV is generated from a counter value stored at the user terminal. It
-is used to prevent predictable ciphertext, when the directory's entries are encrypted.
-
-The next value added to the directory is the write enabler. The write enabler is
-an HMAC-SHA-2 value created from the directory's write key and a static chosen
-text value. It is uploaded as a part of the directory, but can never be
-downloaded from the server. The write enabler is used by the server to enable
-users, that possess the directory's write key, to modify the directory. This
-ensures that only authorized users can modify a directory.
-
-After adding the write enabler, the user must add the directory's private
-signing key. The signing key should only be available for users with write
-permission to the directory. It is therefore encrypted with the directory's
-write key before it is added to the directory. The signing key is encrypted using \ac{AES} in
-\ac{CBC} mode. The next value added is the directory's entries. The entries of a
-directory should only be visible to users with read permissions to
-the directory. They are therefore encrypted with the directory's \ac{IV} and read
-key prior to insertion. The entries are encrypted using \ac{AES} in \ac{CBC} mode. The
-last value added to the directory is a signed hash value of the encrypted
-entries. The hash value is encrypted with the signing key using \ac{RSA}. A
-signature is needed for other users to know that the directory was created from
-an authorized user.
-
-After creating a new directory, the directory is further uploaded to the remote
-server.
-
-It is important to notice that none of the values contained within the
-directory or any of the cryptographic keys are kept locally by the user. The
-user can only achieve the public and private keys through the remote directory.
-The directory's read and write keys can only be achieved through capabilities stored
-in the remote directory's parent directory. This is true for all directories
-stored on the server except for the user's root directory. The keys to the
-root directory are stored in the user's local keyring. The keyring is explained
-in Section \ref{KEYRING}.
-
-\subsubsection{Open Directory}
-
-This section describes the procedure for opening a directory. Opening a
-directory involves both downloading, verifying and decrypting the directory. The
-download and verify procedure is illustrated in Figure \ref{fig:CS:VOD} and
-described below. A description of the subsequent decryption procedure follows.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\columnwidth]{VerifyOpenFolder.pdf}
-    \caption{Downloading and verifying a remote directory.}
-    \label{fig:CS:VOD}
-\end{figure}
-
-First of all, to download a desired directory, the user must be in
-possession of a read key specific to that directory. The read key is either
-created from a hash value of the directory's write key, or obtained from a read
-capability stored in the parent directory.
-
-The directory's storage index is further obtained. It is either created from the
-obtained read key, or obtained from the read capability stored in the parent
-directory. The storage index is a simple hash value of the read key. It is used to
-localize the specific directory on the remote server. The localized directory is
-further downloaded to the user's terminal.
-
-When the correct directory is downloaded, it will further exhibit a verification
-procedure prior to decryption. The verification procedure is illustrated in
-Figure \ref{fig:CS:VOD}.
-
-The purpose of the verification procedure is to check the integrity of the
-content and to verify that it has been written by an authorized user.
-If one or neither of these checks are verified, the directory content will not
-be decrypted.
-
-The first check verifies the correctness of the public key stored within the
-downloaded directory. The key must be checked to ensure that it belongs to the signing
-key. If it does, it indicates that an authorized user has signed the directory
-content. The check is carried out by hashing the directory's public key and
-comparing it with a verification capability.
-
-If the directory passes the first check, it will further be checked for content
-integrity. The integrity check ensures that the directory content, in form of
-entries, has not been tampered with. It is carried out by decrypting a stored
-encrypted hash value in the directory and comparing it against the hash value of
-the directory's encrypted entries. The encrypted hash value stored in the
-directory is decrypted using the previously verified public key. The integrity
-check is depicted as a part of Figure \ref{fig:CS:VOD}.
-
-If the directory passes the verification procedure, the user will decrypt the
-directory's encrypted entries using the directory specific read key. The decryption procedure
-is illustrated as a part of Figure \ref{fig:CS:OD}. An \ac{IV} is additionally
-used with the read key to carry out the decryption procedure. The \ac{IV} is easily
-fetched from the directory prior to decryption.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\columnwidth]{OpenFolder.pdf}
-    \caption{Decrypting a remote directory: Decrypting directory content and
-    obtaining the signature key.}
-    \label{fig:CS:OD}
-\end{figure}
-
-\subsubsection{Modify Directory}
-In addition to read the content of a directory, the user might want to write to it as well.
-To be able to modify a downloaded directory, the user must be in possession of
-the directory's write key. The write key is needed to obtain the directory's
-signing key and write enabler.
-
-The signing key is needed by the user to correctly sign the
-modified directory. Remember that a directory can only be read by users if it
-contains a valid signature. Obtaining the signing key from a downloaded
-directory is shown as a part of Figure \ref{fig:CS:OD}.
-
-The write enabler is generated as a HMAC-SHA-2 value from the write key and a
-static known text value. It is used to prove the user's write permissions to the
-receiving ACL layer at the remote server. This ensures that the directory has
-been modified by an authorized user.
-
-The user fetches the encrypted signing key and decrypts it with the
-write key. This is illustrated in Figure \ref{fig:CS:OD}.
-
+Capabilities are containers which contain the necessary information to locate,
+encrypt, decrypt, verify and possibly write file objects. The layout of the
+information in a Capability is shown in figure XX. How this information is
+created is somewhat different for files and folders and is shown is the
+subsequent sections. 
 
 \subsection{File Operations}
 This section describes the elementary file operations supported by the
-application. The ``create file'' and ``open file'' operations are considered.
+application. The operations are ``upload file'' and ``download file''.
 
-\subsubsection{Create File}
-\label{sec:CS:CF}
-In the create file operation, a file must be created locally on the user's terminal
-prior to upload. The operation is depicted in Figure \ref{fig:CS:CF} and
-described as follows.
+\subsubsection{Upload File} 
+\label{sec:CS:CF} 
 
 \begin{figure}[h!]
     \centering
@@ -1351,20 +1211,13 @@ described as follows.
     \label{fig:CS:CF}
 \end{figure}
 
-The user chooses a local file to upload. This file is depicted as the
-``content'' value in Figure \ref{fig:CS:CF}. A cryptographic write key, specific
-for the new file, is further generated. The key generation algorithm is
-explained in Section \ref{KEYGEN}. The write key is further hashed to create a
-file specific storage index. The storage index is stored in the new file. A
-file's storage index has the same property as a directory's storage index. The
-\ac{IV} is the next value that is inserted into the new file. It is
-generated from a counter stored at the user's terminal.
-
-The previously chosen file content is further encrypted with the write key and
-file \ac{IV}. The encrypted file content is then inserted to the new file. The last
-value added to the new file is an encrypted hash value of the encrypted content.
-The hash value is encrypted using the file's write key. Both the file content
-and hash value are encrypted using \ac{AES} in \ac{CBC} mode.
+The operation for uploading a file is depicted in Figure \ref{fig:CS:CF}. A
+random symmetric encryption key is generated, this is hashed once to obtain the
+Storage Index for the file. The storage index is then hashed again to form the
+\ac{IV} for the file. The file is then hashed and the resulting digest is
+stored together with the encryption key in the Capability. The file is then
+encrypted with the encryption key and the \ac{IV} and is uploaded into the
+Cloud.
 
 \subsubsection{Open File}
 \label{sec:CS:OF}
@@ -1375,17 +1228,81 @@ and hash value are encrypted using \ac{AES} in \ac{CBC} mode.
     \label{fig:CS:OF}
 \end{figure}
 
-The process of retrieving a file is illustrated in figure \ref{fig:CS:OF}.A
-file is located by hashing the write key, which in turn is obtained either by
-knowledge by the user or client or from a parent folder. The ciphertext, the
-\ac{IV} and the encrypted hash of the ciphertext is downloaded from the server.
-The ciphertext is hashed client side and the encrypted hash from the server is
-decrypted with the write key, if these two outputs match the ciphertext has not
-been tampered with. The ciphertext is then decrypted using the write key and
-\ac{IV} to obtain the file contents.
+The process of retrieving a file is illustrated in figure \ref{fig:CS:OF}. The
+storage index is obtained by hashing the stored encryption key from the
+Capability, and the \ac{IV} is obtained by hashing the Storage Index. The file
+is then downloaded from the server and decrypted. The file is then hashed and
+the resulting digest is compared against the digest stored in the Capability.
+If these two matches the file has not been tampered with.
+
+\subsection{Directory Operations}
+\label{sec:CS:DO}
+
+This section presents the two basic directory operations used by the
+application. The ``create directory'' and ``open directory'' operations are
+explained as follows.
+
+\subsubsection{Create Directory} Creating and uploading a directory from the
+user terminal is illustrated in Figure \ref{fig:CS:CD}. The process is a bit
+more complex than for files to support changing the content of the folder.
+Firstly an assymetric keypair is generated, and forms the private ``signing
+key''  and the public key. The Signing key is hashed to form the ``write key'',
+again to form the ``read key'' and once more to form the Storage Index. The
+content of the folder (which may be empty) is encrypted with the read key and
+the resulting ciphertext is signed with the signing key. The signing key is
+then encrypted with the read key and together with the ciphertext, the public
+key, the IV and the signature is uploaded to the cloud. The write enabler is
+made from the write key with a \ac{MAC} function and sent along.The write key
+is stored together with a hash of the public key in the Capability.
+
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=\columnwidth]{CryptoCreateFolder.pdf}
+	    \caption{Creating and uploading a directory.}
+    \label{fig:CS:CD}
+\end{figure}
+
+\subsubsection{Open Directory}
+
+Opening a directory involves both downloading, verifying and decrypting the
+directory. The verification  illustrated in Figure \ref{fig:CS:VOD} and
+decryption is illustrated in Figure \ref{fig:CS:OD}. From the Capability a user
+either obtains the read or write key, if the write key is stored it can be
+hashed to obtain the read key. The read key is again hashed to form the Storage
+Index which is used to request content from the server. From the server the
+user receives the encrypted contents of the folder, the signature for the folder
+and the public key. The user verifies that the public key is correct by hashing
+it and matching it against a hash stored in the Capability. Afterwards the
+public key is used to verify the signature. If both these checks are correct
+the folder is decrypted with the read key and the content is obtained.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{VerifyOpenFolder.pdf}
+    \caption{Downloading and verifying a remote directory.}
+    \label{fig:CS:VOD}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{OpenFolder.pdf}
+    \caption{Decrypting a remote directory: Decrypting directory content and
+    obtaining the signature key.}
+    \label{fig:CS:OD}
+\end{figure}
+
+\subsubsection{Modify Directory}
+
+In addition to read the content of a directory, the user might want to write to
+it as well. The process to do this is similar to initially creating the first
+directory. The difference is that the user has the write key in his Capability
+and must use this to decrypt the encrypted signing key which he downloads from
+the server. A fresh \ac{IV} is then generated and the content of the folder is
+encrypted, and signed by the signing key. The fresh \ac{IV}, the signature and
+the encrypted contents is then uploaded to the server along with the write
+enabler which is deduced in the same way as for a new folder.
 
 \subsection{Keychain}
-
 As stated, each client keeps a local copy of the identity and write key to the
 personal root folder in a password protected keychain. This is done to be able
 to encrypt the root folder with a key that is not based on a password, but
