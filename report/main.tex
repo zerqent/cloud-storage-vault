@@ -7,9 +7,15 @@
 \usepackage[printonlyused]{acronym} % Package to handle the acronym list
 \usepackage{graphicx} % We *may* use images
 \graphicspath{{images/}} % and it is clean to put them in a separate dir
-\usepackage{hyperref} % Internal and external links is nice
-\hypersetup{pdfborder=0 0 0} % ..especially without red borders
 \usepackage{amstext} % To support \text in math mode
+\usepackage{hyperref} % Internal and external links is nice
+\hypersetup{
+    pdfborder=0 0 0, % ..especially without red borders
+    pdftitle={Cloud Storage Vault},
+    pdfauthor={Haver, Melvold and Ruud},
+    pdfsubject={Secure Storage in the Cloud},
+    pdfkeywords={secure, cloud, cryptographic, sharing}
+}
 
 % Packages and settings for code listings
 \usepackage{listings}
