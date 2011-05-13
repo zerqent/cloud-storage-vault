@@ -179,6 +179,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ECB}{Electronic Codebook}
 \acro{FAQ}{Frequently Asked Questions}
 \acro{GPU}{Graphics Processing Unit}
+\acrodef{GUI}{Graphical User Interface}
 \acro{FEC}{Forward Error Correction}
 \acro{HDFS}{Hadoop Distributed File System}
 \acro{HTTP}{Hypertext Transfer Protocol}
@@ -230,16 +231,27 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
-% TODO: Generic introduction
+% TODO: Generic introduction 
+
+The term \emph{Cloud Computing}, and the common shorthand \emph{``The Cloud''},
+is not clearly defined yet \cite{clouddef}, but involves the provision of
+software or computational resources available by demand via the Internet.
+
+In a draft \cite{cloud_nistdef}, the \ac{NIST} defines cloud computing as:
+\begin{quote}\it
+``Cloud computing is a model for enabling ubiquitous, convenient,
+on-demand network access to a shared pool of configurable computing resources
+(e.g., networks, servers, storage, applications, and services) that can be
+rapidly provisioned and released with minimal management effort or service
+provider interaction.''
+\end{quote}
 
 \section{Motivation}
 
-% What is different with this solution, than the other on the market?
-% (Hva vi får ut av dette)
-In the last decade, the supply of storing data remotely in the cloud has
-increased considerable. Storing private data at a third party cloud provider
-in contrast to self owned storage devices has proven to be preferable due to low
-storage costs and high reliability, scalability and capacity.
+In the last decade, the available supply of storing data remotely in the cloud
+has increased considerable. Storing private data at a third party cloud
+provider in contrast to self owned storage devices has proven to be preferable
+due to low storage costs and high reliability, scalability and capacity.
 
 However, storing data at a remote location prevents users from physically
 protecting their storage medium. With this in mind, there is no guarantee that a
@@ -254,14 +266,11 @@ storage solution. %Open source, privacy, integrity,
 This situation has given motivation to implement a proof of concept
 application, that provides what we define as a secure cloud storage service.
 %TODO: presiser/skriv om motivasjonene under
-The task will additionally give us more experience within software development,
+We do also see this as a golden opportunity to learn more about software development,
 development methodologies, team work, security and cryptography.
 
 
 \section{Related Work}
-
-% Summary of corresponding section in Background ch., and especially weight
-% Tahoe.
 
 In the later years, there has been quite a lot of research done in the field of
 security in cloud computing. The problems that arise, are fundamentally not
@@ -282,29 +291,86 @@ that the user has control of. In Section \ref{sec:existing}, we present three
 commercially and publicly available software services that relates to this way
 of thinking.
 
+One of these applications, Tahoe-\ac{LAFS} \cite{tahoe}, is given special
+attention. This is because it is an Open Source and a well documented piece of
+software, that answers most of the problems arising in an untrusted cloud
+storage environment, and relates closely to the work performed in this thesis.
+
 \section{Scope and Objectives}
 
 % Sum up problem description and concretize the goals.
-
-\subsection{Criteria for a Secure Cloud Storage Service}
+There are two main objectives of this thesis. The first objective is to create a
+cryptographic scheme that can provide secure storage of data by using an untrusted
+cloud storage provider. We define secure storage by the following criteria.
 \label{sec:criteria}
-% TODO: Complete this list and section and section
-
 \begin{enumerate}
-  \item Open Source
-  \item Encryption locally
+  \item Data should be encrypted in a safe environment trusted by the owner,
+  before it is stored.
+  \item It should be possible to verify the integrity of the stored data.
+  \item Only authorized people should have access to the data.
+  \item The storage scheme should be documented in detail, such that users can
+  easily understand the scheme and accept/reject it on that basis. 
+  \item An implementation of the storage scheme should be Open Source.
 \end{enumerate}
+
+The cryptographic scheme should, in addition to the mentioned security, provide
+the possibility of sharing stored data between multiple customers. The security
+requirements above should also be valid for the shared data. The underlying scheme for
+sharing data must be applicable for both enterprise and regular customer
+scenarios.
+
+The second main objective is to implement the proposed scheme as part of a
+proof of concept application for Android devices. The application should be
+suitable for regular customers, although the underlying cryptographic scheme
+should support an enterprise scenario.
 
 \section{Limitations}
 
-% What we do not focus on (GUI, lesser important functions).
-% Time constraints in relation to amount of work
+We will focus on making an architecture that covers the scope and objectives,
+in an easy to understand and complete way. In addition, making core
+functionality, that demonstrates the most important security features in a proof
+of concept system, will be prioritized.
+
+However, due to time and resource constraints, we will focus less on the following:
+\begin{itemize}
+  \item The language in the proof of concept client should be clear, but the
+    \ac{GUI} in itself will not get special attention
+  \item Experimentation with the proof of concept code, other
+    than basic performance and security measurements
+  \item Experimentation with the proof of concept client on hardware equipment
+    other than what we easily have available at the time of testing
+\end{itemize}
 
 \section{Methodology}
 
-% theory, abstraction, design
-% Research methodology, Scrum?, iterative
-% Android, Eclipse
+The work behind this thesis, is carried out by the three authors in
+cooperation. The methodology used, can be categorized based on the three main
+parts of this work; the \emph{research}, the \emph{design and abstraction} part,
+and the \emph{software development} cycles.
+
+The research will include an analysis of related systems, and a study of
+relevant background theory. Based on this theory, we will use experimentation
+to create and design a theoretical solution to the problem of secure storage
+and sharing of files on an untrusted server. We will iteratively analyse our
+experimentation to find and correct flaws with the design.
+
+The third part of the work, is the software development cycles of the proof of
+concept application. We will work after SCRUM principles -- an iterative and
+incremental based framework for project management \cite{scrum}. There does not
+exist a SCRUM \emph{product owner} for the system we will create, nor do we
+fulfill the requirements and characteristics \cite{scrum} of a traditional
+SCRUM \emph{team}. Hence, we will use the principles that are practically
+possible for us to follow:
+
+\begin{itemize}
+  \item Daily \emph{stand-up} with planning of the tasks of the current day
+  \item Weekly \emph{sprint}\footnote{A \emph{sprint} is a defined period with
+    a given set of tasks.} planning meetings 
+  \item Keep tasks on stickers, that we move between different phases on a
+    board: \emph{to do}, \emph{in progress}, \emph{quality assurance} and
+    \emph{done}. This is to keep track of progress in the current sprint
+  \item Continuously analyse the process, and improve it if possible
+\end{itemize}
 
 \section{Outline}
 
@@ -565,14 +631,9 @@ predefined dictionary of words.
 
 \section{Cloud Computing}
 
-In a draft \cite{cloud_nistdef}, the \ac{NIST} defines cloud computing as:
-\begin{quote}\it
-``Cloud computing is a model for enabling ubiquitous, convenient,
-on-demand network access to a shared pool of configurable computing resources
-(e.g., networks, servers, storage, applications, and services) that can be
-rapidly provisioned and released with minimal management effort or service
-provider interaction.''
-\end{quote}
+In this section, we will extend from the definitions given in Section
+\ref{sec:intro:intro}, and further describe terms that are associated with
+\emph{Cloud Computing}.
 
 \subsection{Service Models}
 The \ac{NIST} also defines three service models which deals with what kind of
