@@ -1001,14 +1001,14 @@ users that has donated capacity to the system.
 The architectural solution of a secure cloud file sharing system has to
 convince its users that the functions indeed are secure, and that the concepts
 are easy to understand and accept. The following sections will elaborate on the
-architecture designed by us, favouring simplicity and familiar concept such as
-files and directories. We also introduce the concept of a \textbf{Capability}.
+architecture designed by us, favouring simplicity and familiar concepts, such
+as files and directories. We also introduce the concept of \emph{capabilities}.
 
 Figure \ref{fig:AS:overview} represents an overview of the functionality that
-the architecture must support. The Figure exhibits a user uploading a file to
-the cloud, and adding this to a parent directory. After he has done this it is
-possible for him to distribute the Capability to other users to realize sharing
-of files or directories.
+the architecture must support. The illustration exhibits a user uploading a
+file to the cloud, and adding this to a parent directory. After he has done
+this, it is possible for him to distribute the capability to other users to
+realize sharing of files or directories.
 
 \begin{figure}[h!]
     \centering
@@ -1020,40 +1020,39 @@ of files or directories.
 \subsection{File Storage}
 \label{sec:AS:FS}
 
-The solution proposed in this thesis, is that only a simple key-value store is
-needed on the server side. The key works as a lookup index for a specific value,
-while the corresponding value equals an encrypted file object. The server will
-be required to support the operations of uploading and downloading key-value
-pairs to this store.
+The solution for file storage proposed in this thesis, is that only a simple
+\emph{key-value store} is needed on the server side. The key works as a lookup
+index for a specific value, while the corresponding value equals an encrypted
+file object. The server will be required to support the operations of uploading
+and downloading key-value pairs to this store.
 
-From the users perspective a file object can however have multiple forms, it
-can either be a mutable or immutable file. A mutable file can be changed, and
-is what a user will see as a directory, while an immutable file is what a users
-would see as a normal file.  
+From the users perspective however, a file object can have multiple forms -- it
+can either be a \emph{mutable} or an \emph{immutable} file. A mutable file can
+be changed, and is what a user will see as a directory, while an immutable file
+is utilized as a normal file.  
 
 A user will need certain information to be able to reach and read a file
-object, we define these properties as the \emph{Capability} of a file object.
-For now the Capability represents the ability to find, read, verify that a file
-has not been tampered with and possibly write to the file object.
-
+object, we define these properties as the \emph{capability} of a file object.
+For now, the capability represents the ability to find, read, verify that a
+file has not been tampered with, and possibly write to the file object.
 
 \subsubsection{Directory Structure} 
 
-The contents of a directory are files or other directories. More specifically a
-directory contains the means to find files or directories, namely the
-Capabilities of these file objects. In addition there exist a human readable
-name, an \emph{Alias}, for each entry in a directory. This design gives a
+The contents of a directory are files and other directories. More specifically,
+a directory contains the means to find files or directories, namely the
+capabilities of these file objects. In addition, there exist a human readable
+name, an \emph{alias}, for each entry in a directory. This design gives a
 flexible and space-conservative structure, since any file object may be found
 from multiple directory, but does only exist once in the cloud.
 
-A user will have to have some way of storing the Capabilities of his file
+A user will have to have some way of storing the capabilities of his file
 objects. This could potentially be done client side, but a problem arises if
-the user wants to use several terminals. Therefore we introduce the \emph{root
-folder}, a folder from which all other files and folders can be reached.  The
-user will then only need to know of one single Capability to reach all his
-stored data. This capability needs to be stored and protected by the client in
-a password protected \emph{keyring}. The resulting structure is a directed
-graph illustrated in Figure \ref{fig:AS:filesystem}.
+the user wants to use several terminals. Thus, we introduce the \emph{root
+folder}, a folder from which all other files and folders can be reached. The
+user will only need to know of one single capability to reach all his stored
+data. This capability needs to be stored and protected by the client in a
+password protected \emph{keyring}. The resulting structure is a
+directed graph, as illustrated in Figure \ref{fig:AS:filesystem}.
 
 \begin{figure}[h!]
     \centering
@@ -1064,53 +1063,54 @@ graph illustrated in Figure \ref{fig:AS:filesystem}.
 
 \subsection{ACL/Authentication Layer}
 
-The possession of a Capability gives a user access to read a file or read or
-write a folder. However there are some properties that The server provider
-might want or needs that can not be given by the Capability. Therefore a layer
-implementing authentication and possibly more access control could be
-preferable.
+The possession of a capability gives a user access to read a file or read or
+write a folder. There are however some properties that the server provider
+might want that can not be given by the capability. Therefore a layer
+implementing authentication, accountability and possibly more access control
+could be preferable.
 
-\subsubsection{Block access to encrypted data}
+\subsubsection{Block Access to Encrypted Data}
 
 The capability for a file or folder might be intentionally or unintentionally
-leaked by a user. In this case it would be preferable that the server can block
-access to a particular object. The server could also potentially enforce access
-right on all encrypted objects based on who a user has shared a file with.
-This does however require the client to notify a server every time he shares a
-file object with a new person, and is strictly not necessary from a security
-standpoint.
+leaked by a user. In this case, it would be preferable that the server can
+block access to a particular object. The server could also potentially enforce
+access rights on all encrypted objects, based on who a user has shared a file
+with. This does however require the client to notify the server every time it 
+shares a file object with a new person, and is strictly not necessary from a
+security standpoint.
 
 \subsubsection{Modification and deletion of objects} 
 
-For each directory there exist a different Capability for read and write
-operations, however the read Capability can be deduced from the write
-Capability. From the write Capability it is possible to deduce another secret,
-the \emph{Write Enabler} which the server also knows of.  Knowledge of the
+For each directory, there exist a different capability for read and write
+operations, though the read capability can be deduced from the write
+capability. From the write capability, it is possible to deduce another secret,
+the \emph{write enabler}, which the server also knows of.  Knowledge of the
 write enabler is needed for the server to grant access to modify or delete a
-folder. 
+folder.
 
-For immutable files there is no concept of write-access, only read. It is both
+For immutable files, there is no concept of write-access, only read. It is both
 illogical and impractical to assume that read access should also yield delete
 access. A layer that identifies the creators of a file, can by the same method
 decide who should have the rights to delete it.
 
 \subsubsection{Accounting}
 
-If the server side of the application is held by a cloud storage provider, it is
-important to be able to decide which users should be billed for the file storage
-and generated network traffic.
+If the server side of the system is held by a cloud storage provider, it
+is important to be able to decide which users should be billed for the file
+\emph{storage} and generated \emph{network traffic}.
 
 In the case of an immutable file, the storage costs can be billed to the user
 creating the file. The costs of network traffic can further be charged to the
 users retrieving the file.
 
 Accounting might also be interesting for an organization using a third party
-cloud provider. For instance an employee who leaves the organization might be
-tempted to copy all the data stored on the server, the organization should then
-be able to discover what he has done. It is however worth noting that if the
-accounting happens server side, there is no real way to verify that all logs
-stored there are correct, since the cloud provider will have access to at least
-delete them.
+cloud provider. For instance an employee who leaves the organization, might be
+tempted to copy all the data stored on the server. The organization should then
+be able to discover what he has done. 
+
+It is however worth noting that if the accounting happens server side, there is
+no real way to verify that all logs stored there are correct, since the cloud
+provider will have access to modify or delete them.
 
 \subsection{User Scenarios}
 
@@ -1120,15 +1120,10 @@ describe the external properties of the system. The fundamental operations are
 
 \subsubsection{Download File}
 
-The download procedure is depicted in Figure \ref{fig:AS:download}.  The client
-sends a download request with the identifier of a folder which he possesses the
-Capability of. The server will respond with the encrypted directory. The user
-will use the Capability to decrypt the directory. In the directory the user
-finds the aliases and necessary Capabilities to gain access to the children of
-that folder. If the user now wants to download a file from the opened folder he
-obtains the identifier for this file from the files Capability, and requests
-the server for this file. Once downloaded the Capability provides means of
-decrypting and verifying that the file has not been tampered with.
+The download procedure is depicted in Figure \ref{fig:AS:download}. The client
+sends a download request with the identifier of a folder, which he possesses
+the capability of. The server will respond with the encrypted directory. 
+The user will use the capability to decrypt the directory. 
 
 \begin{figure}[h!]
     \centering
@@ -1137,11 +1132,18 @@ decrypting and verifying that the file has not been tampered with.
     \label{fig:AS:download}
 \end{figure}
 
+In the directory, the user finds the aliases and necessary capabilities to gain
+access to the children of that folder. If the user now wants to download a file
+from the accessed folder, he obtains the identifier for this file through the
+capability of the file, and requests the server for this file. Once downloaded,
+the capability provides means of decrypting and verifying that the file has not
+been tampered with.
+
 \subsubsection{Upload File}
 
 Figure \ref{fig:AS:upload} shows the process of uploading new files. The
-Capability for the new file is generated by the client, and used to encrypt the
-file. The file is then uploaded to the cloud, and the Capability and an alias
+capability for the new file is generated by the client, and used to encrypt the
+file. The file is then uploaded to the cloud, and the capability and an alias
 is linked in to the parent folder of the file. 
 
 \begin{figure}[h!]
@@ -1155,13 +1157,9 @@ is linked in to the parent folder of the file.
 
 As shown in Figure \ref{fig:AS:sharing}, for Alice to be able to share files
 with Bob, she first has to create a new directory that will contain these
-files. Alice is then required to share a capability of the new directory with
+files. Alice is then required to share the capability of the new directory with
 Bob. When the capability is shared, the new directory will work as a secure
 channel where Bob and Alice can share their own folders and files.
-
-Before transferring the capabilities to Bob, Alice links the shared directory to
-a parent directory, so she can easily find it again at a later time. She can
-also link files to the shared directory.
 
 \begin{figure}[h!]
     \centering
@@ -1169,6 +1167,10 @@ also link files to the shared directory.
     \caption{Scenario: Sharing files}
     \label{fig:AS:sharing}
 \end{figure}
+
+Before transferring the capabilities to Bob, Alice links the shared directory
+to a parent directory, so she can easily find it again at a later time. She can
+also link files and other directories to the shared directory.
 
 The capability distribution is a key design issue, and has to be performed in a
 secure manner. This can be solved in a variety of ways, and the solutions
@@ -1182,19 +1184,19 @@ where his own.
 \paragraph{Read-Only Shares}
 
 If Alice wants to share a directory in Read-Only mode, she can simply share the
-read Capability with Bob instead of the write Capability. This will work as
-intended but might prove somewhat irritating for Alice. If Alice wants to write
-to the directory she has shared with Bob she can not enter it through the
-parent folder shared with Bob, since this will only grant her the read
-Capability. The implication is that Alice will have to find the directory
-another place in her directory tree, which might be cumbersome. 
+read capability with Bob, instead of the write capability. This will work as
+intended, but might prove somewhat cumbersome for Alice. If Alice wants to
+write to the directory she has shared with Bob, she can not enter it through
+the parent folder shared with Bob, since this will only grant her the read
+capability. The implication is that Alice will have to find the directory
+another place in her directory tree, to get the write capability.
 
 A more simple solution is to enable Alice to store the write capability
 individually among her private files, while storing the read capability in the
 shared parent directory. The solution can easily be implemented by using a
 specialized \emph{write key folder} under Alice's root folder. The write key
 folder will then contain write capabilities to every folder that Alice has
-shared in Read-Only mode.  The idea behind the write key folder is illustrated
+shared in Read-Only mode. The idea behind the write key folder is illustrated
 in Figure \ref{fig:AS:readonly}.
 
 \begin{figure}[h!]
@@ -1207,8 +1209,8 @@ in Figure \ref{fig:AS:readonly}.
 \subsection{Implications of User Equipment}
 
 The software should be able to run on restricted devices, i.e. equipment with
-limited memory and \ac{CPU} power, often in addition to constraints on power and
-network consumption.
+limited memory and \ac{CPU} power, often in addition to constraints on power
+and network utilization.
 
 This has implications for the design of the software, since all cryptographic
 operations has to be performed client-side. These considerations will be
@@ -1228,38 +1230,41 @@ proposed architecture.
 %security features, hence an appropriate solution for key distribution will
 %also be given.
 
-The first section is a brief introduction explaining the basic security concept
-used by the application. Following is a detailed description of the
+The first section is a brief introduction explaining the basic security
+concepts used by the application. Following is a detailed description of the
 cryptographic solutions adapted. The cryptographic solutions are revealed in
 terms of file and directory operations performed by the application. The
-chapter ends with a description of a users encrypted keyring.
+chapter ends with a description of a user's encrypted keyring.
 
 \subsection{Security Concept}
 
-The basic security concept of the application is to keep a user's remote
-storage confidential to a third-party storage provider. To solve this, the
-application encrypt files locally at the users terminal before uploading them
-to the third-party storage provider. When accessing a file, the application
-first download the encrypted file and further decrypt it locally. To enable
-this simple encryption scheme, a users terminal is required to possess the
-knowledge of at least one Capability, which in it contains cryptographic keys
-to decrypt and verify the contents of the root folder. The root folder will in
-turn contain the Capabilities for its own children, which enables the client to
-decrypt files and folders stored in the root folder. The other folders work in
-the same manner.
+The basic security concept of the application, is to keep the files of a user
+confidential to a third-party storage provider. To solve this, the application
+encrypts files locally at the user's terminal before uploading them to the
+third-party storage provider. 
 
-By initially knowing that files are placed encrypted on a remote server and that
-the local user possess one or more cryptographic keys, we can continue with a
-more comprehensive description of the complete cryptographic solution. The
-details are explained in terms of Capabilities and the operations conducted on
-files and folders.
+When accessing a file, the application first downloads the encrypted file
+before decrypting it locally. To enable this simple encryption scheme, a user's
+terminal is required to locally possess the knowledge of at least one
+capability, which contains cryptographic keys to decrypt and verify the
+contents of the \emph{root folder}.
+
+The root folder will in turn contain the capabilities for its own children,
+which enables the client to decrypt files and folders stored in the root
+folder. The other folders work in the same manner.
+
+By initially knowing that files are placed encrypted on a remote server and
+that the user possesses one or more cryptographic keys locally, we can continue
+with a more comprehensive description of the complete cryptographic solution.
+The details are explained in terms of capabilities and the operations conducted
+on files and folders.
 
 \subsection{Capabilities}
 
 Capabilities are containers which contain the necessary information to locate,
 encrypt, decrypt, verify and possibly write file objects. The contents is
 summarized in Table \ref{tbl:capability}. How this information is
-created is somewhat different for files and folders and is shown is the
+created, is somewhat different for files and folders, and is shown in the
 subsequent sections. 
 
 \input{tables/capability.tex}
@@ -1267,21 +1272,32 @@ subsequent sections.
 \subsection{Cryptographic Primitives}
 
 The illustrations in the following sections included our chosen cryptographic
-primitives, it is however important to note that this cryptographic solution
-could work with other primitives. Any symmetric cipher could work instead of
+primitives. It is however important to note that this cryptographic scheme will
+work with other primitives. Any symmetric cipher could work instead of
 \ac{AES}, any signing function that uses both a private and public key could be
-used, any \ac{MAC} could be used instead of H\ac{MAC}-\ac{SHA}1 and any
+used, any \ac{MAC} could be used instead of HMAC-\ac{SHA}1, and any
 cryptographic hash function could be used instead of \ac{SHA}-256. The security
-of the system does however rely on these choices, the rationale for our choices
-can be found in % TODO REF.
+of the system does however rely on these choices, and the rationale for
+each of these can be found in Section \ref{sec:cryptoprimitivechoice}.
 %% TODO: Tenk deg litt om
 
 \subsection{File Operations}
+
 This section describes the elementary file operations supported by the
-application. The operations are ``upload file'' and ``download file''.
+application. The basic operations are \emph{upload file} and \emph{download
+file}.
 
 \subsubsection{Upload File} 
 \label{sec:CS:CF} 
+
+The operation behind uploading a file, is depicted in Figure \ref{fig:CS:CF}. A
+random symmetric encryption key is generated. This is hashed once to obtain the
+\emph{storage index} for the file. The storage index is then hashed again to
+form the \ac{IV} for the file. 
+
+Next, the file is hashed and the resulting digest is stored together with the
+encryption key in the capability. Lastly, the file is encrypted with the
+encryption key, and the \ac{IV} is uploaded to the server.
 
 \begin{figure}[h!]
     \centering
@@ -1290,16 +1306,16 @@ application. The operations are ``upload file'' and ``download file''.
     \label{fig:CS:CF}
 \end{figure}
 
-The operation for uploading a file is depicted in Figure \ref{fig:CS:CF}. A
-random symmetric encryption key is generated, this is hashed once to obtain the
-Storage Index for the file. The storage index is then hashed again to form the
-\ac{IV} for the file. The file is then hashed and the resulting digest is
-stored together with the encryption key in the Capability. The file is then
-encrypted with the encryption key and the \ac{IV} and is uploaded into the
-Cloud.
-
-\subsubsection{Open File}
+\subsubsection{Download File}
 \label{sec:CS:OF}
+
+The process of retrieving a file is illustrated in Figure \ref{fig:CS:OF}. The
+storage index is obtained by hashing the stored encryption key extracted from
+the capability, and the \ac{IV} is obtained by hashing the storage index. The
+file is then downloaded from the server and decrypted. Next, the file is
+hashed, and the resulting digest is compared against the digest stored in the
+capability. If these two match, the file has not been tampered with.
+
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{CryptoOpenFile.pdf}
@@ -1307,32 +1323,18 @@ Cloud.
     \label{fig:CS:OF}
 \end{figure}
 
-The process of retrieving a file is illustrated in figure \ref{fig:CS:OF}. The
-storage index is obtained by hashing the stored encryption key from the
-Capability, and the \ac{IV} is obtained by hashing the Storage Index. The file
-is then downloaded from the server and decrypted. The file is then hashed and
-the resulting digest is compared against the digest stored in the Capability.
-If these two matches the file has not been tampered with.
-
 \subsection{Directory Operations}
 \label{sec:CS:DO}
 
 This section presents the two basic directory operations used by the
-application. The ``create directory'' and ``open directory'' operations are
-explained as follows.
+application. The \emph{create directory} and \emph{open directory} operations
+are explained as follows.
 
-\subsubsection{Create Directory} Creating and uploading a directory from the
-user terminal is illustrated in Figure \ref{fig:CS:CD}. The process is a bit
-more complex than for files to support changing the content of the folder.
-Firstly an assymetric keypair is generated, and forms the private ``signing
-key''  and the public key. The Signing key is hashed to form the ``write key'',
-again to form the ``read key'' and once more to form the Storage Index. The
-content of the folder (which may be empty) is encrypted with the read key and
-the resulting ciphertext is signed with the signing key. The signing key is
-then encrypted with the read key and together with the ciphertext, the public
-key, the IV and the signature is uploaded to the cloud. The write enabler is
-made from the write key with a \ac{MAC} function and sent along.The write key
-is stored together with a hash of the public key in the Capability.
+\subsubsection{Create Directory}
+
+Creating and uploading a directory from the user terminal, is illustrated in
+Figure \ref{fig:CS:CD}. The process is a bit more complex than for files,
+because it has to support changing the contents of the folder. 
 
 \begin{figure}[h!]
     \centering
@@ -1341,19 +1343,25 @@ is stored together with a hash of the public key in the Capability.
     \label{fig:CS:CD}
 \end{figure}
 
+Firstly, an asymmetric key pair is generated, and forms the private
+\emph{signing key} and the public key. The signing key is hashed to form the
+\emph{write key}, and again to form the \emph{read key}, and even once more to
+form the \emph{storage index}.
+
+The contents of the folder, which may be empty, is encrypted with the read key
+and the resulting ciphertext is signed with the signing key. The signing key is
+further encrypted with the read key, and together with the ciphertext, the
+public key, the \ac{IV} and the signature, uploaded to the server. 
+
+The \emph{write enabler} is made from the write key with a \ac{MAC} function
+and sent alongside the file. The write key is stored together with a hash of
+the public key in the capability.
+
 \subsubsection{Open Directory}
 
 Opening a directory involves both downloading, verifying and decrypting the
-directory. The verification  illustrated in Figure \ref{fig:CS:VOD} and
-decryption is illustrated in Figure \ref{fig:CS:OD}. From the Capability a user
-either obtains the read or write key, if the write key is stored it can be
-hashed to obtain the read key. The read key is again hashed to form the Storage
-Index which is used to request content from the server. From the server the
-user receives the encrypted contents of the folder, the signature for the folder
-and the public key. The user verifies that the public key is correct by hashing
-it and matching it against a hash stored in the Capability. Afterwards the
-public key is used to verify the signature. If both these checks are correct
-the folder is decrypted with the read key and the content is obtained.
+directory. The verification illustrated in Figure \ref{fig:CS:VOD} and
+decryption is illustrated in Figure \ref{fig:CS:OD}. 
 
 \begin{figure}[h!]
     \centering
@@ -1370,37 +1378,56 @@ the folder is decrypted with the read key and the content is obtained.
     \label{fig:CS:OD}
 \end{figure}
 
+From the capability, the user either obtains the read key or the write key. If
+the write key is found, it can be hashed to obtain the read key. The read key
+is again hashed to form the storage index, which is used to request content
+from the server.
+
+From the server, the user receives the encrypted contents of the folder, the
+signature for the folder and the public key. The user verifies that the public
+key is correct by hashing it and matching it against a hash stored in the
+corresponding capability. Afterwards, the public key is used to verify the
+signature. If both these checks pass, the folder is decrypted with the
+read key and the content is obtained.
+
 \subsubsection{Modify Directory}
 
-In addition to read the content of a directory, the user might want to write to
-it as well. The process to do this is similar to initially creating the first
-directory. The difference is that the user has the write key in his Capability
-and must use this to decrypt the encrypted signing key which he downloads from
-the server. A fresh \ac{IV} is then generated and the content of the folder is
-encrypted, and signed by the signing key. The fresh \ac{IV}, the signature and
-the encrypted contents is then uploaded to the server along with the write
-enabler which is deduced in the same way as for a new folder.
+In addition to read the contents of a directory, the user might want to write
+to it as well. The process of doing this, is similar to initially creating the
+first directory. The key difference, is that the user has the write key in a
+capability, and must use this to decrypt the encrypted signing key which he
+downloads from the server, instead of generating a new one.
+% TODO: Is the sentence above making any sense?
+
+A new \ac{IV} is generated, and the content of the folder is encrypted, and
+signed by the signing key. The fresh \ac{IV}, the signature and the encrypted
+contents are then uploaded to the server. The write enabler is also sent
+alongside, which is deduced in the same way as when creating a new folder.
 
 \subsection{Keychain}
-Every user will need to keep a copy of his or hers root Capability stored
-somehwere. The Capability contains both an encryption key and verification data
-that a user will need to safely access his files. This amount of data will be
-hard for a person to remember, and therefore the Capability will have to be
-stored on the terminal which runs the client application. Since it might happen
-that this terminal is either broken in to, lost or stolen, precautions should
-be taken to protect the Capability on the device. The normal approach to this
-is a password. 
 
-The strength of a password is related to its length and its randomness
-properties. Passwords shorter than 10 characters are usually considered to be
-weak \cite{pbkdf_nist}. In the event of loosing one of the clients, and thus
-the keychain, a potential attacker can use fast password cracking attacks to
-try to compromise the root folder keys. As an precaution for this, we will use
-\ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a salt
-value to create additional computational work for the process of unlocking the
-keychain. This method is known as key stretching \cite{keystretch}.
+Every user will need to keep a copy of his root capability somewhere.
+The capability contains both an encryption key and verification data that a
+user will need to safely access his files.
+
+This amount of random data will be hard for a person to remember, and therefore
+the capability will have to be stored on the terminal which runs the client
+application. Since it might happen that this terminal is either broken in to,
+lost or stolen, precautions should be taken to protect the capability on the
+device. The normal approach to this, is by using password protection. 
+
+The strength of a password is related to its length and randomness properties.
+Passwords shorter than 10 characters are usually considered to be weak
+\cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
+encrypted keychain, a potential attacker can use fast password cracking attacks
+to try to compromise the root folder keys. As an precaution for this, we will
+use \ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a
+salt value, to create additional computational work for the process of
+unlocking the keychain. This method is known as key stretching
+\cite{keystretch}.
 
 \subsection{Choice of Cryptographic Primitives}
+\label{sec:cryptoprimitivechoice}
 
 The scheme which has been described in this section requires three primitives;
 a cryptographic hash function, a symmetric cipher and an asymmetric cipher
@@ -1419,13 +1446,6 @@ For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is
 a standard, has been around for a long time, and does not have any serious
 security issues as long as it is used correctly.
 % Kilder kilder TODO
-
-%%**************************************%
-%\chapter{Implementation}
-%%**************************************%
-%This chapter describes the implementation of our proof-of-concept client and
-%server. The technologies and software \ac{API}s used will be described, in
-%addition to implementation details that require special attention.
 
 \section{Server Implementation}
 
@@ -1707,7 +1727,7 @@ respectively.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{CapabilitySerialization.pdf}
-    \caption{Serialized form of a Capability}
+    \caption{Serialized form of a capability}
     \label{fig:CAP:serial}
 \end{figure}
 
@@ -1993,7 +2013,7 @@ Figure \ref{fig:KeyringFormat}.  It is encrypted with 128-bit \ac{AES} in
 key strengthening function \ac{PBKDF2} but is based on a password set by the
 user, which is why this key is potentially weaker than the keys for files and
 folders. An attacker will also know some of the plaintext for the keyring. The
-serialization of Capability for a writeable folder will make a plaintext that
+serialization of capability for a writeable folder will make a plaintext that
 starts with ``D:RW:`` followed by 16-byte of Base32-encoded data, another ``:``
 and then 16 more bytes of Base32-encoded data.
 
@@ -2008,7 +2028,7 @@ and then 16 more bytes of Base32-encoded data.
 on the encrypted keyring, one must decrypt the keyring for each password
 guessed. The decryption involves both key derivation with \ac{PBKDF2} and
 decryption with 128-bit \ac{AES} in \ac{ECB} mode. We verified a successful
-attack by our knowledge of the serialization of the Capability. \ac{PBKDF2} is
+attack by our knowledge of the serialization of the capability. \ac{PBKDF2} is
 also a function that can be used with a varying number of iterations, our
 attacks are tested on 500, 1000, 2000 and 4000 iterations.
 
