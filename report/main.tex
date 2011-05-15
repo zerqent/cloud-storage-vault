@@ -165,6 +165,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{AES}{Advanced Encryption Standard}
 \acro{API}{Application Programming Interface}
 \acro{BC}{Bouncy Castle}
+\acro{BFDA}{Brute Force and Dictionary Attack}
 \acro{CA}{Certification Authority}
 \acro{CBC}{Cipher Block Chaining}
 \acro{CDA}{Cluster Dictionary Attack}
@@ -302,7 +303,6 @@ storage environment, and relates closely to the work performed in this thesis.
 
 \section{Scope and Objectives}
 
-% Sum up problem description and concretize the goals.
 There are two main objectives of this thesis. The first objective is to create a
 cryptographic scheme that can provide secure storage of data by using an untrusted
 cloud storage provider. We define secure storage by the following criteria.
@@ -318,15 +318,21 @@ cloud storage provider. We define secure storage by the following criteria.
 \end{enumerate}
 
 The cryptographic scheme should, in addition to the mentioned security, provide
-the possibility of sharing stored data between multiple customers. The security
+the possibility of sharing stored data between multiple cloud storage customers. The security
 requirements above should also be valid for the shared data. The underlying scheme for
-sharing data must be applicable for both enterprise and regular customer
+sharing data should be applicable for both enterprise and regular customer
 scenarios.
 
 The second main objective is to implement the proposed scheme as part of a
 proof of concept application for Android devices. The application should be
-suitable for regular customers, although the underlying cryptographic scheme
-should support an enterprise scenario.
+designed for regular customers, although the underlying cryptographic scheme
+should additionally support enterprise scenarios. It is further important that the server side of the
+application is compatible with as many existing cloud storage providers as possible.
+%This will require the application to only
+%utilize known standard components, such as the HTTP protocol and the TLS channel.
+
+Finally, it is important that the implementation of the cryptographic scheme
+is available as Open Source.
 
 \section{Limitations}
 
@@ -1983,7 +1989,7 @@ time, as will the serialization of folders. For folders we measured:
     \item The time it takes to serialize a folder, with varying amount of data
 \end{enumerate}
 
-\subsection{Error Sources}
+\subsection{Sources of Error}
 The trouble with measuring performance on operations that are relatively quick
 is that they are very vulnerable to noise from the system. The Android system
 comes with a lot of built in services that runs sporadically, which means that
@@ -2033,14 +2039,14 @@ also a function that can be used with a varying number of iterations, our
 attacks are tested on 500, 1000, 2000 and 4000 iterations.
 
 \subsubsection{Implemented Attacks} We created two programs designed to crack
-the keyring password. The first program, named BruteForce, was designed for a
+the keyring password. The first program, named \ac{BFDA}, was designed for a
 single computer while the second program, named \ac{CDA}, was designed to
 perform attacks by a cluster of cooperating computers. Both use dictionary
-attacks, but BruteForce is also capable of a pure brute force attack. The
+attacks, but \ac{BFDA} is also capable of a pure brute force attack. The
 source code and .jar files for both programs can be found in the attached
 CD-ROM. Implementation details are given in Appendix \ref{ap:RI}.
 
-\subsubsection{Configuration} BruteForce requires Java with \ac{JCE} and
+\subsubsection{Configuration} \ac{BFDA} requires Java with \ac{JCE} and
 Jurisdiction Policy files\footnote{The policy files enables Java to use
 stronger encryption than what is allowed by US export law} installed.  It also
 requires Java to be configure to use \ac{BC} as its primary \ac{JCE} provider.
@@ -2049,9 +2055,9 @@ encrypted using BC version 1.34\footnote{BC version 1.34 is used by default in
 Android 2.2.}.\\
 %TODO: Confirm that BC v.1.34 is default!!!1
 
-\noindent \ac{CDA} requires almost the same configuration as the BruteForce
-attack, but for each node in the cluster. Another requirement for
-\ac{CDA} is that the cluster must be configured with Apache Hadoop.\\
+\noindent \ac{CDA} requires almost the same configuration as BFDA, but for each
+node in the cluster. Another requirement for \ac{CDA} is that the cluster must
+be configured with Apache Hadoop.\\
 
 \noindent The steps we performed to set up Java with \ac{BC} and the
 Jurisdifction Policiy files can be seen in \cite{jce+bc}. The guide we used for
@@ -2059,72 +2065,30 @@ using Apache Hadoop in a Cluster using Ubuntu Server can be found at
 \cite{cluster}.
 
 \subsubsection{Hardware Specifications} The hardware specification for the
-attacks with the tool BruteForce we ran is given in Table \ref{tab:hwbf}. The
-\ac{CDA} attack was executed over a cluster of Amazon \ac{EC2} instances. All
+\ac{BFDA} is given in Table \ref{tab:hwbf}. The
+\ac{CDA} was executed over a cluster of Amazon \ac{EC2} instances. All
 instances used were categorized by Amazon as ``high-CPU extra large
 instances``. The hardware specification for a single instance, used in the
 \ac{CDA} attack, is given in Table \ref{tab:hwcda}. We used 20 of these
 instances.
 
-\begin{table}[!h]
-    \centering
-    \caption{Hardware specifications for computer executing BruteForce}
-    \label{tab:hwbf}
-    \begin{tabular}{| l | l |}
-	\hline
-	Product		        &HP Compaq 8100 Elite SFF PC \\
-	\hline
-	CPU		            &Intel(R) Core(TM) i7 CPU 860 @ 2.80GHz\\
-	\hline
-	CPU Architecture    &x86\_64\\
-	\hline
-	RAM		            &4GiB\\
-	\hline
-	OS		            &Ubuntu 10.10 (Maverick Meerkat)\\
-	\hline
-	Kernel Version	    &2.6.35-28-generic\\
-	\hline
-    \end{tabular}
-\end{table}
+\input{tables/hw_bf.tex}
+\input{tables/hw_cda.tex}
 
-\begin{table}[!h]
-    \centering
-    \caption{Hardware specifications for cluster instances executing the
-    \ac{CDA}}
-    \label{tab:hwcda}
-    \begin{tabular}{| l | l |}
-	\hline
-	Instance Type       &High-CPU Extra Large Instance\\
-	\hline
-	CPU		            &Intel(R) Xeon(R) CPU E5410 @ 2.33GHz\\
-	\hline
-	CPU Architecture    &x86\_64\\
-	\hline
-	RAM		            &7GiB\\
-	\hline
-	OS		            &Ubuntu 10.10 (Maverick Meerkat)\\
-	\hline
-	Kernel Version	    &2.6.35-24-virtual\\
-	\hline
-	I/O Performance	    &High (as defined by Amazon)\\
-	\hline
-    \end{tabular}
-\end{table}
-
-\subsubsection{Running BruteForce}
-The command used for executing a brute force attack with the tool BruteForce
+\subsubsection{Running \ac{BFDA}}
+The command used for executing a plain brute force attack with \ac{BFDA}
 can be seen in Listing \ref{lst:bf}. The command for running a dictionary
 attack is seen in Listing \ref{lst:da}.
 
 \lstset{label=lst:bf, caption=Running local brute force attack}
 \begin{lstlisting}
-$ java -jar BruteForce.jar /path/to/keyring  \
+$ java -jar BFDA.jar /path/to/keyring  \
     maximum_password_length number_of_threads
 \end{lstlisting}
 
 \lstset{label=lst:da, caption=Running local dictionary attack}
 \begin{lstlisting}
-$ java -jar BruteForce.jar /path/to/keyring \
+$ java -jar BFDA.jar /path/to/keyring \
     /path/to/dictionary number_of_threads
 \end{lstlisting}
 
@@ -2211,31 +2175,33 @@ and signing is pretty fast for all devices.
 \label{sec:R:BFLK}
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
 by implementing and executing two different programs. The first program, named
-BruteForce, was designed to run on a single computer, and supports both brute force and
+Brute Force and Dictionary Attack (BFDA), was designed to run on a single computer, and supports both brute force and
 dictionary attacks. The second program, named Cluster Dictionary Attack (CDA), was created to run in a
 computational cluster. However, the CDA attack does only support dictionary attacks. The results for
 both programs are given below.
 
-\subsection{BruteForce}
-With BruteForce we executed both a brute force and a dictionary attack to estimate the
+\subsection{Brute Force and Dictionary Attack (BFDA)}
+With BFDA we executed both a brute force and a dictionary attack to estimate the
 amount of passwords we could brute force within a second. The brute force
 and dictionary attacks achieved approximately the same results. However, for
-each measurement, the brute force attack turned out to achieve about 50
+each measurement, the brute force attack turned out to achieve about 30
 passwords more per seconds than the dictionary attack. This is believed to
 exist due to the file reading overhead in the dictionary attack. The results for both
-attacks are illustrated in Figure \ref{fig:bfres}.
+attacks are illustrated in Table \ref{tab:res_bf} and Figure \ref{fig:bfres}.
+
+\input{tables/res_bf.tex}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{bf.png}
 \caption{Results from running brute force and dictionary attacks against a local
-keyring. The histogram shows how many passwords per second we were able to brute
+encrypted keyring. The histogram shows how many passwords per second we were able to brute
 force against different amounts of iterations used in PBKDF2.}
 \label{fig:bfres}
 \end{figure}
 \subsection{Cluster Dictionary Attack (CDA)}
-In the CDA attack, each node of the cluster achieved approximately the same results as a single computer
-running a dictionary attack with BruteForce. We found a small difference where
+When running CDA, each node of the cluster achieved approximately the same results as a single computer
+running a dictionary attack with \ac{BFDA}. We found a small difference where
 the local computer achieved about 100 passwords per second more than each
 instance in the cluster. With respect to difference in CPU power between the
 local computer and a single cluster instance \cite{cpubench}, this is an expected
@@ -2245,7 +2211,7 @@ passwords per second, given PBKDF2 with 1000 iterations.
 %**************************************%
 \chapter{Discussion}
 %**************************************%
-\section{Complexity}
+%\section{Complexity}
 % Hvordan vi lagrer filer
 % Lagring av nøkler
 % Hvordan direktorier fungerer
@@ -2253,19 +2219,29 @@ passwords per second, given PBKDF2 with 1000 iterations.
 
 %Vår løsning VS relatert research og existing solutions
 
-\subsection{Keys}
+%\subsection{Keys}
 %Type of keys, what distribution scheme was chosen
-\subsection{Files}
+%\subsection{Files}
 
-\subsection{Folders}
+%\subsection{Folders}
 
-\subsection{Sharing}
+%\subsection{Sharing}
+
+\section{Cryptographic Scheme}
+%What is/is not used from TAHOE?
+
+\section{Implementation}
+\subsection{Choice of Use Case}
+\subsection{Choice of Key Distribution}
+\label{sec:DI:keydist}
+%Describe possible key distributions schemes
+%Argue why we chose our scheme
+\subsection{Choice of Cryptographic Primitives}
 
 \section{Performance}
 % 1 mappe med 100 filer i, tar ikke mye lenger tid å åpne enn en mappe med 3
 % filer i
-
-\subsection{Compared with Other Solutions}
+\subsection{Sources of Error}
 
 \section{Security}
 % Hvordan angripe?
@@ -2274,11 +2250,6 @@ This thesis is written with the basis that we are hiring storage from an
 untrusted provider, and the security of the application should primarily
 reflect that. With this starting point we can assume that all data stored on
 the server is obtainable by the provider.
-
-\subsection{Key Distribution}
-\label{sec:DI:keydist}
-%Describe possible key distributions schemes
-%Argue why we chose our scheme
 
 \subsection{Passive Attacks}
 % Avhengig av cryptographic primitives
@@ -2314,8 +2285,8 @@ minutes and 39 seconds to check all possible values. By using a cluster of 200
 nodes the CDA attack is able to crack a similar password of length 6 within 14 minutes
 and 42 seconds in worst case.\\
 
-\noindent It is important to notice that both the CDA and BruteForce
-attack were written in Java. With this in mind, it is reasonable to believe
+\noindent It is important to notice that both CDA and \ac{BFDA} programs were
+written in Java. With this in mind, it is reasonable to believe
 that general performance can be improved by using lower-layer
 programming languages, such as C, to implement the attacks. Another way to
 increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.\\
@@ -2345,10 +2316,10 @@ one number.
 \noindent With the password requirements above and with 4000 iterations in PBKDF2, it will
 be extremely hard to perform a plain brute force attack against the local
 keyring. Figure \ref{fig:bfres} indicates that when using PBKDF2 with 4000
-iterations, the local test computer running BruteForce is only able to check
+iterations, the local test computer running BFDA is only able to check
 around 400 passwords per second. Given a cluster of 200 such computers, it will
-take 2683 years on average to brute force a password following the syntax above
-with a length of 9.\\
+take 2683 years on average to brute force a password using the syntax above
+and a length of 9.\\
 
 \noindent Even though the keyring is secured against a plain brute force attack, it is
 still, to a certain degree,  vulnerable to a dictionary attack.
@@ -2370,7 +2341,7 @@ terminal, for instance a mobile phone, a terminal might also be broken into
 without the users knowledge.
 
 
-\section{Omitted Features}
+\section{Additional Features}
 % Ting vi ikke har lagt inn
 % - Cascading deletes? Loops.
 % - Hvem 'eier' en directory
@@ -2381,6 +2352,7 @@ without the users knowledge.
 \chapter{Conclusion and Future Work}
 %**************************************%
 
+\section{Compared with Other Solutions}
 % BibTeX bibliography lives in external file
 \bibliographystyle{unsrtnat}
 \bibliography{references}
@@ -2398,19 +2370,19 @@ without the users knowledge.
 
 This chapter will study implementation details from applications that were
 created, but not a part of the thesis' main topic. Applications considered are
-BruteForce and the Cluster Dictionary Attack (CDA).
+Brute Force and Dictionary Attack (BFDA) and the Cluster Dictionary Attack (CDA).
 
-\section{BruteForce}
+\section{Brute Force and Dictionary Attack}
 
-\emph{BruteForce} includes a plain brute force attack and a dictionary attack against
+\emph{\ac{BFDA}} includes a plain brute force attack and a dictionary attack against
 a users encrypted keyring. Details about the implementation follows.
 
 \subsection{Implementation Details}
 
-BruteForce is written in Java and utilize the \texttt{javax.crypto} library with Bouncy
+\ac{BFDA} is written in Java and utilize the \texttt{javax.crypto} library with Bouncy
 Castle version 1.34 as JCE provider to decrypt the encrypted keyring. The
 Bouncy Castle JCE provider seems to be necessary as Android 2.2 uses it by
-default to encrypt the keyring. To enable PBKDF2 before decryption, BruteForce
+default to encrypt the keyring. To enable PBKDF2 before decryption, \ac{BFDA}
 utilize a PBKDF2 Java library \cite{pbkdf2}.
 
 The program is divided into two functions, named \texttt{bruteForceAttack} and
@@ -2450,7 +2422,7 @@ password is found.
 \section{Cluster Dictionary Attack}
 
 The \ac{CDA} is written in Java, and is built around the same procedure as the
-dictionary attack in BruteForce. However, the difference lays in the cooperation
+dictionary attack in \ac{BFDA}. However, the difference lays in the cooperation
 of multiple computers. To enable a cluster of computers to cooperate, we used
 the following environment.
 
@@ -2503,7 +2475,7 @@ When receiving a key/value pair, the map function first splits the input line
 into an array of words called line. It then creates a given number of
 \texttt{DictionaryThread} threads and serves each thread a sub array of words from the
 line array. Each \texttt{DictionaryThread} will check all of its incoming words similar
-to the \texttt{DictionaryThread} in BruteForce. If the correct password is found, the
+to the \texttt{DictionaryThread} in BFDA. If the correct password is found, the
 password will be written to the \texttt{sysout} folder on the machine where the mapper is
 running.
 
