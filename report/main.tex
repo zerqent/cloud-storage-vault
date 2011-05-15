@@ -400,14 +400,49 @@ possible for us to follow:
 
 \section{Outline}
 
-The work is presented as per the following chapters:
+This thesis is presented as per the following chapters:
 
-\paragraph{Chapter 2} provides background knowledge of the technologies and
-software used.
+\paragraph{Chapter \ref{ch:background} -- Background} provides background
+knowledge of the security services, technologies and software used to form a
+secure cloud storage system. In addition, relevant research and commercial
+solutions are scrutinized.
 
+\paragraph{Chapter \ref{ch:technical} -- Technical Procedure} goes through the
+development process of the scheme and software produced by this thesis. It
+starts with an overview of the architectural properties, followed by the more
+specific cryptographic scheme that fits in with the architecture. Lastly, the
+implementation of the proof of concept system is described.
+
+\paragraph{Chapter \ref{ch:experimental} -- Experimental Procedure} presents
+the measurements and practical experimentation done to look at how the system
+performs performance- and security-wise.
+
+\paragraph{Chapter \ref{ch:results} -- Results} illustrates the findings from
+the experimentation.
+
+\paragraph{Chapter \ref{ch:discussion} -- Discussion} reflects on the specific
+implementation and results from the previous chapters. In addition, associated
+functionality to a secure cloud storage system, that has not been mentioned
+earlier, is presented and discussed.
+
+\paragraph{Chapter \ref{ch:conclusion} -- Conclusion} extracts the most
+important results and findings, and concludes the work done in this thesis.
+Further work that can be applied to the created system and scheme,
+are prioritized and presented as final ideas.
+
+\bigskip
+
+\noindent In addition, included appendices consist of:
+
+\paragraph{Appendix \ref{ap:other} -- Other Relevant Implementations}
+presents the implementations created to carry out the security experiments.
+
+\paragraph{Appendix \ref{ap:attachments} -- Attachments} describes the contents
+of the supplied attachments provided.
 
 %**************************************%
 \chapter{Background}
+\label{ch:background}
 %**************************************%
 
 The basis and underlying technologies for a secure storage service in the
@@ -1015,6 +1050,7 @@ users that has donated capacity to the system.
 
 %**************************************%
 \chapter{Technical Procedure}
+\label{ch:technical}
 %**************************************%
 \section{Architectural Overview}
 %**************************************%
@@ -1949,6 +1985,7 @@ unlinking from.
 
 %**************************************%
 \chapter{Experimental Procedure}
+\label{ch:experimental}
 %**************************************%
 This chapter will explain the experimental procedures performed towards the Cloud
 Storage Vault. It will start by explaining the
@@ -2060,7 +2097,7 @@ single computer while the second program, named \ac{CDA}, was designed to
 perform attacks by a cluster of cooperating computers. Both use dictionary
 attacks, but \ac{BFDA} is also capable of a pure brute force attack. The
 source code and .jar files for both programs can be found in the attached
-CD-ROM. Implementation details are given in Appendix \ref{ap:RI}.
+CD-ROM. Implementation details are given in Appendix \ref{ap:other}.
 
 \subsubsection{Configuration} \ac{BFDA} requires Java with \ac{JCE} and
 Jurisdiction Policy files\footnote{The policy files enables Java to use
@@ -2116,7 +2153,7 @@ the Hadoop master, slaves and their corresponding \ac{HDFS} are shown in
 Listing \ref{lst:hadoop}. The last command enables the existing Hadoop cluster
 to support MapReduce. This is necessary as the \ac{CDA} attack is implemented
 as a map-reduce problem. Details about MapReduce and the implementation of
-\ac{CDA} are given in Appendix \ref{ap:RI}.\\
+\ac{CDA} are given in Appendix \ref{ap:other}.\\
 
 \lstset{language=bash, label=lst:hadoop, caption=Starting Hadoop cluster with HDFS}
 \begin{lstlisting}
@@ -2148,6 +2185,7 @@ $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
 \end{lstlisting}
 %**************************************%
 \chapter{Results}
+\label{ch:results}
 %**************************************%
 \section{Client Performance}
 This section displays the results of the client benchmarking and highlights the
@@ -2226,6 +2264,7 @@ passwords per second, given PBKDF2 with 1000 iterations.
 
 %**************************************%
 \chapter{Discussion}
+\label{ch:discussion}
 %**************************************%
 %\section{Complexity}
 % Hvordan vi lagrer filer
@@ -2366,6 +2405,7 @@ without the users knowledge.
 
 %**************************************%
 \chapter{Conclusion and Future Work}
+\label{ch:conclusion}
 %**************************************%
 
 \section{Compared with Other Solutions}
@@ -2381,8 +2421,8 @@ without the users knowledge.
 %**************************************%
 %**************************************%
 \chapter{Other Relevant Implementations}
+\label{ap:other}
 %**************************************%
-\label{ap:RI}
 
 This chapter will study implementation details from applications that were
 created, but not a part of the thesis' main topic. Applications considered are
@@ -2510,7 +2550,10 @@ In this occasion, we have created a Bash script, named \texttt{dictmaker.sh},
 that changes a regular dictionary into an $N$ words-per-line dictionary. The
 script can be found on the attached CD-ROM.
 
+%**************************************%
 \chapter{Attachments}
+\label{ap:attachments}
+%**************************************%
 
 This thesis comes with two available attachments -- one digitally uploaded to
 the DAIM system\footnote{\url{http://daim.idi.ntnu.no/}}, and one physical DVD.
