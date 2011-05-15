@@ -1206,11 +1206,11 @@ in Figure \ref{fig:AS:readonly}.
     \label{fig:AS:readonly}
 \end{figure}
 
-\subsection{Implications of User Equipment}
+\subsection{Constraints}
 
-The software should be able to run on restricted devices, i.e. equipment with
-limited memory and \ac{CPU} power, often in addition to constraints on power
-and network utilization.
+The software using this architecture should be able to run on restricted
+devices, i.e. equipment with limited memory and \ac{CPU} power, often in
+addition to constraints on power and network utilization.
 
 This has implications for the design of the software, since all cryptographic
 operations has to be performed client-side. These considerations will be
@@ -1236,7 +1236,7 @@ cryptographic solutions adapted. The cryptographic solutions are revealed in
 terms of file and directory operations performed by the application. The
 chapter ends with a description of a user's encrypted keyring.
 
-\subsection{Security Concept}
+\subsection{Security Concepts}
 
 The basic security concept of the application, is to keep the files of a user
 confidential to a third-party storage provider. To solve this, the application
