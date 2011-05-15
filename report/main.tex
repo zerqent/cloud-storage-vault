@@ -196,6 +196,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{MAC}{Message Autentication Code}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
+\acro{OS}{Operating System}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
 \acro{PaaS}{Platform as a Service}
 \acro{PasS}{Privacy as a Service}
@@ -220,8 +221,10 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{TLS}{Transport Layer Security}
 \acro{TPM}{Trusted Platform Module}
 \acro{TTP}{Trusted Third Party}
+\acro{UMTS}{Universal Mobile Telecommunications System}
 \acro{URI}{Uniform Resource Indetifier}
 \acro{URL}{Uniform Resource Locator}
+\acro{USB}{Universal Serial Bus}
 \acro{VM}{Virtual Machine}
 \acro{WSGI}{Web Server Gateway Interface}
 \end{acronym}
@@ -1052,6 +1055,12 @@ users that has donated capacity to the system.
 \chapter{Technical Procedure}
 \label{ch:technical}
 %**************************************%
+
+% TODO: Complete this
+
+This chapter will describe the steps taken for creating the system we name
+\emph{Cloud Storage Vault}.
+
 \section{Architectural Overview}
 %**************************************%
 \label{chap:AS}
@@ -1987,47 +1996,52 @@ unlinking from.
 \chapter{Experimental Procedure}
 \label{ch:experimental}
 %**************************************%
-This chapter will explain the experimental procedures performed towards the Cloud
-Storage Vault. It will start by explaining the
-procedures taken to measure the application's performance. The Performance is
-further checked against efficiency of similar existing applications.
-The chapter will complete by further explaining the experimental procedures
-taken to measure some aspects of the application's security.
+
+This chapter will explain the experimental procedures performed on the Cloud
+Storage Vault. It will start by explaining the measurements on the performance
+of the application. The performance is further compared to similar existing
+network applications. Finally, the chapter will go through the experimental
+procedures of measuring some aspects of the security of the system.
 
 \section{Performance}
-We have tested the application on two Android phones, a HTC Desire and a HTC
-Hero. We have also tested the Java libraries on desktop computer. The
-specifications for HTC Desire can be seen in Table \ref{tbl:device:desire},
-for HTC Hero in Table \ref{tbl:device:hero} and the computer in Table
-\ref{tbl:device:computer}.
+
+We have tested the client part of the application on two Android phones, an HTC
+Desire and an HTC Hero. We have also tested the Java libraries on a
+desktop computer. The specifications for HTC Desire can be seen in Table
+\ref{tbl:device:desire}, for HTC Hero in Table \ref{tbl:device:hero}, and the
+desktop computer in Table \ref{tbl:device:computer}.
 
 \input{tables/exp_desire.tex}
 \input{tables/exp_hero.tex}
 \input{tables/exp_computer.tex}
 
 \subsection{Eliminating Bottlenecks on Android Devices}
-On the Android devices we identify three possible bottlenecks that we might be
-able to control: The Network, our application and the memory card. The mobile
-phones will normally obtain their network connection through a wireless
-protocol, normally 3G, EDGE or WLAN. While these protocols works just fine,
-form a performance standpoint we want to have a fast and stable connection. Our
-solution was therefore to connect the Android devices to the test computer, and
-use the computers network.
 
-The other bottleneck might be the memory card. The class of a memory will
-identify the lowest speed that the card might give on reads. The class number X
-represents this guarantee in y MB, so a class 2 card guarantees 2 MB/s. There
-are however the possibility of the card performing significantly better than
-what the class indicates.
+On the Android devices, we identify three possible bottlenecks that we might be
+able to control: The \emph{network}, our \emph{application} by itself and the
+\emph{memory card}.
+
+The mobile phones will normally obtain their network connection through a
+wireless protocol that varies naturally in throughput, e.g. \ac{UMTS}. While
+these protocols work just fine, from a measurement standpoint, we want to have
+a fast and stable connection. Our solution was therefore to connect the Android
+devices to the test computer, and use the computers network through the
+\ac{USB} interface.
+
+Another bottleneck, might be the memory card. The \emph{class} of a memory card
+will identify the least sustained write speeds obtainable from the card in a
+fragmented state \cite{sdcard}. The class number $X$ represents this guarantee
+in $X$ MB, so a Class 2 card guarantees a speed of 2 MB/s. However, there are
+the possibility of the card performing significantly better than what the class
+number indicates.
 
 \subsection{What is Measured}
-% Upload and Download of files (speed/bandwidth). Wget speed, folder creation
-% etc
-% TODO
-For \textbf{files} we measure the bandwidth the client uses when uploading and
-downloading a file. We do this by measuring the network traffic on the
-server, and record this. For comparison we also deactivated hashing and
-encryption in the pipeline and recorded the network traffic.
+
+For \emph{files}, we measure the bandwidth the client uses when uploading and
+downloading a file. This is accomplished by measuring the network traffic on
+the server, and record this. For comparison, we also deactivated hashing and
+encryption in the processing pipeline on the client, and recorded the network
+traffic.
 
 Folders are relatively small in size, so the network should not be a
 bottleneck. However the different cryptographic operations might take some
