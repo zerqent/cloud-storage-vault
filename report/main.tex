@@ -2225,15 +2225,18 @@ $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
 \chapter{Results}
 \label{ch:results}
 %**************************************%
+
 \section{Client Performance}
+
 This section displays the results of the client benchmarking and highlights the
 most important results.
 
-\subsection{Files} The following results shows the network speed obtained when
-uploading and downloading files. Table \ref{tbl:files:encrypted} shows the
-speed when using the unmodified client, while Table \ref{tbl:files:unencrypted}
-shows the speed obtained when using the same client but with encryption and
-hashing disabled.
+\subsection{Files}
+
+The following results shows the network speed obtained when uploading and
+downloading files. Table \ref{tbl:files:encrypted} shows the speed when using
+the unmodified client, while Table \ref{tbl:files:unencrypted} shows the speed
+obtained when using the same client but with encryption and hashing disabled.
 
 % Kanskje en tabell her, som viser søyler med ukryptert bak og kryptert forann?
 \input{tables/performance_files.tex}
@@ -2244,8 +2247,10 @@ for uploads than downloads, and that this is not the case for the computer. We
 also observe that the speed with encryption and hashing enabled is severely
 higher for all three devices.
 
-\subsection{Folders} Table \ref{tbl:folder:createblank} shows the average time
-it takes to create an empty folder on the different devices. The Tables
+\subsection{Folders}
+
+Table \ref{tbl:folder:createblank} shows the average time it takes to create an
+empty folder on the different devices. The Tables
 \ref{tbl:folder:serializefolder} and \ref{tbl:folder:encryptsign} shows the
 time it takes to serialize and encrypt and sign the folder respectively. These
 two actions are what has to be performed every time a folder is changed, while
@@ -2265,40 +2270,48 @@ and signing is pretty fast for all devices.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
+
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
 by implementing and executing two different programs. The first program, named
-Brute Force and Dictionary Attack (BFDA), was designed to run on a single computer, and supports both brute force and
-dictionary attacks. The second program, named Cluster Dictionary Attack (CDA), was created to run in a
-computational cluster. However, the CDA attack does only support dictionary attacks. The results for
-both programs are given below.
+Brute Force and Dictionary Attack (BFDA), was designed to run on a single
+computer, and supports both brute force and dictionary attacks. The second
+program, named Cluster Dictionary Attack (CDA), was created to run in a
+computational cluster. However, the CDA attack does only support dictionary
+attacks. The results for both programs are given below.
 
 \subsection{Brute Force and Dictionary Attack (BFDA)}
-With BFDA we executed both a brute force and a dictionary attack to estimate the
-amount of passwords we could brute force within a second. The brute force
+
+With BFDA we executed both a brute force and a dictionary attack to estimate
+the amount of passwords we could brute force within a second. The brute force
 and dictionary attacks achieved approximately the same results. However, for
 each measurement, the brute force attack turned out to achieve about 30
 passwords more per seconds than the dictionary attack. This is believed to
-exist due to the file reading overhead in the dictionary attack. The results for both
-attacks are illustrated in Table \ref{tab:res_bf} and Figure \ref{fig:bfres}.
+exist due to the file reading overhead in the dictionary attack. The results
+for both attacks are illustrated in Table \ref{tab:res_bf} and Figure
+\ref{fig:bfres}.
 
 \input{tables/res_bf.tex}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{bf.png}
+% TODO: Cut this down!!
 \caption{Results from running brute force and dictionary attacks against a local
 encrypted keyring. The histogram shows how many passwords per second we were able to brute
 force against different amounts of iterations used in PBKDF2.}
 \label{fig:bfres}
 \end{figure}
+
 \subsection{Cluster Dictionary Attack (CDA)}
-When running CDA, each node of the cluster achieved approximately the same results as a single computer
-running a dictionary attack with \ac{BFDA}. We found a small difference where
-the local computer achieved about 100 passwords per second more than each
-instance in the cluster. With respect to difference in CPU power between the
-local computer and a single cluster instance \cite{cpubench}, this is an expected
-result. With 20 nodes in the cluster we were able to brute force around 35 000
-passwords per second, given PBKDF2 with 1000 iterations.
+
+When running CDA, each node of the cluster achieved approximately the same
+results as a single computer running a dictionary attack with \ac{BFDA}. We
+found a small difference where the local computer achieved about 100 passwords
+per second more than each instance in the cluster. With respect to difference
+in CPU power between the local computer and a single cluster instance
+\cite{cpubench}, this is an expected result. With 20 nodes in the cluster we
+were able to brute force around 35 000 passwords per second, given
+\emph{PBKDF2} with 1000 iterations.
 
 %**************************************%
 \chapter{Discussion}
@@ -2365,12 +2378,12 @@ files are effectively compromised.
 The confidentiality of the root folder can be breached by brute forcing a user's
 locally stored keyring. This was experienced in Section \ref{sec:BFLK}. From the
 results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
-that the choice of iterations in PBKDF2 were conclusive to the efficiency of a
+that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
 brute force attack against the local keyring. By doubling the number of
-iterations in PBKDF2, the efficiency of a brute force attack would decrease by
-half of it's value. The PBKDF2 standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
+iterations in \emph{PBKDF2}, the efficiency of a brute force attack would decrease by
+half of it's value. The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
 recommends the minimum number of iterations to be 1000. With 1000 iterations in
-PBKDF2 we were able to achieve a brute force efficiency around 1800 passwords
+\emph{PBKDF2} we were able to achieve a brute force efficiency around 1800 passwords
 per second for a single computer, and 35 000 passwords per second running the
 CDA attack on 20 Amazon EC2 high-CPU extra large instances. Given a password
 with length 5 and containing only small letters, the CDA attack will use 5
@@ -2396,7 +2409,7 @@ this in mind, we should consider that our own keyring can be subject to a lot
 more efficient brute force attacks compared to our own findings.\\
 
 \noindent To reduce vulnerability from plain brute force attacks, we decided to
-use 4000 iterations in PBKDF2. In addition, we designed the Cloud Storage Vault
+use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
 to force users to utilize more advanced and sophisticated passwords. Password
 requirements for the Cloud Storage Vault are given below:
 
@@ -2406,9 +2419,10 @@ requirements for the Cloud Storage Vault are given below:
 one number.
 \end{itemize}
 
-\noindent With the password requirements above and with 4000 iterations in PBKDF2, it will
+\noindent With the password requirements above and with 4000 iterations in
+\emph{PBKDF2}, it will
 be extremely hard to perform a plain brute force attack against the local
-keyring. Figure \ref{fig:bfres} indicates that when using PBKDF2 with 4000
+keyring. Figure \ref{fig:bfres} indicates that when using \emph{PBKDF2} with 4000
 iterations, the local test computer running BFDA is only able to check
 around 400 passwords per second. Given a cluster of 200 such computers, it will
 take 2683 years on average to brute force a password using the syntax above
@@ -2476,8 +2490,8 @@ a users encrypted keyring. Details about the implementation follows.
 \ac{BFDA} is written in Java and utilize the \texttt{javax.crypto} library with Bouncy
 Castle version 1.34 as JCE provider to decrypt the encrypted keyring. The
 Bouncy Castle JCE provider seems to be necessary as Android 2.2 uses it by
-default to encrypt the keyring. To enable PBKDF2 before decryption, \ac{BFDA}
-utilize a PBKDF2 Java library \cite{pbkdf2}.
+default to encrypt the keyring. To enable \emph{PBKDF2} before decryption, \ac{BFDA}
+utilize a \emph{PBKDF2} Java library \cite{pbkdf2}.
 
 The program is divided into two functions, named \texttt{bruteForceAttack} and
 \texttt{dictionaryAttack} that correspondingly executes a brute force and
@@ -2497,7 +2511,7 @@ of a given length onto a stack of words. The length of the words to push are
 given by its integer argument. The whole attack is based on letting the main
 thread create and push words onto a stack, while the \texttt{BruteForceThreads} are
 pulling words from the stack. When a word is pulled from the stack, it is
-subject to PBKDF2, where the result is used to decrypt the ciphertext. If
+subject to \emph{PBKDF2}, where the result is used to decrypt the ciphertext. If
 decryption results in a given plaintext, the password is found.
 
 The \texttt{dictionaryAttack} function is shown in Listing \ref{lst:dafunc}.
@@ -2509,7 +2523,7 @@ function]{listings/dictionaryAttack.java}
 \texttt{BufferedReader}. It then starts a given number of
 \texttt{DictionaryThreads}. The \texttt{DictionaryThreads} will read from the
 \texttt{BufferedReader} in a synchronized way. When a word is read from a
-\texttt{DictionaryThread} it will be subject to PBKDF2, where the result is
+\texttt{DictionaryThread} it will be subject to \emph{PBKDF2}, where the result is
 used to decrypt the ciphertext. If decryption results in a given plaintext, the
 password is found.
 
