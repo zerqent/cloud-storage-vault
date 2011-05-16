@@ -164,7 +164,6 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ACL}{Access Control List}
 \acro{AES}{Advanced Encryption Standard}
 \acro{API}{Application Programming Interface}
-\acro{BC}{Bouncy Castle}
 \acro{BFDA}{Brute Force and Dictionary Attack}
 \acro{CA}{Certification Authority}
 \acro{CBC}{Cipher Block Chaining}
@@ -2109,79 +2108,91 @@ start with \texttt{D:RW:}, followed by 16-byte of Base32-encoded data, another
 
 To perform a brute force or dictionary attack on the encrypted keyring, one
 must decrypt the keyring for each password guessed. The decryption involves
-both key derivation with \ac{PBKDF2} and decryption with 128-bit \ac{AES} in
-\ac{ECB} mode. We verified a successful attack by our knowledge of the
-serialization of the capability. \ac{PBKDF2} is also a function that can be
-used with a varying number of iterations, our attacks are tested on 500, 1000,
-2000 and 4000 iterations.
+both key derivation with \ac{PBKDF2}, and decryption with 128-bit \ac{AES} in
+\ac{ECB} mode. The \ac{PBKDF2} is a function that can be used with a
+varying number of iterations, with the purpose of having a customizable way for
+users to increase key strenght. Our attacks are tested on 500, 1000, 2000 and
+4000 iterations.
+
+%We verified a successful attack based on our knowledge of the
+%serialization of the capability.
 
 \subsubsection{Implemented Attacks}
 
 We created two programs designed to crack the keyring password. The first
-program, named \ac{BFDA}, was designed for a single computer while the second
-program, named \ac{CDA}, was designed to perform attacks by a cluster of
-cooperating computers. Both use dictionary attacks, but \ac{BFDA} is also
-capable of a pure brute force attack. The source code and .jar files for both
-programs can be found in the attached CD-ROM. Implementation details are given
-in Appendix \ref{ap:other}.
+program, named \ac{BFDA}, was designed for a single computer, while the second
+program, named \ac{CDA}, was created to perform attacks by a cluster of
+cooperating computers.
 
-\subsubsection{Configuration} \ac{BFDA} requires Java with \ac{JCE} and
-Jurisdiction Policy files\footnote{The policy files enables Java to use
-stronger encryption than what is allowed by US export law} installed.  It also
-requires Java to be configure to use \ac{BC} as its primary \ac{JCE} provider.
-The policy files and \ac{BC} provider are required because the keyring is
-encrypted using BC version 1.34\footnote{BC version 1.34 is used by default in
-Android 2.2.}.\\
-%TODO: Confirm that BC v.1.34 is default!!!1
+Both use dictionary attacks, but the firstly mentioned is also capable of a
+pure brute force attack. The source code and compiled \texttt{.jar} files for
+both programs can be found in the attached CD-ROM. Implementation details are
+given in Appendix \ref{ap:other}.
 
-\noindent \ac{CDA} requires almost the same configuration as BFDA, but for each
-node in the cluster. Another requirement for \ac{CDA} is that the cluster must
-be configured with Apache Hadoop.\\
+\subsubsection{Configuration} 
 
-\noindent The steps we performed to set up Java with \ac{BC} and the
-Jurisdifction Policiy files can be seen in \cite{jce+bc}. The guide we used for
-using Apache Hadoop in a Cluster using Ubuntu Server can be found at
-\cite{cluster}.
+\ac{BFDA} requires Java with the \ac{JCE} and Jurisdiction Policy
+files\footnote{Policy files enables Java to use stronger encryption than what
+is allowed by US export law.} installed. It also depends on Java being
+configured to use Bouncy Castle as its primary \ac{JCE} provider. These
+prerequisites are required because the keyring is encrypted using Bouncy
+Castle, as this is used by default on the Android platform.
 
-\subsubsection{Hardware Specifications} The hardware specification for the
-\ac{BFDA} is given in Table \ref{tab:hwbf}. The
-\ac{CDA} was executed over a cluster of Amazon \ac{EC2} instances. All
-instances used were categorized by Amazon as ``high-CPU extra large
-instances``. The hardware specification for a single instance, used in the
-\ac{CDA} attack, is given in Table \ref{tab:hwcda}. We used 20 of these
-instances.
+\ac{CDA} requires almost the same configuration as \ac{BFDA}, but naturally for
+each node in the cluster. Additionally, the cluster must be configured with
+Apache Hadoop.
+
+The steps we performed to set up Java with Bouncy Castle and the Jurisdiction
+Policy files, are as described by \citet{jce+bc}, and the guide we used for
+configuring Apache Hadoop in a Cluster using Ubuntu Server, are made by
+\citet{cluster}.
+
+\subsubsection{Hardware Specifications}
+
+The hardware specifications for the \acl{BFDA} are given in Table
+\ref{tab:hwbf}. The \acl{CDA} was executed over a cluster of Amazon \ac{EC2}
+instances, of type \emph{High-CPU Extra Large Instances}. The hardware
+specification for a single instance, used in the cluster attack, is given in
+Table \ref{tab:hwcda}.
 
 \input{tables/hw_bf.tex}
 \input{tables/hw_cda.tex}
 
 \subsubsection{Running \ac{BFDA}}
-The command used for executing a plain brute force attack with \ac{BFDA}
-can be seen in Listing \ref{lst:bf}. The command for running a dictionary
-attack is seen in Listing \ref{lst:da}.
 
-\lstset{label=lst:bf, caption=Running local brute force attack}
+The command used for executing a plain brute force attack with \ac{BFDA} can be
+seen in Listing \ref{lst:bf}. The command for running a local dictionary attack
+is seen in Listing \ref{lst:da}.
+
+\lstset{label=lst:bf, caption=Running Local Brute Force Attack}
 \begin{lstlisting}
 $ java -jar BFDA.jar /path/to/keyring  \
     maximum_password_length number_of_threads
 \end{lstlisting}
 
-\lstset{label=lst:da, caption=Running local dictionary attack}
+\lstset{label=lst:da, caption=Running Local Dictionary Attack}
 \begin{lstlisting}
 $ java -jar BFDA.jar /path/to/keyring \
     /path/to/dictionary number_of_threads
 \end{lstlisting}
 
-\subsubsection{Cloud Dictionary Attack with \ac{CDA}} The attack using \ac{CDA}
-was carried out over 20 Amazon EC2 ``high-CPU extra large instances``. One
-instance was configured as both a Hadoop master and slave node, while the 19
-other instances were configured only as slaves. The commands executed to start
-the Hadoop master, slaves and their corresponding \ac{HDFS} are shown in
-Listing \ref{lst:hadoop}. The last command enables the existing Hadoop cluster
-to support MapReduce. This is necessary as the \ac{CDA} attack is implemented
-as a map-reduce problem. Details about MapReduce and the implementation of
-\ac{CDA} are given in Appendix \ref{ap:other}.\\
+\subsubsection{Cloud Dictionary Attack with \ac{CDA}}
 
-\lstset{language=bash, label=lst:hadoop, caption=Starting Hadoop cluster with HDFS}
+The cluster attack was carried out by 20 of the previously specified Amazon EC2
+nodes. One instance was configured as both a Hadoop \emph{master} and
+\emph{slave} node, while the 19 other instances were configured as slaves.
+This was done to utilize as much as possible out of the available nodes, as the
+master node performs quite a bit less computational work than the slave nodes.
+
+Multiple scripts are needed to initiate the distributed attack.
+The commands executed to start the Hadoop master and slaves, and mount up the
+shared, distributed file system \ac{HDFS}, are shown in Listing
+\ref{lst:hadoop}. The final command enables the Hadoop cluster to support
+\emph{MapReduce}. This is necessary as the \ac{CDA} attack is implemented as a
+map-reduce problem. Details about Apache Hadoop, MapReduce and the
+implementation of \ac{CDA}, are given in Appendix \ref{ap:other}.
+
+\lstset{language=bash, label=lst:hadoop, caption=Starting Hadoop Cluster with HDFS}
 \begin{lstlisting}
 # Start HDFS and initialize master and slave nodes
 $ /path/to/Hadoop/bin/start-dfs.sh
@@ -2190,25 +2201,26 @@ $ /path/to/Hadoop/bin/start-dfs.sh
 $ /path/to/Hadoop/bin/start-mapred.sh
 \end{lstlisting}
 
-\noindent The last requirement, before executing the attack, is to copy the
+The last requirement, before executing the attack, is to copy the
 desired dictionary file and keyring into the \ac{HDFS}. Copying files from the
 master node to the \ac{HDFS} is done with the command shown in Listing
 \ref{lst:cpHDFS}. The attack can then be started on the master node with the
 command shown in Listing \ref{lst:CDA}.
 
-\lstset{language=bash, label=lst:cpHDFS, caption=Copying files into HDFS}
+\lstset{language=bash, label=lst:cpHDFS, caption=Copying Files Into HDFS}
 \begin{lstlisting}
 $ /path/to/Hadoop/bin/hadoop dfs -put /path/to/file \
     /path/to/file/in/HDFS
 \end{lstlisting}
 
-\lstset{language=bash, label=lst:CDA, caption=Executing the CDA attack}
+\lstset{language=bash, label=lst:CDA, caption=Executing the CDA Attack}
 \begin{lstlisting}
 $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
     /HDFSpath/to/dictionary /HDFSpath/to/output/file \
     /HDFSpath/to/keyring number_of_slaves \
     number_of_threads_per_slave
 \end{lstlisting}
+
 %**************************************%
 \chapter{Results}
 \label{ch:results}
