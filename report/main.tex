@@ -1058,8 +1058,17 @@ users that has donated capacity to the system.
 
 % TODO: Complete this
 
-This chapter will describe the steps taken for creating the system we name
-\emph{Cloud Storage Vault}.
+This chapter will describe a proposed architectural and cryptographic scheme
+for providing secure storage of data on a remote untrusted system. It will
+further explain the procedures carried out to create a proof of concept
+application, that implements the proposed architectural and cryptographic
+scheme. The application, named \emph{Cloud Storage Vault}, is implemented as an
+Android application, and consists of a separate server and client functionality.
+
+The chapter will start by giving an overview of the proposed architectural
+scheme followed by a more detailed description of the corresponding
+cryptographic scheme. The chapter will end by describing the implementation
+details for both the server and client side functionality of the Cloud Storage Vault.
 
 \section{Architectural Overview}
 %**************************************%
@@ -1289,19 +1298,18 @@ brought up throughout the further description of the software.
 \label{chap:CS} 
 
 This section elaborates on the cryptographic solutions applied to the
-architectural scheme in Chapter \ref{chap:AS}. We take a closer look at how
-confidentiality, integrity and authentication can be integrated into the
-proposed architecture.
+architectural scheme in Section \ref{chap:AS}. It will take a closer look at how
+confidentiality and integrity can be integrated into the proposed architecture.
 
 %A fundamental scheme for key distribution is needed to realize the desired
 %security features, hence an appropriate solution for key distribution will
 %also be given.
 
-The first section is a brief introduction explaining the basic security
-concepts used by the application. Following is a detailed description of the
-cryptographic solutions adapted. The cryptographic solutions are revealed in
-terms of file and directory operations performed by the application. The
-chapter ends with a description of a user's encrypted keyring.
+The section will start with a brief introduction explaining the fundamental security
+concepts utilized by the cryptographic architecture. The cryptographic
+architecture is further described in terms of file and directory operations. It
+is important to mention that some of the cryptographic operations are
+taken from key concepts in the TAHOE LAFS \cite{cite}.
 
 \subsection{Security Concepts}
 
@@ -2300,7 +2308,15 @@ passwords per second, given PBKDF2 with 1000 iterations.
 %What is/is not used from TAHOE?
 
 \section{Implementation}
+This section will discuss and deal with the different choices taken to fulfill
+the implementation of the cryptographic scheme. We will start by discussing the
+use case we chose to implement. We will further analyse our choice of key
+distribution and look at alternative solutions. The section will end by
+discussing the most important cryptographic primitives chosen and utilized in our
+implementation.
+
 \subsection{Choice of Use Case}
+
 \subsection{Choice of Key Distribution}
 \label{sec:DI:keydist}
 %Describe possible key distributions schemes
@@ -2385,7 +2401,7 @@ one number.
 \noindent With the password requirements above and with 4000 iterations in PBKDF2, it will
 be extremely hard to perform a plain brute force attack against the local
 keyring. Figure \ref{fig:bfres} indicates that when using PBKDF2 with 4000
-iterations, the local test computer running BFDA is only able to check
+iterations, the local test computer running \ac{BFDA} is only able to check
 around 400 passwords per second. Given a cluster of 200 such computers, it will
 take 2683 years on average to brute force a password using the syntax above
 and a length of 9.\\
