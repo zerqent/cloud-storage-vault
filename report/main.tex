@@ -1687,8 +1687,9 @@ database.
 \subsubsection{\acs{ACL} functionality}
 
 The only \ac{ACL} functionality implemented, is the server-side verification
-that a client has proper access to overwrite a file, e.g. when a client wishes to
-update a folder with new contents. We call this \textbf{Write-Enabler Verification}.
+that a client has proper access to overwrite a file, e.g. when a client wishes
+to update a folder with new contents. We call this \textbf{Write-Enabler
+Verification}.
 
 When a client first uploads a new folder, it also provides a
 \emph{Write-Enabler Key}, which the server adds to the database along with the
@@ -1701,10 +1702,7 @@ server replies with an error code if the client in addition does not provide a
 valid Write-Enabler Key.
 
 \section{Client Implementation - Android}
-% Java/Android/Dalvik/JCE/Commons HTTPClient
-% Security vs. Usability - Rationale for GUI
-% MVC? V=Android GUI
-%
+
 The \ac{PoC} client we have implemented, is made for devices using the Android
 operating system, which is based on Linux. The \ac{SDK} for making Android
 applications, is essentially a somewhat modified version of Java.
@@ -1721,23 +1719,29 @@ software performs well on a constrained device, it will almost certainly also
 have good performance on any faster device as well.
 
 \subsection{Environment}
-The \ac{PoC} client was made on the Android platform in the Java programming
-language, together with a set of frameworks. The rationale for these are as
-follows.
+
+The \ac{PoC} client was made on the Android platform and written in the Java
+programming language, together with a set of frameworks. The rationale for
+these are as follows.
 
 \paragraph{Android} The Android operating system is made by Google, and is most
-commonly found on mobile phones and tablets. The platform choice of Android was done
-based on hardware availability and familiarity with developing on the
+commonly found on mobile phones and tablets. The platform choice of Android was
+done based on hardware availability and familiarity with developing on the
 platform and the programming language (Java).
 
 \paragraph{Java} Java is a high-level, object-oriented programming language.
 Applications written in Java runs in a \ac{JVM}, which implies that a Java
-application can run on almost any device which has a \ac{JVM}. The \ac{JVM} on
-Android is called Dalvik.
+application can run on almost any device which has a \ac{JVM}.
+
+The ``\ac{JVM}'' on Android is called \emph{Dalvik}, but it is strictly not a
+\acl{JVM} as the bytecode on which it operates is not Java bytecode.
+After the regular Java compiler has created the \texttt{.class} files, a Dalvik
+tool transforms them to another class file format called \texttt{.dex}
+\cite{dalvik}.
 
 \paragraph{HttpComponents} Apache HttpComponents are a set of libraries for
 \ac{HTTP} transport in Java. The part used in our client is called HttpClient.
-Android incorporates parts of this client in its native \ac{JVM}. The use of
+Android incorporates parts of this client in Dalvik. The use of
 this library adheres to the \ac{DRY} principles.
 
 \paragraph{\ac{JCA}} \ac{JCA} is an architecture for doing cryptographic
