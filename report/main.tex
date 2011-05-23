@@ -2392,15 +2392,17 @@ untrusted provider, and the security of the application should primarily
 reflect that. With this starting point we can assume that all data stored on
 the server is obtainable by the provider.
 
-\subsection{Passive Attacks}
-% Avhengig av cryptographic primitives
-% Confidentiality den største utfordringen
-% Her trengs det gode kilder
+This section will discuss the general security provided by the Cloud Storage vault. The
+security of the Cloud Storage Vault is divided into security of the cryptographic
+scheme and security of the user client.
+
+\subsection{Security of the Cryptographic Scheme}
+%TODO: Write this subsection
 The provider will have access to all data on the server, and also know what
 data stored is part of files and what is part of folders. The confidentiality
 of both files and folders relies primarily on the symmetric cipher used to
 encrypt the data. But for folders one can obtain this key if one manages to
-obtain the asymmetric private key belonging to the folder. In other words a
+obtain the asymmetric private key belonging to the folder. In other words, a
 folder is attackable both trough the asymmetric and the symmetric cipher used.
 If the confidentiality of a folder is breached it will additionally enable the
 attacker to decrypt all of the corresponding sub-folders and files. In contrast,
@@ -2409,7 +2411,51 @@ also important to note that users will use a root folder which any other file
 or folder relies on, if the confidentiality of this folder is breached, all
 files are effectively compromised.
 
-\subsubsection{Brute Force Local Keyring}
+\subsection{Client Security}
+Given enough users, sooner or later, there will be a user who looses his client.
+Additionally, a user's client might also be broken into without the user's knowledge.
+
+If a user looses his client and the client is logged on to the user's Cloud
+Storage Vault, anyone who finds the client can get access to the user's private
+files and folders. While logged on to the service, it is also possible for an
+educated attacker to reveal the user's server access password as well as the
+password to decrypt the locally stored keyring. The attacker will then have access to the
+user's files and folders at any time. The attacker can achieve the passwords by
+scanning the client's memory while it is logged into the Cloud Storage Vault.
+Although this is a severe security breach, it can easily be avoided by an
+additional mechanism to the implementation. The Cloud Storage Vault can simply
+flush the password values right after a successful login session. 
+
+Even though this prevents disclosure of critical access data, it does not prevent
+a logged in attacker from disclosing the user's encrypted files and folders.
+However, to solve this problem the Cloud Storage Vault should implement a
+timeout mechanism for inactive users. If a user has been inactive for a given
+amount of time, the user should be logged out of the application. In this way,
+the application will reduce the consequence of losing a user client. It is
+important that the timeout is set to a value between what is acceptable by users
+and what can be defined as secure enough\footnote{Users would not like to write
+their password for every 30th second. Additionally, a timeout value of 30 minutes is
+not secure, as it is long enough for someone to posses the user's client.}.
+
+As mentioned earlier, an attacker can also break into a user's client, using a backdoor,
+trojan horse etc.. Depending on the attack, a worst case scenario would
+enable the attacker to obtain root access on a user client. With root access,
+the attacker is given complete control and privileges over the client and can access whatever
+data resource desired within the client. With this in mind, the attacker can read,
+write and execute every file that has been downloaded by the Cloud Storage
+Vault. 
+
+The attacker can additionally utilize software to read from the client's
+memory.
+%TIMEOUT VALUE
+%SLETTE FILER PÅ DISK (TMPFS)
+
+\subsubsection{Security of Encrypted Keyring}
+In both cases above, with a broken or lost user client, an attacker can
+copy/achieve the encrypted keyring stored by the Cloud Storage Vault.
+%TODO: write intro
+
+\paragraph{Brute Forcing the Keyring}
 The confidentiality of the root folder can be breached by brute forcing a user's
 locally stored keyring. This was experienced in Section \ref{sec:BFLK}. From the
 results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
@@ -2464,23 +2510,15 @@ take 2683 years on average to brute force a password using the syntax above
 and a length of 9.\\
 
 \noindent Even though the keyring is secured against a plain brute force attack, it is
-still, to a certain degree,  vulnerable to a dictionary attack.
+still vulnerable to slow dictionary attacks. To completely
+avoid brute force and dictionary attacks against the keyring, the most efficient
+and preventive action would be to simply ensure that the encrypted keyring is
+only accessible by its corresponding user.
 
-\subsubsection{RSA attacks}
-
-\subsubsection{AES attacks}
-
-\subsection{Active attacks}
+%\subsection{Active attacks}
 % MITM - Dersom vi f.eks. skrur av SSL-laget
 % Innside attacker - hos Amazon
 
-
-\subsection{Terminal security}
-% What happens if someone steals a terminal
-% OR install some backdoor/torjan etc?
-Given enough users, at some point there will be a users who looses his
-terminal, for instance a mobile phone, a terminal might also be broken into
-without the users knowledge.
 
 
 \section{Additional Features}
