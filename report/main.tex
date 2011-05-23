@@ -2364,13 +2364,35 @@ were able to brute force around 35 000 passwords per second, given
 \section{Cryptographic Scheme}
 %What is/is not used from TAHOE?
 
+In this section, we will go through the cryptographic scheme produced and
+described in Section \ref{ch:CS}. The influence of Tahoe-\ac{LAFS} is described
+in detail, followed by subsections scrutinizing how the scheme does or does not
+support various features and functionality.
+
+\subsection{Influence of Tahoe-LAFS}
+% Capabilities, folders, immutable vs. mutable, some of the key gen.
+% Tahoe does not let you change crypto primitives
+
+\subsection{Sharing}
+% Read/write keys, integrity, the general key distribution problem
+
+\subsection{Deletion of Files}
+% VCS, write-enabler, creator/ACL, link count, DAG
+
+\subsection{Verification of Files}
+% Hash trees, server involvement, streaming
+
+\subsection{De-duplication}
+% How Tahoe does this, security vs. performance trade off 
+
 \section{Implementation}
+
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
 use case we chose to implement. We will further analyse our choice of key
 distribution and look at alternative solutions. The section will end by
-discussing the most important cryptographic primitives chosen and utilized in our
-implementation.
+discussing the most important cryptographic primitives chosen and utilized in
+our implementation.
 
 \subsection{Choice of Use Case}
 
