@@ -164,13 +164,13 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{ACL}{Access Control List}
 \acro{AES}{Advanced Encryption Standard}
 \acro{API}{Application Programming Interface}
-\acro{BC}{Bouncy Castle}
 \acro{BFDA}{Brute Force and Dictionary Attack}
 \acro{CA}{Certification Authority}
 \acro{CBC}{Cipher Block Chaining}
 \acro{CDA}{Cluster Dictionary Attack}
 \acro{CG}{Credential Generator}
 \acro{CPU}{Central Processing Unit}
+\acro{CSV}{Cloud Storage Vault}
 \acro{DP}{Data Processor}
 \acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
@@ -374,8 +374,8 @@ However, due to time and resource constraints, we will focus less on the followi
 
 The work behind this thesis, is carried out by the three authors in
 cooperation. The methodology used, can be categorized based on the three main
-parts of this work; the \emph{research}, the \emph{design and abstraction} part,
-and the \emph{software development} cycles.
+parts of this work; the \emph{research}, the \emph{design and abstraction}
+part, and the \emph{software development} cycles.
 
 The research will include an analysis of related systems, and a study of
 relevant background theory. Based on this theory, we will use experimentation
@@ -384,7 +384,9 @@ and sharing of files on an untrusted server. We will iteratively analyse our
 experimentation to find and correct flaws with the design.
 
 The third part of the work, is the software development cycles of the proof of
-concept application. We will work after SCRUM principles -- an iterative and
+concept application. 
+
+\paragraph{SCRUM} We will work after SCRUM principles -- an iterative and
 incremental based framework for project management \cite{scrum}. There does not
 exist a SCRUM \emph{product owner} for the system we will create, nor do we
 fulfill the requirements and characteristics \cite{scrum} of a traditional
@@ -400,6 +402,19 @@ possible for us to follow:
     \emph{done}. This is to keep track of progress in the current sprint
   \item Continuously analyse the process, and improve it if possible
 \end{itemize}
+
+\paragraph{DRY} We choose to follow the \ac{DRY} principle when developing
+software. \citet{dry} define \ac{DRY} as:
+
+\begin{quote}\it
+Every piece of knowledge must have a single, unambiguous, authoritative
+representation within a system.
+\end{quote}
+
+\noindent This principle can be taken further, as to not develop something that
+has already been developed in the past. If there exist a library for a given
+task that does fulfill the requirements set for the specific task, we will
+choose to utilize the library instead of developing similar code by ourselves.
 
 \section{Outline}
 
@@ -1058,8 +1073,17 @@ users that has donated capacity to the system.
 
 % TODO: Complete this
 
-This chapter will describe the steps taken for creating the system we name
-\emph{Cloud Storage Vault}.
+This chapter will describe a proposed architectural and cryptographic scheme
+for providing secure storage of data on a remote untrusted system. It will
+further explain the procedures carried out to create a proof of concept
+application, that implements the proposed architectural and cryptographic
+scheme. The application, named \emph{\ac{CSV}}, is implemented as an
+Android application, and consists of a separate server and client functionality.
+
+The chapter will start by giving an overview of the proposed architectural
+scheme followed by a more detailed description of the corresponding
+cryptographic scheme. The chapter will end by describing the implementation
+details for both the server and client side functionality of the Cloud Storage Vault.
 
 \section{Architectural Overview}
 %**************************************%
@@ -1124,7 +1148,7 @@ directed graph, as illustrated in Figure \ref{fig:AS:filesystem}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureFileSystem.pdf}
-    \caption{File System Structure}
+    \caption{File system ssructure}
     \label{fig:AS:filesystem}
 \end{figure}
 
@@ -1289,19 +1313,18 @@ brought up throughout the further description of the software.
 \label{chap:CS} 
 
 This section elaborates on the cryptographic solutions applied to the
-architectural scheme in Chapter \ref{chap:AS}. We take a closer look at how
-confidentiality, integrity and authentication can be integrated into the
-proposed architecture.
+architectural scheme in Section \ref{chap:AS}. It will take a closer look at how
+confidentiality and integrity can be integrated into the proposed architecture.
 
 %A fundamental scheme for key distribution is needed to realize the desired
 %security features, hence an appropriate solution for key distribution will
 %also be given.
 
-The first section is a brief introduction explaining the basic security
-concepts used by the application. Following is a detailed description of the
-cryptographic solutions adapted. The cryptographic solutions are revealed in
-terms of file and directory operations performed by the application. The
-chapter ends with a description of a user's encrypted keyring.
+The section will start with a brief introduction explaining the fundamental security
+concepts utilized by the cryptographic architecture. The cryptographic
+architecture is further described in terms of file and directory operations. It
+is important to mention that some of the cryptographic operations are
+taken from key concepts in the TAHOE LAFS \cite{cite}.
 
 \subsection{Security Concepts}
 
@@ -1433,7 +1456,7 @@ decryption is illustrated in Figure \ref{fig:CS:OD}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{CryptoVerifyOpenFolder.pdf}
-    \caption{Verifying a directory.}
+    \caption{Verifying a directory}
     \label{fig:CS:VOD}
 \end{figure}
 
@@ -1637,7 +1660,7 @@ constraints or \emph{patterns} as follows:
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{ImplementationServerLayers.pdf}
-    \caption{Architectural Layers in the Server application.}
+    \caption{Architectural layers in the server application.}
     \label{fig:IM:layers}
 \end{figure}
 
@@ -1748,8 +1771,9 @@ database.
 \subsubsection{\acs{ACL} functionality}
 
 The only \ac{ACL} functionality implemented, is the server-side verification
-that a client has proper access to overwrite a file, e.g. when a client wishes to
-update a folder with new contents. We call this \textbf{Write-Enabler Verification}.
+that a client has proper access to overwrite a file, e.g. when a client wishes
+to update a folder with new contents. We call this \textbf{Write-Enabler
+Verification}.
 
 When a client first uploads a new folder, it also provides a
 \emph{Write-Enabler Key}, which the server adds to the database along with the
@@ -1762,10 +1786,7 @@ server replies with an error code if the client in addition does not provide a
 valid Write-Enabler Key.
 
 \section{Client Implementation - Android}
-% Java/Android/Dalvik/JCE/Commons HTTPClient
-% Security vs. Usability - Rationale for GUI
-% MVC? V=Android GUI
-%
+
 The \ac{PoC} client we have implemented, is made for devices using the Android
 operating system, which is based on Linux. The \ac{SDK} for making Android
 applications, is essentially a somewhat modified version of Java.
@@ -1782,24 +1803,30 @@ software performs well on a constrained device, it will almost certainly also
 have good performance on any faster device as well.
 
 \subsection{Environment}
-The \ac{PoC} client was made on the Android platform in the Java programming
-language, together with a set of frameworks. The rationale for these are as
-follows.
+
+The \ac{PoC} client was made on the Android platform and written in the Java
+programming language, together with a set of frameworks. The rationale for
+these are as follows.
 
 \paragraph{Android} The Android operating system is made by Google, and is most
-commonly found on mobile phones and tablets. The platform choice of Android was done
-based on hardware availability and familiarity with developing on the
+commonly found on mobile phones and tablets. The platform choice of Android was
+done based on hardware availability and familiarity with developing on the
 platform and the programming language (Java).
 
 \paragraph{Java} Java is a high-level, object-oriented programming language.
 Applications written in Java runs in a \ac{JVM}, which implies that a Java
-application can run on almost any device which has a \ac{JVM}. The \ac{JVM} on
-Android is called Dalvik.
+application can run on almost any device which has a \ac{JVM}.
+
+The ``\ac{JVM}'' on Android is called \emph{Dalvik}, but it is strictly not a
+\acl{JVM} as the bytecode on which it operates is not Java bytecode.
+After the regular Java compiler has created the \texttt{.class} files, a Dalvik
+tool transforms them to another class file format called \texttt{.dex}
+\cite{dalvik}.
 
 \paragraph{HttpComponents} Apache HttpComponents are a set of libraries for
 \ac{HTTP} transport in Java. The part used in our client is called HttpClient.
-Android incorporates parts of this client in its native \ac{JVM}. The use of
-this library adheres to the \ac{DRY} principles.
+Android incorporates parts of this client in its runtime environment. The use
+of this library adheres to the \ac{DRY} principles.
 
 \paragraph{\ac{JCA}} \ac{JCA} is an architecture for doing cryptographic
 operations in Java. The architecture is based on principles of implementation
@@ -1955,7 +1982,7 @@ is also needed to support out-of-band methods for establishing a share.
     \label{fig:CSVAndroid:manualimport}
 \end{figure}
 
-The other possibility is to make use of a \ac{QR} code, which is a matrix
+The other possibility is to make use of a \emph{\ac{QR} code}, which is a matrix
 barcode that can store information. What this means is that one user will
 generate a barcode on his device, and the other user can scan that code using
 the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
@@ -1984,12 +2011,13 @@ that is the users wish.
 For a user to access his root folder, the client will have to know the
 capability of that folder. This is clearly to much for a user to remember, so
 the capability will have to be stored on the client. However, the client might
-be stolen or broken into by some means, and if the capability is stored in clear
-text, it is easily stolen.
+be stolen or broken into by some means, and if the capability is stored in
+clear text, it is easily stolen.
 
-We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes an
-encryption key from a password. This generated key is used to encrypt the root
-capability in a file stored on the client. We call this the encrypted key ring.
+We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes
+an encryption key from a password. This generated key is used to encrypt the
+root capability in a file stored on the client. We call this the encrypted key
+ring.
 
 These precautions are however no defense if the attacker managed to read the
 memory while the key is unlocked. The client enforces that this password should
@@ -2002,8 +2030,8 @@ be at least 9 characters long.
 % Sharing a file - first/following times - Key Distribution
 % Uploading/Downloading file
 
-We have tried to make a user interface that is easily understandable by a novice
-user, both in terms of \emph{where to click} and in terms of how we name
+We have tried to make a user interface that is easily understandable by a
+novice user, both in terms of \emph{where to click} and in terms of how we name
 cryptographic operations. For instance we never use the word \emph{capability}
 in the client.
 
@@ -2022,7 +2050,7 @@ the files that the user has stored in the cloud.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-mainscreen.png}
-    \caption{Main screen of client}
+    \caption{Main screen of the client application}
     \label{fig:CSVAndroid:mainscreen}
 \end{figure}
 
@@ -2037,7 +2065,7 @@ tapping a folder will open that folder.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-remotebrowse.png}
-    \caption{Browsing the cloud storage from client}
+    \caption{Browsing the cloud storage from the client}
     \label{fig:CSVAndroid:remotebrowse}
 \end{figure}
 
@@ -2057,7 +2085,7 @@ unlinking from.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-browsecontext.png}
-    \caption{Context menu}
+    \caption{Context menu showing actions available for items stored}
     \label{fig:CSVAndroid:remotecontext}
 \end{figure}
 
@@ -2101,8 +2129,8 @@ Another bottleneck, might be the memory card. The \emph{class} of a memory card
 will identify the least sustained write speeds obtainable from the card in a
 fragmented state \cite{sdcard}. The class number $X$ represents this guarantee
 in $X$ MB, so a Class 2 card guarantees a speed of 2 MB/s. However, there are
-the possibility of the card performing significantly better than what the class
-number indicates.
+the possibility that the card can perform significantly better than what the
+class number indicates.
 
 \subsection{What is Measured}
 
@@ -2112,109 +2140,126 @@ the server, and record this. For comparison, we also deactivated hashing and
 encryption in the processing pipeline on the client, and recorded the network
 traffic.
 
-Folders are relatively small in size, so the network should not be a
-bottleneck. However the different cryptographic operations might take some
-time, as will the serialization of folders. For folders we measured:
+\emph{Folders} are relatively small in size, so the network should not be a
+bottleneck. However, the different cryptographic operations might take some
+time, as will the serialization of folders. The following were measured for
+folders:
 
 \begin{enumerate}
     \item The average time it takes to create a folder
     \item The time it takes to encrypt and sign a folder, with varying amount
-    of data
+        of data
     \item The time it takes to verify a newly downloaded folder, with varying
-    amount of data
+        amount of data
     \item The time it takes to serialize a folder, with varying amount of data
 \end{enumerate}
 
 \subsection{Sources of Error}
-The trouble with measuring performance on operations that are relatively quick
-is that they are very vulnerable to noise from the system. The Android system
-comes with a lot of built in services that runs sporadically, which means that
-they will affect the measurements. However, the small and quick operations are
-not necessarily what is interesting, the interesting thing to see is how their
-performance is affected when the amount of data is increased. The goal of the
-client is to deliver a quick and smooth experience for the user.
 
-Other error sources is that we cannot explicitly tell what the speed of either
-the network is or the memory card. But comparing the speed for file operations
-in CSV with the modified version with encryption and hashing disabled should
-give us an inclination about how quick the software can be.
+The trouble with measuring performance on operations that are relatively quick,
+is that they are very vulnerable to \emph{noise} from the system. The Android
+system comes with a lot of built-in services that runs sporadically, and hence
+affect the measurements. However, the small and quick operations are not
+necessarily facinating to measure -- the interesting behaviour to observe is
+how their performance is affected when the amount of data is increased. The
+goal of the client is to deliver a quick and smooth experience for the user.
+
+We cannot explicitly tell what the speed of either the network nor the memory
+card are, and this is thus another error source. But by comparing the speed for
+file operations in \ac{CSV} with the modified version without encryption and
+hashing, we should get an indication about how quick the software can be.
+
 \section{Security}
+\label{sec:BFLK}
 
-\subsection{Brute Force Local Keyring} \label{sec:BFLK} The locally stored and
-encrypted keyring can be considered a security risk if it somehow end up in
-malicious hands, either by a device being lost or a person hacking in to a
-device. Even though the keyring is encrypted it might be weak to a brute force
-or dictionary attack. If an attacker is able to decrypt the keyring he will
-obtain the information to access a users root folder. This is potentially
-enough for the attacker to access every file stored by the user. This section
-describes our approach to attack the keyring.
+The locally stored and encrypted keyring can be considered a security risk if
+it somehow ends up in an attacker's hands, either by a device being lost or by
+an intrusion in to a device. Even though the keyring is encrypted, it might be
+prone to a brute force or dictionary attack. If an attacker is able to decrypt
+the keyring, he will obtain enough information to access a user's root folder,
+and thus all the other files stored by the user as well.
 
-\subsubsection{Keyring Format} The format of the encrypted keyring is given in
-Figure \ref{fig:KeyringFormat}.  It is encrypted with 128-bit \ac{AES} in
-\ac{ECB} mode, but the key is not randomly generated.  The key is made by the
-key strengthening function \ac{PBKDF2} but is based on a password set by the
-user, which is why this key is potentially weaker than the keys for files and
-folders. An attacker will also know some of the plaintext for the keyring. The
-serialization of capability for a writeable folder will make a plaintext that
-starts with ``D:RW:`` followed by 16-byte of Base32-encoded data, another ``:``
-and then 16 more bytes of Base32-encoded data.
+This section describes our approach to attack the keyring.
+
+\subsubsection{Keyring Format}
+
+The format of the encrypted keyring is given in Figure \ref{fig:KeyringFormat}.
+It is encrypted with 128-bit \ac{AES} in \ac{ECB} mode, but the key is not
+randomly generated. The key is given by the key strengthening function
+\ac{PBKDF2}, but this is based on a password set by the user, which is why this
+key is potentially weaker than the keys for files and folders. 
 
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{KeyringFormat.pdf}
-    \caption{The Keyring format. Encrypted fields are shaded in blue.}
+    \caption{The keyring format with encrypted fields shaded in blue}
     \label{fig:KeyringFormat}
 \end{figure}
 
-\subsubsection{General Procedure} To perform a brute force or dictionary attack
-on the encrypted keyring, one must decrypt the keyring for each password
-guessed. The decryption involves both key derivation with \ac{PBKDF2} and
-decryption with 128-bit \ac{AES} in \ac{ECB} mode. We verified a successful
-attack by our knowledge of the serialization of the capability. \ac{PBKDF2} is
-also a function that can be used with a varying number of iterations, our
-attacks are tested on 500, 1000, 2000 and 4000 iterations.
+An attacker will also know some of the plaintext of the keyring. The
+serialization of a capability for a writeable folder will
+start with \texttt{D:RW:}, followed by 16-byte of Base32-encoded data, another
+\texttt{:} and then 16 more bytes of Base32-encoded data.
 
-\subsubsection{Implemented Attacks} We created two programs designed to crack
-the keyring password. The first program, named \ac{BFDA}, was designed for a
-single computer while the second program, named \ac{CDA}, was designed to
-perform attacks by a cluster of cooperating computers. Both use dictionary
-attacks, but \ac{BFDA} is also capable of a pure brute force attack. The
-source code and .jar files for both programs can be found in the attached
-CD-ROM. Implementation details are given in Appendix \ref{ap:other}.
+\subsubsection{General Procedure}
 
-\subsubsection{Configuration} \ac{BFDA} requires Java with \ac{JCE} and
-Jurisdiction Policy files\footnote{The policy files enables Java to use
-stronger encryption than what is allowed by US export law} installed.  It also
-requires Java to be configure to use \ac{BC} as its primary \ac{JCE} provider.
-The policy files and \ac{BC} provider are required because the keyring is
-encrypted using BC version 1.34\footnote{BC version 1.34 is used by default in
-Android 2.2.}.\\
-%TODO: Confirm that BC v.1.34 is default!!!1
+To perform a brute force or dictionary attack on the encrypted keyring, one
+must decrypt the keyring for each password guessed. The decryption involves
+both key derivation with \ac{PBKDF2}, and decryption with 128-bit \ac{AES} in
+\ac{ECB} mode. The \ac{PBKDF2} is a function that can be used with a
+varying number of iterations, with the purpose of having a customizable way for
+users to increase key strenght. Our attacks are tested on 500, 1000, 2000 and
+4000 iterations.
 
-\noindent \ac{CDA} requires almost the same configuration as BFDA, but for each
-node in the cluster. Another requirement for \ac{CDA} is that the cluster must
-be configured with Apache Hadoop.\\
+%We verified a successful attack based on our knowledge of the
+%serialization of the capability.
 
-\noindent The steps we performed to set up Java with \ac{BC} and the
-Jurisdifction Policiy files can be seen in \cite{jce+bc}. The guide we used for
-using Apache Hadoop in a Cluster using Ubuntu Server can be found at
-\cite{cluster}.
+\subsubsection{Implemented Attacks}
 
-\subsubsection{Hardware Specifications} The hardware specification for the
-\ac{BFDA} is given in Table \ref{tab:hwbf}. The
-\ac{CDA} was executed over a cluster of Amazon \ac{EC2} instances. All
-instances used were categorized by Amazon as ``high-CPU extra large
-instances``. The hardware specification for a single instance, used in the
-\ac{CDA} attack, is given in Table \ref{tab:hwcda}. We used 20 of these
-instances.
+We created two programs designed to crack the keyring password. The first
+program, named \ac{BFDA}, was designed for a single computer, while the second
+program, named \ac{CDA}, was created to perform attacks by a cluster of
+cooperating computers.
+
+Both use dictionary attacks, but the firstly mentioned is also capable of a
+pure brute force attack. The source code and compiled \texttt{.jar} files for
+both programs can be found in the attached CD-ROM. Implementation details are
+given in Appendix \ref{ap:other}.
+
+\subsubsection{Configuration} 
+
+\ac{BFDA} requires Java with the \ac{JCE} and Jurisdiction Policy
+files\footnote{Policy files enables Java to use stronger encryption than what
+is allowed by US export law.} installed. It also depends on Java being
+configured to use Bouncy Castle as its primary \ac{JCE} provider. These
+prerequisites are required because the keyring is encrypted using Bouncy
+Castle, as this is used by default on the Android platform.
+
+\ac{CDA} requires almost the same configuration as \ac{BFDA}, but naturally for
+each node in the cluster. Additionally, the cluster must be configured with
+Apache Hadoop.
+
+The steps we performed to set up Java with Bouncy Castle and the Jurisdiction
+Policy files, are as described by \citet{jce+bc}, and the guide we used for
+configuring Apache Hadoop in a Cluster using Ubuntu Server, are made by
+\citet{cluster}.
+
+\subsubsection{Hardware Specifications}
+
+The hardware specifications for the \acl{BFDA} are given in Table
+\ref{tab:hwbf}. The \acl{CDA} was executed over a cluster of Amazon \ac{EC2}
+instances, of type \emph{High-CPU Extra Large Instances}. The hardware
+specification for a single instance, used in the cluster attack, is given in
+Table \ref{tab:hwcda}.
 
 \input{tables/hw_bf.tex}
 \input{tables/hw_cda.tex}
 
 \subsubsection{Running \ac{BFDA}}
-The command used for executing a plain brute force attack with \ac{BFDA}
-can be seen in Listing \ref{lst:bf}. The command for running a dictionary
-attack is seen in Listing \ref{lst:da}.
+
+The command used for executing a plain brute force attack with \ac{BFDA} can be
+seen in Listing \ref{lst:bf}. The command for running a local dictionary attack
+is seen in Listing \ref{lst:da}.
 
 \lstset{label=lst:bf, caption=Running local brute force attack}
 \begin{lstlisting}
@@ -2228,17 +2273,23 @@ $ java -jar BFDA.jar /path/to/keyring \
     /path/to/dictionary number_of_threads
 \end{lstlisting}
 
-\subsubsection{Cloud Dictionary Attack with \ac{CDA}} The attack using \ac{CDA}
-was carried out over 20 Amazon EC2 ``high-CPU extra large instances``. One
-instance was configured as both a Hadoop master and slave node, while the 19
-other instances were configured only as slaves. The commands executed to start
-the Hadoop master, slaves and their corresponding \ac{HDFS} are shown in
-Listing \ref{lst:hadoop}. The last command enables the existing Hadoop cluster
-to support MapReduce. This is necessary as the \ac{CDA} attack is implemented
-as a map-reduce problem. Details about MapReduce and the implementation of
-\ac{CDA} are given in Appendix \ref{ap:other}.\\
+\subsubsection{Cloud Dictionary Attack with \ac{CDA}}
 
-\lstset{language=bash, label=lst:hadoop, caption=Starting Hadoop cluster with HDFS}
+The cluster attack was carried out by 20 of the previously specified Amazon EC2
+nodes. One instance was configured as both a Hadoop \emph{master} and
+\emph{slave} node, while the 19 other instances were configured as slaves.
+This was done to utilize as much as possible out of the available nodes, as the
+master node performs quite a bit less computational work than the slave nodes.
+
+Multiple scripts are needed to initiate the distributed attack.
+The commands executed to start the Hadoop master and slaves, and mount up the
+shared, distributed file system \ac{HDFS}, are shown in Listing
+\ref{lst:hadoop}. The final command enables the Hadoop cluster to support
+\emph{MapReduce}. This is necessary as the \ac{CDA} attack is implemented as a
+map-reduce problem. Details about Apache Hadoop, MapReduce and the
+implementation of \ac{CDA}, are given in Appendix \ref{ap:other}.
+
+\lstset{language=bash, label=lst:hadoop, caption=Starting Hadoop Cluster with HDFS}
 \begin{lstlisting}
 # Start HDFS and initialize master and slave nodes
 $ /path/to/Hadoop/bin/start-dfs.sh
@@ -2247,7 +2298,7 @@ $ /path/to/Hadoop/bin/start-dfs.sh
 $ /path/to/Hadoop/bin/start-mapred.sh
 \end{lstlisting}
 
-\noindent The last requirement, before executing the attack, is to copy the
+The last requirement, before executing the attack, is to copy the
 desired dictionary file and keyring into the \ac{HDFS}. Copying files from the
 master node to the \ac{HDFS} is done with the command shown in Listing
 \ref{lst:cpHDFS}. The attack can then be started on the master node with the
@@ -2259,26 +2310,30 @@ $ /path/to/Hadoop/bin/hadoop dfs -put /path/to/file \
     /path/to/file/in/HDFS
 \end{lstlisting}
 
-\lstset{language=bash, label=lst:CDA, caption=Executing the CDA attack}
+\lstset{language=bash, label=lst:CDA, caption=Executing the CDA Attack}
 \begin{lstlisting}
 $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
     /HDFSpath/to/dictionary /HDFSpath/to/output/file \
     /HDFSpath/to/keyring number_of_slaves \
     number_of_threads_per_slave
 \end{lstlisting}
+
 %**************************************%
 \chapter{Results}
 \label{ch:results}
 %**************************************%
+
 \section{Client Performance}
+
 This section displays the results of the client benchmarking and highlights the
 most important results.
 
-\subsection{Files} The following results shows the network speed obtained when
-uploading and downloading files. Table \ref{tbl:files:encrypted} shows the
-speed when using the unmodified client, while Table \ref{tbl:files:unencrypted}
-shows the speed obtained when using the same client but with encryption and
-hashing disabled.
+\subsection{Files}
+
+The following results shows the network speed obtained when uploading and
+downloading files. Table \ref{tbl:files:encrypted} shows the speed when using
+the unmodified client, while Table \ref{tbl:files:unencrypted} shows the speed
+obtained when using the same client but with encryption and hashing disabled.
 
 % Kanskje en tabell her, som viser søyler med ukryptert bak og kryptert forann?
 \input{tables/performance_files.tex}
@@ -2289,8 +2344,10 @@ for uploads than downloads, and that this is not the case for the computer. We
 also observe that the speed with encryption and hashing enabled is severely
 higher for all three devices.
 
-\subsection{Folders} Table \ref{tbl:folder:createblank} shows the average time
-it takes to create an empty folder on the different devices. The Tables
+\subsection{Folders}
+
+Table \ref{tbl:folder:createblank} shows the average time it takes to create an
+empty folder on the different devices. The Tables
 \ref{tbl:folder:serializefolder} and \ref{tbl:folder:encryptsign} shows the
 time it takes to serialize and encrypt and sign the folder respectively. These
 two actions are what has to be performed every time a folder is changed, while
@@ -2310,40 +2367,48 @@ and signing is pretty fast for all devices.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
+
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
 by implementing and executing two different programs. The first program, named
-Brute Force and Dictionary Attack (BFDA), was designed to run on a single computer, and supports both brute force and
-dictionary attacks. The second program, named Cluster Dictionary Attack (CDA), was created to run in a
-computational cluster. However, the CDA attack does only support dictionary attacks. The results for
-both programs are given below.
+Brute Force and Dictionary Attack (BFDA), was designed to run on a single
+computer, and supports both brute force and dictionary attacks. The second
+program, named Cluster Dictionary Attack (CDA), was created to run in a
+computational cluster. However, the CDA attack does only support dictionary
+attacks. The results for both programs are given below.
 
 \subsection{Brute Force and Dictionary Attack (BFDA)}
-With BFDA we executed both a brute force and a dictionary attack to estimate the
-amount of passwords we could brute force within a second. The brute force
+
+With BFDA we executed both a brute force and a dictionary attack to estimate
+the amount of passwords we could brute force within a second. The brute force
 and dictionary attacks achieved approximately the same results. However, for
 each measurement, the brute force attack turned out to achieve about 30
 passwords more per seconds than the dictionary attack. This is believed to
-exist due to the file reading overhead in the dictionary attack. The results for both
-attacks are illustrated in Table \ref{tab:res_bf} and Figure \ref{fig:bfres}.
+exist due to the file reading overhead in the dictionary attack. The results
+for both attacks are illustrated in Table \ref{tab:res_bf} and Figure
+\ref{fig:bfres}.
 
 \input{tables/res_bf.tex}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{bf.png}
+% TODO: Cut this down!!
 \caption{Results from running brute force and dictionary attacks against a local
 encrypted keyring. The histogram shows how many passwords per second we were able to brute
 force against different amounts of iterations used in PBKDF2.}
 \label{fig:bfres}
 \end{figure}
+
 \subsection{Cluster Dictionary Attack (CDA)}
-When running CDA, each node of the cluster achieved approximately the same results as a single computer
-running a dictionary attack with \ac{BFDA}. We found a small difference where
-the local computer achieved about 100 passwords per second more than each
-instance in the cluster. With respect to difference in CPU power between the
-local computer and a single cluster instance \cite{cpubench}, this is an expected
-result. With 20 nodes in the cluster we were able to brute force around 35 000
-passwords per second, given PBKDF2 with 1000 iterations.
+
+When running CDA, each node of the cluster achieved approximately the same
+results as a single computer running a dictionary attack with \ac{BFDA}. We
+found a small difference where the local computer achieved about 100 passwords
+per second more than each instance in the cluster. With respect to difference
+in CPU power between the local computer and a single cluster instance
+\cite{cpubench}, this is an expected result. With 20 nodes in the cluster we
+were able to brute force around 35 000 passwords per second, given
+\emph{PBKDF2} with 1000 iterations.
 
 %**************************************%
 \chapter{Discussion}
@@ -2368,8 +2433,38 @@ passwords per second, given PBKDF2 with 1000 iterations.
 \section{Cryptographic Scheme}
 %What is/is not used from TAHOE?
 
+In this section, we will go through the cryptographic scheme produced and
+described in Section \ref{ch:CS}. The influence of Tahoe-\ac{LAFS} is described
+in detail, followed by subsections scrutinizing how the scheme does or does not
+support various features and functionality.
+
+\subsection{Influence of Tahoe-LAFS}
+% Capabilities, folders, immutable vs. mutable, some of the key gen.
+% Tahoe does not let you change crypto primitives
+
+\subsection{Sharing}
+% Read/write keys, integrity, the general key distribution problem
+
+\subsection{Deletion of Files}
+% VCS, write-enabler, creator/ACL, link count, DAG
+
+\subsection{Verification of Files}
+% Hash trees, server involvement, streaming
+
+\subsection{De-duplication}
+% How Tahoe does this, security vs. performance trade off 
+
 \section{Implementation}
+
+This section will discuss and deal with the different choices taken to fulfill
+the implementation of the cryptographic scheme. We will start by discussing the
+use case we chose to implement. We will further analyse our choice of key
+distribution and look at alternative solutions. The section will end by
+discussing the most important cryptographic primitives chosen and utilized in
+our implementation.
+
 \subsection{Choice of Use Case}
+
 \subsection{Choice of Key Distribution}
 \label{sec:DI:keydist}
 %Describe possible key distributions schemes
@@ -2410,12 +2505,12 @@ files are effectively compromised.
 The confidentiality of the root folder can be breached by brute forcing a user's
 locally stored keyring. This was experienced in Section \ref{sec:BFLK}. From the
 results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
-that the choice of iterations in PBKDF2 were conclusive to the efficiency of a
+that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
 brute force attack against the local keyring. By doubling the number of
-iterations in PBKDF2, the efficiency of a brute force attack would decrease by
-half of it's value. The PBKDF2 standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
+iterations in \emph{PBKDF2}, the efficiency of a brute force attack would decrease by
+half of it's value. The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
 recommends the minimum number of iterations to be 1000. With 1000 iterations in
-PBKDF2 we were able to achieve a brute force efficiency around 1800 passwords
+\emph{PBKDF2} we were able to achieve a brute force efficiency around 1800 passwords
 per second for a single computer, and 35 000 passwords per second running the
 CDA attack on 20 Amazon EC2 high-CPU extra large instances. Given a password
 with length 5 and containing only small letters, the CDA attack will use 5
@@ -2441,7 +2536,7 @@ this in mind, we should consider that our own keyring can be subject to a lot
 more efficient brute force attacks compared to our own findings.\\
 
 \noindent To reduce vulnerability from plain brute force attacks, we decided to
-use 4000 iterations in PBKDF2. In addition, we designed the Cloud Storage Vault
+use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
 to force users to utilize more advanced and sophisticated passwords. Password
 requirements for the Cloud Storage Vault are given below:
 
@@ -2451,10 +2546,11 @@ requirements for the Cloud Storage Vault are given below:
 one number.
 \end{itemize}
 
-\noindent With the password requirements above and with 4000 iterations in PBKDF2, it will
+\noindent With the password requirements above and with 4000 iterations in
+\emph{PBKDF2}, it will
 be extremely hard to perform a plain brute force attack against the local
-keyring. Figure \ref{fig:bfres} indicates that when using PBKDF2 with 4000
-iterations, the local test computer running BFDA is only able to check
+keyring. Figure \ref{fig:bfres} indicates that when using \emph{PBKDF2} with 4000
+iterations, the local test computer running \ac{BFDA} is only able to check
 around 400 passwords per second. Given a cluster of 200 such computers, it will
 take 2683 years on average to brute force a password using the syntax above
 and a length of 9.\\
@@ -2521,8 +2617,8 @@ a users encrypted keyring. Details about the implementation follows.
 \ac{BFDA} is written in Java and utilize the \texttt{javax.crypto} library with Bouncy
 Castle version 1.34 as JCE provider to decrypt the encrypted keyring. The
 Bouncy Castle JCE provider seems to be necessary as Android 2.2 uses it by
-default to encrypt the keyring. To enable PBKDF2 before decryption, \ac{BFDA}
-utilize a PBKDF2 Java library \cite{pbkdf2}.
+default to encrypt the keyring. To enable \emph{PBKDF2} before decryption, \ac{BFDA}
+utilize a \emph{PBKDF2} Java library \cite{pbkdf2}.
 
 The program is divided into two functions, named \texttt{bruteForceAttack} and
 \texttt{dictionaryAttack} that correspondingly executes a brute force and
@@ -2542,7 +2638,7 @@ of a given length onto a stack of words. The length of the words to push are
 given by its integer argument. The whole attack is based on letting the main
 thread create and push words onto a stack, while the \texttt{BruteForceThreads} are
 pulling words from the stack. When a word is pulled from the stack, it is
-subject to PBKDF2, where the result is used to decrypt the ciphertext. If
+subject to \emph{PBKDF2}, where the result is used to decrypt the ciphertext. If
 decryption results in a given plaintext, the password is found.
 
 The \texttt{dictionaryAttack} function is shown in Listing \ref{lst:dafunc}.
@@ -2554,7 +2650,7 @@ function]{listings/dictionaryAttack.java}
 \texttt{BufferedReader}. It then starts a given number of
 \texttt{DictionaryThreads}. The \texttt{DictionaryThreads} will read from the
 \texttt{BufferedReader} in a synchronized way. When a word is read from a
-\texttt{DictionaryThread} it will be subject to PBKDF2, where the result is
+\texttt{DictionaryThread} it will be subject to \emph{PBKDF2}, where the result is
 used to decrypt the ciphertext. If decryption results in a given plaintext, the
 password is found.
 
