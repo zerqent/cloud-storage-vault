@@ -1148,7 +1148,7 @@ directed graph, as illustrated in Figure \ref{fig:AS:filesystem}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureFileSystem.pdf}
-    \caption{File System Structure}
+    \caption{File system ssructure}
     \label{fig:AS:filesystem}
 \end{figure}
 
@@ -1456,7 +1456,7 @@ decryption is illustrated in Figure \ref{fig:CS:OD}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{CryptoVerifyOpenFolder.pdf}
-    \caption{Verifying a directory.}
+    \caption{Verifying a directory}
     \label{fig:CS:VOD}
 \end{figure}
 
@@ -1591,7 +1591,7 @@ constraints or \emph{patterns} as follows:
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{ImplementationServerLayers.pdf}
-    \caption{Architectural Layers in the Server application.}
+    \caption{Architectural layers in the server application.}
     \label{fig:IM:layers}
 \end{figure}
 
@@ -1913,7 +1913,7 @@ is also needed to support out-of-band methods for establishing a share.
     \label{fig:CSVAndroid:manualimport}
 \end{figure}
 
-The other possibility is to make use of a \ac{QR} code, which is a matrix
+The other possibility is to make use of a \emph{\ac{QR} code}, which is a matrix
 barcode that can store information. What this means is that one user will
 generate a barcode on his device, and the other user can scan that code using
 the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
@@ -1942,12 +1942,13 @@ that is the users wish.
 For a user to access his root folder, the client will have to know the
 capability of that folder. This is clearly to much for a user to remember, so
 the capability will have to be stored on the client. However, the client might
-be stolen or broken into by some means, and if the capability is stored in clear
-text, it is easily stolen.
+be stolen or broken into by some means, and if the capability is stored in
+clear text, it is easily stolen.
 
-We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes an
-encryption key from a password. This generated key is used to encrypt the root
-capability in a file stored on the client. We call this the encrypted key ring.
+We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes
+an encryption key from a password. This generated key is used to encrypt the
+root capability in a file stored on the client. We call this the encrypted key
+ring.
 
 These precautions are however no defense if the attacker managed to read the
 memory while the key is unlocked. The client enforces that this password should
@@ -1960,8 +1961,8 @@ be at least 9 characters long.
 % Sharing a file - first/following times - Key Distribution
 % Uploading/Downloading file
 
-We have tried to make a user interface that is easily understandable by a novice
-user, both in terms of \emph{where to click} and in terms of how we name
+We have tried to make a user interface that is easily understandable by a
+novice user, both in terms of \emph{where to click} and in terms of how we name
 cryptographic operations. For instance we never use the word \emph{capability}
 in the client.
 
@@ -1980,7 +1981,7 @@ the files that the user has stored in the cloud.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-mainscreen.png}
-    \caption{Main screen of client}
+    \caption{Main screen of the client application}
     \label{fig:CSVAndroid:mainscreen}
 \end{figure}
 
@@ -1995,7 +1996,7 @@ tapping a folder will open that folder.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-remotebrowse.png}
-    \caption{Browsing the cloud storage from client}
+    \caption{Browsing the cloud storage from the client}
     \label{fig:CSVAndroid:remotebrowse}
 \end{figure}
 
@@ -2015,7 +2016,7 @@ unlinking from.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-browsecontext.png}
-    \caption{Context menu}
+    \caption{Context menu showing actions available for items stored}
     \label{fig:CSVAndroid:remotecontext}
 \end{figure}
 
@@ -2122,7 +2123,7 @@ key is potentially weaker than the keys for files and folders.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{KeyringFormat.pdf}
-    \caption{The Keyring format. Encrypted fields are shaded in blue.}
+    \caption{The keyring format with encrypted fields shaded in blue}
     \label{fig:KeyringFormat}
 \end{figure}
 
@@ -2191,13 +2192,13 @@ The command used for executing a plain brute force attack with \ac{BFDA} can be
 seen in Listing \ref{lst:bf}. The command for running a local dictionary attack
 is seen in Listing \ref{lst:da}.
 
-\lstset{label=lst:bf, caption=Running Local Brute Force Attack}
+\lstset{label=lst:bf, caption=Running local brute force attack}
 \begin{lstlisting}
 $ java -jar BFDA.jar /path/to/keyring  \
     maximum_password_length number_of_threads
 \end{lstlisting}
 
-\lstset{label=lst:da, caption=Running Local Dictionary Attack}
+\lstset{label=lst:da, caption=Running local dictionary attack}
 \begin{lstlisting}
 $ java -jar BFDA.jar /path/to/keyring \
     /path/to/dictionary number_of_threads
@@ -2234,7 +2235,7 @@ master node to the \ac{HDFS} is done with the command shown in Listing
 \ref{lst:cpHDFS}. The attack can then be started on the master node with the
 command shown in Listing \ref{lst:CDA}.
 
-\lstset{language=bash, label=lst:cpHDFS, caption=Copying Files Into HDFS}
+\lstset{language=bash, label=lst:cpHDFS, caption=Copying files into HDFS}
 \begin{lstlisting}
 $ /path/to/Hadoop/bin/hadoop dfs -put /path/to/file \
     /path/to/file/in/HDFS
