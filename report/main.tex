@@ -1495,24 +1495,93 @@ unlocking the keychain. This method is known as key stretching
 
 \subsection{Choice of Cryptographic Primitives}
 \label{sec:cryptoprimitivechoice}
+For the proposed cryptographic scheme to be secure it needs secure
+cryptographic primitives. More specific, it needs a symmetric cipher, a
+cryptographic hash function, a \ac{MAC} function and a function for digital
+signatures. These primitives needs to be set in accordance with the security
+requirements established in TODO. The hard part of selecting appropriate
+cryptographic primitives is trying to predict how long the primitives will be
+secure. Keylength.com\footnote{\url{http://www.keylength.com}} list predictions
+on how long primitives will be secure based on different sources with different
+predictions.
+% TODO: finn ut hvordan vi skal liste kilder her
 
-The scheme which has been described in this section requires three primitives;
-a cryptographic hash function, a symmetric cipher and an asymmetric cipher
-which can be used for digital signatures. The choices should reflect the
-following security demands of our application, all with the assumption that the
-possible attacker has access to vast quantities of computing power.
+% Poeng: Det skal være trygt lenge nok
+% For filer: Vi bruker hver nøkkel 1 gang
+% For mapper: Vi bruker hver nøkkel flere ganger, men forskjellig IV
+% CBC > CTR fordi det er "enklere å implementere"
+% "Med blokker på 128 bit får man aldri 128 bit sikkerhet
 
-% TODO: Sikkerhetskrav bør vi definere tidligere
-\begin{enumerate}
-    \item It should be infeasible to break confidentiality for any file or folder
-    \item It should be infeasible to break integrity for any file or folder
-\end{enumerate}
+% AES key length, keylength.org, Ecrypt II. AES 128 er bra nok, men viktig at
+% man kan endre det. AES-256 dersom vi skulle gått kommerst
+
+% Viktige ting
+% Alle IVer brukes bare 1 gang (per nøkkel)
+% Alle fil-nøkler brukes kun 1 gang
+% Alle 
+
+% Nøkkellengde på SHA-256, og hva er poenget med konkatinering
+
+% Framtiden: Quantum Computing, Moores law
+
+% Hva er problemet om hva som blir knukket?
+
+% SchneieR:
+% AES-256 for å være sikker
+% SHAd-++
+% RSA: ??
 
 \subsubsection{Symmetric Cipher}
-For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is
-a standard, has been around for a long time, and does not have any serious
-security issues as long as it is used correctly.
-% Kilder kilder TODO
+% Argumentasjon skal kanskje være delvis i background
+
+For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is the
+standard for symmetric encryption and is readily available in most programming
+languages. We have chosen a key size of 128-bit. ECRYPT II has one of the more
+pessimistic predictions on how long this will be secure, saying data should be
+secure until 2030-2040\cite{ecrypt2_2010}. The gain of not choosing a larger
+key is a somewhat greater performance\footnote{\ac{AES}-128 is 10 rounds while
+\ac{AES}-256 is 14 rounds} and of course that the keys are smaller to store.
+
+\paragraph{Mode of operation} The mode of operation we have chosen is \ac{CBC}.
+This is based more on practical advice than on security consideration. Bruce
+Schneier advices the use of either \ac{CBC} or \ac{CTR}-mode, where
+\ac{CBC}-mode is easier to implement correctly \cite{schneier}. 
+
+\paragraph{Padding} One negative consequence of \ac{CBC} is that \ac{CBC}
+requires that the plaintext is an exact multiple of the block length, 128-bit.
+Since this is not always the case a padding scheme will also be required. A
+padding scheme does not have any security implications as long as it is
+reversible\cite{schneier} at least not for \ac{CBC}. We went with PKCS5Padding
+in our implementation based on its existence in the cryptographic libraries we
+use.
+
+%TODO Padding
+
+\subsubsection{Cryptographic Hash Function}
+
+The \ac{SHA}-family is the current standard for cryptographic hash functions,
+and from this family we have gone with double \ac{SHA}-256. The cryptographic
+scheme requires the hash function to have an output of at least the size of the
+key used for encryption. \ac{SHA}-1 have an output of 160-bits and could have
+been used to this but have weaknesses and are not recommended for use in new
+systems. The use of double \ac{SHA}-256 compared to single is to prevent a
+length-extension-attack\cite{schneier}.
+
+\subsubsection{Signature Algorithm}
+
+For a signature scheme the standard seems to be either \ac{RSA} or \ac{DSA}.
+Both functions would work but we went with \ac{RSA} primarily because
+Tahoe-\ac{LAFS} made the same choice. There might however be a performance
+bonus in selecting \ac{RSA}. An internet draft suggests that \ac{DSA} is about three
+times faster than \ac{RSA} at signing, but \ac{RSA} is about ten times faster
+at verifying a signature\cite{dsa_sha2}. A performance comparison from Microsoft
+suggest that \ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at
+verifying signatures\cite{msdn_perf}. Verification, opening a folder, is an
+operation we believe most users will do significantly more than signing,
+updating and creating folders. 
+
+For the key length we have implemented 1024-bit, but in retrospect this is a
+bad choice. All sources at this point recommends at least 2048-bit.
 
 \section{Server Implementation}
 
