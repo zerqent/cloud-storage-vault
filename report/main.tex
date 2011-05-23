@@ -2441,8 +2441,7 @@ described in detail, followed by subsections scrutinizing how the scheme does
 or does not support various features and functionality.
 
 \subsection{Influence of Tahoe-LAFS}
-% Capabilities, folders, immutable vs. mutable, some of the key gen.
-% Tahoe does not let you change crypto primitives
+%TODO: This subsection lacks the 'why' questions (and answers!)
 
 The general idea behind the development of the cryptographic scheme, was that
 we would use the scheme of Tahoe-\ac{LAFS} as a basis, and simplify it where
@@ -2473,8 +2472,57 @@ user in Tahoe-\ac{LAFS} than in \ac{CSV}.
 \subsection{Sharing}
 % Read/write keys, integrity, the general key distribution problem
 
+One of the major advantages of \ac{CSV} over other cloud storage systems, is
+the possibility to share files and folders in a secure manner. If the read
+capability of a folder is shared, the user holding the write capability are
+guaranteed to be the only one capable of making changes to the folder. 
+
+The server denies people with only the read capability to make changes to the
+folder by the use of the \emph{write enabler}. The write enabler serves the
+purpose of proving to the server that one holds the correct write capability.
+If someone with access to the file system on the server, e.g. a cloud
+provider employee, decides to make changes on a folder, the integrity check
+will warn the user of this.
+
+\paragraph{Key Distribution} The sharing of files and directories implicitly
+deals with the general problem of key distribution. The cryptographic scheme
+does not propose specific solutions for this, and leaves it up to the
+implementation to choose the best suiting method in light of the specific
+requirements. The procedure used in the proof of concept system developed, are
+described in Section \ref{sec:DIS:impl}.
+
 \subsection{Deletion of Files}
-% VCS, write-enabler, creator/ACL, link count, DAG
+
+To support deletion of files, various alternatives has to be assessed.
+Consider the following scenarios:
+
+\begin{enumerate}
+  \item A folder is shared between two users, and one of the users has
+    linked in the files in other directories as well. What should happen if the
+    other user deletes the files in the shared folder?
+
+  \item A folder contains a folder which is a link to a folder ``higher''
+    in the folder tree, and thus creating a loop. By deleting the folder,
+    should all subdirectories be deleted as well, i.e. cascading delete?
+\end{enumerate}
+
+The choice of the alternatives presented shortly, are not taken by the proposed
+cryptographic scheme, as it is merely a practical decision.
+
+\paragraph{Creator/\ac{ACL}} The \ac{ACL} layer on the server could store the
+username of the creator of the file along with each storage index, and use this
+to decide who should be granted access to delete files.
+
+\paragraph{Write Enabler} Similarly, the server could grant removal rights to
+whoever provides the write enabler, in the same manner as when updating
+folders. This requires that \emph{delete enablers} is produced for immutable
+files as well as folders.
+
+\paragraph{Link Count} The files could include a link count in its meta data,
+updated whenever a user links or unlinks it from a folder. When the link count
+reach zero, the user notifies the server to delete it.
+
+\paragraph{Directed Acyclic Graph}
 
 \subsection{Verification of Files}
 % Hash trees, server involvement, streaming
@@ -2482,7 +2530,10 @@ user in Tahoe-\ac{LAFS} than in \ac{CSV}.
 \subsection{De-duplication}
 % How Tahoe does this, security vs. performance trade off 
 
+\subsection{Version Control System}
+
 \section{Implementation}
+\label{sec:DIS:impl}
 
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
