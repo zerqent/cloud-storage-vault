@@ -1148,7 +1148,7 @@ directed graph, as illustrated in Figure \ref{fig:AS:filesystem}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureFileSystem.pdf}
-    \caption{File System Structure}
+    \caption{File system ssructure}
     \label{fig:AS:filesystem}
 \end{figure}
 
@@ -1456,7 +1456,7 @@ decryption is illustrated in Figure \ref{fig:CS:OD}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{CryptoVerifyOpenFolder.pdf}
-    \caption{Verifying a directory.}
+    \caption{Verifying a directory}
     \label{fig:CS:VOD}
 \end{figure}
 
@@ -1518,24 +1518,93 @@ unlocking the keychain. This method is known as key stretching
 
 \subsection{Choice of Cryptographic Primitives}
 \label{sec:cryptoprimitivechoice}
+For the proposed cryptographic scheme to be secure it needs secure
+cryptographic primitives. More specific, it needs a symmetric cipher, a
+cryptographic hash function, a \ac{MAC} function and a function for digital
+signatures. These primitives needs to be set in accordance with the security
+requirements established in TODO. The hard part of selecting appropriate
+cryptographic primitives is trying to predict how long the primitives will be
+secure. Keylength.com\footnote{\url{http://www.keylength.com}} list predictions
+on how long primitives will be secure based on different sources with different
+predictions.
+% TODO: finn ut hvordan vi skal liste kilder her
 
-The scheme which has been described in this section requires three primitives;
-a cryptographic hash function, a symmetric cipher and an asymmetric cipher
-which can be used for digital signatures. The choices should reflect the
-following security demands of our application, all with the assumption that the
-possible attacker has access to vast quantities of computing power.
+% Poeng: Det skal være trygt lenge nok
+% For filer: Vi bruker hver nøkkel 1 gang
+% For mapper: Vi bruker hver nøkkel flere ganger, men forskjellig IV
+% CBC > CTR fordi det er "enklere å implementere"
+% "Med blokker på 128 bit får man aldri 128 bit sikkerhet
 
-% TODO: Sikkerhetskrav bør vi definere tidligere
-\begin{enumerate}
-    \item It should be infeasible to break confidentiality for any file or folder
-    \item It should be infeasible to break integrity for any file or folder
-\end{enumerate}
+% AES key length, keylength.org, Ecrypt II. AES 128 er bra nok, men viktig at
+% man kan endre det. AES-256 dersom vi skulle gått kommerst
+
+% Viktige ting
+% Alle IVer brukes bare 1 gang (per nøkkel)
+% Alle fil-nøkler brukes kun 1 gang
+% Alle 
+
+% Nøkkellengde på SHA-256, og hva er poenget med konkatinering
+
+% Framtiden: Quantum Computing, Moores law
+
+% Hva er problemet om hva som blir knukket?
+
+% SchneieR:
+% AES-256 for å være sikker
+% SHAd-++
+% RSA: ??
 
 \subsubsection{Symmetric Cipher}
-For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is
-a standard, has been around for a long time, and does not have any serious
-security issues as long as it is used correctly.
-% Kilder kilder TODO
+% Argumentasjon skal kanskje være delvis i background
+
+For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is the
+standard for symmetric encryption and is readily available in most programming
+languages. We have chosen a key size of 128-bit. ECRYPT II has one of the more
+pessimistic predictions on how long this will be secure, saying data should be
+secure until 2030-2040\cite{ecrypt2_2010}. The gain of not choosing a larger
+key is a somewhat greater performance\footnote{\ac{AES}-128 is 10 rounds while
+\ac{AES}-256 is 14 rounds} and of course that the keys are smaller to store.
+
+\paragraph{Mode of operation} The mode of operation we have chosen is \ac{CBC}.
+This is based more on practical advice than on security consideration. Bruce
+Schneier advices the use of either \ac{CBC} or \ac{CTR}-mode, where
+\ac{CBC}-mode is easier to implement correctly \cite{schneier}. 
+
+\paragraph{Padding} One negative consequence of \ac{CBC} is that \ac{CBC}
+requires that the plaintext is an exact multiple of the block length, 128-bit.
+Since this is not always the case a padding scheme will also be required. A
+padding scheme does not have any security implications as long as it is
+reversible\cite{schneier} at least not for \ac{CBC}. We went with PKCS5Padding
+in our implementation based on its existence in the cryptographic libraries we
+use.
+
+%TODO Padding
+
+\subsubsection{Cryptographic Hash Function}
+
+The \ac{SHA}-family is the current standard for cryptographic hash functions,
+and from this family we have gone with double \ac{SHA}-256. The cryptographic
+scheme requires the hash function to have an output of at least the size of the
+key used for encryption. \ac{SHA}-1 have an output of 160-bits and could have
+been used to this but have weaknesses and are not recommended for use in new
+systems. The use of double \ac{SHA}-256 compared to single is to prevent a
+length-extension-attack\cite{schneier}.
+
+\subsubsection{Signature Algorithm}
+
+For a signature scheme the standard seems to be either \ac{RSA} or \ac{DSA}.
+Both functions would work but we went with \ac{RSA} primarily because
+Tahoe-\ac{LAFS} made the same choice. There might however be a performance
+bonus in selecting \ac{RSA}. An internet draft suggests that \ac{DSA} is about three
+times faster than \ac{RSA} at signing, but \ac{RSA} is about ten times faster
+at verifying a signature\cite{dsa_sha2}. A performance comparison from Microsoft
+suggest that \ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at
+verifying signatures\cite{msdn_perf}. Verification, opening a folder, is an
+operation we believe most users will do significantly more than signing,
+updating and creating folders. 
+
+For the key length we have implemented 1024-bit, but in retrospect this is a
+bad choice. All sources at this point recommends at least 2048-bit.
 
 \section{Server Implementation}
 
@@ -1591,7 +1660,7 @@ constraints or \emph{patterns} as follows:
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{ImplementationServerLayers.pdf}
-    \caption{Architectural Layers in the Server application.}
+    \caption{Architectural layers in the server application.}
     \label{fig:IM:layers}
 \end{figure}
 
@@ -1913,7 +1982,7 @@ is also needed to support out-of-band methods for establishing a share.
     \label{fig:CSVAndroid:manualimport}
 \end{figure}
 
-The other possibility is to make use of a \ac{QR} code, which is a matrix
+The other possibility is to make use of a \emph{\ac{QR} code}, which is a matrix
 barcode that can store information. What this means is that one user will
 generate a barcode on his device, and the other user can scan that code using
 the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
@@ -1942,12 +2011,13 @@ that is the users wish.
 For a user to access his root folder, the client will have to know the
 capability of that folder. This is clearly to much for a user to remember, so
 the capability will have to be stored on the client. However, the client might
-be stolen or broken into by some means, and if the capability is stored in clear
-text, it is easily stolen.
+be stolen or broken into by some means, and if the capability is stored in
+clear text, it is easily stolen.
 
-We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes an
-encryption key from a password. This generated key is used to encrypt the root
-capability in a file stored on the client. We call this the encrypted key ring.
+We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes
+an encryption key from a password. This generated key is used to encrypt the
+root capability in a file stored on the client. We call this the encrypted key
+ring.
 
 These precautions are however no defense if the attacker managed to read the
 memory while the key is unlocked. The client enforces that this password should
@@ -1960,8 +2030,8 @@ be at least 9 characters long.
 % Sharing a file - first/following times - Key Distribution
 % Uploading/Downloading file
 
-We have tried to make a user interface that is easily understandable by a novice
-user, both in terms of \emph{where to click} and in terms of how we name
+We have tried to make a user interface that is easily understandable by a
+novice user, both in terms of \emph{where to click} and in terms of how we name
 cryptographic operations. For instance we never use the word \emph{capability}
 in the client.
 
@@ -1980,7 +2050,7 @@ the files that the user has stored in the cloud.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-mainscreen.png}
-    \caption{Main screen of client}
+    \caption{Main screen of the client application}
     \label{fig:CSVAndroid:mainscreen}
 \end{figure}
 
@@ -1995,7 +2065,7 @@ tapping a folder will open that folder.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-remotebrowse.png}
-    \caption{Browsing the cloud storage from client}
+    \caption{Browsing the cloud storage from the client}
     \label{fig:CSVAndroid:remotebrowse}
 \end{figure}
 
@@ -2015,7 +2085,7 @@ unlinking from.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{client-browsecontext.png}
-    \caption{Context menu}
+    \caption{Context menu showing actions available for items stored}
     \label{fig:CSVAndroid:remotecontext}
 \end{figure}
 
@@ -2122,7 +2192,7 @@ key is potentially weaker than the keys for files and folders.
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{KeyringFormat.pdf}
-    \caption{The Keyring format. Encrypted fields are shaded in blue.}
+    \caption{The keyring format with encrypted fields shaded in blue}
     \label{fig:KeyringFormat}
 \end{figure}
 
@@ -2191,13 +2261,13 @@ The command used for executing a plain brute force attack with \ac{BFDA} can be
 seen in Listing \ref{lst:bf}. The command for running a local dictionary attack
 is seen in Listing \ref{lst:da}.
 
-\lstset{label=lst:bf, caption=Running Local Brute Force Attack}
+\lstset{label=lst:bf, caption=Running local brute force attack}
 \begin{lstlisting}
 $ java -jar BFDA.jar /path/to/keyring  \
     maximum_password_length number_of_threads
 \end{lstlisting}
 
-\lstset{label=lst:da, caption=Running Local Dictionary Attack}
+\lstset{label=lst:da, caption=Running local dictionary attack}
 \begin{lstlisting}
 $ java -jar BFDA.jar /path/to/keyring \
     /path/to/dictionary number_of_threads
@@ -2234,7 +2304,7 @@ master node to the \ac{HDFS} is done with the command shown in Listing
 \ref{lst:cpHDFS}. The attack can then be started on the master node with the
 command shown in Listing \ref{lst:CDA}.
 
-\lstset{language=bash, label=lst:cpHDFS, caption=Copying Files Into HDFS}
+\lstset{language=bash, label=lst:cpHDFS, caption=Copying files into HDFS}
 \begin{lstlisting}
 $ /path/to/Hadoop/bin/hadoop dfs -put /path/to/file \
     /path/to/file/in/HDFS
@@ -2363,13 +2433,35 @@ were able to brute force around 35 000 passwords per second, given
 \section{Cryptographic Scheme}
 %What is/is not used from TAHOE?
 
+In this section, we will go through the cryptographic scheme produced and
+described in Section \ref{ch:CS}. The influence of Tahoe-\ac{LAFS} is described
+in detail, followed by subsections scrutinizing how the scheme does or does not
+support various features and functionality.
+
+\subsection{Influence of Tahoe-LAFS}
+% Capabilities, folders, immutable vs. mutable, some of the key gen.
+% Tahoe does not let you change crypto primitives
+
+\subsection{Sharing}
+% Read/write keys, integrity, the general key distribution problem
+
+\subsection{Deletion of Files}
+% VCS, write-enabler, creator/ACL, link count, DAG
+
+\subsection{Verification of Files}
+% Hash trees, server involvement, streaming
+
+\subsection{De-duplication}
+% How Tahoe does this, security vs. performance trade off 
+
 \section{Implementation}
+
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
 use case we chose to implement. We will further analyse our choice of key
 distribution and look at alternative solutions. The section will end by
-discussing the most important cryptographic primitives chosen and utilized in our
-implementation.
+discussing the most important cryptographic primitives chosen and utilized in
+our implementation.
 
 \subsection{Choice of Use Case}
 
