@@ -105,8 +105,8 @@ design.\\
 \begin{tabbing}
     Assignment given: \hspace{12pt} \= 24. January 2011 \\ 
     Supervisor: \> Danilo Gligoroski\\
-    External Supervisors: \> Carsten Maartmann-Moe and \\
-    \> Antonio Martiradonna (Ernst \& Young AS)
+    External Supervisors: \> Carsten Maartmann-Moe, Ernst \& Young AS\\
+    \> Antonio Martiradonna, Ernst \& Young AS
 \end{tabbing}
 
 \chapter*{Abstract}
@@ -194,6 +194,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{CG}{Credential Generator}
 \acro{CPU}{Central Processing Unit}
 \acro{CSV}{Cloud Storage Vault}
+\acro{CTR}{Counter}
 \acro{DP}{Data Processor}
 \acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
@@ -1543,15 +1544,20 @@ unlocking the keychain. This method is known as key stretching
 
 \subsection{Choice of Cryptographic Primitives}
 \label{sec:cryptoprimitivechoice}
-For the proposed cryptographic scheme to be secure it needs secure
+
+For the proposed cryptographic scheme to be secure, it needs secure
 cryptographic primitives. More specific, it needs a symmetric cipher, a
 cryptographic hash function, a \ac{MAC} function and a function for digital
-signatures. These primitives needs to be set in accordance with the security
-requirements established in TODO. The hard part of selecting appropriate
-cryptographic primitives is trying to predict how long the primitives will be
-secure. Keylength.com\footnote{\url{http://www.keylength.com}} list predictions
-on how long primitives will be secure based on different sources with different
-predictions.
+signatures, as found in Figures \ref{fig:CS:CF}, \ref{fig:CS:OF},
+\ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}. 
+
+These primitives needs to be set in accordance with the security requirements
+established in Section \ref{sec:criteria}. Additionally, the hard part of
+selecting appropriate cryptographic primitives, is trying to predict for how
+long the primitives will be secure. \citet{keylength} compares studies listing
+predictions on how long primitives will be secure based on different sources
+with different predictions.
+
 % TODO: finn ut hvordan vi skal liste kilder her
 
 % Poeng: Det skal være trygt lenge nok
@@ -1581,53 +1587,60 @@ predictions.
 
 \subsubsection{Symmetric Cipher}
 % Argumentasjon skal kanskje være delvis i background
+\defcitealias{ecrypt2_2010}{ECRYPT II}
 
-For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is the
-standard for symmetric encryption and is readily available in most programming
-languages. We have chosen a key size of 128-bit. ECRYPT II has one of the more
-pessimistic predictions on how long this will be secure, saying data should be
-secure until 2030-2040\cite{ecrypt2_2010}. The gain of not choosing a larger
-key is a somewhat greater performance\footnote{\ac{AES}-128 is 10 rounds while
-\ac{AES}-256 is 14 rounds} and of course that the keys are smaller to store.
+For a symmetric cipher the choice is pretty simple -- \ac{AES}. \ac{AES} is the
+NIST standard for symmetric encryption and is readily available in most
+programming languages. We have chosen a key size of 128-bit.
+\citetalias{ecrypt2_2010} \cite{ecrypt2_2010} has one of the more pessimistic
+predictions on how long this will be secure, saying data encrypted with this
+key size should be secure until 2030-2040. 
+
+The gain of not choosing a larger key is a somewhat greater
+performance -- \ac{AES}-128 is 10 rounds while \ac{AES}-256 is 14
+rounds -- and of course that the keys are smaller to store.
 
 \paragraph{Mode of operation} The mode of operation we have chosen is \ac{CBC}.
-This is based more on practical advice than on security consideration. Bruce
-Schneier advices the use of either \ac{CBC} or \ac{CTR}-mode, where
-\ac{CBC}-mode is easier to implement correctly \cite{schneier}. 
+This is based more on practical advice than on security consideration.
+\citet{schneier} advices the use of either \ac{CBC} or \ac{CTR} mode, where
+\ac{CBC} mode is easier to implement correctly, while \ac{CTR} mode, at least
+in theory, leaks the least information.
 
-\paragraph{Padding} One negative consequence of \ac{CBC} is that \ac{CBC}
-requires that the plaintext is an exact multiple of the block length, 128-bit.
-Since this is not always the case a padding scheme will also be required. A
-padding scheme does not have any security implications as long as it is
-reversible\cite{schneier} at least not for \ac{CBC}. We went with PKCS5Padding
-in our implementation based on its existence in the cryptographic libraries we
-use.
+\paragraph{Padding} One negative consequence of using \ac{CBC}, is that it
+requires that the plaintext is an exact multiple of the block length, i.e.
+128-bit. Since this is not always the case, a padding scheme will be required.
+A padding scheme does not have any security implications as long as it is
+reversible \cite{schneier}, at least not for \ac{CBC}. We decided on
+\emph{PKCS5Padding} in our implementation, based on its existence in the
+cryptographic libraries we utilized.
 
 \subsubsection{Cryptographic Hash Function}
 
 The \ac{SHA}-family is the current standard for cryptographic hash functions,
-and from this family we have gone with double \ac{SHA}-256. The cryptographic
-scheme requires the hash function to have an output of at least the size of the
-key used for encryption. \ac{SHA}-1 have an output of 160-bits and could have
-been used to this but have weaknesses and are not recommended for use in new
-systems. The use of double \ac{SHA}-256 compared to single is to prevent a
-length-extension-attack\cite{schneier}.
+and from this we chose double \ac{SHA}-256. The cryptographic scheme requires
+the hash function to have an output of at least the size of the key used for
+encryption. The \ac{SHA}-1 has an output of 160 bits and could have been used,
+but more and more attacks are discovered (e.g. \citet{sha1}) and are not
+recommended for use in new systems. The use of double \ac{SHA}-256 compared to
+single, is to prevent a length-extension attack \cite{schneier}.
 
 \subsubsection{Signature Algorithm}
 
-For a signature scheme the standard seems to be either \ac{RSA} or \ac{DSA}.
-Both functions would work but we went with \ac{RSA} primarily because
-Tahoe-\ac{LAFS} made the same choice. There might however be a performance
-bonus in selecting \ac{RSA}. An internet draft suggests that \ac{DSA} is about three
-times faster than \ac{RSA} at signing, but \ac{RSA} is about ten times faster
-at verifying a signature\cite{dsa_sha2}. A performance comparison from Microsoft
-suggest that \ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at
-verifying signatures\cite{msdn_perf}. Verification, opening a folder, is an
-operation we believe most users will do significantly more than signing,
-updating and creating folders. 
+For a signature scheme, the standard seems to be either \ac{RSA} or \ac{DSA}.
+Both functions would work, but we went with \ac{RSA}, primarily because
+Tahoe-\ac{LAFS} made the same choice. 
 
-For the key length we have implemented 1024-bit, but in retrospect this is a
-bad choice. All sources at this point recommends at least 2048-bit.
+There might however be a performance bonus in selecting \ac{RSA}. An internet
+draft \cite{dsa_sha2} suggests that \ac{DSA} is about three times faster than
+\ac{RSA} at signing, but \ac{RSA} is about ten times faster at verifying a
+signature. A performance comparison from \citet{msdn_perf} suggest that
+\ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at verifying
+signatures. Verification, in the form of opening a folder, is an operation we
+believe most users will do significantly more than signing, updating and
+creating folders. 
+
+For the key length we have implemented 1024 bit, but in retrospect this is a
+bad choice. All sources at this point recommends at least 2048 bit.
 %TODO FIX KILDE
 
 \subsubsection{\ac{MAC}}
