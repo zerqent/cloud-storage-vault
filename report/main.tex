@@ -83,8 +83,31 @@ inputencoding=utf8
 
 \begin{document}
 
-\include{title}
+\chapter*{Problem Description}
+\thispagestyle{empty}
 \pagestyle{empty}
+
+Modern cloud storage systems that encrypts data for "at rest" protection often
+has access to the stored data, since the encryption is performed with an
+encryption key known by the service provider.\\
+
+\noindent The candidates will design an application in which all data stored in
+the cloud are encrypted with a key that can not be obtained by the service
+provider.\\
+
+\noindent Other goals of the application should be the ability to share
+encrypted files with others users, without leaking the encryption key to the
+service provider, and make it as user friendly as possible without compromising
+security. The students will develop a proof of concept implementation of the
+design.\\
+
+\medskip\noindent 
+\begin{tabbing}
+    Assignment given: \hspace{12pt} \= 24. January 2011 \\ 
+    Supervisor: \> Danilo Gligoroski\\
+    External Supervisors: \> Carsten Maartmann-Moe, Ernst \& Young AS\\
+    \> Antonio Martiradonna, Ernst \& Young AS
+\end{tabbing}
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
@@ -171,6 +194,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{CG}{Credential Generator}
 \acro{CPU}{Central Processing Unit}
 \acro{CSV}{Cloud Storage Vault}
+\acro{CTR}{Counter}
 \acro{DP}{Data Processor}
 \acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
@@ -995,6 +1019,7 @@ In addition, Dropbox is not Open Source, and hence one has no way of verifying
 that the security features actually work as claimed.
 
 \subsection{Tahoe-LAFS}
+\label{sec:tahoe}
 
 Tahoe-\ac{LAFS}\footnote{\url{http://www.tahoe-lafs.org/}} is an open source,
 distributed and secure cloud storage file system, which does fulfill
@@ -1148,17 +1173,17 @@ directed graph, as illustrated in Figure \ref{fig:AS:filesystem}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureFileSystem.pdf}
-    \caption{File system ssructure}
+    \caption{File system structure}
     \label{fig:AS:filesystem}
 \end{figure}
 
 \subsection{ACL/Authentication Layer}
 
 The possession of a capability gives a user access to read a file or read or
-write a folder. There are however some properties that the server provider
-might want that can not be given by the capability. Therefore a layer
-implementing authentication, accountability and possibly more access control
-could be preferable.
+write a folder, and hence serve as the primary access control. There are
+however some properties that the server provider might want that can not be
+given by the capability. Therefore a layer implementing authentication,
+accountability and possibly more access control could be preferable.
 
 \subsubsection{Block Access to Encrypted Data}
 
@@ -1313,18 +1338,19 @@ brought up throughout the further description of the software.
 \label{chap:CS} 
 
 This section elaborates on the cryptographic solutions applied to the
-architectural scheme in Section \ref{chap:AS}. It will take a closer look at how
-confidentiality and integrity can be integrated into the proposed architecture.
+architectural scheme in Section \ref{chap:AS}. It will take a closer look at
+how confidentiality and integrity can be integrated into the proposed
+architecture.
 
 %A fundamental scheme for key distribution is needed to realize the desired
 %security features, hence an appropriate solution for key distribution will
 %also be given.
 
-The section will start with a brief introduction explaining the fundamental security
+We will start with a brief introduction explaining the fundamental security
 concepts utilized by the cryptographic architecture. The cryptographic
-architecture is further described in terms of file and directory operations. It
-is important to mention that some of the cryptographic operations are
-taken from key concepts in the TAHOE LAFS \cite{cite}.
+architecture is further described in terms of file and directory operations.
+Key concepts are based on equivalent operations found in the Tahoe-\ac{LAFS}
+\cite{tahoe}.
 
 \subsection{Security Concepts}
 
@@ -1387,12 +1413,12 @@ form the \ac{IV} for the file.
 
 Next, the file is hashed and the resulting digest is stored together with the
 encryption key in the capability. Lastly, the file is encrypted with the
-encryption key, and the \ac{IV} is uploaded to the server.
+encryption key and the \ac{IV}, and is transfered to the server.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{CryptoCreateFile.pdf}
-    \caption{Uploading a file}
+    \caption{Behind the scenes: Uploading a file}
     \label{fig:CS:CF}
 \end{figure}
 
@@ -1409,7 +1435,7 @@ capability. If these two match, the file has not been tampered with.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{CryptoOpenFile.pdf}
-    \caption{Downloading a file from the server}
+    \caption{Behind the scenes: Downloading a file}
     \label{fig:CS:OF}
 \end{figure}
 
@@ -1429,7 +1455,7 @@ because it has to support changing the contents of the folder.
 \begin{figure}[h!]
     \centering
         \includegraphics[width=\columnwidth]{CryptoCreateFolder.pdf}
-	    \caption{Creating a directory}
+	    \caption{Behind the scenes: Creating a directory}
     \label{fig:CS:CD}
 \end{figure}
 
@@ -1518,15 +1544,20 @@ unlocking the keychain. This method is known as key stretching
 
 \subsection{Choice of Cryptographic Primitives}
 \label{sec:cryptoprimitivechoice}
-For the proposed cryptographic scheme to be secure it needs secure
+
+For the proposed cryptographic scheme to be secure, it needs secure
 cryptographic primitives. More specific, it needs a symmetric cipher, a
 cryptographic hash function, a \ac{MAC} function and a function for digital
-signatures. These primitives needs to be set in accordance with the security
-requirements established in TODO. The hard part of selecting appropriate
-cryptographic primitives is trying to predict how long the primitives will be
-secure. Keylength.com\footnote{\url{http://www.keylength.com}} list predictions
-on how long primitives will be secure based on different sources with different
-predictions.
+signatures, as found in Figures \ref{fig:CS:CF}, \ref{fig:CS:OF},
+\ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}. 
+
+These primitives needs to be set in accordance with the security requirements
+established in Section \ref{sec:criteria}. Additionally, the hard part of
+selecting appropriate cryptographic primitives, is trying to predict for how
+long the primitives will be secure. \citet{keylength} compares studies listing
+predictions on how long primitives will be secure based on different sources
+with different predictions.
+
 % TODO: finn ut hvordan vi skal liste kilder her
 
 % Poeng: Det skal være trygt lenge nok
@@ -1556,55 +1587,64 @@ predictions.
 
 \subsubsection{Symmetric Cipher}
 % Argumentasjon skal kanskje være delvis i background
+\defcitealias{ecrypt2_2010}{ECRYPT II}
 
-For a symmetric cipher the choice is pretty simple; \ac{AES}. \ac{AES} is the
-standard for symmetric encryption and is readily available in most programming
-languages. We have chosen a key size of 128-bit. ECRYPT II has one of the more
-pessimistic predictions on how long this will be secure, saying data should be
-secure until 2030-2040\cite{ecrypt2_2010}. The gain of not choosing a larger
-key is a somewhat greater performance\footnote{\ac{AES}-128 is 10 rounds while
-\ac{AES}-256 is 14 rounds} and of course that the keys are smaller to store.
+For a symmetric cipher the choice is pretty simple -- \ac{AES}. \ac{AES} is the
+NIST standard for symmetric encryption and is readily available in most
+programming languages. We have chosen a key size of 128-bit.
+\citetalias{ecrypt2_2010} \cite{ecrypt2_2010} has one of the more pessimistic
+predictions on how long this will be secure, saying data encrypted with this
+key size should be secure until 2030-2040. 
+
+The gain of not choosing a larger key is a somewhat greater
+performance -- \ac{AES}-128 is 10 rounds while \ac{AES}-256 is 14
+rounds -- and of course that the keys are smaller to store.
 
 \paragraph{Mode of operation} The mode of operation we have chosen is \ac{CBC}.
-This is based more on practical advice than on security consideration. Bruce
-Schneier advices the use of either \ac{CBC} or \ac{CTR}-mode, where
-\ac{CBC}-mode is easier to implement correctly \cite{schneier}. 
+This is based more on practical advice than on security consideration.
+\citet{schneier} advices the use of either \ac{CBC} or \ac{CTR} mode, where
+\ac{CBC} mode is easier to implement correctly, while \ac{CTR} mode, at least
+in theory, leaks the least information.
 
-\paragraph{Padding} One negative consequence of \ac{CBC} is that \ac{CBC}
-requires that the plaintext is an exact multiple of the block length, 128-bit.
-Since this is not always the case a padding scheme will also be required. A
-padding scheme does not have any security implications as long as it is
-reversible\cite{schneier} at least not for \ac{CBC}. We went with PKCS5Padding
-in our implementation based on its existence in the cryptographic libraries we
-use.
-
-%TODO Padding
+\paragraph{Padding} One negative consequence of using \ac{CBC}, is that it
+requires that the plaintext is an exact multiple of the block length, i.e.
+128-bit. Since this is not always the case, a padding scheme will be required.
+A padding scheme does not have any security implications as long as it is
+reversible \cite{schneier}, at least not for \ac{CBC}. We decided on
+\emph{PKCS5Padding} in our implementation, based on its existence in the
+cryptographic libraries we utilized.
 
 \subsubsection{Cryptographic Hash Function}
 
 The \ac{SHA}-family is the current standard for cryptographic hash functions,
-and from this family we have gone with double \ac{SHA}-256. The cryptographic
-scheme requires the hash function to have an output of at least the size of the
-key used for encryption. \ac{SHA}-1 have an output of 160-bits and could have
-been used to this but have weaknesses and are not recommended for use in new
-systems. The use of double \ac{SHA}-256 compared to single is to prevent a
-length-extension-attack\cite{schneier}.
+and from this we chose double \ac{SHA}-256. The cryptographic scheme requires
+the hash function to have an output of at least the size of the key used for
+encryption. The \ac{SHA}-1 has an output of 160 bits and could have been used,
+but more and more attacks are discovered (e.g. \citet{sha1}) and are not
+recommended for use in new systems. The use of double \ac{SHA}-256 compared to
+single, is to prevent a length-extension attack \cite{schneier}.
 
 \subsubsection{Signature Algorithm}
 
-For a signature scheme the standard seems to be either \ac{RSA} or \ac{DSA}.
-Both functions would work but we went with \ac{RSA} primarily because
-Tahoe-\ac{LAFS} made the same choice. There might however be a performance
-bonus in selecting \ac{RSA}. An internet draft suggests that \ac{DSA} is about three
-times faster than \ac{RSA} at signing, but \ac{RSA} is about ten times faster
-at verifying a signature\cite{dsa_sha2}. A performance comparison from Microsoft
-suggest that \ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at
-verifying signatures\cite{msdn_perf}. Verification, opening a folder, is an
-operation we believe most users will do significantly more than signing,
-updating and creating folders. 
+For a signature scheme, the standard seems to be either \ac{RSA} or \ac{DSA}.
+Both functions would work, but we went with \ac{RSA}, primarily because
+Tahoe-\ac{LAFS} made the same choice. 
 
-For the key length we have implemented 1024-bit, but in retrospect this is a
-bad choice. All sources at this point recommends at least 2048-bit.
+There might however be a performance bonus in selecting \ac{RSA}. An internet
+draft \cite{dsa_sha2} suggests that \ac{DSA} is about three times faster than
+\ac{RSA} at signing, but \ac{RSA} is about ten times faster at verifying a
+signature. A performance comparison from \citet{msdn_perf} suggest that
+\ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at verifying
+signatures. Verification, in the form of opening a folder, is an operation we
+believe most users will do significantly more than signing, updating and
+creating folders. 
+
+For the key length we have implemented 1024 bit, but in retrospect this is a
+bad choice. All sources at this point recommends at least 2048 bit.
+%TODO FIX KILDE
+
+\subsubsection{\ac{MAC}}
+The \ac{MAC}
 
 \section{Server Implementation}
 
@@ -2434,27 +2474,128 @@ were able to brute force around 35 000 passwords per second, given
 %What is/is not used from TAHOE?
 
 In this section, we will go through the cryptographic scheme produced and
-described in Section \ref{ch:CS}. The influence of Tahoe-\ac{LAFS} is described
-in detail, followed by subsections scrutinizing how the scheme does or does not
-support various features and functionality.
+described in Section \ref{chap:CS}. The influence of Tahoe-\ac{LAFS} is
+described in detail, followed by subsections scrutinizing how the scheme does
+or does not support various features and functionality.
 
 \subsection{Influence of Tahoe-LAFS}
-% Capabilities, folders, immutable vs. mutable, some of the key gen.
-% Tahoe does not let you change crypto primitives
+%TODO: This subsection lacks the 'why' questions (and answers!)
+
+The general idea behind the development of the cryptographic scheme, was that
+we would use the scheme of Tahoe-\ac{LAFS} as a basis, and simplify it where
+possible. One of the primary design goals was to make it easy to
+understand and therefore simple to accept the security features.
+
+\paragraph{Capabilities} The term \emph{capability} is directly based on that
+found in Tahoe-\ac{LAFS}, as it is a good descriptive name for what it is. The
+possession of a capability enables one to find, decrypt and verify the
+integrity of a file or folder.
+
+\paragraph{File Types} The concept of having two different file types, i.e.
+\emph{mutable} and \emph{immutable} files, resembles that found in
+Tahoe-\ac{LAFS}. The only use of mutable files in the \acl{CSV}, is for
+implementing directories. By not allowing the users to generate mutable files,
+the scheme is significantly simplified.
+
+\paragraph{Key Generation} The process of generating keys for directories, as
+described in Section \ref{sec:CS:DO}, are heavily based on the scheme of
+Tahoe-\ac{LAFS}. By using the combination of symmetric keys derived from
+asymmetric keys, the scheme supports safe sharing of folders in both read-only
+and read-write modes.
+
+\paragraph{Cryptographic Primitives} A significant design difference, is that
+it is substantially more difficult to change cryptographic primitives for the
+user in Tahoe-\ac{LAFS} than in \ac{CSV}.
 
 \subsection{Sharing}
 % Read/write keys, integrity, the general key distribution problem
 
+One of the major advantages of \ac{CSV} over other cloud storage systems, is
+the possibility to share files and folders in a secure manner. If the read
+capability of a folder is shared, the user holding the write capability are
+guaranteed to be the only one capable of making changes to the folder. 
+
+The server denies people with only the read capability to make changes to the
+folder by the use of the \emph{write enabler}. The write enabler serves the
+purpose of proving to the server that one holds the correct write capability.
+If someone with access to the file system on the server, e.g. a cloud
+provider employee, decides to make changes on a folder, the integrity check
+will warn the user of this.
+
+\paragraph{Key Distribution} The sharing of files and directories implicitly
+deals with the general problem of key distribution. The cryptographic scheme
+does not propose specific solutions for this, and leaves it up to the
+implementation to choose the best suiting method in light of the specific
+requirements. The procedure used in the proof of concept system developed, are
+described in Section \ref{sec:DIS:impl}.
+
 \subsection{Deletion of Files}
-% VCS, write-enabler, creator/ACL, link count, DAG
+
+To support deletion of files, various alternatives has to be assessed.
+Consider the following scenarios:
+
+\begin{enumerate}
+  \item A folder is shared between two users, and one of the users has
+    linked in the files in other directories as well. What should happen if the
+    other user deletes the files in the shared folder?
+
+  \item A folder contains a folder which is a link to a folder ``higher''
+    in the folder tree, and thus creating a loop. By deleting the folder,
+    should all subdirectories be deleted as well, i.e. cascading delete?
+\end{enumerate}
+
+The choice of the alternatives presented shortly, are not taken by the proposed
+cryptographic scheme, as it is merely a practical decision.
+
+\paragraph{Creator/\ac{ACL}} The \ac{ACL} layer on the server could store the
+username of the creator of the file along with each storage index, and use this
+to decide who should be granted access to delete files.
+
+\paragraph{Write Enabler} Similarly, the server could grant removal rights to
+whoever provides the write enabler, in the same manner as when updating
+folders. This requires that \emph{delete enablers} is produced for immutable
+files as well as folders.
+
+\paragraph{Link Count} The files could include a link count in its meta data,
+updated whenever a user links or unlinks it from a folder. When the link count
+reach zero, the user notifies the server to delete it.
+
+\paragraph{Directed Acyclic Graph}
 
 \subsection{Verification of Files}
 % Hash trees, server involvement, streaming
+The verification scheme for files is suboptimal in pretty much every way a user
+wants to use a file, with the exception of the case where the user wants the
+entire file and the file has not been tampered with. The problem with the
+scheme is that the user will have to download the whole file before he is sure
+the file is OK. If it turns out the file is not OK, and the error was the first
+byte, the user has wasted time and bandwidth downloading a lot of data he will
+not need. Another problem is that if the file is for instance a movie file, and
+the user only wants to look at a small part of this file. There is no way for
+the user to verify only parts of a file, he will have to download the whole
+thing which is suboptimal. A solution to this would be to build a hash-tree of
+the whole file, as shown in Figure \ref{fig:hashtree}. With a hash-tree smaller
+bits of the file can be verified, and errors can be detected earlier. The
+hash-tree could be stored encrypted on the server together with the ciphertext,
+and the capability could hold only information to verify the hash-tree. The
+downside to this approach is that performance would be affected due to the
+substantial amount of hash operations required to do this.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.55]{hash-tree.pdf}
+\caption{Hash-tree for a file}
+\label{fig:hashtree}
+\end{figure}
+
 
 \subsection{De-duplication}
 % How Tahoe does this, security vs. performance trade off 
 
+\subsection{Version Control System}
+
 \section{Implementation}
+\label{sec:DIS:impl}
 
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
@@ -2463,12 +2604,42 @@ distribution and look at alternative solutions. The section will end by
 discussing the most important cryptographic primitives chosen and utilized in
 our implementation.
 
-\subsection{Choice of Use Case}
+\subsection{Choice of Use Case} 
+
+There are mainly two types of users for a cloud storage solution, personal or
+enterprise/organizational. What we have implemented is aimed more against the
+personal users than the enterprise market. The main difference between these
+two use cases is that in an enterprise there will usually be some kind of IT
+department which will have the possibility of setting up users terminal, which
+in turn means that the initial client setup can be more advanced. Another
+difference is that it would usually be more defined who you are supposed to
+share files with and what you should have access to. An organization might not
+approve of a model where a random user can forward read rights to other users.
 
 \subsection{Choice of Key Distribution}
 \label{sec:DI:keydist}
 %Describe possible key distributions schemes
 %Argue why we chose our scheme
+
+The challenge of key distribution is a hard one. To successfully authenticate a
+user and transfer a key requires either that you trust a third party, you meet
+a user in person or that you use some out of bound safe channel. Since our
+initial problem is that we do not trust the cloud provider we do not want to
+use a trusted third party either. This pretty much leaves verifying another
+user in person, although a scheme similar to \ac{PGP} could be used. In
+\ac{PGP} users can publish that they have verified other users and to which
+degree they trust them. Other users can use this information to calculate the
+probability that a certain user is legit. The reason why we do not want this
+scheme is that it is fairly complex, and to easy for users to make mistakes
+when using it.  
+
+If our cryptographic scheme should be used in an organization a
+\ac{PKI} is probably the best solution. In this setting the organization can
+itself be the trusted third party, who enforces that all certificates granted
+to users are correct. A user could then be simply prompted by the name of the
+user she would like to share a file with, and the rest could be handled by
+logic and the trust of the \ac{PKI}.
+
 \subsection{Choice of Cryptographic Primitives}
 
 \section{Performance}
