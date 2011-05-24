@@ -2560,39 +2560,79 @@ files as well as folders.
 updated whenever a user links or unlinks it from a folder. When the link count
 reach zero, the user notifies the server to delete it.
 
-\paragraph{Directed Acyclic Graph}
+\subsubsection{Loop Detection in a Directed Acyclic Graph}
+
+In remedy of the problem of cascading deletion with loops, the system could
+utilize an algorithm for finding strongly connected components of a graph,
+before actually deleting any files.
+
+Two components are strongly connected if there exist a path from $A$ to $B$,
+and from $B$ to $A$, as depicted in Figure \ref{fig:DSC:cycles} where a
+directory is linked in at a higher level in the directory tree. The dashed line
+represents the actual path in the graph. If the folder $X$ is requested to be
+deleted, the $Y$ directory will also be removed, and this is might not the
+behaviour the user expected.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{CyclesintheDAG.pdf}
+    \caption{Theoretical cycle in the directory graph}
+    \label{fig:DSC:cycles}
+\end{figure}
+
+\emph{Tarjan's Algorithm} \cite{tarjan} is an example of algorithm that can be
+implemented to do this kind of check, and is basically a depth first search,
+with a stack containing visited nodes.
 
 \subsection{Verification of Files}
-% Hash trees, server involvement, streaming
-The verification scheme for files is suboptimal in pretty much every way a user
-wants to use a file, with the exception of the case where the user wants the
-entire file and the file has not been tampered with. The problem with the
-scheme is that the user will have to download the whole file before he is sure
-the file is OK. If it turns out the file is not OK, and the error was the first
-byte, the user has wasted time and bandwidth downloading a lot of data he will
-not need. Another problem is that if the file is for instance a movie file, and
-the user only wants to look at a small part of this file. There is no way for
-the user to verify only parts of a file, he will have to download the whole
-thing which is suboptimal. A solution to this would be to build a hash-tree of
-the whole file, as shown in Figure \ref{fig:hashtree}. With a hash-tree smaller
-bits of the file can be verified, and errors can be detected earlier. The
-hash-tree could be stored encrypted on the server together with the ciphertext,
-and the capability could hold only information to verify the hash-tree. The
-downside to this approach is that performance would be affected due to the
-substantial amount of hash operations required to do this.
+
+The verification scheme for immutable files is suboptimal in pretty much every
+way a user wants to use an ordinary file, with the exception of the case where
+the user wants the entire file and the file has not been tampered with.
+
+The problem with the scheme, is that the user will have to download the whole
+file, before he can verify by absolute certainty that the file is what it is
+supposed to be. If it turns out that the file does not pass this check, and
+the error was in the very first byte, the user has wasted time and bandwidth
+downloading a lot of useless data.
+
+If the file is a movie file, and the user only wants to look at a
+small part of this file, this is not possible with the current verification
+scheme. There is no way for the user to verify only parts of a
+file, and he will have to download the whole file, which is suboptimal.
+
+A possible solution to support this kind of streaming, would be to build a
+\emph{hash tree} of the whole file, as shown in Figure \ref{fig:hashtree}. With
+a hash tree, smaller bits of the file can be verified, and errors can be
+detected earlier. The hash tree could be stored encrypted on the server
+together with the ciphertext, and the capability could hold information to
+verify the hash tree. The downside to this approach, is that performance would
+be affected due to the substantial amount of hash operations required to
+compute the hash tree. This idea of a hash tree is implemented in the
+Tahoe-\ac{LAFS} \cite{tahoe}.
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{hash-tree.pdf}
-\caption{Hash-tree for a file}
+\caption{Hash tree of a file}
 \label{fig:hashtree}
 \end{figure}
 
+\subsection{Version Control System}
+
+Some of the currently available cloud storage systems, as Wuala and Dropbox
+mentioned in Section \ref{sec:existing}, support a kind of \emph{version
+control} of the files stored.
+
+%TODO: Elaborate on this.
+This could be implemented in \ac{CSV} as either an extension of the items in
+the directories, or as a special kind of mutable file. The containing items of
+this file could refer to different storage indexes, and have an alias
+containing a time stamp.
 
 \subsection{De-duplication}
 % How Tahoe does this, security vs. performance trade off 
 
-\subsection{Version Control System}
 
 \section{Implementation}
 \label{sec:DIS:impl}
