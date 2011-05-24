@@ -2591,12 +2591,42 @@ distribution and look at alternative solutions. The section will end by
 discussing the most important cryptographic primitives chosen and utilized in
 our implementation.
 
-\subsection{Choice of Use Case}
+\subsection{Choice of Use Case} 
+
+There are mainly two types of users for a cloud storage solution, personal or
+enterprise/organizational. What we have implemented is aimed more against the
+personal users than the enterprise market. The main difference between these
+two use cases is that in an enterprise there will usually be some kind of IT
+department which will have the possibility of setting up users terminal, which
+in turn means that the initial client setup can be more advanced. Another
+difference is that it would usually be more defined who you are supposed to
+share files with and what you should have access to. An organization might not
+approve of a model where a random user can forward read rights to other users.
 
 \subsection{Choice of Key Distribution}
 \label{sec:DI:keydist}
 %Describe possible key distributions schemes
 %Argue why we chose our scheme
+
+The challenge of key distribution is a hard one. To successfully authenticate a
+user and transfer a key requires either that you trust a third party, you meet
+a user in person or that you use some out of bound safe channel. Since our
+initial problem is that we do not trust the cloud provider we do not want to
+use a trusted third party either. This pretty much leaves verifying another
+user in person, although a scheme similar to \ac{PGP} could be used. In
+\ac{PGP} users can publish that they have verified other users and to which
+degree they trust them. Other users can use this information to calculate the
+probability that a certain user is legit. The reason why we do not want this
+scheme is that it is fairly complex, and to easy for users to make mistakes
+when using it.  
+
+If our cryptographic scheme should be used in an organization a
+\ac{PKI} is probably the best solution. In this setting the organization can
+itself be the trusted third party, who enforces that all certificates granted
+to users are correct. A user could then be simply prompted by the name of the
+user she would like to share a file with, and the rest could be handled by
+logic and the trust of the \ac{PKI}.
+
 \subsection{Choice of Cryptographic Primitives}
 
 \section{Performance}
