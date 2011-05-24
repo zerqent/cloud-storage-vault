@@ -2490,6 +2490,7 @@ scheme and security of the user client.
 
 \subsection{Security of the Cryptographic Scheme}
 %TODO: Write this subsection
+
 The provider will have access to all data on the server, and also know what
 data stored is part of files and what is part of folders. The confidentiality
 of both files and folders relies primarily on the symmetric cipher used to
@@ -2505,47 +2506,80 @@ files are effectively compromised.
 
 \subsection{Client Security}
 Given enough users, sooner or later, there will be a user who looses his client.
-Additionally, a user's client might also be broken into without the user's knowledge.
+Additionally, a user's client might also be broken into without the user's
+knowledge. This section will look at the application's security in both
+scenarios and further discuss the security of the encrypted keyring stored
+inside a user client.
 
+\subsubsection{Loosing the Client}
 If a user looses his client and the client is logged on to the user's Cloud
 Storage Vault, anyone who finds the client can get access to the user's private
 files and folders. While logged on to the service, it is also possible for an
-educated attacker to reveal the user's server access password as well as the
-password to decrypt the locally stored keyring. The attacker will then have access to the
-user's files and folders at any time. The attacker can achieve the passwords by
+experienced attacker to reveal the user's server access password as well as the
+password to decrypt the locally stored keyring. The attacker can achieve the passwords by
 scanning the client's memory while it is logged into the Cloud Storage Vault.
 Although this is a severe security breach, it can easily be avoided by an
 additional mechanism to the implementation. The Cloud Storage Vault can simply
-flush the password values right after a successful login session. 
+flush the password values stored in memory right after a successful login session. 
 
-Even though this prevents disclosure of critical access data, it does not prevent
-a logged in attacker from disclosing the user's encrypted files and folders.
-However, to solve this problem the Cloud Storage Vault should implement a
+Even though this mechanism prevents disclosure of critical access data when
+loosing a client, it does not prevent a logged in attacker from disclosing the user's encrypted files and folders.
+To minimize this problem the Cloud Storage Vault should implement a
 timeout mechanism for inactive users. If a user has been inactive for a given
 amount of time, the user should be logged out of the application. In this way,
-the application will reduce the consequence of losing a user client. It is
-important that the timeout is set to a value between what is acceptable by users
-and what can be defined as secure enough\footnote{Users would not like to write
+the application will reduce the consequence of losing the client. It is
+important that the timeout is set to a value between what is acceptable by the users
+and what can be defined as secure timeout\footnote{Users would not like to write
 their password for every 30th second. Additionally, a timeout value of 30 minutes is
 not secure, as it is long enough for someone to posses the user's client.}.
 
+Even though a timeout value may deny an attacker access to the storage vault, it
+can not prevent the attacker from accessing files that have already been downloaded from
+the Cloud. There is, however, two solutions to handle this problem. The first
+solution is to avoid that downloaded files are written to the client's storage
+medium. This can be implemented using a temporary filesystem in the client's
+memory\footnote{tmpfs, ramfs for clients running Unix-like OSs etc.}. However, using only the client
+memory to store files, will greatly limit the possible size of the downloaded
+files. In case limited file size is not an acceptable solution, it is possible to use a temporary filesystem
+that supports swapping. This will, however, keep parts of a large file in the
+client's storage medium, revealing information about a downloaded file. The most
+important feature with the temporary filesystem is that the downloaded files are
+only stored temporary, while they are opened by the application etc.. This will
+prevent an attacker from revealing previously downloaded files from the cloud.
+
+It is important to mention that a temporary filesystem for downloaded files can
+not be used in case users want to store their downloaded files. A solution would
+be for the Cloud Storage Vault to store downloaded files in their encrypted
+form. The downloaded files could then only be opened locally through the Cloud Storage
+Vault application, which would further decrypt and send the file to the
+appropriate application. It is worth noticing that this mechanism will also
+enable the possibility of file synchronization between the client and the cloud,
+similar to the one of Dropbox. 
+
+\subsubsection{Possessing a Compromised Client}
 As mentioned earlier, an attacker can also break into a user's client, using a backdoor,
 trojan horse etc.. Depending on the attack, a worst case scenario would
 enable the attacker to obtain root access on a user client. With root access,
 the attacker is given complete control and privileges over the client and can access whatever
 data resource desired within the client. With this in mind, the attacker can read,
 write and execute every file that has been downloaded by the Cloud Storage
-Vault. 
+Vault. However, this can be prevented by using a temporary filesystem or
+storing downloaded files in their encrypted form as previously described.
 
-The attacker can additionally utilize software to read from the client's
-memory.
-%TIMEOUT VALUE
-%SLETTE FILER PÅ DISK (TMPFS)
+Given root access, the attacker can also utilize software to read live content
+from the client's memory. In this case, it is unfortunately not possible to protect against
+disclosure of passwords or capabilities used in the Cloud Storage Vault. The
+Cloud Storage vault is dependent on storing the keyring password in memory
+during the login procedure. Capabilities are also stored in memory during
+browsing of contents in the cloud. Both passwords and capabilities are therefore
+retrievable by the attacker, even though their necessary storage time in memory is kept to a
+minimum by the application.
 
-\subsubsection{Security of Encrypted Keyring}
-In both cases above, with a broken or lost user client, an attacker can
-copy/achieve the encrypted keyring stored by the Cloud Storage Vault.
-%TODO: write intro
+\subsubsection{Security of the Encrypted Keyring}
+In both cases above, with a compromised or lost user client, an attacker can
+copy/achieve the encrypted keyring stored by the Cloud Storage Vault. The
+application's security is therefore dependent on the cryptographic strength and
+brute force resistance of its keyring.
 
 \paragraph{Brute Forcing the Keyring}
 The confidentiality of the root folder can be breached by brute forcing a user's
@@ -2562,15 +2596,15 @@ CDA attack on 20 Amazon EC2 high-CPU extra large instances. Given a password
 with length 5 and containing only small letters, the CDA attack will use 5
 minutes and 39 seconds to check all possible values. By using a cluster of 200
 nodes the CDA attack is able to crack a similar password of length 6 within 14 minutes
-and 42 seconds in worst case.\\
+and 42 seconds in worst case.
 
-\noindent It is important to notice that both CDA and \ac{BFDA} programs were
+It is important to notice that both CDA and \ac{BFDA} programs were
 written in Java. With this in mind, it is reasonable to believe
 that general performance can be improved by using lower-layer
 programming languages, such as C, to implement the attacks. Another way to
-increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.\\
+increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
 
-\noindent Regarding CDA, the use of cloud computing to execute a brute force
+Regarding CDA, the use of cloud computing to execute a brute force
 attack is not a new idea \cite{bfpgp, rothsha, rothwpa}. Newly on Black Hat DC 2011, a
 security researcher named Thomas Roth, showed that it was possible to brute
 force WPA passwords with a speed of 47 000 passwords per second on a single EC2
@@ -2579,9 +2613,9 @@ cluster GPU instances, without the need of a special request. This indicate that
 anyone can crack WPA passwords at almost 400 000 passwords per second, and that
 Amazon can achieve even higher and unknown speed for WPA password cracking. With
 this in mind, we should consider that our own keyring can be subject to a lot
-more efficient brute force attacks compared to our own findings.\\
+more efficient brute force attacks compared to our own findings.
 
-\noindent To reduce vulnerability from plain brute force attacks, we decided to
+To reduce vulnerability from plain brute force attacks, we decided to
 use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
 to force users to utilize more advanced and sophisticated passwords. Password
 requirements for the Cloud Storage Vault are given below:
@@ -2592,16 +2626,16 @@ requirements for the Cloud Storage Vault are given below:
 one number.
 \end{itemize}
 
-\noindent With the password requirements above and with 4000 iterations in
+With the password requirements above and with 4000 iterations in
 \emph{PBKDF2}, it will
 be extremely hard to perform a plain brute force attack against the local
 keyring. Figure \ref{fig:bfres} indicates that when using \emph{PBKDF2} with 4000
 iterations, the local test computer running \ac{BFDA} is only able to check
 around 400 passwords per second. Given a cluster of 200 such computers, it will
 take 2683 years on average to brute force a password using the syntax above
-and a length of 9.\\
+and a length of 9.
 
-\noindent Even though the keyring is secured against a plain brute force attack, it is
+Even though the keyring is secured against a plain brute force attack, it is
 still vulnerable to slow dictionary attacks. To completely
 avoid brute force and dictionary attacks against the keyring, the most efficient
 and preventive action would be to simply ensure that the encrypted keyring is
