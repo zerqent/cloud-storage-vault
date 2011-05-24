@@ -1578,8 +1578,6 @@ reversible\cite{schneier} at least not for \ac{CBC}. We went with PKCS5Padding
 in our implementation based on its existence in the cryptographic libraries we
 use.
 
-%TODO Padding
-
 \subsubsection{Cryptographic Hash Function}
 
 The \ac{SHA}-family is the current standard for cryptographic hash functions,
@@ -1605,6 +1603,10 @@ updating and creating folders.
 
 For the key length we have implemented 1024-bit, but in retrospect this is a
 bad choice. All sources at this point recommends at least 2048-bit.
+%TODO FIX KILDE
+
+\subsubsection{\ac{MAC}}
+The \ac{MA
 
 \section{Server Implementation}
 
