@@ -2551,6 +2551,30 @@ reach zero, the user notifies the server to delete it.
 
 \subsection{Verification of Files}
 % Hash trees, server involvement, streaming
+The verification scheme for files is suboptimal in pretty much every way a user
+wants to use a file, with the exception of the case where the user wants the
+entire file and the file has not been tampered with. The problem with the
+scheme is that the user will have to download the whole file before he is sure
+the file is OK. If it turns out the file is not OK, and the error was the first
+byte, the user has wasted time and bandwidth downloading a lot of data he will
+not need. Another problem is that if the file is for instance a movie file, and
+the user only wants to look at a small part of this file. There is no way for
+the user to verify only parts of a file, he will have to download the whole
+thing which is suboptimal. A solution to this would be to build a hash-tree of
+the whole file, as shown in Figure \ref{fig:hashtree}. With a hash-tree smaller
+bits of the file can be verified, and errors can be detected earlier. The
+hash-tree could be stored encrypted on the server together with the ciphertext,
+and the capability could hold only information to verify the hash-tree. The
+downside to this approach is that performance would be affected due to the
+substantial amount of hash operations required to do this.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.55]{hash-tree.pdf}
+\caption{Hash-tree for a file}
+\label{fig:hashtree}
+\end{figure}
+
 
 \subsection{De-duplication}
 % How Tahoe does this, security vs. performance trade off 
