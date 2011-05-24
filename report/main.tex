@@ -2364,20 +2364,24 @@ $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
 \label{ch:results}
 %**************************************%
 
+In this chapter we will present the quantifiable numbers retrieved when doing
+the experimentation in Chapter \ref{ch:experimental}. This includes performance
+measurements on the proof of concept client, and figures on the attacks
+presented that target the local keyring.
+
 \section{Client Performance}
 
-This section displays the results of the client benchmarking and highlights the
-most important results.
+This section presents the results of benchmarking of the proof of concept
+client, and highlights the most important results.
 
 \subsection{Files}
 
 The following results shows the network speed obtained when uploading and
 downloading files. Table \ref{tbl:files:encrypted} shows the speed when using
-the unmodified client, while Table \ref{tbl:files:unencrypted} shows the speed
-obtained when using the same client but with encryption and hashing disabled.
+the \emph{unmodified} client, while Table \ref{tbl:files:unencrypted} shows the
+speed obtained when using the same client, but with \emph{encryption and
+hashing disabled}.
 
-% Kanskje en tabell her, som viser søyler med ukryptert bak og kryptert forann?
-\input{tables/performance_files.tex}
 \input{tables/performance_files_unencrypted.tex}
 
 We observe that the Android devices performance for uploads is severely lower
