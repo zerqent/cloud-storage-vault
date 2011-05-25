@@ -2652,12 +2652,30 @@ instead of aliases, and pointing to corresponding storage indexes. With this
 procedure, it should be easy to configure for the user which files and folders
 that should be under version control.
 
-\subsection{De-duplication}
+\subsection{Deduplication}
 % How Tahoe does this, security vs. performance trade off 
 
+The term \emph{data deduplication} implies not having to store redundant data.
+By implementing a deduplication scheme, multiple advantages can arise in the
+sense of a secure cloud storage system. For the service provider, this could
+mean cost savings in the form of not having to store the same file twice, but
+still claim money from users for the given storage. For the users of the
+service, this could mean better network utilization, as uploading a big file
+that already exist on the server would take no time at all. 
 
-\section{Implementation}
-\label{sec:DIS:impl}
+There are however practical disadvantages and great privacy concerns related to
+this issue.
+
+\paragraph{Practical Disadvantages} Deduplication relies on the use of hash
+functions to check whether a file or a block of data exist on the storage node.
+In general, as long as you hash something larger than the length of the digest,
+there is the potential for a collision, and hence data corruption.
+
+Further on, the additional hash operations and queries to the server pose
+extra computational overhead, which increase if the deduplication is on block
+level.
+
+\section{Implementation} \label{sec:DIS:impl}
 
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
