@@ -2674,22 +2674,55 @@ use a trusted third party either. This pretty much leaves verifying another
 user in person, although a scheme similar to \ac{PGP} could be used. In
 \ac{PGP} users can publish that they have verified other users and to which
 degree they trust them. Other users can use this information to calculate the
-probability that a certain user is legit. The reason why we do not want this
-scheme is that it is fairly complex, and to easy for users to make mistakes
-when using it.  
+probability that a certain user is legit. The reason why we do not implement this
+scheme is that it is fairly complex for a standard user. There are however
+nothing that stops a user that want to use \ac{PGP} to transfer capabilities
+through it. 
 
-If our cryptographic scheme should be used in an organization a
-\ac{PKI} is probably the best solution. In this setting the organization can
-itself be the trusted third party, who enforces that all certificates granted
-to users are correct. A user could then be simply prompted by the name of the
-user she would like to share a file with, and the rest could be handled by
-logic and the trust of the \ac{PKI}.
+If our cryptographic scheme should be used in an organization a \ac{PKI} is
+probably the best solution. In this setting the organization can itself be the
+trusted third party, who enforces that all certificates granted to users are
+correct. A user could then be simply prompted by the name of the user she would
+like to share a file with, and the rest could be handled by logic and the trust
+of the \ac{PKI}.
 
 \subsection{Choice of Cryptographic Primitives}
 
-\section{Performance}
-% 1 mappe med 100 filer i, tar ikke mye lenger tid å åpne enn en mappe med 3
-% filer i
+\section{Performance} 
+
+The measurements of our client reveal that it is not as fast as you would want
+it to be. For files, a perfect client would render the network or the SD-card
+as the bottleneck, but our measurements state that this is clearly not the
+case. The speed we get when downloading or uploading a file is decreased by
+about 50-80\% on all three devices. There can be many reasons why this happens.
+For the Android devices the most probably cause is that either the \ac{AES}
+implementation in Dalvik is to slow, the hardware is to slow or our
+optimization is slow. Files travel through the pipeline which is worked in a
+single thread.  The problem with this is that we have to wait at several
+stages, for the memory card to read, the hash function to update its state and
+the AES block for encrypting. A multi threaded approach would probably be
+favorable here, where one thread continiously reads data from disk, one
+encrypts, one hashes and another one writes to the network. This option would
+probably have even greater affect on the computer, due to its multi core
+architecture. 
+
+\paragraph{Folders} For folders our application is performing quite good, if we
+look at only the cryptographic options. Here the slowest operation is clearly
+the generation of new cryptographic keys. We do not believe this is a big
+problem for the end user, since he will not create that many folders in
+sequence, and the maximum two seconds it takes to create a folder can easily be
+done as an asynchronous task. The other cryptographic operations on folders
+runs quite quickly, but the performance for serializing the folder is painfully
+low when folders reach a large size. Now a folder with thousands of children is
+probably not something a normal user will have, but in any case it's the
+serialization in our client that takes time. In our client the content of a
+folder is implemented as a hashmap, and the serialization is performed by
+transforming all of these contents to a string, which is then encrypted. This
+is probably not the fastest implementation possible. All data that should be
+encrypted is already in memory so in an optimal implementation the
+serialization phase should take almost no time, since the data that has to be
+encrypted could be read directly from it's current location. 
+
 \subsection{Sources of Error}
 
 \section{Security}
@@ -2700,9 +2733,9 @@ untrusted provider, and the security of the application should primarily
 reflect that. With this starting point we can assume that all data stored on
 the server is obtainable by the provider.
 
-This section will discuss the general security provided by the Cloud Storage vault. The
-security of the Cloud Storage Vault is divided into security of the cryptographic
-scheme and security of the user client.
+This section will discuss the general security provided by the Cloud Storage
+vault. The security of the Cloud Storage Vault is divided into security of the
+cryptographic scheme and security of the user client.
 
 \subsection{Security of the Cryptographic Scheme}
 %TODO: Write this subsection
