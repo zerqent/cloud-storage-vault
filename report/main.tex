@@ -1343,10 +1343,6 @@ architectural scheme in Section \ref{chap:AS}. It will take a closer look at
 how confidentiality and integrity can be integrated into the proposed
 architecture.
 
-%A fundamental scheme for key distribution is needed to realize the desired
-%security features, hence an appropriate solution for key distribution will
-%also be given.
-
 We will start with a brief introduction explaining the fundamental security
 concepts utilized by the cryptographic architecture. The cryptographic
 architecture is further described in terms of file and directory operations.
@@ -1355,7 +1351,7 @@ Key concepts are based on equivalent operations found in the Tahoe-\ac{LAFS}
 
 \subsection{Security Concepts}
 
-The basic security concept of the application, is to keep the files of a user
+The basic security concept of the application is to keep the files of a user
 confidential to a third-party storage provider. To solve this, the application
 encrypts files locally at the user's terminal before uploading them to the
 third-party storage provider. 
@@ -1376,33 +1372,53 @@ with a more comprehensive description of the complete cryptographic solution.
 The details are explained in terms of capabilities and the operations conducted
 on files and folders.
 
-\subsection{Capabilities}
-
-Capabilities are containers which contain the necessary information to locate,
-encrypt, decrypt, verify and possibly write file objects. The contents is
-summarized in Table \ref{tbl:capability}. How this information is
-created, is somewhat different for files and folders, and is shown in the
-subsequent sections. 
+\paragraph{Capabilities} Capabilities are containers which contain the
+necessary information to locate, encrypt, decrypt, verify and possibly write
+file objects. The contents is summarized in Table \ref{tbl:capability}, and
+will vary somewhat for files and folders, since they are implemented by
+respectively immutable and mutable files.
 
 \input{tables/capability.tex}
 
-\subsection{Cryptographic Primitives}
+\paragraph{Encrypted Keychain} Every user will need to keep a copy of his root
+capability somewhere. The capability contains both an encryption key and
+verification data that a user will need to safely access his files.
 
-The illustrations in the following sections included our chosen cryptographic
-primitives. It is however important to note that this cryptographic scheme will
-work with other primitives. Any symmetric cipher could work instead of
-\ac{AES}, any signing function that uses both a private and public key could be
-used, any \ac{MAC} could be used instead of HMAC-\ac{SHA}1, and any
-cryptographic hash function could be used instead of \ac{SHA}-256. The security
-of the system does however rely on these choices, and the rationale for
-each of these can be found in Section \ref{sec:cryptoprimitivechoice}.
-%% TODO: Tenk deg litt om
+This amount of random data will be hard for a person to remember, and therefore
+the capability will have to be stored on the terminal which runs the client
+software. Since it might happen that this terminal is either broken in to,
+lost or stolen, precautions should be taken to protect the capability on the
+device. The normal approach to this, is by using password protection. 
 
-\subsection{File Operations}
+The strength of a password is related to its length and randomness properties.
+Passwords shorter than 10 characters are usually considered to be weak
+\cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
+encrypted keychain, a potential attacker can use fast password cracking attacks
+to try to compromise the root folder keys. As an precaution for this, we will
+use \ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a
+salt value, to create additional computational work for the process of
+unlocking the keychain. This method is known as key stretching
+\cite{keystretch}.
 
-This section describes the elementary file operations supported by the
-application. The basic operations are \emph{upload file} and \emph{download
-file}.
+\subsection{File and Directory Operations}
+\label{sec:CS:DO}
+
+This section describes the elementary file and directory operations supported
+by the application. The basic file operations are \emph{upload file} and
+\emph{download file}, and correspondingly for directories, \emph{create
+directory} and \emph{open directory}.
+
+For simplicity, the illustrations in the following sections includes naming of
+cryptographic primitives. However, it is important to note that this
+cryptographic scheme will work with other primitives. Any symmetric cipher
+could work instead of \ac{AES}, any signing function that uses both a private
+and public key could be used, any \ac{MAC} could be used instead of
+HMAC-\ac{SHA}1, and any cryptographic hash function could be used instead of
+\ac{SHA}-256. 
+
+Though, the security of the system does rely on these choices, and a
+recommendation with rationale for each of the needed primitives will be given
+in Section \ref{sec:cryptoprimitivechoice}.
 
 \subsubsection{Upload File} 
 \label{sec:CS:CF} 
@@ -1439,13 +1455,6 @@ capability. If these two match, the file has not been tampered with.
     \caption{Behind the scenes: Downloading a file}
     \label{fig:CS:OF}
 \end{figure}
-
-\subsection{Directory Operations}
-\label{sec:CS:DO}
-
-This section presents the two basic directory operations used by the
-application. The \emph{create directory} and \emph{open directory} operations
-are explained as follows.
 
 \subsubsection{Create Directory}
 
@@ -1521,29 +1530,7 @@ signed by the signing key. The fresh \ac{IV}, the signature and the encrypted
 contents are then uploaded to the server. The write enabler is also sent
 alongside, which is deduced in the same way as when creating a new folder.
 
-\subsection{Keychain}
-
-Every user will need to keep a copy of his root capability somewhere.
-The capability contains both an encryption key and verification data that a
-user will need to safely access his files.
-
-This amount of random data will be hard for a person to remember, and therefore
-the capability will have to be stored on the terminal which runs the client
-application. Since it might happen that this terminal is either broken in to,
-lost or stolen, precautions should be taken to protect the capability on the
-device. The normal approach to this, is by using password protection. 
-
-The strength of a password is related to its length and randomness properties.
-Passwords shorter than 10 characters are usually considered to be weak
-\cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
-encrypted keychain, a potential attacker can use fast password cracking attacks
-to try to compromise the root folder keys. As an precaution for this, we will
-use \ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a
-salt value, to create additional computational work for the process of
-unlocking the keychain. This method is known as key stretching
-\cite{keystretch}.
-
-\subsection{Choice of Cryptographic Primitives}
+\subsection{Recommendations for Cryptographic Primitives}
 \label{sec:cryptoprimitivechoice}
 
 For the proposed cryptographic scheme to be secure, it needs secure
@@ -2674,6 +2661,14 @@ there is the potential for a collision, and hence data corruption.
 Further on, the additional hash operations and queries to the server pose
 extra computational overhead, which increase if the deduplication is on block
 level.
+
+\paragraph{Privacy} Implicitly, using deduplication globally -- i.e. for the
+whole system, for all users -- gives any user of the system the possibility to
+check a file for existence. This could for instance be utilized by anti piracy
+companies working for the movie industry, by first uploading a file known to be
+illegally spread over the Internet, and then see if it takes next to nothing
+time to upload it to the server. If this is the case, they can file a petition
+to get the company hosting the server to yield the user 
 
 \section{Implementation} \label{sec:DIS:impl}
 
