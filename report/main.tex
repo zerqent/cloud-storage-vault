@@ -2450,6 +2450,20 @@ in CPU power between the local computer and a single cluster instance
 were able to brute force around 35 000 passwords per second, given
 \emph{PBKDF2} with 1000 iterations.
 
+
+%The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
+%recommends the minimum number of iterations to be 1000.
+With 1000 iterations in \emph{PBKDF2} we were able to achieve a brute force efficiency around 1800 passwords
+per second for a single computer, and
+
+With 1000 iterations in \emph{PBKDF2} we were able to achieve a brute force
+efficiency around 35 000 passwords per second running the
+CDA attack on 20 Amazon EC2 high-CPU extra large instances. Given a password
+with length 5 and containing only small letters, the CDA attack will use 5
+minutes and 39 seconds to check all possible values. By using a cluster of 200
+nodes the CDA attack is able to crack a similar password of length 6 within 14 minutes
+and 42 seconds in worst case.
+
 %**************************************%
 \chapter{Discussion}
 \label{ch:discussion}
@@ -2660,20 +2674,96 @@ security of the Cloud Storage Vault is divided into security of the cryptographi
 scheme and security of the user client.
 
 \subsection{Security of the Cryptographic Scheme}
-%TODO: Write this subsection
+%TODO: What dioes the server side know, Information leakage, Weakest link
+%Looking at the cryptographic scheme, in a superficially manner, files and folders are
+%encrypted locally on a user's client and further stored on a remote server,
+%hosted by an untrusted provider.
 
-The provider will have access to all data on the server, and also know what
-data stored is part of files and what is part of folders. The confidentiality
-of both files and folders relies primarily on the symmetric cipher used to
-encrypt the data. But for folders one can obtain this key if one manages to
-obtain the asymmetric private key belonging to the folder. In other words, a
+The proposed cryptographic scheme is subject to certain weaknesses, that
+currently, or in the future, may be utilized by an attacker. The following
+subsections will discuss possible weaknesses and their consequences. 
+
+\subsubsection{Information leakage}
+The storage provider can access all data encrypted on the server, and also know whether a
+stored data object corresponds to a file or a folder. 
+
+\subsubsection{Content Disclosure}
+The confidentiality of both files and folders relies primarily on the symmetric
+cipher used to encrypt the data. But for folders one can obtain this key if one
+manages to obtain the asymmetric private key belonging to the folder. In other words, a
 folder is attackable both trough the asymmetric and the symmetric cipher used.
 If the confidentiality of a folder is breached it will additionally enable the
 attacker to decrypt all of the corresponding sub-folders and files. In contrast,
 cracking the confidentiality of a file will only compromise that specific file. It is
-also important to note that users will use a root folder which any other file
-or folder relies on, if the confidentiality of this folder is breached, all
-files are effectively compromised.
+also important to note that if the confidentiality of a user's root folder is breached,
+all files, belonging to that user, are effectively compromised.
+
+\subsubsection{Disclosure of Keyring Content}
+The confidentiality of the cryptographic root key and user passwords is held by
+a single encrypted keyring that is stored locally for each user client. The
+keyring is encrypted with a cryptographic key derived from a user password.
+Unfortunately, using a password to encrypt the keyring, makes the keyring a
+suitable target for brute force and dictionary attacks. The keyring's
+vulnerability against brute force and dictionary attacks was experienced in
+Section \ref{sec:BFLK}. The paragraph below will discuss our findings from
+Section \ref{sec:R:BFLK}.
+
+
+\paragraph{Brute Forcing the Keyring}
+%The confidentiality of the root folder can be breached by brute forcing a user's
+%locally stored keyring. This was experienced in Section \ref{sec:BFLK}. 
+From the results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
+that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
+brute force attack against the local keyring. By doubling the number of
+iterations in \emph{PBKDF2}, the efficiency of a brute force attack would decrease by
+half of it's value.
+
+
+It is important to notice that both CDA and \ac{BFDA} programs were
+written in Java. With this in mind, it is reasonable to believe
+that general performance can be improved by using lower-layer
+programming languages, such as C, to implement the attacks. Another way to
+increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
+
+Regarding CDA, the use of cloud computing to execute a brute force
+attack is not a new idea \cite{bfpgp, rothsha, rothwpa}. Newly on Black Hat DC 2011, a
+security researcher named Thomas Roth, showed that it was possible to brute
+force WPA passwords with a speed of 47 000 passwords per second on a single EC2
+cluster GPU instance \cite{rothwpa}. Amazon allows a user to execute up to 8
+cluster GPU instances, without the need of a special request. This indicate that
+anyone can crack WPA passwords at almost 400 000 passwords per second, and that
+Amazon can achieve even higher and unknown speed for WPA password cracking. With
+this in mind, we should consider that our own keyring can be subject to a lot
+more efficient brute force attacks compared to our own findings.
+
+%To reduce vulnerability from plain brute force attacks, we decided to
+%use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
+%to force users to utilize more advanced and sophisticated passwords. Password
+%requirements for the Cloud Storage Vault are given below:
+
+%\begin{itemize}
+%\item Password length >= 9.
+%\item Password must include at least one capital letter, one small letter and
+%one number.
+%\end{itemize}
+
+With the password requirements above and with 4000 iterations in
+\emph{PBKDF2}, it will be extremely hard to perform a plain brute force attack against the local
+keyring. Figure \ref{fig:bfres} indicates that when using \emph{PBKDF2} with 4000
+iterations, the local test computer running \ac{BFDA} is only able to check
+around 400 passwords per second. Given a cluster of 200 such computers, it will
+take 2683 years on average to brute force a password using the syntax above
+and a length of 9.
+
+Even though the keyring is secured against a plain brute force attack, it is
+still vulnerable to slow dictionary attacks. To completely
+avoid brute force and dictionary attacks against the keyring, the most efficient
+and preventive action would be to simply ensure that the encrypted keyring is
+only accessible by its authorized users.
+
+
+\subsubsection{The Weakest Link}
+
 
 \subsection{Client Security}
 Given enough users, sooner or later, there will be a user who looses his client.
@@ -2709,8 +2799,9 @@ can not prevent the attacker from accessing files that have already been downloa
 the Cloud. There is, however, two solutions to handle this problem. The first
 solution is to avoid that downloaded files are written to the client's storage
 medium. This can be implemented using a temporary filesystem in the client's
-memory\footnote{tmpfs, ramfs for clients running Unix-like OSs etc.}. However, using only the client
-memory to store files, will greatly limit the possible size of the downloaded
+memory\footnote{ramfs and tmpfs are examples of temporary filesystems for
+clients running Unix-like operating systems}. However, using only the
+client memory to store files, will greatly limit the possible size of the downloaded
 files. In case limited file size is not an acceptable solution, it is possible to use a temporary filesystem
 that supports swapping. This will, however, keep parts of a large file in the
 client's storage medium, revealing information about a downloaded file. The most
@@ -2744,73 +2835,12 @@ Cloud Storage vault is dependent on storing the keyring password in memory
 during the login procedure. Capabilities are also stored in memory during
 browsing of contents in the cloud. Both passwords and capabilities are therefore
 retrievable by the attacker, even though their necessary storage time in memory is kept to a
-minimum by the application.
+minimum by the application. Another unmanageable scenario would involve the
+attacker installing a keylogger on the compromised client. The keylogger can
+further detect the keyring password, when the user logs in to the application.
 
-\subsubsection{Security of the Encrypted Keyring}
-In both cases above, with a compromised or lost user client, an attacker can
-copy/achieve the encrypted keyring stored by the Cloud Storage Vault. The
-application's security is therefore dependent on the cryptographic strength and
-brute force resistance of its keyring.
-
-\paragraph{Brute Forcing the Keyring}
-The confidentiality of the root folder can be breached by brute forcing a user's
-locally stored keyring. This was experienced in Section \ref{sec:BFLK}. From the
-results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
-that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
-brute force attack against the local keyring. By doubling the number of
-iterations in \emph{PBKDF2}, the efficiency of a brute force attack would decrease by
-half of it's value. The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
-recommends the minimum number of iterations to be 1000. With 1000 iterations in
-\emph{PBKDF2} we were able to achieve a brute force efficiency around 1800 passwords
-per second for a single computer, and 35 000 passwords per second running the
-CDA attack on 20 Amazon EC2 high-CPU extra large instances. Given a password
-with length 5 and containing only small letters, the CDA attack will use 5
-minutes and 39 seconds to check all possible values. By using a cluster of 200
-nodes the CDA attack is able to crack a similar password of length 6 within 14 minutes
-and 42 seconds in worst case.
-
-It is important to notice that both CDA and \ac{BFDA} programs were
-written in Java. With this in mind, it is reasonable to believe
-that general performance can be improved by using lower-layer
-programming languages, such as C, to implement the attacks. Another way to
-increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
-
-Regarding CDA, the use of cloud computing to execute a brute force
-attack is not a new idea \cite{bfpgp, rothsha, rothwpa}. Newly on Black Hat DC 2011, a
-security researcher named Thomas Roth, showed that it was possible to brute
-force WPA passwords with a speed of 47 000 passwords per second on a single EC2
-cluster GPU instance \cite{rothwpa}. Amazon allows a user to execute up to 8
-cluster GPU instances, without the need of a special request. This indicate that
-anyone can crack WPA passwords at almost 400 000 passwords per second, and that
-Amazon can achieve even higher and unknown speed for WPA password cracking. With
-this in mind, we should consider that our own keyring can be subject to a lot
-more efficient brute force attacks compared to our own findings.
-
-To reduce vulnerability from plain brute force attacks, we decided to
-use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
-to force users to utilize more advanced and sophisticated passwords. Password
-requirements for the Cloud Storage Vault are given below:
-
-\begin{itemize}
-\item Password length >= 9.
-\item Password must include at least one capital letter, one small letter and
-one number.
-\end{itemize}
-
-With the password requirements above and with 4000 iterations in
-\emph{PBKDF2}, it will
-be extremely hard to perform a plain brute force attack against the local
-keyring. Figure \ref{fig:bfres} indicates that when using \emph{PBKDF2} with 4000
-iterations, the local test computer running \ac{BFDA} is only able to check
-around 400 passwords per second. Given a cluster of 200 such computers, it will
-take 2683 years on average to brute force a password using the syntax above
-and a length of 9.
-
-Even though the keyring is secured against a plain brute force attack, it is
-still vulnerable to slow dictionary attacks. To completely
-avoid brute force and dictionary attacks against the keyring, the most efficient
-and preventive action would be to simply ensure that the encrypted keyring is
-only accessible by its corresponding user.
+It should be concluded that a compromised client, in a worst case scenario, will not be able
+to support secure usage of the Cloud Storage Vault. 
 
 %\subsection{Active attacks}
 % MITM - Dersom vi f.eks. skrur av SSL-laget
