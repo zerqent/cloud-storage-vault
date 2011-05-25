@@ -2640,7 +2640,6 @@ procedure, it should be easy to configure for the user which files and folders
 that should be under version control.
 
 \subsection{Deduplication}
-% How Tahoe does this, security vs. performance trade off 
 
 The term \emph{data deduplication} implies not having to store redundant data.
 By implementing a deduplication scheme, multiple advantages can arise in the
@@ -2650,8 +2649,11 @@ still claim money from users for the given storage. For the users of the
 service, this could mean better network utilization, as uploading a big file
 that already exist on the server would take no time at all. 
 
-There are however practical disadvantages and great privacy concerns related to
-this issue.
+However, there are practical disadvantages and great privacy concerns related
+to deduplication, in addition to some solutions that address these issues.
+The \ac{CSV} does not utilize deduplication, as the scheme simply does not
+support it. Since all encryption keys are randomly selected, neither the server
+or the client is able to detect whether a file already exists in the system.
 
 \paragraph{Practical Disadvantages} Deduplication relies on the use of hash
 functions to check whether a file or a block of data exist on the storage node.
@@ -2668,9 +2670,35 @@ check a file for existence. This could for instance be utilized by anti piracy
 companies working for the movie industry, by first uploading a file known to be
 illegally spread over the Internet, and then see if it takes next to nothing
 time to upload it to the server. If this is the case, they can file a petition
-to get the company hosting the server to yield the user 
+to get the company hosting the server to yield the contact information for the
+users in question.
 
-\section{Implementation} \label{sec:DIS:impl}
+\paragraph{Customizable Deduplication} The Tahoe-\ac{LAFS} tries to provide a
+solution that has all the advantages and none of the issues related to
+deduplication, by \emph{convergent encryption with an added secret}
+\cite{tahoe}.
+
+Convergent encryption implies using the hash of the plaintext as the key to the
+symmetric encryption algorithm, i.e. the same plaintext will always yield the
+same ciphertext, making it relatively easy to implement deduplication.
+
+Tahoe-\ac{LAFS} adds an extra per-client secret to the hashing procedure, as
+depicted in Figure \ref{fig:tahoe:dedup}, before using the result as a key to
+encrypt the file. This enables per-client deduplication, or per-group
+duplication if the user shares the secret with other users. Since the
+the storage index is based on the encryption key, and the plaintext will always
+lead to the same encryption key, the client can check for file existence on the
+server and hinder duplication.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.55]{TahoeDeduplication.pdf}
+    \caption{Tahoe-LAFS deduplication scheme}
+    \label{fig:tahoe:dedup}
+\end{figure}
+
+\section{Implementation}
+\label{sec:DIS:impl}
 
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
