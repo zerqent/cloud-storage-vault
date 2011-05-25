@@ -255,6 +255,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 
 %**************************************%
 \chapter{Introduction}
+\label{ch:intro}
 %**************************************%
 \pagenumbering{arabic}
 \setcounter{page}{1}
@@ -734,8 +735,8 @@ predefined dictionary of words.
 
 \section{Cloud Computing}
 
-In this section, we will extend from the definitions given in Section
-\ref{sec:intro:intro}, and further describe terms that are associated with
+In this section, we will extend from the definitions given in Chapter
+\ref{ch:intro}, and further describe terms that are associated with
 \emph{Cloud Computing}.
 
 \subsection{Service Models}
@@ -1342,10 +1343,6 @@ architectural scheme in Section \ref{chap:AS}. It will take a closer look at
 how confidentiality and integrity can be integrated into the proposed
 architecture.
 
-%A fundamental scheme for key distribution is needed to realize the desired
-%security features, hence an appropriate solution for key distribution will
-%also be given.
-
 We will start with a brief introduction explaining the fundamental security
 concepts utilized by the cryptographic architecture. The cryptographic
 architecture is further described in terms of file and directory operations.
@@ -1354,7 +1351,7 @@ Key concepts are based on equivalent operations found in the Tahoe-\ac{LAFS}
 
 \subsection{Security Concepts}
 
-The basic security concept of the application, is to keep the files of a user
+The basic security concept of the application is to keep the files of a user
 confidential to a third-party storage provider. To solve this, the application
 encrypts files locally at the user's terminal before uploading them to the
 third-party storage provider. 
@@ -1375,33 +1372,53 @@ with a more comprehensive description of the complete cryptographic solution.
 The details are explained in terms of capabilities and the operations conducted
 on files and folders.
 
-\subsection{Capabilities}
-
-Capabilities are containers which contain the necessary information to locate,
-encrypt, decrypt, verify and possibly write file objects. The contents is
-summarized in Table \ref{tbl:capability}. How this information is
-created, is somewhat different for files and folders, and is shown in the
-subsequent sections. 
+\paragraph{Capabilities} Capabilities are containers which contain the
+necessary information to locate, encrypt, decrypt, verify and possibly write
+file objects. The contents is summarized in Table \ref{tbl:capability}, and
+will vary somewhat for files and folders, since they are implemented by
+respectively immutable and mutable files.
 
 \input{tables/capability.tex}
 
-\subsection{Cryptographic Primitives}
+\paragraph{Encrypted Keychain} Every user will need to keep a copy of his root
+capability somewhere. The capability contains both an encryption key and
+verification data that a user will need to safely access his files.
 
-The illustrations in the following sections included our chosen cryptographic
-primitives. It is however important to note that this cryptographic scheme will
-work with other primitives. Any symmetric cipher could work instead of
-\ac{AES}, any signing function that uses both a private and public key could be
-used, any \ac{MAC} could be used instead of HMAC-\ac{SHA}1, and any
-cryptographic hash function could be used instead of \ac{SHA}-256. The security
-of the system does however rely on these choices, and the rationale for
-each of these can be found in Section \ref{sec:cryptoprimitivechoice}.
-%% TODO: Tenk deg litt om
+This amount of random data will be hard for a person to remember, and therefore
+the capability will have to be stored on the terminal which runs the client
+software. Since it might happen that this terminal is either broken in to,
+lost or stolen, precautions should be taken to protect the capability on the
+device. The normal approach to this, is by using password protection. 
 
-\subsection{File Operations}
+The strength of a password is related to its length and randomness properties.
+Passwords shorter than 10 characters are usually considered to be weak
+\cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
+encrypted keychain, a potential attacker can use fast password cracking attacks
+to try to compromise the root folder keys. As an precaution for this, we will
+use \ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a
+salt value, to create additional computational work for the process of
+unlocking the keychain. This method is known as key stretching
+\cite{keystretch}.
 
-This section describes the elementary file operations supported by the
-application. The basic operations are \emph{upload file} and \emph{download
-file}.
+\subsection{File and Directory Operations}
+\label{sec:CS:DO}
+
+This section describes the elementary file and directory operations supported
+by the application. The basic file operations are \emph{upload file} and
+\emph{download file}, and correspondingly for directories, \emph{create
+directory} and \emph{open directory}.
+
+For simplicity, the illustrations in the following sections includes naming of
+cryptographic primitives. However, it is important to note that this
+cryptographic scheme will work with other primitives. Any symmetric cipher
+could work instead of \ac{AES}, any signing function that uses both a private
+and public key could be used, any \ac{MAC} could be used instead of
+HMAC-\ac{SHA}1, and any cryptographic hash function could be used instead of
+\ac{SHA}-256. 
+
+Though, the security of the system does rely on these choices, and a
+recommendation with rationale for each of the needed primitives will be given
+in Section \ref{sec:cryptoprimitivechoice}.
 
 \subsubsection{Upload File} 
 \label{sec:CS:CF} 
@@ -1438,13 +1455,6 @@ capability. If these two match, the file has not been tampered with.
     \caption{Behind the scenes: Downloading a file}
     \label{fig:CS:OF}
 \end{figure}
-
-\subsection{Directory Operations}
-\label{sec:CS:DO}
-
-This section presents the two basic directory operations used by the
-application. The \emph{create directory} and \emph{open directory} operations
-are explained as follows.
 
 \subsubsection{Create Directory}
 
@@ -1520,29 +1530,7 @@ signed by the signing key. The fresh \ac{IV}, the signature and the encrypted
 contents are then uploaded to the server. The write enabler is also sent
 alongside, which is deduced in the same way as when creating a new folder.
 
-\subsection{Keychain}
-
-Every user will need to keep a copy of his root capability somewhere.
-The capability contains both an encryption key and verification data that a
-user will need to safely access his files.
-
-This amount of random data will be hard for a person to remember, and therefore
-the capability will have to be stored on the terminal which runs the client
-application. Since it might happen that this terminal is either broken in to,
-lost or stolen, precautions should be taken to protect the capability on the
-device. The normal approach to this, is by using password protection. 
-
-The strength of a password is related to its length and randomness properties.
-Passwords shorter than 10 characters are usually considered to be weak
-\cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
-encrypted keychain, a potential attacker can use fast password cracking attacks
-to try to compromise the root folder keys. As an precaution for this, we will
-use \ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a
-salt value, to create additional computational work for the process of
-unlocking the keychain. This method is known as key stretching
-\cite{keystretch}.
-
-\subsection{Choice of Cryptographic Primitives}
+\subsection{Recommendations for Cryptographic Primitives}
 \label{sec:cryptoprimitivechoice}
 
 For the proposed cryptographic scheme to be secure, it needs secure
@@ -1895,6 +1883,7 @@ limit the memory usage of the client, as well as to increase performance.
 from hanging and to deliver a smoother user experience in general.
 
 \subsection{Implementation Details}
+\label{sec:cli:impl:det}
 
 \subsubsection{Structure}
 % Package Structure, some nice UML (?)
@@ -2035,7 +2024,7 @@ meet and do the capability exchange again. The identity has thus been verified.
     \centering
     \includegraphics[scale=0.4]{client-barcode.png}
     \caption{Establishing a share by using barcodes}
-    \label{fig:csvandroid:barcode}
+    \label{fig:CSVAndroid:barcode}
 \end{figure}
 
 \subsection{Adding a New Client}
@@ -2363,20 +2352,24 @@ $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
 \label{ch:results}
 %**************************************%
 
+In this chapter we will present the quantifiable numbers retrieved when doing
+the experimentation in Chapter \ref{ch:experimental}. This includes performance
+measurements on the proof of concept client, and figures on the attacks
+presented that target the local keyring.
+
 \section{Client Performance}
 
-This section displays the results of the client benchmarking and highlights the
-most important results.
+This section presents the results of benchmarking of the proof of concept
+client, and highlights the most important results.
 
 \subsection{Files}
 
 The following results shows the network speed obtained when uploading and
 downloading files. Table \ref{tbl:files:encrypted} shows the speed when using
-the unmodified client, while Table \ref{tbl:files:unencrypted} shows the speed
-obtained when using the same client but with encryption and hashing disabled.
+the \emph{unmodified} client, while Table \ref{tbl:files:unencrypted} shows the
+speed obtained when using the same client, but with \emph{encryption and
+hashing disabled}.
 
-% Kanskje en tabell her, som viser søyler med ukryptert bak og kryptert forann?
-\input{tables/performance_files.tex}
 \input{tables/performance_files_unencrypted.tex}
 
 We observe that the Android devices performance for uploads is severely lower
@@ -2574,42 +2567,124 @@ files as well as folders.
 updated whenever a user links or unlinks it from a folder. When the link count
 reach zero, the user notifies the server to delete it.
 
-\paragraph{Directed Acyclic Graph}
+\subsubsection{Loop Detection in a Directed Acyclic Graph}
+
+In remedy of the problem of cascading deletion with loops, the system could
+utilize an algorithm for finding strongly connected components of a graph,
+before actually deleting any files.
+
+Two components are strongly connected if there exist a path from $A$ to $B$,
+and from $B$ to $A$, as depicted in Figure \ref{fig:DSC:cycles} where a
+directory is linked in at a higher level in the directory tree. The dashed line
+represents the actual path in the graph. If the folder $X$ is requested to be
+deleted, the $Y$ directory will also be removed, and this is might not the
+behaviour the user expected.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{CyclesintheDAG.pdf}
+    \caption{Theoretical cycle in the directory graph}
+    \label{fig:DSC:cycles}
+\end{figure}
+
+\emph{Tarjan's Algorithm} \cite{tarjan} is an example of algorithm that can be
+implemented to do this kind of check, and is basically a depth first search,
+with a stack containing visited nodes.
 
 \subsection{Verification of Files}
-% Hash trees, server involvement, streaming
-The verification scheme for files is suboptimal in pretty much every way a user
-wants to use a file, with the exception of the case where the user wants the
-entire file and the file has not been tampered with. The problem with the
-scheme is that the user will have to download the whole file before he is sure
-the file is OK. If it turns out the file is not OK, and the error was the first
-byte, the user has wasted time and bandwidth downloading a lot of data he will
-not need. Another problem is that if the file is for instance a movie file, and
-the user only wants to look at a small part of this file. There is no way for
-the user to verify only parts of a file, he will have to download the whole
-thing which is suboptimal. A solution to this would be to build a hash-tree of
-the whole file, as shown in Figure \ref{fig:hashtree}. With a hash-tree smaller
-bits of the file can be verified, and errors can be detected earlier. The
-hash-tree could be stored encrypted on the server together with the ciphertext,
-and the capability could hold only information to verify the hash-tree. The
-downside to this approach is that performance would be affected due to the
-substantial amount of hash operations required to do this.
+
+The verification scheme for immutable files is suboptimal in pretty much every
+way a user wants to use an ordinary file, with the exception of the case where
+the user wants the entire file and the file has not been tampered with.
+
+The problem with the scheme, is that the user will have to download the whole
+file, before he can verify by absolute certainty that the file is what it is
+supposed to be. If it turns out that the file does not pass this check, and
+the error was in the very first byte, the user has wasted time and bandwidth
+downloading a lot of useless data.
+
+If the file is a movie file, and the user only wants to look at a
+small part of this file, this is not possible with the current verification
+scheme. There is no way for the user to verify only parts of a
+file, and he will have to download the whole file, which is suboptimal.
+
+A possible solution to support this kind of streaming, would be to build a
+\emph{hash tree} of the whole file, as shown in Figure \ref{fig:hashtree}. With
+a hash tree, smaller bits of the file can be verified, and errors can be
+detected earlier. The hash tree could be stored encrypted on the server
+together with the ciphertext, and the capability could hold information to
+verify the hash tree. The downside to this approach, is that performance would
+be affected due to the substantial amount of hash operations required to
+compute the hash tree. This idea of a hash tree is implemented in the
+Tahoe-\ac{LAFS} \cite{tahoe}.
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{hash-tree.pdf}
-\caption{Hash-tree for a file}
+\caption{Hash tree of a file}
 \label{fig:hashtree}
 \end{figure}
 
-
-\subsection{De-duplication}
-% How Tahoe does this, security vs. performance trade off 
-
 \subsection{Version Control System}
 
-\section{Implementation}
-\label{sec:DIS:impl}
+Some of the currently available cloud storage systems, as Wuala and Dropbox
+mentioned in Section \ref{sec:existing}, support a kind of \emph{version
+control} of the files stored. This means that the data lost during a
+modification of a file are saved alongside the current file, so that the user
+has enough information to restore the file to a previous state.  In practice,
+this often mean to store multiple versions of the same file.  This could be
+implemented in \ac{CSV} as follows.
+
+\paragraph{Extension to Folders} By adding a nested list to the directory
+structure exemplified in Section \ref{sec:cli:impl:det}, we can link previous
+versions of a file in the serialization form:
+
+\begin{quote}
+    \centering
+    \textbf{alias;capability;capability;capability}
+\end{quote}
+
+To make this feasible and user friendly, a time stamp would have to be added to
+the capability.
+
+\paragraph{Type of Mutable File} A new form of mutable file could be
+implemented in practically the same shape as a directory, containing timestamps
+instead of aliases, and pointing to corresponding storage indexes. With this
+procedure, it should be easy to configure for the user which files and folders
+that should be under version control.
+
+\subsection{Deduplication}
+% How Tahoe does this, security vs. performance trade off 
+
+The term \emph{data deduplication} implies not having to store redundant data.
+By implementing a deduplication scheme, multiple advantages can arise in the
+sense of a secure cloud storage system. For the service provider, this could
+mean cost savings in the form of not having to store the same file twice, but
+still claim money from users for the given storage. For the users of the
+service, this could mean better network utilization, as uploading a big file
+that already exist on the server would take no time at all. 
+
+There are however practical disadvantages and great privacy concerns related to
+this issue.
+
+\paragraph{Practical Disadvantages} Deduplication relies on the use of hash
+functions to check whether a file or a block of data exist on the storage node.
+In general, as long as you hash something larger than the length of the digest,
+there is the potential for a collision, and hence data corruption.
+
+Further on, the additional hash operations and queries to the server pose
+extra computational overhead, which increase if the deduplication is on block
+level.
+
+\paragraph{Privacy} Implicitly, using deduplication globally -- i.e. for the
+whole system, for all users -- gives any user of the system the possibility to
+check a file for existence. This could for instance be utilized by anti piracy
+companies working for the movie industry, by first uploading a file known to be
+illegally spread over the Internet, and then see if it takes next to nothing
+time to upload it to the server. If this is the case, they can file a petition
+to get the company hosting the server to yield the user 
+
+\section{Implementation} \label{sec:DIS:impl}
 
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
@@ -2643,22 +2718,55 @@ use a trusted third party either. This pretty much leaves verifying another
 user in person, although a scheme similar to \ac{PGP} could be used. In
 \ac{PGP} users can publish that they have verified other users and to which
 degree they trust them. Other users can use this information to calculate the
-probability that a certain user is legit. The reason why we do not want this
-scheme is that it is fairly complex, and to easy for users to make mistakes
-when using it.  
+probability that a certain user is legit. The reason why we do not implement this
+scheme is that it is fairly complex for a standard user. There are however
+nothing that stops a user that want to use \ac{PGP} to transfer capabilities
+through it. 
 
-If our cryptographic scheme should be used in an organization a
-\ac{PKI} is probably the best solution. In this setting the organization can
-itself be the trusted third party, who enforces that all certificates granted
-to users are correct. A user could then be simply prompted by the name of the
-user she would like to share a file with, and the rest could be handled by
-logic and the trust of the \ac{PKI}.
+If our cryptographic scheme should be used in an organization a \ac{PKI} is
+probably the best solution. In this setting the organization can itself be the
+trusted third party, who enforces that all certificates granted to users are
+correct. A user could then be simply prompted by the name of the user she would
+like to share a file with, and the rest could be handled by logic and the trust
+of the \ac{PKI}.
 
 \subsection{Choice of Cryptographic Primitives}
 
-\section{Performance}
-% 1 mappe med 100 filer i, tar ikke mye lenger tid å åpne enn en mappe med 3
-% filer i
+\section{Performance} 
+
+The measurements of our client reveal that it is not as fast as you would want
+it to be. For files, a perfect client would render the network or the SD-card
+as the bottleneck, but our measurements state that this is clearly not the
+case. The speed we get when downloading or uploading a file is decreased by
+about 50-80\% on all three devices. There can be many reasons why this happens.
+For the Android devices the most probably cause is that either the \ac{AES}
+implementation in Dalvik is to slow, the hardware is to slow or our
+optimization is slow. Files travel through the pipeline which is worked in a
+single thread.  The problem with this is that we have to wait at several
+stages, for the memory card to read, the hash function to update its state and
+the AES block for encrypting. A multi threaded approach would probably be
+favorable here, where one thread continiously reads data from disk, one
+encrypts, one hashes and another one writes to the network. This option would
+probably have even greater affect on the computer, due to its multi core
+architecture. 
+
+\paragraph{Folders} For folders our application is performing quite good, if we
+look at only the cryptographic options. Here the slowest operation is clearly
+the generation of new cryptographic keys. We do not believe this is a big
+problem for the end user, since he will not create that many folders in
+sequence, and the maximum two seconds it takes to create a folder can easily be
+done as an asynchronous task. The other cryptographic operations on folders
+runs quite quickly, but the performance for serializing the folder is painfully
+low when folders reach a large size. Now a folder with thousands of children is
+probably not something a normal user will have, but in any case it's the
+serialization in our client that takes time. In our client the content of a
+folder is implemented as a hashmap, and the serialization is performed by
+transforming all of these contents to a string, which is then encrypted. This
+is probably not the fastest implementation possible. All data that should be
+encrypted is already in memory so in an optimal implementation the
+serialization phase should take almost no time, since the data that has to be
+encrypted could be read directly from it's current location. 
+
 \subsection{Sources of Error}
 
 \section{Security}
@@ -2669,9 +2777,9 @@ untrusted provider, and the security of the application should primarily
 reflect that. With this starting point we can assume that all data stored on
 the server is obtainable by the provider.
 
-This section will discuss the general security provided by the Cloud Storage vault. The
-security of the Cloud Storage Vault is divided into security of the cryptographic
-scheme and security of the user client.
+This section will discuss the general security provided by the Cloud Storage
+vault. The security of the Cloud Storage Vault is divided into security of the
+cryptographic scheme and security of the user client.
 
 \subsection{Security of the Cryptographic Scheme}
 %TODO: What dioes the server side know, Information leakage, Weakest link
