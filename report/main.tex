@@ -1896,6 +1896,7 @@ limit the memory usage of the client, as well as to increase performance.
 from hanging and to deliver a smoother user experience in general.
 
 \subsection{Implementation Details}
+\label{sec:cli:impl:det}
 
 \subsubsection{Structure}
 % Package Structure, some nice UML (?)
@@ -2627,13 +2628,29 @@ Tahoe-\ac{LAFS} \cite{tahoe}.
 
 Some of the currently available cloud storage systems, as Wuala and Dropbox
 mentioned in Section \ref{sec:existing}, support a kind of \emph{version
-control} of the files stored.
+control} of the files stored. This means that the data lost during a
+modification of a file are saved alongside the current file, so that the user
+has enough information to restore the file to a previous state.  In practice,
+this often mean to store multiple versions of the same file.  This could be
+implemented in \ac{CSV} as follows.
 
-%TODO: Elaborate on this.
-This could be implemented in \ac{CSV} as either an extension of the items in
-the directories, or as a special kind of mutable file. The containing items of
-this file could refer to different storage indexes, and have an alias
-containing a time stamp.
+\paragraph{Extension to Folders} By adding a nested list to the directory
+structure exemplified in Section \ref{sec:cli:impl:det}, we can link previous
+versions of a file in the serialization form:
+
+\begin{quote}
+    \centering
+    \textbf{alias;capability;capability;capability}
+\end{quote}
+
+To make this feasible and user friendly, a time stamp would have to be added to
+the capability.
+
+\paragraph{Type of Mutable File} A new form of mutable file could be
+implemented in practically the same shape as a directory, containing timestamps
+instead of aliases, and pointing to corresponding storage indexes. With this
+procedure, it should be easy to configure for the user which files and folders
+that should be under version control.
 
 \subsection{De-duplication}
 % How Tahoe does this, security vs. performance trade off 
