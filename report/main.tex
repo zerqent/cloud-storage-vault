@@ -2395,14 +2395,19 @@ The following results shows the network speed obtained when uploading and
 downloading files. Table \ref{tbl:files:encrypted} shows the speed when using
 the \emph{unmodified} client, while Table \ref{tbl:files:unencrypted} shows the
 speed obtained when using the same client, but with \emph{encryption and
-hashing disabled}.
+hashing disabled}. Table \ref{tbl:desire:pinpoint} shows the speed of the
+individual operations in the pipeline on the HTC Desire.
 
+\input{tables/performance_files.tex}
 \input{tables/performance_files_unencrypted.tex}
+\input{tables/result_desire_pinpoint.tex}
 
 We observe that the Android devices performance for uploads is severely lower
 for uploads than downloads, and that this is not the case for the computer. We
 also observe that the speed with encryption and hashing enabled is severely
-higher for all three devices.
+higher for all three devices. From the individual operation results for HTC
+Desire we note that the encryption and decryption part is the time consuming
+operation.
 
 \subsection{Folders}
 
@@ -2414,7 +2419,8 @@ two actions are what has to be performed every time a folder is changed, while
 the creation of a blank folder is added if the content should be added to a new
 folder. Table \ref{tbl:folder:verify} displays the time the devices used to
 verify an existing folder, a step which is taken by the client every time a
-folder is opened.
+folder is opened. Results noted as \emph{N/A} for the HTC Hero is operations
+that lead to an Out of Memory exception during execution.
 
 \input{tables/result_perf_createblankfolder}
 \input{tables/result_perf_serializefolder}
@@ -2423,7 +2429,8 @@ folder is opened.
 
 We observe that that the slow part of folders operations are the initial key
 generation and more important the serialization speed. Verification, encryption
-and signing is pretty fast for all devices.
+and signing is pretty fast for all devices. We also note that our
+implementation struggle to handle folders with large contents on the HTC Hero.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
