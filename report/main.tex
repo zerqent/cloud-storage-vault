@@ -2105,12 +2105,8 @@ clear text, it is easily stolen.
 
 We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes
 an encryption key from a password. This generated key is used to encrypt the
-root capability in a file stored on the client. We call this the encrypted key
-ring.
-
-These precautions are however no defense if the attacker managed to read the
-memory while the key is unlocked. The client enforces that this password should
-be at least 9 characters long.
+root capability in a file stored on the client. We call this the encrypted
+keyring.
 
 \subsection{User Interface}
 % goal: As easy as possible!
@@ -2132,7 +2128,7 @@ he will have to unlock his local keyring with his password. If it is the first
 time the user starts the application, he will have to enter his online
 credentials, and gets a choice to either import an existing root folder, or to
 generate a new one. In both cases the user will have to choose a password to
-encrypt the root capability in to the local keyring.. From the main screen the
+encrypt the root capability in to the local keyring. From the main screen the
 most common action would be to \emph{Browse the vault} -- in other words to see
 the files that the user has stored in the cloud.
 
@@ -2851,7 +2847,23 @@ correct. A user could then be simply prompted by the name of the user she would
 like to share a file with, and the rest could be handled by logic and the trust
 of the \ac{PKI}.
 
-\subsection{Choice of Cryptographic Primitives}
+\subsection{Deviations in the Choice of Cryptographic Primitives}
+
+The implementation of the proof of concept client deviates in two points from
+the recommendation given in Section \ref{sec:cryptoprimitivechoice}. 
+These discoveries where done during the analysis of the system, and are
+corrected with a patch file submitted alongside the code attachment.
+
+\paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
+bits, in contrast to the argued 2048 bits. Because this was discovered after
+the development phase, all the measurements presented in Chapter
+\ref{ch:experimental} and \ref{ch:results} are based on an RSA key length of
+1024 bits.
+
+\paragraph{PBKDF2 Salt} As argued in Section \ref{sec:cryptoprimitivechoice},
+the salt length used with the \ac{PBKDF2} should be as long as the key length.
+In the implementation, this salt value is only 8 bytes, as opposed to the key
+length of 16 bytes.
 
 \section{Performance}
 
@@ -3052,7 +3064,6 @@ to support secure usage of the Cloud Storage Vault.
 % Innside attacker - hos Amazon
 
 
-
 \section{Additional Features}
 % Ting vi ikke har lagt inn
 % - Cascading deletes? Loops.
@@ -3222,8 +3233,9 @@ DAIM, consists of the following files
 and directories:
 
 \begin{description}
-  \item[Application] All files and source code to the proof of concept system,
-    i.e. the background library, server and client.
+  \item[Application] All files and source code of the proof of concept system,
+    i.e. the background library, server and client. A patch file containing
+    security fixes, is also included.
   \item[Report] All files that is used to create this report, including images
     and tables.
   \item[Other] Scripts and raw data from the experiments.
