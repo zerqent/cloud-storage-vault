@@ -1634,6 +1634,34 @@ bad choice. All sources at this point recommends at least 2048 bit.
 \subsubsection{\ac{MAC}}
 The \ac{MAC}
 
+\subsubsection{Password Based Key Derivation}
+%The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
+%recommends the minimum number of iterations to be 1000.
+
+%Regarding CDA, the use of cloud computing to execute a brute force
+%attack is not a new idea \cite{bfpgp, rothsha, rothwpa}. Newly on Black Hat DC 2011, a
+%security researcher named Thomas Roth, showed that it was possible to brute
+%force WPA passwords with a speed of 47 000 passwords per second on a single EC2
+%cluster GPU instance \cite{rothwpa}. Amazon allows a user to execute up to 8
+%cluster GPU instances, without the need of a special request. This indicate that
+%anyone can crack WPA passwords at almost 400 000 passwords per second, and that
+%Amazon can achieve even higher and unknown speed for WPA password cracking. With
+%this in mind, we should consider that our own keyring can be subject to a lot
+%more efficient brute force attacks compared to our own findings.
+
+%To reduce vulnerability from plain brute force attacks, we decided to
+%use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
+%to force users to utilize more advanced and sophisticated passwords. Password
+%requirements for the Cloud Storage Vault are given below:
+
+%\begin{itemize}
+%\item Password length >= 9.
+%\item Password must include at least one capital letter, one small letter and
+%one number.
+%\end{itemize}
+
+
+
 \section{Server Implementation}
 
 The server, in the most basic form, has to support two operations -- sending
@@ -2418,7 +2446,9 @@ each measurement, the brute force attack turned out to achieve about 30
 passwords more per seconds than the dictionary attack. This is believed to
 exist due to the file reading overhead in the dictionary attack. The results
 for both attacks are illustrated in Table \ref{tab:res_bf} and Figure
-\ref{fig:bfres}.
+\ref{fig:bfres}. The histogram in Figure \ref{fig:bfres} shows how many
+passwords per second we were able to brute force versus the different amounts of
+iterations used in PBKDF2.
 
 \input{tables/res_bf.tex}
 
@@ -2427,10 +2457,14 @@ for both attacks are illustrated in Table \ref{tab:res_bf} and Figure
 \includegraphics[scale=0.55]{bf.png}
 % TODO: Cut this down!!
 \caption{Results from running brute force and dictionary attacks against a local
-encrypted keyring. The histogram shows how many passwords per second we were able to brute
-force against different amounts of iterations used in PBKDF2.}
+encrypted keyring.}
 \label{fig:bfres}
 \end{figure}
+
+Figure \ref{fig:bfres} indicates that by doubling the number of iterations in
+\emph{PBKDF2}, the efficiency of a brute force attack would decrease by half of
+it's value.
+%TODO: 1800 P/s given PBKDF2 with 1000 iterations. Calculate time trivia.
 
 \subsection{Cluster Dictionary Attack (CDA)}
 
@@ -2443,19 +2477,13 @@ in CPU power between the local computer and a single cluster instance
 were able to brute force around 35 000 passwords per second, given
 \emph{PBKDF2} with 1000 iterations.
 
+%TODO: Calculate some trivia time results
+%Given a password with length 5 and containing only small letters, the CDA attack will use 5
+%minutes and 39 seconds to check a dictionary containing all possible values. By using a cluster of 200
+%nodes the CDA attack is able to check all passwords, in small letters, of length
+%6 within 14 minutes and 42 seconds.
 
-%The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
-%recommends the minimum number of iterations to be 1000.
-With 1000 iterations in \emph{PBKDF2} we were able to achieve a brute force efficiency around 1800 passwords
-per second for a single computer, and
-
-With 1000 iterations in \emph{PBKDF2} we were able to achieve a brute force
-efficiency around 35 000 passwords per second running the
-CDA attack on 20 Amazon EC2 high-CPU extra large instances. Given a password
-with length 5 and containing only small letters, the CDA attack will use 5
-minutes and 39 seconds to check all possible values. By using a cluster of 200
-nodes the CDA attack is able to crack a similar password of length 6 within 14 minutes
-and 42 seconds in worst case.
+%TODO: Calculate some trivia PRICES!
 
 %**************************************%
 \chapter{Discussion}
@@ -2813,19 +2841,18 @@ keyring is encrypted with a cryptographic key derived from a user password.
 Unfortunately, using a password to encrypt the keyring, makes the keyring a
 suitable target for brute force and dictionary attacks. The keyring's
 vulnerability against brute force and dictionary attacks was experienced in
-Section \ref{sec:BFLK}. The paragraph below will discuss our findings from
-Section \ref{sec:R:BFLK}.
+Section \ref{sec:BFLK}. 
+%TODO: The paragraph below will discuss our findings from Section \ref{sec:R:BFLK}.
 
 
 \paragraph{Brute Forcing the Keyring}
-%The confidentiality of the root folder can be breached by brute forcing a user's
-%locally stored keyring. This was experienced in Section \ref{sec:BFLK}. 
+The confidentiality of the root folder can be breached by brute forcing a user's
+locally stored keyring. This was experienced in Section \ref{sec:BFLK}. 
 From the results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
 that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
 brute force attack against the local keyring. By doubling the number of
 iterations in \emph{PBKDF2}, the efficiency of a brute force attack would decrease by
 half of it's value.
-
 
 It is important to notice that both CDA and \ac{BFDA} programs were
 written in Java. With this in mind, it is reasonable to believe
@@ -2833,35 +2860,9 @@ that general performance can be improved by using lower-layer
 programming languages, such as C, to implement the attacks. Another way to
 increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
 
-Regarding CDA, the use of cloud computing to execute a brute force
-attack is not a new idea \cite{bfpgp, rothsha, rothwpa}. Newly on Black Hat DC 2011, a
-security researcher named Thomas Roth, showed that it was possible to brute
-force WPA passwords with a speed of 47 000 passwords per second on a single EC2
-cluster GPU instance \cite{rothwpa}. Amazon allows a user to execute up to 8
-cluster GPU instances, without the need of a special request. This indicate that
-anyone can crack WPA passwords at almost 400 000 passwords per second, and that
-Amazon can achieve even higher and unknown speed for WPA password cracking. With
-this in mind, we should consider that our own keyring can be subject to a lot
-more efficient brute force attacks compared to our own findings.
-
-%To reduce vulnerability from plain brute force attacks, we decided to
-%use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
-%to force users to utilize more advanced and sophisticated passwords. Password
-%requirements for the Cloud Storage Vault are given below:
-
-%\begin{itemize}
-%\item Password length >= 9.
-%\item Password must include at least one capital letter, one small letter and
-%one number.
-%\end{itemize}
-
 With the password requirements above and with 4000 iterations in
 \emph{PBKDF2}, it will be extremely hard to perform a plain brute force attack against the local
-keyring. Figure \ref{fig:bfres} indicates that when using \emph{PBKDF2} with 4000
-iterations, the local test computer running \ac{BFDA} is only able to check
-around 400 passwords per second. Given a cluster of 200 such computers, it will
-take 2683 years on average to brute force a password using the syntax above
-and a length of 9.
+keyring. 
 
 Even though the keyring is secured against a plain brute force attack, it is
 still vulnerable to slow dictionary attacks. To completely
