@@ -1,0 +1,15 @@
+Encrypt a file in memory:
+
+I/System.out( 1025): CSV: READ-SIZE: 4597950
+I/System.out( 1025): CSV: READ-TIME: 1141
+I/System.out( 1025): CSV: E-SIZE: 4597950
+I/System.out( 1025): CSV: E-TIME: 3761
+I/System.out( 1025): CSV: D-SIZE: 4597950
+I/System.out( 1025): CSV: D-TIME: 3140
+
+
+Hashing
+I/System.out( 1261): CSV: H-SIZE: 4597950
+I/System.out( 1261): CSV: H-TIME: 358
+
+12.248454813184685
