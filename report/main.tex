@@ -614,6 +614,13 @@ also be infeasible to find two blocks of data which produce the same hash value
 The standard for cryptographic hash functions today, are \ac{SHA}-1 and the
 \ac{SHA}-2 family.
 
+\subsection{\ac{MAC} Functions} 
+
+\citet{schneier} defines a \ac{MAC} to be a construction that detects tampering
+with a message -- i.e. it authenticates the message. A \ac{MAC} can be
+constructed in different ways, one example is H\ac{MAC} which constructs the
+\ac{MAC} using a secret key, the message and a hash function\cite{rfc_2104}. 
+
 \section{Applications of Cryptographic Primitives}
 
 \subsection{Digital Signatures}
@@ -1644,13 +1651,14 @@ bad choice. All sources at this point recommends at least 2048 bit.
 %TODO FIX KILDE
 
 \subsubsection{\ac{MAC}}
-
-The use of the \ac{MAC} function in \ac{CSV} is somewhat special.
-\citet{schneier} defines a \ac{MAC} to be a construction that detects tampering
-with a message -- i.e. it authenticates the message.  As depicted in Figure
-\ref{fig:CS:CD}, the result of the \ac{MAC} function is another key. By
-presenting this key, a user verifies \emph{to the server} that he knows the
-write key.
+The use of the \ac{MAC} function in \ac{CSV} is somewhat special. The
+definition states that MAC function is used for authenticating messages.  As
+depicted in Figure \ref{fig:CS:CD}, the result of the \ac{MAC} function is
+another key. By presenting this key, a user verifies \emph{to the server} that
+he is in posession of the write key for a folder and thereby his is
+authenticated and authorized to change the folder contents. The main difference
+between the ``normal" use of a \ac{MAC} is that the user will always present
+the same \ac{MAC} for the same folder.
 
 Because of the usage of the \ac{MAC} as a simple key derivation function, the
 most important factor to consider when choosing a primitive, is that it should
