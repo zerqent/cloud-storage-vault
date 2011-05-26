@@ -101,9 +101,9 @@ service provider, and make it as user friendly as possible without compromising
 security. The students will develop a proof of concept implementation of the
 design.\\
 
-\medskip\noindent 
+\medskip\noindent
 \begin{tabbing}
-    Assignment given: \hspace{12pt} \= 24. January 2011 \\ 
+    Assignment given: \hspace{12pt} \= 24. January 2011 \\
     Supervisor: \> Danilo Gligoroski\\
     External Supervisors: \> Carsten Maartmann-Moe, Ernst \& Young AS\\
     \> Antonio Martiradonna, Ernst \& Young AS
@@ -137,7 +137,7 @@ not guaranteed data privacy or integrity by the cloud provider.
 To solve this problem, we have proposed a solution that ensures
 privacy and integrity of customers' data stored by untrusted cloud providers.
 The proposed solution does also support sharing of private data among customers
-of the same cloud provider. The solution has further been implemented as a proof of concept. 
+of the same cloud provider. The solution has further been implemented as a proof of concept.
 
 When implementing the solution, we first created an underlying framework to support the
 proposed and necessary cryptographic functionality. The framework was further
@@ -260,7 +260,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
-% TODO: Generic introduction 
+% TODO: Generic introduction
 
 The term \emph{Cloud Computing}, and the common shorthand \emph{The Cloud},
 is not yet clearly defined \cite{clouddef}, but involves the provision of
@@ -346,34 +346,37 @@ software, that answers most of the problems arising in an untrusted cloud
 storage environment, and relates closely to the work performed in this thesis.
 
 \section{Scope and Objectives}
-
-There are two main objectives of this thesis. The first objective is to create a
-cryptographic scheme that can provide secure storage of data by using an untrusted
-cloud storage provider. We define secure storage by the following criteria.
 \label{sec:criteria}
+
+There are two main objectives of this thesis. The first objective is to create
+a cryptographic scheme that can provide secure storage of data by using an
+untrusted cloud storage provider. We define the criteria of a secure storage
+system by the following points:
+
 \begin{enumerate}
   \item Data should be encrypted in a safe environment trusted by the owner,
-  before it is stored.
+      before it is stored on the server.
   \item It should be possible to verify the integrity of the stored data.
   \item Only authorized people should have access to the data.
   \item The storage scheme should be documented in detail, such that users can
-  easily understand the scheme and accept/reject it on that basis. 
+      easily understand the scheme and accept/reject it on that basis.
   \item An implementation of the storage scheme should be Open Source.
+  \item An intrusion of the server should not affect the security of
+      the stored files.
 \end{enumerate}
 
 The cryptographic scheme should, in addition to the mentioned security, provide
-the possibility of sharing stored data between multiple cloud storage customers. The security
-requirements above should also be valid for the shared data. The underlying scheme for
-sharing data should be applicable for both enterprise and regular customer
-scenarios.
+the possibility of sharing stored data between multiple cloud storage
+customers. The security requirements above should also be valid for the shared
+data. The underlying scheme for sharing data should be applicable for both
+enterprise and regular customer scenarios.
 
 The second main objective is to implement the proposed scheme as part of a
 proof of concept application for Android devices. The application should be
 designed for regular customers, although the underlying cryptographic scheme
-should additionally support enterprise scenarios. It is further important that the server side of the
-application is compatible with as many existing cloud storage providers as possible.
-%This will require the application to only
-%utilize known standard components, such as the HTTP protocol and the TLS channel.
+should additionally support enterprise scenarios. It is further important that
+the server side of the application is compatible with as many existing cloud
+storage providers as possible.
 
 Finally, it is important that the implementation of the cryptographic scheme
 is available as Open Source.
@@ -409,7 +412,7 @@ and sharing of files on an untrusted server. We will iteratively analyse our
 experimentation to find and correct flaws with the design.
 
 The third part of the work, is the software development cycles of the proof of
-concept application. 
+concept application.
 
 \paragraph{SCRUM} We will work after SCRUM principles -- an iterative and
 incremental based framework for project management \cite{scrum}. There does not
@@ -421,7 +424,7 @@ possible for us to follow:
 \begin{itemize}
   \item Daily \emph{stand-up} with planning of the tasks of the current day
   \item Weekly \emph{sprint}\footnote{A \emph{sprint} is a defined period with
-    a given set of tasks.} planning meetings 
+    a given set of tasks.} planning meetings
   \item Keep tasks on stickers, that we move between different phases on a
     board: \emph{to do}, \emph{in progress}, \emph{quality assurance} and
     \emph{done}. This is to keep track of progress in the current sprint
@@ -799,17 +802,26 @@ within cloud computing. The research on this subject can be divided into
 proactive solutions that either reduce, or prevent the risk of leaking privacy
 related information. Only the latter type of solutions are further discussed.
 
+We choose to present these papers as they provide possible solutions to the
+same problems this thesis is set out to solve, although from a different angle.
+A criterion of the scheme presented in this thesis, as described in Section
+\ref{sec:criteria}, is that unauthorized access to the encrypted files stored
+on the server should be avoided, but that it should not be crucial for the
+security of the content of the files. The following first three security
+systems seeks to secure the cloud server itself, and the last one argues for
+building a secure system on top of non-trusted cloud servers.
+
 \subsection{Privacy as a Service}
 
-A concept entitled \ac{PasS}, was suggested in 2009 \cite{PasS}. \ac{PasS} is a set
-of security protocols ensuring privacy of customer data in cloud computing
-architectures. The main design goal with \ac{PasS}, is to maximize the user's control
-over his sensitive data, both processed and stored within a cloud.
+A concept entitled \ac{PasS}, was suggested in 2009 \cite{PasS}. \ac{PasS} is a
+set of security protocols ensuring privacy of customer data in cloud computing
+architectures. The main design goal with \ac{PasS}, is to maximize the user's
+control over his sensitive data, both processed and stored within a cloud.
 
-The \ac{PasS} concept is based on a fundamental \emph{system model} and \emph{trust
-model}. The system model consists of three communicating parties, namely a
-\emph{cloud provider}, a \emph{cloud customer} and a \emph{\ac{TTP}}. The
-\ac{PasS} system model is shown in Figure \ref{fig:RW:PasS}.
+The \ac{PasS} concept is based on a fundamental \emph{system model} and
+\emph{trust model}. The system model consists of three communicating parties,
+namely a \emph{cloud provider}, a \emph{cloud customer} and a \emph{\ac{TTP}}.
+The \ac{PasS} system model is shown in Figure \ref{fig:RW:PasS}.
 
 \begin{figure}[h!]
     \centering
@@ -1146,14 +1158,14 @@ and downloading key-value pairs to this store.
 From the users perspective however, a file object can have multiple forms -- it
 can either be a \emph{mutable} or an \emph{immutable} file. A mutable file can
 be changed, and is what a user will see as a directory, while an immutable file
-is utilized as a normal file.  
+is utilized as a normal file.
 
 A user will need certain information to be able to reach and read a file
 object, we define these properties as the \emph{capability} of a file object.
 For now, the capability represents the ability to find, read, verify that a
 file has not been tampered with, and possibly write to the file object.
 
-\subsubsection{Directory Structure} 
+\subsubsection{Directory Structure}
 
 The contents of a directory are files and other directories. More specifically,
 a directory contains the means to find files or directories, namely the
@@ -1192,11 +1204,11 @@ The capability for a file or folder might be intentionally or unintentionally
 leaked by a user. In this case, it would be preferable that the server can
 block access to a particular object. The server could also potentially enforce
 access rights on all encrypted objects, based on who a user has shared a file
-with. This does however require the client to notify the server every time it 
+with. This does however require the client to notify the server every time it
 shares a file object with a new person, and is strictly not necessary from a
 security standpoint.
 
-\subsubsection{Modification and deletion of objects} 
+\subsubsection{Modification and deletion of objects}
 
 For each directory, there exist a different capability for read and write
 operations, though the read capability can be deduced from the write
@@ -1223,7 +1235,7 @@ users retrieving the file.
 Accounting might also be interesting for an organization using a third party
 cloud provider. For instance an employee who leaves the organization, might be
 tempted to copy all the data stored on the server. The organization should then
-be able to discover what he has done. 
+be able to discover what he has done.
 
 It is however worth noting that if the accounting happens server side, there is
 no real way to verify that all logs stored there are correct, since the cloud
@@ -1239,8 +1251,8 @@ describe the external properties of the system. The fundamental operations are
 
 The download procedure is depicted in Figure \ref{fig:AS:download}. The client
 sends a download request with the identifier of a folder, which he possesses
-the capability of. The server will respond with the encrypted directory. 
-The user will use the capability to decrypt the directory. 
+the capability of. The server will respond with the encrypted directory.
+The user will use the capability to decrypt the directory.
 
 \begin{figure}[h!]
     \centering
@@ -1261,7 +1273,7 @@ been tampered with.
 Figure \ref{fig:AS:upload} shows the process of uploading new files. The
 capability for the new file is generated by the client, and used to encrypt the
 file. The file is then uploaded to the cloud, and the capability and an alias
-is linked in to the parent folder of the file. 
+is linked in to the parent folder of the file.
 
 \begin{figure}[h!]
     \centering
@@ -1336,7 +1348,7 @@ brought up throughout the further description of the software.
 %**************************************%
 \section{Cryptographic Architecture}
 %**************************************%
-\label{chap:CS} 
+\label{chap:CS}
 
 This section elaborates on the cryptographic solutions applied to the
 architectural scheme in Section \ref{chap:AS}. It will take a closer look at
@@ -1354,7 +1366,7 @@ Key concepts are based on equivalent operations found in the Tahoe-\ac{LAFS}
 The basic security concept of the application is to keep the files of a user
 confidential to a third-party storage provider. To solve this, the application
 encrypts files locally at the user's terminal before uploading them to the
-third-party storage provider. 
+third-party storage provider.
 
 When accessing a file, the application first downloads the encrypted file
 before decrypting it locally. To enable this simple encryption scheme, a user's
@@ -1388,7 +1400,7 @@ This amount of random data will be hard for a person to remember, and therefore
 the capability will have to be stored on the terminal which runs the client
 software. Since it might happen that this terminal is either broken in to,
 lost or stolen, precautions should be taken to protect the capability on the
-device. The normal approach to this, is by using password protection. 
+device. The normal approach to this, is by using password protection.
 
 The strength of a password is related to its length and randomness properties.
 Passwords shorter than 10 characters are usually considered to be weak
@@ -1414,19 +1426,19 @@ cryptographic scheme will work with other primitives. Any symmetric cipher
 could work instead of \ac{AES}, any signing function that uses both a private
 and public key could be used, any \ac{MAC} could be used instead of
 HMAC-\ac{SHA}1, and any cryptographic hash function could be used instead of
-\ac{SHA}-256. 
+\ac{SHA}-256.
 
 Though, the security of the system does rely on these choices, and a
 recommendation with rationale for each of the needed primitives will be given
 in Section \ref{sec:cryptoprimitivechoice}.
 
-\subsubsection{Upload File} 
-\label{sec:CS:CF} 
+\subsubsection{Upload File}
+\label{sec:CS:CF}
 
 The operation behind uploading a file, is depicted in Figure \ref{fig:CS:CF}. A
 random symmetric encryption key is generated. This is hashed once to obtain the
 \emph{storage index} for the file. The storage index is then hashed again to
-form the \ac{IV} for the file. 
+form the \ac{IV} for the file.
 
 Next, the file is hashed and the resulting digest is stored together with the
 encryption key in the capability. Lastly, the file is encrypted with the
@@ -1460,7 +1472,7 @@ capability. If these two match, the file has not been tampered with.
 
 Creating and uploading a directory from the user terminal, is illustrated in
 Figure \ref{fig:CS:CD}. The process is a bit more complex than for files,
-because it has to support changing the contents of the folder. 
+because it has to support changing the contents of the folder.
 
 \begin{figure}[h!]
     \centering
@@ -1477,7 +1489,7 @@ form the \emph{storage index}.
 The contents of the folder, which may be empty, is encrypted with the read key
 and the resulting ciphertext is signed with the signing key. The signing key is
 further encrypted with the read key, and together with the ciphertext, the
-public key, the \ac{IV} and the signature, uploaded to the server. 
+public key, the \ac{IV} and the signature, uploaded to the server.
 
 The \emph{write enabler} is made from the write key with a \ac{MAC} function
 and sent alongside the file. The write key is stored together with a hash of
@@ -1487,7 +1499,7 @@ the public key in the capability.
 
 Opening a directory involves both downloading, verifying and decrypting the
 directory. The verification illustrated in Figure \ref{fig:CS:VOD} and
-decryption is illustrated in Figure \ref{fig:CS:OD}. 
+decryption is illustrated in Figure \ref{fig:CS:OD}.
 
 \begin{figure}[h!]
     \centering
@@ -1537,7 +1549,7 @@ For the proposed cryptographic scheme to be secure, it needs secure
 cryptographic primitives. More specific, it needs a symmetric cipher, a
 cryptographic hash function, a \ac{MAC} function and a function for digital
 signatures, as found in Figures \ref{fig:CS:CF}, \ref{fig:CS:OF},
-\ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}. 
+\ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}.
 
 These primitives needs to be set in accordance with the security requirements
 established in Section \ref{sec:criteria}. Additionally, the hard part of
@@ -1560,7 +1572,7 @@ with different predictions.
 % Viktige ting
 % Alle IVer brukes bare 1 gang (per nøkkel)
 % Alle fil-nøkler brukes kun 1 gang
-% Alle 
+% Alle
 
 % Nøkkellengde på SHA-256, og hva er poenget med konkatinering
 
@@ -1582,7 +1594,7 @@ NIST standard for symmetric encryption and is readily available in most
 programming languages. We have chosen a key size of 128-bit.
 \citetalias{ecrypt2_2010} \cite{ecrypt2_2010} has one of the more pessimistic
 predictions on how long this will be secure, saying data encrypted with this
-key size should be secure until 2030-2040. 
+key size should be secure until 2030-2040.
 
 The gain of not choosing a larger key is a somewhat greater
 performance -- \ac{AES}-128 is 10 rounds while \ac{AES}-256 is 14
@@ -1616,7 +1628,7 @@ single, is to prevent a length-extension attack \cite{schneier}.
 
 For a signature scheme, the standard seems to be either \ac{RSA} or \ac{DSA}.
 Both functions would work, but we went with \ac{RSA}, primarily because
-Tahoe-\ac{LAFS} made the same choice. 
+Tahoe-\ac{LAFS} made the same choice.
 
 There might however be a performance bonus in selecting \ac{RSA}. An internet
 draft \cite{dsa_sha2} suggests that \ac{DSA} is about three times faster than
@@ -1625,7 +1637,7 @@ signature. A performance comparison from \citet{msdn_perf} suggest that
 \ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at verifying
 signatures. Verification, in the form of opening a folder, is an operation we
 believe most users will do significantly more than signing, updating and
-creating folders. 
+creating folders.
 
 For the key length we have implemented 1024 bit, but in retrospect this is a
 bad choice. All sources at this point recommends at least 2048 bit.
@@ -2167,7 +2179,7 @@ HTC Hero in Table \ref{tbl:device:hero}, and the desktop computer in Table
 \ref{tbl:device:computer}. We emphasis that the measurements are meant to be
 taken as indications of the performance of the scheme and implementation and
 not exact measurements. We also emphasis that the Android measurements are our
-main objective, since that is what the client is primarily 
+main objective, since that is what the client is primarily
 
 \input{tables/exp_desire.tex}
 \input{tables/exp_hero.tex}
@@ -2271,7 +2283,7 @@ The format of the encrypted keyring is given in Figure \ref{fig:KeyringFormat}.
 It is encrypted with 128-bit \ac{AES} in \ac{ECB} mode, but the key is not
 randomly generated. The key is given by the key strengthening function
 \ac{PBKDF2}, but this is based on a password set by the user, which is why this
-key is potentially weaker than the keys for files and folders. 
+key is potentially weaker than the keys for files and folders.
 
 \begin{figure}[h!]
     \centering
@@ -2310,7 +2322,7 @@ pure brute force attack. The source code and compiled \texttt{.jar} files for
 both programs can be found in the attached CD-ROM. Implementation details are
 given in Appendix \ref{ap:other}.
 
-\subsubsection{Configuration} 
+\subsubsection{Configuration}
 
 \ac{BFDA} requires Java with the \ac{JCE} and Jurisdiction Policy
 files\footnote{Policy files enables Java to use stronger encryption than what
@@ -2582,7 +2594,7 @@ user in Tahoe-\ac{LAFS} than in \ac{CSV}.
 One of the major advantages of \ac{CSV} over other cloud storage systems, is
 the possibility to share files and folders in a secure manner. If the read
 capability of a folder is shared, the user holding the write capability are
-guaranteed to be the only one capable of making changes to the folder. 
+guaranteed to be the only one capable of making changes to the folder.
 
 The server denies people with only the read capability to make changes to the
 folder by the use of the \emph{write enabler}. The write enabler serves the
@@ -2723,7 +2735,7 @@ sense of a secure cloud storage system. For the service provider, this could
 mean cost savings in the form of not having to store the same file twice, but
 still claim money from users for the given storage. For the users of the
 service, this could mean better network utilization, as uploading a big file
-that already exist on the server would take no time at all. 
+that already exist on the server would take no time at all.
 
 However, there are practical disadvantages and great privacy concerns related
 to deduplication, in addition to some solutions that address these issues.
@@ -2783,7 +2795,7 @@ distribution and look at alternative solutions. The section will end by
 discussing the most important cryptographic primitives chosen and utilized in
 our implementation.
 
-\subsection{Choice of Use Case} 
+\subsection{Choice of Use Case}
 
 There are mainly two types of users for a cloud storage solution, personal or
 enterprise/organizational. What we have implemented is aimed more against the
@@ -2811,7 +2823,7 @@ degree they trust them. Other users can use this information to calculate the
 probability that a certain user is legit. The reason why we do not implement this
 scheme is that it is fairly complex for a standard user. There are however
 nothing that stops a user that want to use \ac{PGP} to transfer capabilities
-through it. 
+through it.
 
 If our cryptographic scheme should be used in an organization a \ac{PKI} is
 probably the best solution. In this setting the organization can itself be the
@@ -2822,7 +2834,7 @@ of the \ac{PKI}.
 
 \subsection{Choice of Cryptographic Primitives}
 
-\section{Performance} 
+\section{Performance}
 
 The measurements of our client reveal that it is not as fast as you would want
 it to be. For files, a perfect client would render the network or the SD-card
@@ -2882,11 +2894,11 @@ cryptographic scheme and security of the user client.
 
 The proposed cryptographic scheme is subject to certain weaknesses, that
 currently, or in the future, may be utilized by an attacker. The following
-subsections will discuss possible weaknesses and their consequences. 
+subsections will discuss possible weaknesses and their consequences.
 
 \subsubsection{Information leakage}
 The storage provider can access all data encrypted on the server, and also know whether a
-stored data object corresponds to a file or a folder. 
+stored data object corresponds to a file or a folder.
 
 \subsubsection{Content Disclosure}
 The confidentiality of both files and folders relies primarily on the symmetric
@@ -2906,13 +2918,13 @@ keyring is encrypted with a cryptographic key derived from a user password.
 Unfortunately, using a password to encrypt the keyring, makes the keyring a
 suitable target for brute force and dictionary attacks. The keyring's
 vulnerability against brute force and dictionary attacks was experienced in
-Section \ref{sec:BFLK}. 
+Section \ref{sec:BFLK}.
 %TODO: The paragraph below will discuss our findings from Section \ref{sec:R:BFLK}.
 
 
 \paragraph{Brute Forcing the Keyring}
 The confidentiality of the root folder can be breached by brute forcing a user's
-locally stored keyring. This was experienced in Section \ref{sec:BFLK}. 
+locally stored keyring. This was experienced in Section \ref{sec:BFLK}.
 From the results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
 that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
 brute force attack against the local keyring. By doubling the number of
@@ -2927,7 +2939,7 @@ increase performance is to design both attacks to run on \ac{GPU}s rather than C
 
 With the password requirements above and with 4000 iterations in
 \emph{PBKDF2}, it will be extremely hard to perform a plain brute force attack against the local
-keyring. 
+keyring.
 
 Even though the keyring is secured against a plain brute force attack, it is
 still vulnerable to slow dictionary attacks. To completely
@@ -2955,7 +2967,7 @@ password to decrypt the locally stored keyring. The attacker can achieve the pas
 scanning the client's memory while it is logged into the Cloud Storage Vault.
 Although this is a severe security breach, it can easily be avoided by an
 additional mechanism to the implementation. The Cloud Storage Vault can simply
-flush the password values stored in memory right after a successful login session. 
+flush the password values stored in memory right after a successful login session.
 
 Even though this mechanism prevents disclosure of critical access data when
 loosing a client, it does not prevent a logged in attacker from disclosing the user's encrypted files and folders.
@@ -2990,7 +3002,7 @@ form. The downloaded files could then only be opened locally through the Cloud S
 Vault application, which would further decrypt and send the file to the
 appropriate application. It is worth noticing that this mechanism will also
 enable the possibility of file synchronization between the client and the cloud,
-similar to the one of Dropbox. 
+similar to the one of Dropbox.
 
 \subsubsection{Possessing a Compromised Client}
 As mentioned earlier, an attacker can also break into a user's client, using a backdoor,
@@ -3014,7 +3026,7 @@ attacker installing a keylogger on the compromised client. The keylogger can
 further detect the keyring password, when the user logs in to the application.
 
 It should be concluded that a compromised client, in a worst case scenario, will not be able
-to support secure usage of the Cloud Storage Vault. 
+to support secure usage of the Cloud Storage Vault.
 
 %\subsection{Active attacks}
 % MITM - Dersom vi f.eks. skrur av SSL-laget
@@ -3122,18 +3134,18 @@ computational work in Hadoop is organized and distributed using \emph{MapReduce}
 
 \paragraph{MapReduce} MapReduce is a programming paradigm introduced by Google.
 It is designed to process and generate large sets of data using a cluster of
-machines \cite{mapred}. 
+machines \cite{mapred}.
 
 In MapReduce, a large set of input data is divided into multiple key/value
 pairs. The key/value pairs are further distributed to multiple MapReduce tasks
-running on multiple machines. 
+running on multiple machines.
 
 A MapReduce task is divided into a \emph{mapper} and a \emph{reducer}. The task
 of a mapper is to perform an operation on a key/value pair and return a
 key/value pair as a result to the reducer. The reducer collects key/value pairs
 from multiple mappers and combine the results into one or more output files.
 
-\subsection{Implementation Details} 
+\subsection{Implementation Details}
 
 The \ac{CDA} attack is implemented as a MapReduce problem, with a large
 dictionary file as the data input set. The dictionary is split into separate
@@ -3170,7 +3182,7 @@ behavior in MapReduce is not needed.
 \paragraph{Notice} The for-loop at Line 10 in Listing \ref{lst:mapfunc}
 requires the number of words per line, in the dictionary, to be equal to a
 multiple of the number of threads in use. It is recommended that the input
-dictionary follows this requirement. 
+dictionary follows this requirement.
 
 In this occasion, we have created a Bash script, named \texttt{dictmaker.sh},
 that changes a regular dictionary into an $N$ words-per-line dictionary. The
