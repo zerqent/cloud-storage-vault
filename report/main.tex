@@ -346,34 +346,37 @@ software, that answers most of the problems arising in an untrusted cloud
 storage environment, and relates closely to the work performed in this thesis.
 
 \section{Scope and Objectives}
-
-There are two main objectives of this thesis. The first objective is to create a
-cryptographic scheme that can provide secure storage of data by using an untrusted
-cloud storage provider. We define secure storage by the following criteria.
 \label{sec:criteria}
+
+There are two main objectives of this thesis. The first objective is to create
+a cryptographic scheme that can provide secure storage of data by using an
+untrusted cloud storage provider. We define the criteria of a secure storage
+system by the following points:
+
 \begin{enumerate}
   \item Data should be encrypted in a safe environment trusted by the owner,
-  before it is stored.
+      before it is stored on the server.
   \item It should be possible to verify the integrity of the stored data.
   \item Only authorized people should have access to the data.
   \item The storage scheme should be documented in detail, such that users can
-  easily understand the scheme and accept/reject it on that basis. 
+      easily understand the scheme and accept/reject it on that basis. 
   \item An implementation of the storage scheme should be Open Source.
+  \item An intrusion of the server should not affect the security of
+      the stored files.
 \end{enumerate}
 
 The cryptographic scheme should, in addition to the mentioned security, provide
-the possibility of sharing stored data between multiple cloud storage customers. The security
-requirements above should also be valid for the shared data. The underlying scheme for
-sharing data should be applicable for both enterprise and regular customer
-scenarios.
+the possibility of sharing stored data between multiple cloud storage
+customers. The security requirements above should also be valid for the shared
+data. The underlying scheme for sharing data should be applicable for both
+enterprise and regular customer scenarios.
 
 The second main objective is to implement the proposed scheme as part of a
 proof of concept application for Android devices. The application should be
 designed for regular customers, although the underlying cryptographic scheme
-should additionally support enterprise scenarios. It is further important that the server side of the
-application is compatible with as many existing cloud storage providers as possible.
-%This will require the application to only
-%utilize known standard components, such as the HTTP protocol and the TLS channel.
+should additionally support enterprise scenarios. It is further important that
+the server side of the application is compatible with as many existing cloud
+storage providers as possible.
 
 Finally, it is important that the implementation of the cryptographic scheme
 is available as Open Source.
@@ -798,6 +801,10 @@ This section will elaborate on selected previous research concerning privacy
 within cloud computing. The research on this subject can be divided into
 proactive solutions that either reduce, or prevent the risk of leaking privacy
 related information. Only the latter type of solutions are further discussed.
+
+We choose to present these papers as they provides possible solutions to the
+same problems this thesis is set out to solve, although from a different angle.
+One of the goals of the solution 
 
 \subsection{Privacy as a Service}
 
