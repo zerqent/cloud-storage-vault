@@ -2685,10 +2685,10 @@ same ciphertext, making it relatively easy to implement deduplication.
 Tahoe-\ac{LAFS} adds an extra per-client secret to the hashing procedure, as
 depicted in Figure \ref{fig:tahoe:dedup}, before using the result as a key to
 encrypt the file. This enables per-client deduplication, or per-group
-duplication if the user shares the secret with other users. Since the
-the storage index is based on the encryption key, and the plaintext will always
-lead to the same encryption key, the client can check for file existence on the
-server and hinder duplication.
+duplication if the user shares the secret with other users. Since the storage
+index is based on the encryption key, and the plaintext will always lead to the
+same encryption key, the client can check for file existence on the server and
+hinder duplication.
 
 \begin{figure}[!h]
     \centering
