@@ -1635,31 +1635,50 @@ bad choice. All sources at this point recommends at least 2048 bit.
 The \ac{MAC}
 
 \subsubsection{Password Based Key Derivation}
-%The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
-%recommends the minimum number of iterations to be 1000.
+We recommend \ac{PBKDF2} as the function to derive cryptographic keys from human memorable
+passwords. The standard for \ac{PBKDF2} was written by \ac{RSA} Laboratories in 1999
+\cite{PBKDF2std}. \ac{PBKDF2} has further been recommended by \ac{NIST} in \cite{pbkdf_nist}.
 
-%Regarding CDA, the use of cloud computing to execute a brute force
-%attack is not a new idea \cite{bfpgp, rothsha, rothwpa}. Newly on Black Hat DC 2011, a
-%security researcher named Thomas Roth, showed that it was possible to brute
-%force WPA passwords with a speed of 47 000 passwords per second on a single EC2
-%cluster GPU instance \cite{rothwpa}. Amazon allows a user to execute up to 8
-%cluster GPU instances, without the need of a special request. This indicate that
-%anyone can crack WPA passwords at almost 400 000 passwords per second, and that
-%Amazon can achieve even higher and unknown speed for WPA password cracking. With
-%this in mind, we should consider that our own keyring can be subject to a lot
-%more efficient brute force attacks compared to our own findings.
+As mentioned earlier, \ac{PBKDF2} utilizes a salt during key derivation. The
+purpose of the salt is to prevent general attacks using precomputed rainbow tables
+to crack the input password. The salt is recommended by \ac{NIST} to be at least
+128 bits in length.
 
-%To reduce vulnerability from plain brute force attacks, we decided to
-%use 4000 iterations in \emph{PBKDF2}. In addition, we designed the Cloud Storage Vault
-%to force users to utilize more advanced and sophisticated passwords. Password
-%requirements for the Cloud Storage Vault are given below:
+In addition to setting a salt value, \ac{PBKDF2} provides the possibility of
+adjusting the number of iterations used in its inner logic. The number of
+iterations defines the computational workload of the key stretching process, and
+is mainly used to resist brute force and dictionary attacks. It is therefore
+proposed that the number of iterations chosen should be set as high as possible,
+while maintaining acceptable performance \cite{pbkdf_nist}.
 
-%\begin{itemize}
-%\item Password length >= 9.
-%\item Password must include at least one capital letter, one small letter and
-%one number.
-%\end{itemize}
+To come up with a secure recommendation, we looked at the usage of \ac{PBKDF2}
+in WPA\footnote{WPA is a security protocol for wireless networks} and what
+security it provides against brute force attacks. WPA is an excellent measuring
+unit, since the utilization of \ac{PBKDF2} is quiet similar to the one in our scheme.
 
+So far, the most sensational brute force attack against WPA was published on
+Black Hat DC 2011 by a security researcher named Thomas Roth. He proved that
+anyone can crack WPA passwords with a speed of up to 400 000 passwords per
+second, using multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
+findings also indicate that Amazon them selves can reach an even higher unknown
+brute force speed.
+
+With this in mind, and that WPA uses 4096 iterations in \ac{PBKDF2}, we
+recommend to use at least 4000 \ac{PBKDF2} iterations for the proposed
+cryptographic scheme.
+
+The recommended number of iterations provides an acceptable performance, but
+makes the cryptographic scheme vulnerable to heavy brute force attacks. 
+
+\paragraph{Password requirements}To avoid the most extreme brute force attacks,
+we suggest that the following password requirements are complied with.
+
+\begin{itemize}
+\item Password length >= 9.
+\item Password must include at least one capital letter, one small letter and
+one number.
+\end{itemize}
+%TODO: Reduce text!
 
 
 \section{Server Implementation}
@@ -2455,7 +2474,6 @@ iterations used in PBKDF2.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{bf.png}
-% TODO: Cut this down!!
 \caption{Results from running brute force and dictionary attacks against a local
 encrypted keyring.}
 \label{fig:bfres}
@@ -2464,26 +2482,30 @@ encrypted keyring.}
 Figure \ref{fig:bfres} indicates that by doubling the number of iterations in
 \emph{PBKDF2}, the efficiency of a brute force attack would decrease by half of
 it's value.
-%TODO: 1800 P/s given PBKDF2 with 1000 iterations. Calculate time trivia.
+
+Using 1000 iterations in PBKDF2, as recommended by RSA Laboratories,
+the brute force attack was able to reach a speed of around 1800 passwords per
+second. With this speed it will take, in average, 24 hours to crack a password of
+length 6, consisting of only small letters.
 
 \subsection{Cluster Dictionary Attack (CDA)}
 
 When running CDA, each node of the cluster achieved approximately the same
 results as a single computer running a dictionary attack with \ac{BFDA}. We
 found a small difference where the local computer achieved about 100 passwords
-per second more than each instance in the cluster. With respect to difference
-in CPU power between the local computer and a single cluster instance
-\cite{cpubench}, this is an expected result. With 20 nodes in the cluster we
-were able to brute force around 35 000 passwords per second, given
-\emph{PBKDF2} with 1000 iterations.
+per second more compared to an instance in the cluster. This was expected, with
+respect to the difference in CPU power between the local computer and a single
+cluster instance \cite{cpubench}. 
 
-%TODO: Calculate some trivia time results
-%Given a password with length 5 and containing only small letters, the CDA attack will use 5
-%minutes and 39 seconds to check a dictionary containing all possible values. By using a cluster of 200
-%nodes the CDA attack is able to check all passwords, in small letters, of length
-%6 within 14 minutes and 42 seconds.
+With 20 nodes in the cluster we were able to brute force around 35 000 passwords
+per second, given \emph{PBKDF2} with 1000 iterations. Running the CDA in a
+cluster of 200 nodes, would further reach a speed of 350 000 passwords per
+second. The latter case would, in average, use about 7 minutes and 20 seconds to crack a
+password of length 6, consisting of only small letters.
 
-%TODO: Calculate some trivia PRICES!
+Renting a single Amazon EC2 high-CPU extra large instance costs 0.68 USD per
+hour. This unit price results in an hourly cost of 13.6 and 136 USD for a
+clusters of 20 and 200 instances respectively. 
 
 %**************************************%
 \chapter{Discussion}
@@ -2837,19 +2859,19 @@ This section will discuss the general security provided by the Cloud Storage
 vault. The security of the Cloud Storage Vault is divided into security of the
 cryptographic scheme and security of the user client.
 
-\subsection{Security of the Cryptographic Scheme}
-%TODO: What dioes the server side know, Information leakage, Weakest link
-%Looking at the cryptographic scheme, in a superficially manner, files and folders are
-%encrypted locally on a user's client and further stored on a remote server,
-%hosted by an untrusted provider.
-
+\subsection{Security of Cryptographic Scheme}
 The proposed cryptographic scheme is subject to certain weaknesses, that
 currently, or in the future, may be utilized by an attacker. The following
 subsections will discuss possible weaknesses and their consequences. 
 
 \subsubsection{Information leakage}
 The storage provider can access all data encrypted on the server, and also know whether a
-stored data object corresponds to a file or a folder. 
+stored data object corresponds to a file or a folder. This is revealed by the
+difference in size between folder and file objects. A user's root folder is also
+known since it is the first object accessed in a user session. It is also
+possible for the provider to reveal the structure of the filesystem. The series
+of file and folder requests from a user enables the provider to learn which
+files are contained in which folders.
 
 \subsubsection{Content Disclosure}
 The confidentiality of both files and folders relies primarily on the symmetric
