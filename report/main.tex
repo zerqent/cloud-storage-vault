@@ -1547,9 +1547,9 @@ alongside, which is deduced in the same way as when creating a new folder.
 
 For the proposed cryptographic scheme to be secure, it needs secure
 cryptographic primitives. More specific, it needs a symmetric cipher, a
-cryptographic hash function, a \ac{MAC} function and a function for digital
-signatures, as found in Figures \ref{fig:CS:CF}, \ref{fig:CS:OF},
-\ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}.
+cryptographic hash function, a \ac{MAC} function, a key stretching function,
+and a function for digital signatures, as found in Figures \ref{fig:CS:CF},
+\ref{fig:CS:OF}, \ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}.
 
 These primitives needs to be set in accordance with the security requirements
 established in Section \ref{sec:criteria}. Additionally, the hard part of
@@ -1620,7 +1620,7 @@ The \ac{SHA}-family is the current standard for cryptographic hash functions,
 and from this we chose double \ac{SHA}-256. The cryptographic scheme requires
 the hash function to have an output of at least the size of the key used for
 encryption. The \ac{SHA}-1 has an output of 160 bits and could have been used,
-but more and more attacks are discovered (e.g. \citet{sha1}) and are not
+but more and more attacks are discovered (e.g. by \citet{sha1}) and are not
 recommended for use in new systems. The use of double \ac{SHA}-256 compared to
 single, is to prevent a length-extension attack \cite{schneier}.
 
@@ -1644,7 +1644,18 @@ bad choice. All sources at this point recommends at least 2048 bit.
 %TODO FIX KILDE
 
 \subsubsection{\ac{MAC}}
-The \ac{MAC}
+
+The use of the \ac{MAC} function in \ac{CSV} is somewhat special.
+\citet{schneier} defines a \ac{MAC} to be a construction that detects tampering
+with a message -- i.e. it authenticates the message.  As depicted in Figure
+\ref{fig:CS:CD}, the result of the \ac{MAC} function is another key. By
+presenting this key, a user verifies \emph{to the server} that he knows the
+write key.
+
+Because of the usage of the \ac{MAC} as a simple key derivation function, the
+most important factor to consider when choosing a primitive, is that it should
+be infeasible to go from the result back to the origin key. On the basis of
+this, \citet{schneier} recommend HMAC-SHA256.
 
 \subsubsection{Password Based Key Derivation}
 %The \emph{PBKDF2} standard, written by RSA Laboratories in 1999 \cite{PBKDF2std},
