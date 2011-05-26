@@ -1896,6 +1896,7 @@ calls required for the client. CSVAndroid contains primarily a graphical user
 interface to make use of CSVlib on an Android device.
 
 \subsubsection{Cryptographic Entities}
+\label{sec:cryptoentities}
 All the cryptographic entities -- namely folders, files and capabilities -- are all
 part of CSVlib. Their relationship can be seen in Figure \ref{fig:CSVlib:overview}.
 
@@ -2131,15 +2132,62 @@ procedures of measuring some aspects of the security of the system.
 
 \section{Performance}
 
-We have tested the client part of the application on two Android phones, an HTC
-Desire and an HTC Hero. We have also tested the Java libraries on a
-desktop computer. The specifications for HTC Desire can be seen in Table
-\ref{tbl:device:desire}, for HTC Hero in Table \ref{tbl:device:hero}, and the
-desktop computer in Table \ref{tbl:device:computer}.
+We have tested the android client on two Android smartphones, an HTC Desire and
+an HTC Hero. We have also tested the Java libraries on a desktop computer. The
+specifications for HTC Desire can be seen in Table \ref{tbl:device:desire}, for
+HTC Hero in Table \ref{tbl:device:hero}, and the desktop computer in Table
+\ref{tbl:device:computer}. We emphasis that the measurements are meant to be
+taken as indications of the performance of the scheme and implementation and
+not exact measurements. We also emphasis that the Android measurements are our
+main objective, since that is what the client is primarily 
 
 \input{tables/exp_desire.tex}
 \input{tables/exp_hero.tex}
 \input{tables/exp_computer.tex}
+
+\subsection{What is Measured}
+
+The construction we use to encrypt, hash and upload \emph{files} is a pipeline
+as described in Section \ref{sec:cryptoentities}. The interesting thing to
+measure is the overall speed of the pipeline compared to a simple file upload
+with no extra operations such as hashing and encryption. To try to pinpoint the
+exact bottlenecks in the pipeline we also measure the bandwidth we get from
+each of the operations in the pipeline on one of the Android devices, the HTC
+Desire.
+
+\emph{Folders} are relatively small in size, and the implementation is not a
+pipeline. Compared to files, the heavy operations are done client side before
+the content is uploaded to the server. We therefore measure the speed of these
+operations, more specifically we measure:
+
+\begin{enumerate}
+    \item The average time it takes to create a folder (initial key generation)
+    \item The time it takes to encrypt and sign a folder, with varying amount
+        of data
+    \item The time it takes to verify a newly downloaded folder, with varying
+        amount of data
+    \item The time it takes to serialize a folder, with varying amount of data
+\end{enumerate}
+
+\subsection{How we Measure}
+
+To test the bandwidth of the pipeline for files, we measure the incoming
+traffic to our server using the tool \emph{nload}\footnote{
+\url{http://www.roland-riegel.de/nload/}} during a file upload.  We measure the
+average bandwidth from a few seconds after the file upload has been started,
+until the file upload is nearly complete. Granted this does not take overhead
+such as the initial key generation into account, but for any file of some size
+this overhead should be neglectable.
+
+% TODO: neglectable slår ut i stavekontrollen min!
+
+To test the different folder operations we have to measure in the program code,
+we do this by the use of the Java function
+\emph{System.currentTimeMillis()}
+\footnote{\url{http://download.oracle.com/javase/6/docs/api/java/lang/System.html\#currentTimeMillis()}},
+which we call before and after an operation and calculate the difference. When
+we test operations that are dependant on the contents of a folder we do this
+with folder entries of 86 Byte.
 
 \subsection{Eliminating Bottlenecks on Android Devices}
 
@@ -2161,27 +2209,6 @@ in $X$ MB, so a Class 2 card guarantees a speed of 2 MB/s. However, there are
 the possibility that the card can perform significantly better than what the
 class number indicates.
 
-\subsection{What is Measured}
-
-For \emph{files}, we measure the bandwidth the client uses when uploading and
-downloading a file. This is accomplished by measuring the network traffic on
-the server, and record this. For comparison, we also deactivated hashing and
-encryption in the processing pipeline on the client, and recorded the network
-traffic.
-
-\emph{Folders} are relatively small in size, so the network should not be a
-bottleneck. However, the different cryptographic operations might take some
-time, as will the serialization of folders. The following were measured for
-folders:
-
-\begin{enumerate}
-    \item The average time it takes to create a folder
-    \item The time it takes to encrypt and sign a folder, with varying amount
-        of data
-    \item The time it takes to verify a newly downloaded folder, with varying
-        amount of data
-    \item The time it takes to serialize a folder, with varying amount of data
-\end{enumerate}
 
 \subsection{Sources of Error}
 
