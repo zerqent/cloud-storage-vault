@@ -2828,36 +2828,39 @@ The measurements of our client reveal that it is not as fast as you would want
 it to be. For files, a perfect client would render the network or the SD-card
 as the bottleneck, but our measurements state that this is clearly not the
 case. The speed we get when downloading or uploading a file is decreased by
-about 50-80\% on all three devices. There can be many reasons why this happens.
-For the Android devices the most probably cause is that either the \ac{AES}
-implementation in Dalvik is to slow, the hardware is to slow or our
-optimization is slow. Files travel through the pipeline which is worked in a
-single thread.  The problem with this is that we have to wait at several
-stages, for the memory card to read, the hash function to update its state and
-the AES block for encrypting. A multi threaded approach would probably be
-favorable here, where one thread continiously reads data from disk, one
-encrypts, one hashes and another one writes to the network. This option would
-probably have even greater affect on the computer, due to its multi core
-architecture. 
+about 50-80\% on all three devices. The results for the individual operations
+performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint} clearly
+indicates that encryption and decryption are the slowest elements in the
+pipeline, and responsible for most of the performance drop. Another thing to
+note is that the implementations of InputStreams and OutputStreams in Java
+reads or writes the requested number of bytes stream by
+stream\footnote{\url{http://download.java.net/jdk6/source/}}, so we will never
+reach even the speed of the slowest component in the pipeline. Splitting the
+pipeline between different threads should make it possible to reach higher
+speed in the pipeline, especially the computer which spots multiple processor
+cores.
+
+%% Kilde Java source
 
 \paragraph{Folders} For folders our application is performing quite good, if we
 look at only the cryptographic options. Here the slowest operation is clearly
-the generation of new cryptographic keys. We do not believe this is a big
-problem for the end user, since he will not create that many folders in
-sequence, and the maximum two seconds it takes to create a folder can easily be
-done as an asynchronous task. The other cryptographic operations on folders
-runs quite quickly, but the performance for serializing the folder is painfully
-low when folders reach a large size. Now a folder with thousands of children is
-probably not something a normal user will have, but in any case it's the
-serialization in our client that takes time. In our client the content of a
-folder is implemented as a hashmap, and the serialization is performed by
-transforming all of these contents to a string, which is then encrypted. This
-is probably not the fastest implementation possible. All data that should be
-encrypted is already in memory so in an optimal implementation the
-serialization phase should take almost no time, since the data that has to be
-encrypted could be read directly from it's current location. 
+the generation of new cryptographic keys. For a user of our Android client this
+should not be a problem, since the folder creation is done as an asynchronous
+task while the user enters the name of the new folder.
 
-\subsection{Sources of Error}
+The other cryptographic operations on folders runs quite quickly, but the
+performance for serializing the folder is painfully low when folders reach a
+large size. Now a folder with thousands of children is not something we expect
+a user of our Android client to have. But if we change the scenario to backing
+up an entire computer the serialization part might become a problem. The reason
+why this operation is to be blamed on our implementation. The contents are
+implemented as a hashmap, which is serialized to a string to make it ready for
+encryption. Ideally this step is not necessary, if the contents exists in the
+correct form in memory by default. Even if this might not be possible for other
+reasons, such as decreased performance when manipulating the folder contents,
+we believe a faster implementation is possible.
+
+\subsection{Accuracy of Measurements}
 
 \section{Security}
 % Hvordan angripe?
