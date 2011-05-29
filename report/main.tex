@@ -3030,9 +3030,9 @@ that general performance can be improved by using lower-layer
 programming languages, such as C, to implement the attacks. Another way to
 increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
 
-When following recommendations for \ac{PBKDF2} and password requirements in
+When following recommendations for \ac{PBKDF2} and password constraints in
 Section \ref{sec:PBKD}, it is impossible to perform a plain brute force attack
-against the local keyring. Even though the keyring is secured against a plain
+against the local keyring. However, even though the keyring is secured against a plain
 brute force attack, it is still vulnerable to slow dictionary attacks.
 
 To completely avoid brute force and dictionary attacks against the keyring, the
@@ -3041,7 +3041,16 @@ only accessible by its authorized users. In other words, the confidentiality of
 the encrypted keyring relies primarily on the client security.
 
 \subsubsection{The Weakest Link}
+Considering the weaknesses discussed above, the weakest link of the Cloud
+Storage Vault is, in no doubt, the locally encrypted keyring. To provide
+usability, users are given the possibility of choosing their own passwords, to
+indirectly encrypt their keyring. However, it is fairly known that users can not
+be trusted to generate and use long, secure passwords. 
 
+As mentioned earlier, even with the recommended password constraints, the
+keyring is still vulnerable to slow dictionary attacks. However, disclosing the
+keyring is only possible if the keyring is accessible to an attacker. Getting access to a
+user's keyring is further dependent on the client security.
 
 \subsection{Client Security}
 Given enough users, sooner or later, there will be a user who looses his client.
@@ -3057,13 +3066,13 @@ files and folders. While logged on to the service, it is also possible for an
 experienced attacker to reveal the user's server access password as well as the
 password to decrypt the locally stored keyring. The attacker can achieve the passwords by
 scanning the client's memory while it is logged into the Cloud Storage Vault.
-Although this is a severe security breach, it can easily be avoided by an
-additional mechanism to the implementation. The Cloud Storage Vault can simply
-flush the password values stored in memory right after a successful login session.
+Although this is a severe security breach, it can easily be avoided by adding an
+additional functionality. The Cloud Storage Vault can simply flush the password
+values stored in memory right after a successful login session.
 
 Even though this mechanism prevents disclosure of critical access data when
-loosing a client, it does not prevent a logged in attacker from disclosing the user's encrypted files and folders.
-To minimize this problem the Cloud Storage Vault should implement a
+loosing a client, it does not prevent a logged in attacker from disclosing the
+user's encrypted files and folders. To minimize this problem the Cloud Storage Vault should implement a
 timeout mechanism for inactive users. If a user has been inactive for a given
 amount of time, the user should be logged out of the application. In this way,
 the application will reduce the consequence of losing the client. It is
@@ -3125,7 +3134,7 @@ to support secure usage of the Cloud Storage Vault.
 % Innside attacker - hos Amazon
 
 
-\section{Additional Features}
+%\section{Additional Features}
 % Ting vi ikke har lagt inn
 % - Cascading deletes? Loops.
 % - Hvem 'eier' en directory
