@@ -686,11 +686,14 @@ involves is making the derivation of a key from a password an expensive
 process in terms of computing power, which in turn makes it more resistant to
 brute force attacks.
 
-\ac{PBKDF2} is a key derivation function which uses key stretching. It uses the
+\ac{PBKDF2} is a key derivation function which uses key stretching. It uses a
 password together with a randomly generated salt and a pseudorandom function to
 do this\cite{rfc2898}. The function will combine this in a specific way, and
 can repeat the process for a specified number of times, the iteration count.
-A higher iteration count results in a stronger key.
+A higher iteration count results in a stronger key. The salt provides defense
+against a precomputed collection of keys, a \emph{rainbow table}, in the sense
+that it will make sure that a password will not derive the same key if the same
+salt is not used.
 
 \section{Security Attacks}
 
@@ -1666,44 +1669,62 @@ most important factor to consider when choosing a primitive, is that it should
 be infeasible to go from the result back to the origin key. On the basis of
 this, \citet{schneier} recommend HMAC-SHA256.
 
-\subsubsection{Password Based Key Derivation}
-We recommend \ac{PBKDF2} as the function to derive cryptographic keys from human memorable
-passwords. The standard for \ac{PBKDF2} was written by \ac{RSA} Laboratories in 1999
-\cite{pbkdf2std}. \ac{PBKDF2} has further been recommended by \ac{NIST} in \cite{pbkdf_nist}.
+\subsubsection{Password Based Key Derivation} 
 
-As mentioned earlier, \ac{PBKDF2} utilizes a salt during key derivation. The
-purpose of the salt is to prevent general attacks using precomputed rainbow tables
-to crack the input password. The salt is recommended by \ac{NIST} to be at least
-128 bits in length.
+To protect the secret that has to be stored on a users terminal our
+recommendation is \ac{PBKDF2}. \ac{PBKDF2} makes a key that a user can remember
+into a key which with greater resistance to brute force and dictionary attacks.
+\ac{PBKDF2} has further been recommended by \ac{NIST} in \cite{pbkdf_nist}.
+The salt that is used should be randomly generated and the length is
+recommended by \ac{NIST} to be at least 128 bits long. The recommendation for
+the iteration count 
 
-In addition to setting a salt value, \ac{PBKDF2} provides the possibility of
-adjusting the number of iterations used in its inner logic. The number of
-iterations defines the computational workload of the key stretching process, and
-is mainly used to resist brute force and dictionary attacks. It is therefore
-proposed that the number of iterations chosen should be set as high as possible,
-while maintaining acceptable performance \cite{pbkdf_nist}.
-
-To come up with a secure recommendation, we looked at the usage of \ac{PBKDF2}
-in WPA\footnote{WPA is a security protocol for wireless networks} and what
-security it provides against brute force attacks. WPA is an excellent measuring
-unit, since the utilization of \ac{PBKDF2} is quiet similar to the one in our scheme.
-
-So far, the most sensational brute force attack against WPA was published on
-Black Hat DC 2011 by a security researcher named Thomas Roth. He proved that
-anyone can crack WPA passwords with a speed of up to 400 000 passwords per
-second, using multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
+\ac{NIST} recommends that the iteration count for \ac{PBKDF2} should be as long
+as possible while at the same time maintaining acceptable
+performance\cite{pbkdf_nist}. To come up with a secure recommendation, we
+looked at the usage of \ac{PBKDF2} in WPA\footnote{WPA is a security protocol
+for wireless networks} and what security it provides against brute force
+attacks. WPA is an excellent measuring unit, since the utilization of
+\ac{PBKDF2} is quiet similar to the one in our scheme. So far, the most
+sensational brute force attack against WPA was published on Black Hat DC 2011
+by a security researcher named Thomas Roth. He proved that anyone can crack WPA
+passwords with a speed of up to about 400 000 passwords per second, using
+multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
 findings also indicate that Amazon them selves can reach an even higher unknown
-brute force speed.
+brute force speed. The same researcher has also hinted that he might be able to
+reach 1 million keys per second on the same equipment\cite{rothblog}.
 
-With this in mind, and that WPA uses 4096 iterations in \ac{PBKDF2}, we
-recommend to use at least 4000 \ac{PBKDF2} iterations for the proposed
-cryptographic scheme.
+The mayor difference between our scheme and WPA is that the necessary data to
+launch a brute force attack in WPA can be sniffed by anyone with a wireless
+device and with no risk. For our scheme one would have to get physical or
+virtual access to it, which has a high risk. In the event that an attacker
+obtains this access installing a keylogger or similar might be a better
+approach than to try an attack on the encrypted keyring. But in the event that
+the attacker is someone who steals or finds a lost device it will be his only
+option. In this event it is however possible for the owner of the terminal to
+simply replace his root capability with a new one to make the information that
+the attacker can obtain almost harmless. There of course exist a theoretical
+scenario where the cloud provider is actually the party which steals the
+terminal, and can protect the server-side encrypted data.
 
-The recommended number of iterations provides an acceptable performance, but
-makes the cryptographic scheme vulnerable to heavy brute force attacks. 
+With this in mind, we recommend at least the same amount of iterations
+to be used in our scheme as in WPA, that being over 4000. This should deal
+acceptable performance on most devices. However the strength of \ac{PBKDF2} is
+not enough alone, if the password used is to weak.
 
-\paragraph{Password requirements}To avoid the most extreme brute force attacks,
-we suggest that the following password requirements are complied with.
+\paragraph{Password requirements}
+
+If we assume every password can only consist of the English letters, both
+uppercase and lowercase, and the numbers 0-9, there exists 62^n different
+passwords for a password of length n. With Roths theoretical results of 1
+million passwords per second this means that any password of length 6, 7 and 8
+is cracked in about 0,66, 40 and 2527 days respectively. But this is the case
+where the attacker finds a password on the last try, which is not plausible.
+These results also only holds if we can guarantee that a user actually chooses
+a random password, which is probably not true either. A more realistic setting
+is that the attacker uses some dictionary, and that a users password is not
+strictly random. By this rationale, it is more important to be safe than sorry,
+and for password guidelines we therefore recommend:
 
 \begin{itemize}
 \item Password length >= 9.
