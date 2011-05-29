@@ -675,21 +675,22 @@ and primitives, but a digital certificate is required for authentication.
 To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
 \ac{HTTPS}.
 
-\subsection{PBKDF2}
+\subsection{Key Derivation Functions}
+% FIXME: Dette kapitellet og MAC er det primitiver eller applications?
 \label{sec:PBKDF2}
+A key derivation function is a function which takes a key, a password, a
+passphrase or similar and creates a new key from it. One of the applications of
+such a function is to create a stronger key from a weaker key, such as a
+password. This technique is called \emph{Key Stretching}. What the process
+involves is making the derivation of a key from a password an expensive
+process in terms of computing power, which in turn makes it more resistant to
+brute force attacks.
 
-\ac{PBKDF2} is a key derivation function used to create an encryption key based
-on a password. The key point of this, is that a password is often something
-that a person has to be able to recall from memory. But, a password phrase that
-is memorable to a person, might be too short to withstand a dictionary or even
-a brute force attack.
-
-What \ac{PBKDF2} does, is to make the process of deriving the key from the password
-an expensive process in terms of computational power, to make it more resistant
-to brute force attacks. This feature is known as \emph{key stretching}.
-
-The efficiency of the key derivation, is dependent on the number of process
-iterations chosen in the implementation of the function.
+\ac{PBKDF2} is a key derivation function which uses key stretching. It uses the
+password together with a randomly generated salt and a pseudorandom function to
+do this\cite{rfc2898}. The function will combine this in a specific way, and
+can repeat the process for a specified number of times, the iteration count.
+A higher iteration count results in a stronger key.
 
 \section{Security Attacks}
 
