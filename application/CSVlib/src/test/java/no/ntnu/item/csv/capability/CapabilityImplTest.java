@@ -35,7 +35,7 @@ public class CapabilityImplTest {
 	@Test
 	public void testStorageIndexEncoding() {
 		String base32 = this.cap.getStorageIndex();
-		Assert.assertEquals(26, base32.length());
+		// Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, base32.length());
 		Assert.assertTrue(isBase32(base32));
 		Assert.assertArrayEquals(this.cap.getStorageIndexByte(),
 				Base32.decode(this.cap.getStorageIndex()));
@@ -43,11 +43,12 @@ public class CapabilityImplTest {
 
 	@Test
 	public void testStorageIndexGeneration() {
-		Assert.assertEquals(this.cap.getStorageIndex(),
-				Base32.encode(Cryptoutil.nHash(this.cap.getKey(), 1, 16)));
-		Assert.assertEquals(this.rwcap.getStorageIndex(),
-				Base32.encode(Cryptoutil.nHash(this.cap.getStorageIndexByte(),
-						1, 16)));
+		Assert.assertEquals(this.cap.getStorageIndex(), Base32
+				.encode(Cryptoutil.nHash(this.cap.getKey(), 1,
+						Cryptoutil.SYM_SIZE / 8)));
+		Assert.assertEquals(this.rwcap.getStorageIndex(), Base32
+				.encode(Cryptoutil.nHash(this.cap.getStorageIndexByte(), 1,
+						Cryptoutil.SYM_SIZE / 8)));
 	}
 
 	@Test
