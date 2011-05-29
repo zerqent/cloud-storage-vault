@@ -38,13 +38,14 @@ public class Cryptoutil {
 	public static final String SYM_CIPHER = "AES";
 	public static final String SYM_PADDING = "PKCS5Padding"; // TODO
 	public static final String SYM_MODE = "CBC";
-	public static final int SYM_SIZE = 128;
+	public static final int SYM_SIZE = 256;
+	public static final int SYM_BLOCK_SIZE = 128;
 
 	// Asymmetric Cipher
 	public static final String ASYM_CIPHER = "RSA";
 	// public static final String ASYM_PADDING = "PKCS1Padding"; // TODO
 	// public static final String ASYM_MODE = "ECB";
-	public static final int ASYM_SIZE = 1024;
+	public static final int ASYM_SIZE = 2048;
 
 	// Signatures
 	public static final String SIGN_ALG = "SHA256withRSA";
@@ -148,23 +149,10 @@ public class Cryptoutil {
 	public static KeyPair generateAsymmetricKeys() {
 		KeyPairGenerator keygen;
 		try {
-			boolean done = false;
-			KeyPair pair = null;
+			keygen = KeyPairGenerator.getInstance(Cryptoutil.ASYM_CIPHER);
+			keygen.initialize(Cryptoutil.ASYM_SIZE);
+			return keygen.generateKeyPair();
 
-			while (!done) {
-				// Private exponent is sometimes 129, we always want it to be
-				// 128
-				keygen = KeyPairGenerator.getInstance(Cryptoutil.ASYM_CIPHER);
-				keygen.initialize(Cryptoutil.ASYM_SIZE);
-				pair = keygen.generateKeyPair();
-				RSAPrivateKey priv = (RSAPrivateKey) pair.getPrivate();
-				if (priv.getPrivateExponent().toByteArray().length == 128) {
-					done = true;
-				}
-
-			}
-			return pair;
-			// return keygen.generateKeyPair();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -373,7 +361,7 @@ public class Cryptoutil {
 		// First comes modulus (129), then comes public exponent (3)
 		try {
 			KeyFactory fact = KeyFactory.getInstance("RSA");
-			byte[] mod = new byte[129];
+			byte[] mod = new byte[Cryptoutil.ASYM_SIZE / 8 + 1];
 			byte[] publicK = new byte[3];
 			System.arraycopy(key, 0, mod, 0, mod.length);
 			System.arraycopy(key, mod.length, publicK, 0, publicK.length);
@@ -397,24 +385,31 @@ public class Cryptoutil {
 
 	public static byte[] serializePrivateKey(RSAPrivateKey privKey) {
 		byte[] mod = privKey.getModulus().toByteArray();
-		byte[] pubexp = privKey.getPrivateExponent().toByteArray();
-		byte[] all = new byte[mod.length + pubexp.length];
+		byte[] privexp = privKey.getPrivateExponent().toByteArray();
+
+		if (privexp.length == Cryptoutil.ASYM_SIZE / 8 + 1) {
+			byte[] tmp = new byte[privexp.length - 1];
+			System.arraycopy(privexp, 1, tmp, 0, tmp.length);
+			privexp = tmp;
+		}
+
+		byte[] all = new byte[mod.length + privexp.length];
 		System.arraycopy(mod, 0, all, 0, mod.length);
-		System.arraycopy(pubexp, 0, all, mod.length, pubexp.length);
+		System.arraycopy(privexp, 0, all, mod.length, privexp.length);
 		return all;
 	}
 
 	public static PrivateKey createRSAPrivateKey(byte key[]) {
-		// First comes modulus (129), then comes public exponent (3)
+		// First comes modulus , then comes public exponent (3)
 		try {
 			KeyFactory fact = KeyFactory.getInstance("RSA");
-			byte[] mod = new byte[129];
-			byte[] privateK = new byte[128];
+			byte[] mod = new byte[Cryptoutil.ASYM_SIZE / 8 + 1];
+			byte[] privexpK = new byte[Cryptoutil.ASYM_SIZE / 8];
 			System.arraycopy(key, 0, mod, 0, mod.length);
-			System.arraycopy(key, mod.length, privateK, 0, privateK.length);
+			System.arraycopy(key, mod.length, privexpK, 0, privexpK.length);
 
 			BigInteger modulus = new BigInteger(1, mod);
-			BigInteger privateExponent = new BigInteger(1, privateK);
+			BigInteger privateExponent = new BigInteger(1, privexpK);
 
 			RSAPrivateKeySpec privKs = new RSAPrivateKeySpec(modulus,
 					privateExponent);

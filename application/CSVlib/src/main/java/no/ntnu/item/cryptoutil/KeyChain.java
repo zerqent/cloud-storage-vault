@@ -20,6 +20,7 @@ public class KeyChain {
 
 	// Creating key chain
 	public KeyChain(String password) {
+		System.out.println("KEYCHAIN CONSTRUCTOR");
 		this.password = password;
 		this.salt = new byte[8];
 		this.iterations = 1000;
