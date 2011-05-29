@@ -614,12 +614,12 @@ also be infeasible to find two blocks of data which produce the same hash value
 The standard for cryptographic hash functions today, are \ac{SHA}-1 and the
 \ac{SHA}-2 family.
 
-\subsection{\ac{MAC} Functions} 
+\subsection{MAC Functions} 
 
 \citet{schneier} defines a \ac{MAC} to be a construction that detects tampering
 with a message -- i.e. it authenticates the message. A \ac{MAC} can be
 constructed in different ways, one example is H\ac{MAC} which constructs the
-\ac{MAC} using a secret key, the message and a hash function\cite{rfc_2104}. 
+\ac{MAC} using a secret key, the message and a hash function \cite{rfc2104}. 
 
 \section{Applications of Cryptographic Primitives}
 
@@ -675,21 +675,25 @@ and primitives, but a digital certificate is required for authentication.
 To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
 \ac{HTTPS}.
 
-\subsection{PBKDF2}
+\subsection{Key Derivation Functions}
+% FIXME: Dette kapitellet og MAC er det primitiver eller applications?
 \label{sec:PBKDF2}
+A key derivation function is a function which takes a key, a password, a
+passphrase or similar and creates a new key from it. One of the applications of
+such a function is to create a stronger key from a weaker key, such as a
+password. This technique is called \emph{Key Stretching}. What the process
+involves is making the derivation of a key from a password an expensive
+process in terms of computing power, which in turn makes it more resistant to
+brute force attacks.
 
-\ac{PBKDF2} is a key derivation function used to create an encryption key based
-on a password. The key point of this, is that a password is often something
-that a person has to be able to recall from memory. But, a password phrase that
-is memorable to a person, might be too short to withstand a dictionary or even
-a brute force attack.
-
-What \ac{PBKDF2} does, is to make the process of deriving the key from the password
-an expensive process in terms of computational power, to make it more resistant
-to brute force attacks. This feature is known as \emph{key stretching}.
-
-The efficiency of the key derivation, is dependent on the number of process
-iterations chosen in the implementation of the function.
+\ac{PBKDF2} is a key derivation function which uses key stretching. It uses a
+password together with a randomly generated salt and a pseudorandom function to
+do this\cite{rfc2898}. The function will combine this in a specific way, and
+can repeat the process for a specified number of times, the iteration count.
+A higher iteration count results in a stronger key. The salt provides defense
+against a precomputed collection of keys, a \emph{rainbow table}, in the sense
+that it will make sure that a password will not derive the same key if the same
+salt is not used.
 
 \section{Security Attacks}
 
@@ -1665,44 +1669,62 @@ most important factor to consider when choosing a primitive, is that it should
 be infeasible to go from the result back to the origin key. On the basis of
 this, \citet{schneier} recommend HMAC-SHA256.
 
-\subsubsection{Password Based Key Derivation}
-We recommend \ac{PBKDF2} as the function to derive cryptographic keys from human memorable
-passwords. The standard for \ac{PBKDF2} was written by \ac{RSA} Laboratories in 1999
-\cite{PBKDF2std}. \ac{PBKDF2} has further been recommended by \ac{NIST} in \cite{pbkdf_nist}.
+\subsubsection{Password Based Key Derivation} 
 
-As mentioned earlier, \ac{PBKDF2} utilizes a salt during key derivation. The
-purpose of the salt is to prevent general attacks using precomputed rainbow tables
-to crack the input password. The salt is recommended by \ac{NIST} to be at least
-128 bits in length.
+To protect the secret that has to be stored on a users terminal our
+recommendation is \ac{PBKDF2}. \ac{PBKDF2} makes a key that a user can remember
+into a key which with greater resistance to brute force and dictionary attacks.
+\ac{PBKDF2} has further been recommended by \ac{NIST} in \cite{pbkdf_nist}.
+The salt that is used should be randomly generated and the length is
+recommended by \ac{NIST} to be at least 128 bits long. The recommendation for
+the iteration count 
 
-In addition to setting a salt value, \ac{PBKDF2} provides the possibility of
-adjusting the number of iterations used in its inner logic. The number of
-iterations defines the computational workload of the key stretching process, and
-is mainly used to resist brute force and dictionary attacks. It is therefore
-proposed that the number of iterations chosen should be set as high as possible,
-while maintaining acceptable performance \cite{pbkdf_nist}.
-
-To come up with a secure recommendation, we looked at the usage of \ac{PBKDF2}
-in WPA\footnote{WPA is a security protocol for wireless networks} and what
-security it provides against brute force attacks. WPA is an excellent measuring
-unit, since the utilization of \ac{PBKDF2} is quiet similar to the one in our scheme.
-
-So far, the most sensational brute force attack against WPA was published on
-Black Hat DC 2011 by a security researcher named Thomas Roth. He proved that
-anyone can crack WPA passwords with a speed of up to 400 000 passwords per
-second, using multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
+\ac{NIST} recommends that the iteration count for \ac{PBKDF2} should be as long
+as possible while at the same time maintaining acceptable
+performance\cite{pbkdf_nist}. To come up with a secure recommendation, we
+looked at the usage of \ac{PBKDF2} in WPA\footnote{WPA is a security protocol
+for wireless networks} and what security it provides against brute force
+attacks. WPA is an excellent measuring unit, since the utilization of
+\ac{PBKDF2} is quiet similar to the one in our scheme. So far, the most
+sensational brute force attack against WPA was published on Black Hat DC 2011
+by a security researcher named Thomas Roth. He proved that anyone can crack WPA
+passwords with a speed of up to about 400 000 passwords per second, using
+multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
 findings also indicate that Amazon them selves can reach an even higher unknown
-brute force speed.
+brute force speed. The same researcher has also hinted that he might be able to
+reach 1 million keys per second on the same equipment\cite{rothblog}.
 
-With this in mind, and that WPA uses 4096 iterations in \ac{PBKDF2}, we
-recommend to use at least 4000 \ac{PBKDF2} iterations for the proposed
-cryptographic scheme.
+The mayor difference between our scheme and WPA is that the necessary data to
+launch a brute force attack in WPA can be sniffed by anyone with a wireless
+device and with no risk. For our scheme one would have to get physical or
+virtual access to it, which has a high risk. In the event that an attacker
+obtains this access installing a keylogger or similar might be a better
+approach than to try an attack on the encrypted keyring. But in the event that
+the attacker is someone who steals or finds a lost device it will be his only
+option. In this event it is however possible for the owner of the terminal to
+simply replace his root capability with a new one to make the information that
+the attacker can obtain almost harmless. There of course exist a theoretical
+scenario where the cloud provider is actually the party which steals the
+terminal, and can protect the server-side encrypted data.
 
-The recommended number of iterations provides an acceptable performance, but
-makes the cryptographic scheme vulnerable to heavy brute force attacks. 
+With this in mind, we recommend at least the same amount of iterations
+to be used in our scheme as in WPA, that being over 4000. This should deal
+acceptable performance on most devices. However the strength of \ac{PBKDF2} is
+not enough alone, if the password used is to weak.
 
-\paragraph{Password requirements}To avoid the most extreme brute force attacks,
-we suggest that the following password requirements are complied with.
+\paragraph{Password requirements}
+
+If we assume every password can only consist of the English letters, both
+uppercase and lowercase, and the numbers 0-9, there exists 62^n different
+passwords for a password of length n. With Roths theoretical results of 1
+million passwords per second this means that any password of length 6, 7 and 8
+is cracked in about 0,66, 40 and 2527 days respectively. But this is the case
+where the attacker finds a password on the last try, which is not plausible.
+These results also only holds if we can guarantee that a user actually chooses
+a random password, which is probably not true either. A more realistic setting
+is that the attacker uses some dictionary, and that a users password is not
+strictly random. By this rationale, it is more important to be safe than sorry,
+and for password guidelines we therefore recommend:
 
 \begin{itemize}
 \item Password length >= 9.
@@ -2455,12 +2477,12 @@ $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
 
 In this chapter we will present the quantifiable numbers retrieved when doing
 the experimentation in Chapter \ref{ch:experimental}. This includes performance
-measurements on the proof of concept client, and figures on the attacks
-presented that target the local keyring.
+measurements of the proof of concept client, and figures on the attacks
+presented, that target the local keyring.
 
 \section{Client Performance}
 
-This section presents the results of benchmarking of the proof of concept
+This section presents the results of the benchmarking of the proof of concept
 client, and highlights the most important results.
 
 \subsection{Files}
@@ -2470,103 +2492,106 @@ downloading files. Table \ref{tbl:files:encrypted} shows the speed when using
 the \emph{unmodified} client, while Table \ref{tbl:files:unencrypted} shows the
 speed obtained when using the same client, but with \emph{encryption and
 hashing disabled}. Table \ref{tbl:desire:pinpoint} shows the speed of the
-individual operations in the pipeline on the HTC Desire.
+individual, isolated operations in the process pipeline on the HTC Desire.
 
 \input{tables/performance_files.tex}
 \input{tables/performance_files_unencrypted.tex}
 \input{tables/result_desire_pinpoint.tex}
 
-We observe that the Android devices performance for uploads is severely lower
-for uploads than downloads, and that this is not the case for the computer. We
-also observe that the speed with encryption and hashing enabled is severely
-higher for all three devices. From the individual operation results for HTC
-Desire we note that the encryption and decryption part is the time consuming
-operation.
+We observe that the performance of the Android devices for uploads is severely
+lower for uploads than for downloads, and that this is not the case for the
+computer client. We also observe that the speed with encryption and hashing
+disabled, is severely higher for all three devices. From the individual
+results for the HTC Desire, we identify that the encryption and decryption
+part is the most time consuming operation.
 
 \subsection{Folders}
 
 Table \ref{tbl:folder:createblank} shows the average time it takes to create an
 empty folder on the different devices. The Tables
 \ref{tbl:folder:serializefolder} and \ref{tbl:folder:encryptsign} shows the
-time it takes to serialize and encrypt and sign the folder respectively. These
-two actions are what has to be performed every time a folder is changed, while
-the creation of a blank folder is added if the content should be added to a new
-folder. Table \ref{tbl:folder:verify} displays the time the devices used to
-verify an existing folder, a step which is taken by the client every time a
-folder is opened. Results noted as \emph{N/A} for the HTC Hero is operations
-that lead to an Out of Memory exception during execution.
+respective time it takes to serialize, encrypt and sign the folder. These three
+actions are what has to be performed every time a folder is changed, while the
+operation of creating a blank folder is added if the content should be added to
+a new folder. Table \ref{tbl:folder:verify} displays the time the devices used
+to verify an existing folder, a step which is taken by the client every time a
+folder is opened. Results noted as \emph{N/A} for the HTC Hero, is operations
+that lead to an \emph{Out of Memory} exception during execution.
 
 \input{tables/result_perf_createblankfolder}
 \input{tables/result_perf_serializefolder}
 \input{tables/result_perf_encryptsignfolder}
 \input{tables/result_perf_verifyfolder}
 
-We observe that that the slow part of folders operations are the initial key
-generation and more important the serialization speed. Verification, encryption
-and signing is pretty fast for all devices. We also note that our
-implementation struggle to handle folders with large contents on the HTC Hero.
+We observe that the slowest part of folders operations are the initial key
+generation and more important, the serialization speed. Verification,
+encryption and signing is pretty fast for all devices. We also note that our
+implementation struggle to handle folders with a certain amount of items on the
+HTC Hero.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
 
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
 by implementing and executing two different programs. The first program, named
-Brute Force and Dictionary Attack (BFDA), was designed to run on a single
-computer, and supports both brute force and dictionary attacks. The second
-program, named Cluster Dictionary Attack (CDA), was created to run in a
-computational cluster. However, the CDA attack does only support dictionary
-attacks. The results for both programs are given below.
+\acf{BFDA}, was designed to run on a single computer, and supports both brute
+force and dictionary attacks. The second program, named \acf{CDA}, was created
+to run in a computational cluster. As the name implies, the \ac{CDA} attack
+does only support dictionary attacks. The results for both programs are given
+in the following sections.
 
 \subsection{Brute Force and Dictionary Attack (BFDA)}
 
-With BFDA we executed both a brute force and a dictionary attack to estimate
-the amount of passwords we could brute force within a second. The brute force
-and dictionary attacks achieved approximately the same results. However, for
-each measurement, the brute force attack turned out to achieve about 30
-passwords more per seconds than the dictionary attack. This is believed to
-exist due to the file reading overhead in the dictionary attack. The results
-for both attacks are illustrated in Table \ref{tab:res_bf} and Figure
-\ref{fig:bfres}. The histogram in Figure \ref{fig:bfres} shows how many
-passwords per second we were able to brute force versus the different amounts of
-iterations used in PBKDF2.
+With \ac{BFDA}, we executed both a brute force and a dictionary attack to
+estimate the amount of passwords we could test during the course of a second.
+
+The brute force and dictionary attacks achieved approximately the same results,
+although the brute force attack turned out to manage about 30 passwords more
+per second than the dictionary attack. A cause of this, might be due to the
+file reading overhead in the dictionary attack. 
+
+The results for both attacks are illustrated in Table \ref{tab:res_bf}. Results
+are given for different numbers of \ac{PBKDF2} iterations, in the matter of
+passwords per second. Figure \ref{fig:bfres} exhibits these numbers in the form
+of a histogram.
 
 \input{tables/res_bf.tex}
 
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{bf.png}
-\caption{Results from running brute force and dictionary attacks against a local
-encrypted keyring.}
+\caption{Results from running brute force and dictionary attacks against encrypted keyring.}
 \label{fig:bfres}
 \end{figure}
 
 Figure \ref{fig:bfres} indicates that by doubling the number of iterations in
 \emph{PBKDF2}, the efficiency of a brute force attack would decrease by half of
-it's value.
+its value.
 
-Using 1000 iterations in PBKDF2, as recommended by RSA Laboratories,
-the brute force attack was able to reach a speed of around 1800 passwords per
-second. With this speed it will take, in average, 24 hours to crack a password of
-length 6, consisting of only small letters.
+Using 1000 iterations in \ac{PBKDF2}, as recommended by \citet{pbkdf2std}, the
+brute force attack was able to reach a speed of around 1800 passwords per
+second. With this speed, it will take, in average, 24 hours to crack a password
+with a length of 6 characters, consisting of only small letters.
 
 \subsection{Cluster Dictionary Attack (CDA)}
 
-When running CDA, each node of the cluster achieved approximately the same
+When running \ac{CDA}, each node of the cluster achieved approximately the same
 results as a single computer running a dictionary attack with \ac{BFDA}. We
-found a small difference where the local computer achieved about 100 passwords
-per second more compared to an instance in the cluster. This was expected, with
-respect to the difference in CPU power between the local computer and a single
-cluster instance \cite{cpubench}. 
+found that there was a small difference where the local computer achieved about
+100 passwords per second more, compared to an instance in the cluster. This was
+expected, with respect to the difference in \ac{CPU} power between the local
+computer and a single cluster instance \cite{cpubench}. 
 
-With 20 nodes in the cluster we were able to brute force around 35 000 passwords
-per second, given \emph{PBKDF2} with 1000 iterations. Running the CDA in a
+With 20 nodes in the cluster, we were able to test around 35 000 passwords per
+second, given \emph{PBKDF2} with 1000 iterations. Running the \ac{CDA} in a
 cluster of 200 nodes, would further reach a speed of 350 000 passwords per
-second. The latter case would, in average, use about 7 minutes and 20 seconds to crack a
-password of length 6, consisting of only small letters.
+second. The latter case would in average use about 7 minutes and 20 seconds to
+crack a password with a length of 6 characters, consisting of only small
+letters.
 
-Renting a single Amazon EC2 high-CPU extra large instance costs 0.68 USD per
-hour. This unit price results in an hourly cost of 13.6 and 136 USD for a
-clusters of 20 and 200 instances respectively. 
+At the time of writing, renting a single \emph{Amazon EC2 high-CPU extra large}
+instance costs 0.68 USD per hour. This unit price results in an hourly cost of
+13.6 USD and 136 USD for clusters of 20 and 200 instances respectively. 
 
 %**************************************%
 \chapter{Discussion}
