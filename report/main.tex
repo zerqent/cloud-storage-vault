@@ -1670,7 +1670,7 @@ be infeasible to go from the result back to the origin key. On the basis of
 this, \citet{schneier} recommend HMAC-SHA256.
 
 \subsubsection{Password Based Key Derivation} 
-
+\label{sec:PBKD}
 To protect the secret that has to be stored on a users terminal our
 recommendation is \ac{PBKDF2}. \ac{PBKDF2} makes a key that a user can remember
 into a key which with greater resistance to brute force and dictionary attacks.
@@ -1715,7 +1715,7 @@ not enough alone, if the password used is to weak.
 \paragraph{Password requirements}
 
 If we assume every password can only consist of the English letters, both
-uppercase and lowercase, and the numbers 0-9, there exists 62^n different
+uppercase and lowercase, and the numbers 0-9, there exists 62\^n different
 passwords for a password of length n. With Roths theoretical results of 1
 million passwords per second this means that any password of length 6, 7 and 8
 is cracked in about 0,66, 40 and 2527 days respectively. But this is the case
@@ -3030,13 +3030,13 @@ that general performance can be improved by using lower-layer
 programming languages, such as C, to implement the attacks. Another way to
 increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
 
-When following recommendations for \ac{PBKDF2} and password requirements in Section \ref{sec:}, it
-is impossible to perform a plain brute force attack against the local keyring.
+When following recommendations for \ac{PBKDF2} and password requirements in
+Section \ref{sec:PBKD}, it is impossible to perform a plain brute force attack
+against the local keyring. Even though the keyring is secured against a plain
+brute force attack, it is still vulnerable to slow dictionary attacks.
 
-Even though the keyring is secured against a plain brute force attack, it is
-still vulnerable to slow dictionary attacks. To completely
-avoid brute force and dictionary attacks against the keyring, the most efficient
-and preventive action is to simply ensure that the encrypted keyring is
+To completely avoid brute force and dictionary attacks against the keyring, the
+most efficient and preventive action is to simply ensure that the encrypted keyring is
 only accessible by its authorized users. In other words, the confidentiality of
 the encrypted keyring relies primarily on the client security.
 
