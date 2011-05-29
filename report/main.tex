@@ -2925,43 +2925,48 @@ opposed to the key length of 16 bytes.
 
 \section{Performance}
 
-The measurements of our client reveal that it is not as fast as you would want
-it to be. For files, a perfect client would render the network or the SD-card
+The measurements of performed on our client reveal that it is not as fast as
+desirable. For files, a perfect client would render the network or the SD card
 as the bottleneck, but our measurements state that this is clearly not the
-case. The speed we get when downloading or uploading a file is decreased by
-about 50-80\% on all three devices. The results for the individual operations
-performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint} clearly
+case. 
+
+The speed we get when downloading or uploading a file is decreased by about
+50-80\% on all three test devices. The results for the individual operations
+performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint}, clearly
 indicates that encryption and decryption are the slowest elements in the
-pipeline, and responsible for most of the performance drop. Another thing to
-note is that the implementations of InputStreams and OutputStreams in Java
-reads or writes the requested number of bytes stream by
-stream\footnote{\url{http://download.java.net/jdk6/source/}}, so we will never
-reach even the speed of the slowest component in the pipeline. Splitting the
-pipeline between different threads should make it possible to reach higher
-speed in the pipeline, especially the computer which spots multiple processor
-cores.
+process pipeline, and responsible for most of the performance drop. 
 
-%% Kilde Java source
+Another thing to note is that the implementations of the \texttt{InputStreams}
+and \texttt{OutputStreams} stream objects in Java seem to read or write the
+requested number of bytes stream by stream. This implies that the
+implementation will never reach even the speed of the slowest component in the
+pipeline. Branching the operations in the pipeline to different threads should
+make it possible to gain better performance, especially in an environment
+which spots multiple processor cores. Multiple \ac{CPU} cores is standard on
+modern computers, and there is no reason to suspect otherwise than that also
+smart phones will be equipped with this in the nearest future.
 
-\paragraph{Folders} For folders our application is performing quite good, if we
-look at only the cryptographic options. Here the slowest operation is clearly
-the generation of new cryptographic keys. For a user of our Android client this
-should not be a problem, since the folder creation is done as an asynchronous
-task while the user enters the name of the new folder.
+\paragraph{Folders} The performance of the folder operations in the
+implementation is quite good, if we look at only the cryptographic
+functionality. We identify the slowest operation to be the generation of
+new cryptographic keys. For a user of the Android client, this should not be a
+problem, since the folder creation is done as an asynchronous task while the
+user enters the name of the new folder.
 
-The other cryptographic operations on folders runs quite quickly, but the
-performance for serializing the folder is painfully low when folders reach a
-large size. Now a folder with thousands of children is not something we expect
-a user of our Android client to have. But if we change the scenario to backing
-up an entire computer the serialization part might become a problem. The reason
-why this operation is to be blamed on our implementation. The contents are
-implemented as a hashmap, which is serialized to a string to make it ready for
-encryption. Ideally this step is not necessary, if the contents exists in the
-correct form in memory by default. Even if this might not be possible for other
-reasons, such as decreased performance when manipulating the folder contents,
-we believe a faster implementation is possible.
+The other cryptographic operations on folders completes quite quickly, but the
+performance for serializing the folder contents is too low when folders contain
+a large number of items. A folder with thousands of children is not
+something we expect an ordinary user of our Android client to have, but if we
+change the scenario to backing up an entire computer, the serialization part
+might become a problem. 
 
-\subsection{Accuracy of Measurements}
+The reason why this serialization operation is slow, it to be blamed on our
+implementation alone. The folder items are stored in a \texttt{HashMap}, which
+is serialized to a string to make it ready for encryption. Ideally, this step
+is not necessary, if the contents exists in the correct form in memory by
+default. Even though this might not be possible for other reasons, such as
+decreased performance when manipulating the folder contents, we believe a
+faster implementation of a serialization algorithm is possible to find.
 
 \section{Security}
 % Hvordan angripe?
