@@ -42,20 +42,20 @@ public class CSVFolder implements CSVObject {
 	}
 
 	public void download(byte[] packet) {
-		byte[] pubkey = new byte[132];
+		byte[] pubkey = new byte[Cryptoutil.ASYM_SIZE / 8 + 1 + 3];
 		System.arraycopy(packet, 0, pubkey, 0, pubkey.length);
 		this.setPubKey(pubkey);
 
-		byte[] signature = new byte[128];
+		byte[] signature = new byte[Cryptoutil.ASYM_SIZE / 8];
 		System.arraycopy(packet, pubkey.length, signature, 0, signature.length);
 		this.signature = signature;
 
-		byte[] iv = new byte[16];
+		byte[] iv = new byte[Cryptoutil.SYM_BLOCK_SIZE / 8];
 		System.arraycopy(packet, pubkey.length + signature.length, iv, 0,
 				iv.length);
 		this.iv = iv;
 
-		byte[] encPrivKey = new byte[272];
+		byte[] encPrivKey = new byte[2 * (Cryptoutil.ASYM_SIZE / 8) + 1 + 15];
 		System.arraycopy(packet, pubkey.length + signature.length + iv.length,
 				encPrivKey, 0, encPrivKey.length);
 		this.encPrivKey = encPrivKey;
