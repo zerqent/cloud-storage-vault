@@ -1670,7 +1670,7 @@ be infeasible to go from the result back to the origin key. On the basis of
 this, \citet{schneier} recommend HMAC-SHA256.
 
 \subsubsection{Password Based Key Derivation} 
-
+\label{sec:PBKD}
 To protect the secret that has to be stored on a users terminal our
 recommendation is \ac{PBKDF2}. \ac{PBKDF2} makes a key that a user can remember
 into a key which with greater resistance to brute force and dictionary attacks.
@@ -1715,7 +1715,7 @@ not enough alone, if the password used is to weak.
 \paragraph{Password requirements}
 
 If we assume every password can only consist of the English letters, both
-uppercase and lowercase, and the numbers 0-9, there exists 62^n different
+uppercase and lowercase, and the numbers 0-9, there exists 62\^n different
 passwords for a password of length n. With Roths theoretical results of 1
 million passwords per second this means that any password of length 6, 7 and 8
 is cracked in about 0,66, 40 and 2527 days respectively. But this is the case
@@ -2852,22 +2852,24 @@ hinder duplication.
 
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
-use case we chose to implement. We will further analyse our choice of key
-distribution and look at alternative solutions. The section will end by
-discussing the most important cryptographic primitives chosen and utilized in
-our implementation.
+use case we chose to implement. Further on, we will analyse our choice of key
+distribution and look at alternative solutions. The section will end by a
+discussion of the most important cryptographic primitives chosen and utilized
+in our implementation.
 
 \subsection{Choice of Use Case}
 
-There are mainly two types of users for a cloud storage solution, personal or
-enterprise/organizational. What we have implemented is aimed more against the
-personal users than the enterprise market. The main difference between these
-two use cases is that in an enterprise there will usually be some kind of IT
-department which will have the possibility of setting up users terminal, which
-in turn means that the initial client setup can be more advanced. Another
-difference is that it would usually be more defined who you are supposed to
-share files with and what you should have access to. An organization might not
-approve of a model where a random user can forward read rights to other users.
+There are mainly two types of user groups interested in a cloud storage
+solution -- personal or enterprise. The proof of concept implementation is more
+aimed against the personal use case, than the enterprise market. The main
+difference between these two use cases, is that in an enterprise there will
+usually be some kind of IT department which will have the possibility of
+initially setting up the terminals before handing them out to the users.
+
+An additional fundamental difference is that it would usually be more defined
+who the users are supposed to share files with, and what they should have
+access to. An organization might not approve of a model where all users can
+forward read rights to every other users.
 
 \subsection{Choice of Key Distribution}
 \label{sec:DI:keydist}
@@ -2875,31 +2877,40 @@ approve of a model where a random user can forward read rights to other users.
 %Argue why we chose our scheme
 
 The challenge of key distribution is a hard one. To successfully authenticate a
-user and transfer a key requires either that you trust a third party, you meet
-a user in person or that you use some out of bound safe channel. Since our
-initial problem is that we do not trust the cloud provider we do not want to
-use a trusted third party either. This pretty much leaves verifying another
-user in person, although a scheme similar to \ac{PGP} could be used. In
-\ac{PGP} users can publish that they have verified other users and to which
-degree they trust them. Other users can use this information to calculate the
-probability that a certain user is legit. The reason why we do not implement this
-scheme is that it is fairly complex for a standard user. There are however
-nothing that stops a user that want to use \ac{PGP} to transfer capabilities
-through it.
+user and transfer a key, it is possible to choose from the following methods:
 
-If our cryptographic scheme should be used in an organization a \ac{PKI} is
-probably the best solution. In this setting the organization can itself be the
-trusted third party, who enforces that all certificates granted to users are
-correct. A user could then be simply prompted by the name of the user she would
-like to share a file with, and the rest could be handled by logic and the trust
-of the \ac{PKI}.
+\begin{itemize}
+ \item Use a trusted third party
+ \item Meet a user in person
+ \item Use some sort of out of bound safe channel
+\end{itemize}
+
+Since one of the basic problems of this thesis is that the cloud provider is
+not to be trusted, it is not desirable to use a trusted third party. This
+implies that the only option left, is to verify another user in person,
+although a scheme similar to \ac{PGP} could be used. 
+
+In \ac{PGP}, users can publish that they have verified other users and to which
+degree they trust them \cite{stallings}. Other users can use this information
+to calculate the probability that a certain user is legit. The reason why this
+scheme is not implemented, is that it is fairly complex for a standard user to
+grasp. There are however nothing that stops a user that want to use the
+\ac{PGP} scheme to transfer capabilities through it.
+
+If the cryptographic scheme presented in Section \ref{chap:CS} should be used
+in an organization, a \ac{PKI} is probably the best solution. In this setting,
+the organization can itself be the trusted third party that enforces that all
+certificates granted to users are correct. A user could then simply be prompted
+by the name of the user he would like to share a file with, and the rest could
+be handled by software logic and the trust of the \ac{PKI}.
 
 \subsection{Deviations in the Choice of Cryptographic Primitives}
 
 The implementation of the proof of concept client deviates in two points from
 the recommendation given in Section \ref{sec:cryptoprimitivechoice}. 
 These discoveries where done during the analysis of the system, and are
-corrected with a patch file submitted alongside the code attachment.
+corrected with a patch file submitted alongside the code attachment, as
+described in Appendix \ref{ap:attachments}.
 
 \paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
 bits, in contrast to the argued 2048 bits. Because this was discovered after
@@ -2908,49 +2919,54 @@ the development phase, all the measurements presented in Chapter
 1024 bits.
 
 \paragraph{PBKDF2 Salt} As argued in Section \ref{sec:cryptoprimitivechoice},
-the salt length used with the \ac{PBKDF2} should be as long as the key length.
-In the implementation, this salt value is only 8 bytes, as opposed to the key
-length of 16 bytes.
+the length of the salt used with the \ac{PBKDF2} should be as long as the
+length of the key. In the implementation, the salt value is only 8 bytes, as
+opposed to the key length of 16 bytes.
 
 \section{Performance}
 
-The measurements of our client reveal that it is not as fast as you would want
-it to be. For files, a perfect client would render the network or the SD-card
+The measurements of performed on our client reveal that it is not as fast as
+desirable. For files, a perfect client would render the network or the SD card
 as the bottleneck, but our measurements state that this is clearly not the
-case. The speed we get when downloading or uploading a file is decreased by
-about 50-80\% on all three devices. The results for the individual operations
-performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint} clearly
+case. 
+
+The speed we get when downloading or uploading a file is decreased by about
+50-80\% on all three test devices. The results for the individual operations
+performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint}, clearly
 indicates that encryption and decryption are the slowest elements in the
-pipeline, and responsible for most of the performance drop. Another thing to
-note is that the implementations of InputStreams and OutputStreams in Java
-reads or writes the requested number of bytes stream by
-stream\footnote{\url{http://download.java.net/jdk6/source/}}, so we will never
-reach even the speed of the slowest component in the pipeline. Splitting the
-pipeline between different threads should make it possible to reach higher
-speed in the pipeline, especially the computer which spots multiple processor
-cores.
+process pipeline, and responsible for most of the performance drop. 
 
-%% Kilde Java source
+Another thing to note is that the implementations of the \texttt{InputStreams}
+and \texttt{OutputStreams} stream objects in Java seem to read or write the
+requested number of bytes stream by stream. This implies that the
+implementation will never reach even the speed of the slowest component in the
+pipeline. Branching the operations in the pipeline to different threads should
+make it possible to gain better performance, especially in an environment
+which spots multiple processor cores. Multiple \ac{CPU} cores is standard on
+modern computers, and there is no reason to suspect otherwise than that also
+smart phones will be equipped with this in the nearest future.
 
-\paragraph{Folders} For folders our application is performing quite good, if we
-look at only the cryptographic options. Here the slowest operation is clearly
-the generation of new cryptographic keys. For a user of our Android client this
-should not be a problem, since the folder creation is done as an asynchronous
-task while the user enters the name of the new folder.
+\paragraph{Folders} The performance of the folder operations in the
+implementation is quite good, if we look at only the cryptographic
+functionality. We identify the slowest operation to be the generation of
+new cryptographic keys. For a user of the Android client, this should not be a
+problem, since the folder creation is done as an asynchronous task while the
+user enters the name of the new folder.
 
-The other cryptographic operations on folders runs quite quickly, but the
-performance for serializing the folder is painfully low when folders reach a
-large size. Now a folder with thousands of children is not something we expect
-a user of our Android client to have. But if we change the scenario to backing
-up an entire computer the serialization part might become a problem. The reason
-why this operation is to be blamed on our implementation. The contents are
-implemented as a hashmap, which is serialized to a string to make it ready for
-encryption. Ideally this step is not necessary, if the contents exists in the
-correct form in memory by default. Even if this might not be possible for other
-reasons, such as decreased performance when manipulating the folder contents,
-we believe a faster implementation is possible.
+The other cryptographic operations on folders completes quite quickly, but the
+performance for serializing the folder contents is too low when folders contain
+a large number of items. A folder with thousands of children is not
+something we expect an ordinary user of our Android client to have, but if we
+change the scenario to backing up an entire computer, the serialization part
+might become a problem. 
 
-\subsection{Accuracy of Measurements}
+The reason why this serialization operation is slow, it to be blamed on our
+implementation alone. The folder items are stored in a \texttt{HashMap}, which
+is serialized to a string to make it ready for encryption. Ideally, this step
+is not necessary, if the contents exists in the correct form in memory by
+default. Even though this might not be possible for other reasons, such as
+decreased performance when manipulating the folder contents, we believe a
+faster implementation of a serialization algorithm is possible to find.
 
 \section{Security}
 % Hvordan angripe?
@@ -2972,37 +2988,52 @@ subsections will discuss possible weaknesses and their consequences.
 \subsubsection{Information leakage}
 The storage provider can access all data encrypted on the server, and also know whether a
 stored data object corresponds to a file or a folder. This is revealed by the
-difference in size between folder and file objects. A user's root folder is also
-known since it is the first object accessed in a user session. It is also
-possible for the provider to reveal the structure of the filesystem. The series
-of file and folder requests from a user enables the provider to learn which
-files are contained in which folders.
+difference in header content and size between folder and file objects. Folders
+are specially recognizable by the server, as their write enabler is revealed
+during upload procedure. A user's root folder is also known since it is the
+first object accessed in a user session. It is also possible for the provider to
+reveal the structure of the filesystem. The series of file and folder requests
+from a user enables the provider to learn which files are contained in which folders.
+
+Considering the findings in \cite{cloud_getoff}, information can also be leaked
+to other attackers besides the untrusted cloud provider. Attackers can locate
+the server, in the cloud, used by the application, and further set up a \ac{VM} on the same
+server. The \ac{VM} can then be used to mount cross-\ac{VM} side-channel attacks
+to extract information from the server side application. This will, however, in
+a worst case scenario, enable an attacker to achieve the exact same information
+as the untrusted cloud provider, hence, no more information is leaked from the
+application.
 
 \subsubsection{Content Disclosure}
 The confidentiality of both files and folders relies primarily on the symmetric
 cipher used to encrypt the data. But for folders one can obtain this key if one
-manages to obtain the asymmetric private key belonging to the folder. In other words, a
-folder is attackable both trough the asymmetric and the symmetric cipher used.
+manages to obtain the asymmetric private key belonging to the folder. In other
+words, files and folders are attackable both trough the asymmetric and the
+symmetric cipher used.
+
+Disclosing folder content through the asymmetric cipher may be avoided by changing the
+usage of the private key. Instead of hashing the private key to derive a folder's
+write key, the write key could rather be generated from a random key generator.
+In this way, even though the asymmetric private key is revealed, the symmetric
+keys used to provide confidentiality are not retrieved. However, revealing the
+private key would still breach the integrity of the cryptographic scheme.
+
 If the confidentiality of a folder is breached it will additionally enable the
 attacker to decrypt all of the corresponding sub-folders and files. In contrast,
 cracking the confidentiality of a file will only compromise that specific file. It is
 also important to note that if the confidentiality of a user's root folder is breached,
 all files, belonging to that user, are effectively compromised.
 
-\subsubsection{Disclosure of Keyring Content}
+\subsubsection{Disclosing the Keyring Content}
 The confidentiality of the cryptographic root key and user passwords is held by
-a single encrypted keyring that is stored locally for each user client. The
+a single encrypted keyring that is stored locally at the user client. The
 keyring is encrypted with a cryptographic key derived from a user password.
 Unfortunately, using a password to encrypt the keyring, makes the keyring a
 suitable target for brute force and dictionary attacks. The keyring's
-vulnerability against brute force and dictionary attacks was experienced in
+vulnerability against brute force and dictionary attacks was questioned in
 Section \ref{sec:BFLK}.
-%TODO: The paragraph below will discuss our findings from Section \ref{sec:R:BFLK}.
-
 
 \paragraph{Brute Forcing the Keyring}
-The confidentiality of the root folder can be breached by brute forcing a user's
-locally stored keyring. This was experienced in Section \ref{sec:BFLK}.
 From the results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
 that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
 brute force attack against the local keyring. By doubling the number of
@@ -3015,19 +3046,27 @@ that general performance can be improved by using lower-layer
 programming languages, such as C, to implement the attacks. Another way to
 increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
 
-With the password requirements above and with 4000 iterations in
-\emph{PBKDF2}, it will be extremely hard to perform a plain brute force attack against the local
-keyring.
+When following recommendations for \ac{PBKDF2} and password constraints in
+Section \ref{sec:PBKD}, it is impossible to perform a plain brute force attack
+against the local keyring. However, even though the keyring is secured against a plain
+brute force attack, it is still vulnerable to slow dictionary attacks.
 
-Even though the keyring is secured against a plain brute force attack, it is
-still vulnerable to slow dictionary attacks. To completely
-avoid brute force and dictionary attacks against the keyring, the most efficient
-and preventive action would be to simply ensure that the encrypted keyring is
-only accessible by its authorized users.
-
+To completely avoid brute force and dictionary attacks against the keyring, the
+most efficient and preventive action is to simply ensure that the encrypted keyring is
+only accessible by its authorized users. In other words, the confidentiality of
+the encrypted keyring relies primarily on the client security.
 
 \subsubsection{The Weakest Link}
+Considering the weaknesses discussed above, the weakest link of the Cloud
+Storage Vault is, in no doubt, the locally encrypted keyring. To provide
+usability, users are given the possibility of choosing their own passwords, to
+indirectly encrypt their keyring. However, it is fairly known that users can not
+be trusted to generate and use long, secure passwords. 
 
+As mentioned earlier, even with the recommended password constraints, the
+keyring is still vulnerable to slow dictionary attacks. However, disclosing the
+keyring is only possible if the keyring is accessible to an attacker. Getting access to a
+user's keyring is further dependent on the client security.
 
 \subsection{Client Security}
 Given enough users, sooner or later, there will be a user who looses his client.
@@ -3043,13 +3082,13 @@ files and folders. While logged on to the service, it is also possible for an
 experienced attacker to reveal the user's server access password as well as the
 password to decrypt the locally stored keyring. The attacker can achieve the passwords by
 scanning the client's memory while it is logged into the Cloud Storage Vault.
-Although this is a severe security breach, it can easily be avoided by an
-additional mechanism to the implementation. The Cloud Storage Vault can simply
-flush the password values stored in memory right after a successful login session.
+Although this is a severe security breach, it can easily be avoided by adding an
+additional functionality. The Cloud Storage Vault can simply flush the password
+values stored in memory right after a successful login session.
 
 Even though this mechanism prevents disclosure of critical access data when
-loosing a client, it does not prevent a logged in attacker from disclosing the user's encrypted files and folders.
-To minimize this problem the Cloud Storage Vault should implement a
+loosing a client, it does not prevent a logged in attacker from disclosing the
+user's encrypted files and folders. To minimize this problem the Cloud Storage Vault should implement a
 timeout mechanism for inactive users. If a user has been inactive for a given
 amount of time, the user should be logged out of the application. In this way,
 the application will reduce the consequence of losing the client. It is
@@ -3111,7 +3150,7 @@ to support secure usage of the Cloud Storage Vault.
 % Innside attacker - hos Amazon
 
 
-\section{Additional Features}
+%\section{Additional Features}
 % Ting vi ikke har lagt inn
 % - Cascading deletes? Loops.
 % - Hvem 'eier' en directory

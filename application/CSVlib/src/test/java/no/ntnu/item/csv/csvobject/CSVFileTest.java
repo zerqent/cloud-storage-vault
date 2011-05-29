@@ -136,7 +136,7 @@ public class CSVFileTest {
 		SecretKey sk = new SecretKeySpec(this.file.getCapability().getKey(),
 				Cryptoutil.SYM_CIPHER);
 		IvParameterSpec iv = new IvParameterSpec(Cryptoutil.nHash(
-				sk.getEncoded(), 2, 16));
+				sk.getEncoded(), 2, Cryptoutil.SYM_SIZE / 8));
 
 		byte[] cipher = Cryptoutil.symEncrypt(tmp, sk, iv);
 		Assert.assertEquals(cipher.length, (int) len);

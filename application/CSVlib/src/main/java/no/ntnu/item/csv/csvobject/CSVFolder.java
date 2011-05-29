@@ -106,7 +106,8 @@ public class CSVFolder implements CSVObject {
 	private void encrypt() {
 		byte[] read;
 		if (this.capability.getType() == CapabilityType.RW) {
-			read = Cryptoutil.hash(this.capability.getKey(), 16);
+			read = Cryptoutil.hash(this.capability.getKey(),
+					Cryptoutil.SYM_SIZE / 8);
 		} else {
 			read = this.capability.getKey();
 		}
@@ -129,7 +130,8 @@ public class CSVFolder implements CSVObject {
 		assert this.ciphertext != null;
 		byte[] read;
 		if (this.capability.getType() == CapabilityType.RW) {
-			read = Cryptoutil.hash(this.capability.getKey(), 16);
+			read = Cryptoutil.hash(this.capability.getKey(),
+					Cryptoutil.SYM_SIZE / 8);
 		} else {
 			read = this.capability.getKey();
 		}

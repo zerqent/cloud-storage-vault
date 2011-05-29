@@ -32,10 +32,12 @@ public class CapabilityImpl implements Capability {
 
 		switch (this.type) {
 		case RW:
-			this.storageIndex = Cryptoutil.nHash(this.key, 2, 16);
+			this.storageIndex = Cryptoutil.nHash(this.key, 2,
+					Cryptoutil.SYM_SIZE / 8);
 			break;
 		case RO:
-			this.storageIndex = Cryptoutil.nHash(this.key, 1, 16);
+			this.storageIndex = Cryptoutil.nHash(this.key, 1,
+					Cryptoutil.SYM_SIZE / 8);
 			break;
 		case V:
 			break;
