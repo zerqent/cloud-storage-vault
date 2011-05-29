@@ -1,6 +1,6 @@
 CREATE TABLE write_enablers (
-    storage_index character varying(30) NOT NULL,
-    write_enabler character varying(30) NOT NULL
+    storage_index character varying(51) NOT NULL,
+    write_enabler character varying(51) NOT NULL
 );
 
 ALTER TABLE ONLY write_enablers
