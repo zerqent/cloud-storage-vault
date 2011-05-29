@@ -2923,6 +2923,23 @@ the length of the salt used with the \ac{PBKDF2} should be as long as the
 length of the key. In the implementation, the salt value is only 8 bytes, as
 opposed to the key length of 16 bytes.
 
+\subsection{Simplifying the Server}
+
+The implemented proof of concept server generally performs quite well, and was
+never identified as a bottleneck during the performance measurements. However,
+by making the server-side contain less logic, \ac{CSV} could be used against
+for instance the Amazon S3 service. This would more easily enable users that
+are not comfortable with setting up a web server, to set up the whole system
+from scratch.
+
+By redesigning the scheme to use a \emph{dumb file store}, the \ac{ACL}
+functionality will be lost. However, a service like Amazon S3 do provide some
+access control, and in the scenario of a \emph{friend net}, this could actually
+be considered as a better solution. Luckily, the cryptographic architecture
+presented in Section \ref{chap:CS}, are loosely coupled with the \ac{ACL}
+layer, so extending the proof of concept software to use a dumb file store
+should not pose any great problems.
+
 \section{Performance}
 
 The measurements of performed on our client reveal that it is not as fast as
@@ -2936,15 +2953,20 @@ performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint}, clearly
 indicates that encryption and decryption are the slowest elements in the
 process pipeline, and responsible for most of the performance drop. 
 
-Another thing to note is that the implementations of the \texttt{InputStreams}
-and \texttt{OutputStreams} stream objects in Java seem to read or write the
+\paragraph{Limitations of Libraries} Another thing to note, is that the
+implementations of the \texttt{InputStreams} and \texttt{OutputStreams} stream
+objects in Java and the Apache HttpComponents seem to read and write the
 requested number of bytes stream by stream. This implies that the
 implementation will never reach even the speed of the slowest component in the
-pipeline. Branching the operations in the pipeline to different threads should
-make it possible to gain better performance, especially in an environment
-which spots multiple processor cores. Multiple \ac{CPU} cores is standard on
-modern computers, and there is no reason to suspect otherwise than that also
-smart phones will be equipped with this in the nearest future.
+pipeline.
+
+\paragraph{Multiple CPU Cores} Branching the operations in the pipeline to
+different threads should make it possible to gain better performance,
+especially in an environment which spots multiple processor cores. Multiple
+\ac{CPU} cores is standard on modern computers, and there is no reason to
+suspect otherwise than that also smart phones will be equipped with this in the
+nearest future. In addition, dedicated cryptographic co-processors may
+relieve the \ac{CPU} from additional work.
 
 \paragraph{Folders} The performance of the folder operations in the
 implementation is quite good, if we look at only the cryptographic
@@ -2967,6 +2989,12 @@ is not necessary, if the contents exists in the correct form in memory by
 default. Even though this might not be possible for other reasons, such as
 decreased performance when manipulating the folder contents, we believe a
 faster implementation of a serialization algorithm is possible to find.
+
+\paragraph{Cache} Since opening folders is a relatively expensive procedure,
+given that it has to be downloaded from the server, decrypted and verified, we
+keep the currently opened folder and its parents in a stack. This can be seen
+on as a kind of cache, and could be extended to include all folders opened
+in the active session.
 
 \section{Security}
 % Hvordan angripe?
