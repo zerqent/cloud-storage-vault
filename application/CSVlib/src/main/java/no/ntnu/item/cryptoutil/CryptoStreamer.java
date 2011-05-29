@@ -51,7 +51,7 @@ public class CryptoStreamer {
 	public CryptoStreamer() {
 		this.secretKey = Cryptoutil.generateSymmetricKey();
 		this.iv = new IvParameterSpec(Cryptoutil.nHash(
-				this.secretKey.getEncoded(), 2, Cryptoutil.SYM_SIZE / 8));
+				this.secretKey.getEncoded(), 2, Cryptoutil.SYM_BLOCK_SIZE / 8));
 		initCipher();
 	}
 

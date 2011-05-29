@@ -39,12 +39,13 @@ public class Cryptoutil {
 	public static final String SYM_PADDING = "PKCS5Padding"; // TODO
 	public static final String SYM_MODE = "CBC";
 	public static final int SYM_SIZE = 128;
+	public static final int SYM_BLOCK_SIZE = 128;
 
 	// Asymmetric Cipher
 	public static final String ASYM_CIPHER = "RSA";
 	// public static final String ASYM_PADDING = "PKCS1Padding"; // TODO
 	// public static final String ASYM_MODE = "ECB";
-	public static final int ASYM_SIZE = 2048;
+	public static final int ASYM_SIZE = 1024;
 
 	// Signatures
 	public static final String SIGN_ALG = "SHA256withRSA";
@@ -74,7 +75,7 @@ public class Cryptoutil {
 			// Should already be tested
 		}
 
-		if (truncate_to > 0) {
+		if (truncate_to > 0 && truncate_to != result.length) {
 			byte[] tmp = new byte[truncate_to];
 			System.arraycopy(result, 0, tmp, 0, truncate_to);
 			result = tmp;
@@ -423,6 +424,13 @@ public class Cryptoutil {
 			KeyFactory fact = KeyFactory.getInstance("RSA");
 			byte[] mod = new byte[ASYM_SIZE / 8 + 1];
 			byte[] privateK = new byte[ASYM_SIZE / 8];
+
+			if (mod.length + privateK.length != key.length) {
+				System.out
+						.println("Something is wrong createRSAPrivateKey! mod: "
+								+ mod.length + " privateK" + privateK.length);
+			}
+
 			System.arraycopy(key, 0, mod, 0, mod.length);
 			System.arraycopy(key, mod.length, privateK, 0, privateK.length);
 

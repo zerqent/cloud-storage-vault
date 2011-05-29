@@ -50,7 +50,7 @@ public class CSVFolder implements CSVObject {
 		System.arraycopy(packet, pubkey.length, signature, 0, signature.length);
 		this.signature = signature;
 
-		byte[] iv = new byte[Cryptoutil.SYM_SIZE / 8];
+		byte[] iv = new byte[Cryptoutil.SYM_BLOCK_SIZE / 8];
 		System.arraycopy(packet, pubkey.length + signature.length, iv, 0,
 				iv.length);
 		this.iv = iv;
@@ -80,7 +80,8 @@ public class CSVFolder implements CSVObject {
 		this.pubkey = pair.getPublic();
 		this.privkey = pair.getPrivate();
 
-		byte[] write = Cryptoutil.hash(this.privkey.getEncoded(), 16);
+		byte[] write = Cryptoutil.hash(this.privkey.getEncoded(),
+				Cryptoutil.SYM_SIZE / 8);
 		// byte[] read = Cryptoutil.hash(write, 16);
 		RSAPublicKey pub = (RSAPublicKey) this.pubkey;
 		byte[] mod = pub.getModulus().toByteArray();
@@ -89,7 +90,7 @@ public class CSVFolder implements CSVObject {
 		System.arraycopy(mod, 0, to_hash, 0, mod.length);
 		System.arraycopy(pubexp, 0, to_hash, mod.length, pubexp.length);
 
-		byte[] verify = Cryptoutil.hash(to_hash, 16);
+		byte[] verify = Cryptoutil.hash(to_hash, Cryptoutil.SYM_SIZE / 8);
 
 		Capability writecap = new CapabilityImpl(CapabilityType.RW, write,
 				verify, false);

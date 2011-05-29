@@ -66,8 +66,8 @@ public class CSVFileTest {
 		Assert.assertNotNull(file.getCapability());
 		Assert.assertNotNull(file.getCapability().getVerificationKey());
 		Assert.assertTrue(file.isValid());
-		Assert.assertEquals(16,
-				file.getCapability().getVerificationKey().length);
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, file.getCapability()
+				.getVerificationKey().length);
 
 	}
 
@@ -121,7 +121,7 @@ public class CSVFileTest {
 				new FileInputStream(this.file.getFile()), (int) this.file
 						.getFile().length());
 
-		byte[] correctHash = Cryptoutil.hash(tmp, 16);
+		byte[] correctHash = Cryptoutil.hash(tmp, Cryptoutil.SYM_SIZE / 8);
 		Assert.assertArrayEquals(correctHash, recorded);
 
 	}

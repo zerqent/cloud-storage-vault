@@ -87,7 +87,7 @@ public class CryptoStreamerTest {
 		}
 
 		this.tmpDigest = this.cryptoStreamer.finish();
-		Assert.assertEquals(16, tmpDigest.length);
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, tmpDigest.length);
 		byte[] cipher = FileUtils.readDataBinary(new FileInputStream(
 				this.encryptedOutputFile), (int) new File(
 				this.encryptedOutputFile).length());
@@ -122,7 +122,7 @@ public class CryptoStreamerTest {
 		ros.flush();
 		ros.close();
 		byte[] digest = this.cryptoStreamer.finish();
-		Assert.assertEquals(16, digest.length);
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, digest.length);
 		Assert.assertArrayEquals(this.tmpDigest, digest);
 
 		File f = new File(this.decryptedOutputFile);
