@@ -2947,37 +2947,52 @@ subsections will discuss possible weaknesses and their consequences.
 \subsubsection{Information leakage}
 The storage provider can access all data encrypted on the server, and also know whether a
 stored data object corresponds to a file or a folder. This is revealed by the
-difference in size between folder and file objects. A user's root folder is also
-known since it is the first object accessed in a user session. It is also
-possible for the provider to reveal the structure of the filesystem. The series
-of file and folder requests from a user enables the provider to learn which
-files are contained in which folders.
+difference in header content and size between folder and file objects. Folders
+are specially recognizable by the server, as their write enabler is revealed
+during upload procedure. A user's root folder is also known since it is the
+first object accessed in a user session. It is also possible for the provider to
+reveal the structure of the filesystem. The series of file and folder requests
+from a user enables the provider to learn which files are contained in which folders.
+
+Considering the findings in \cite{cloud_getoff}, information can also be leaked
+to other attackers besides the untrusted cloud provider. Attackers can locate
+the server, in the cloud, used by the application, and further set up a \ac{VM} on the same
+server. The \ac{VM} can then be used to mount cross-\ac{VM} side-channel attacks
+to extract information from the server side application. This will, however, in
+a worst case scenario, enable an attacker to achieve the exact same information
+as the untrusted cloud provider, hence, no more information is leaked from the
+application.
 
 \subsubsection{Content Disclosure}
 The confidentiality of both files and folders relies primarily on the symmetric
 cipher used to encrypt the data. But for folders one can obtain this key if one
-manages to obtain the asymmetric private key belonging to the folder. In other words, a
-folder is attackable both trough the asymmetric and the symmetric cipher used.
+manages to obtain the asymmetric private key belonging to the folder. In other
+words, files and folders are attackable both trough the asymmetric and the
+symmetric cipher used.
+
+Disclosing folder content through the asymmetric cipher may be avoided by changing the
+usage of the private key. Instead of hashing the private key to derive a folder's
+write key, the write key could rather be generated from a random key generator.
+In this way, even though the asymmetric private key is revealed, the symmetric
+keys used to provide confidentiality are not retrieved. However, revealing the
+private key would still breach the integrity of the cryptographic scheme.
+
 If the confidentiality of a folder is breached it will additionally enable the
 attacker to decrypt all of the corresponding sub-folders and files. In contrast,
 cracking the confidentiality of a file will only compromise that specific file. It is
 also important to note that if the confidentiality of a user's root folder is breached,
 all files, belonging to that user, are effectively compromised.
 
-\subsubsection{Disclosure of Keyring Content}
+\subsubsection{Disclosing the Keyring Content}
 The confidentiality of the cryptographic root key and user passwords is held by
-a single encrypted keyring that is stored locally for each user client. The
+a single encrypted keyring that is stored locally at the user client. The
 keyring is encrypted with a cryptographic key derived from a user password.
 Unfortunately, using a password to encrypt the keyring, makes the keyring a
 suitable target for brute force and dictionary attacks. The keyring's
-vulnerability against brute force and dictionary attacks was experienced in
+vulnerability against brute force and dictionary attacks was questioned in
 Section \ref{sec:BFLK}.
-%TODO: The paragraph below will discuss our findings from Section \ref{sec:R:BFLK}.
-
 
 \paragraph{Brute Forcing the Keyring}
-The confidentiality of the root folder can be breached by brute forcing a user's
-locally stored keyring. This was experienced in Section \ref{sec:BFLK}.
 From the results in Section \ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed
 that the choice of iterations in \emph{PBKDF2} were conclusive to the efficiency of a
 brute force attack against the local keyring. By doubling the number of
@@ -2990,16 +3005,15 @@ that general performance can be improved by using lower-layer
 programming languages, such as C, to implement the attacks. Another way to
 increase performance is to design both attacks to run on \ac{GPU}s rather than CPUs.
 
-With the password requirements above and with 4000 iterations in
-\emph{PBKDF2}, it will be extremely hard to perform a plain brute force attack against the local
-keyring.
+When following recommendations for \ac{PBKDF2} and password requirements in Section \ref{sec:}, it
+is impossible to perform a plain brute force attack against the local keyring.
 
 Even though the keyring is secured against a plain brute force attack, it is
 still vulnerable to slow dictionary attacks. To completely
 avoid brute force and dictionary attacks against the keyring, the most efficient
-and preventive action would be to simply ensure that the encrypted keyring is
-only accessible by its authorized users.
-
+and preventive action is to simply ensure that the encrypted keyring is
+only accessible by its authorized users. In other words, the confidentiality of
+the encrypted keyring relies primarily on the client security.
 
 \subsubsection{The Weakest Link}
 
