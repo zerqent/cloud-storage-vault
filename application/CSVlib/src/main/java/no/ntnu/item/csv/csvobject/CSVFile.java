@@ -48,7 +48,8 @@ public class CSVFile implements CSVObject {
 	public void setCapability(Capability capability) {
 		this.capability = capability;
 		this.cryptoStreamer = new CryptoStreamer(this.capability.getKey(),
-				Cryptoutil.nHash(this.capability.getKey(), 2, 16));
+				Cryptoutil.nHash(this.capability.getKey(), 2,
+						Cryptoutil.SYM_SIZE / 8));
 	}
 
 	@Override

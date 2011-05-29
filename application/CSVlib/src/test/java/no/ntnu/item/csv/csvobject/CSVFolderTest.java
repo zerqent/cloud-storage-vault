@@ -25,8 +25,9 @@ public class CSVFolderTest {
 		Capability cap = this.newFolder.getCapability();
 		Assert.assertEquals(CapabilityType.RW, cap.getType());
 		Assert.assertNotNull(cap.getStorageIndex());
-		Assert.assertEquals(16, cap.getVerificationKey().length);
-		Assert.assertEquals(16, cap.getKey().length);
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8,
+				cap.getVerificationKey().length);
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, cap.getKey().length);
 	}
 
 	@Test

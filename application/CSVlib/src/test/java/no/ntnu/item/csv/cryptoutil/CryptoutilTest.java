@@ -28,7 +28,7 @@ public class CryptoutilTest {
 		byte[] test = { 50, 100, 34, 56, 78 };
 
 		byte[] res = Cryptoutil.hash(test, 0);
-		Assert.assertEquals(32, res.length);
+		Assert.assertEquals(Cryptoutil.HASH_LENGTH / 8, res.length);
 
 		MessageDigest md = MessageDigest.getInstance(Cryptoutil.HASH_ALGORITHM);
 		md.update(test);
