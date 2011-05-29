@@ -2852,22 +2852,24 @@ hinder duplication.
 
 This section will discuss and deal with the different choices taken to fulfill
 the implementation of the cryptographic scheme. We will start by discussing the
-use case we chose to implement. We will further analyse our choice of key
-distribution and look at alternative solutions. The section will end by
-discussing the most important cryptographic primitives chosen and utilized in
-our implementation.
+use case we chose to implement. Further on, we will analyse our choice of key
+distribution and look at alternative solutions. The section will end by a
+discussion of the most important cryptographic primitives chosen and utilized
+in our implementation.
 
 \subsection{Choice of Use Case}
 
-There are mainly two types of users for a cloud storage solution, personal or
-enterprise/organizational. What we have implemented is aimed more against the
-personal users than the enterprise market. The main difference between these
-two use cases is that in an enterprise there will usually be some kind of IT
-department which will have the possibility of setting up users terminal, which
-in turn means that the initial client setup can be more advanced. Another
-difference is that it would usually be more defined who you are supposed to
-share files with and what you should have access to. An organization might not
-approve of a model where a random user can forward read rights to other users.
+There are mainly two types of user groups interested in a cloud storage
+solution -- personal or enterprise. The proof of concept implementation is more
+aimed against the personal use case, than the enterprise market. The main
+difference between these two use cases, is that in an enterprise there will
+usually be some kind of IT department which will have the possibility of
+initially setting up the terminals before handing them out to the users.
+
+An additional fundamental difference is that it would usually be more defined
+who the users are supposed to share files with, and what they should have
+access to. An organization might not approve of a model where all users can
+forward read rights to every other users.
 
 \subsection{Choice of Key Distribution}
 \label{sec:DI:keydist}
@@ -2875,31 +2877,40 @@ approve of a model where a random user can forward read rights to other users.
 %Argue why we chose our scheme
 
 The challenge of key distribution is a hard one. To successfully authenticate a
-user and transfer a key requires either that you trust a third party, you meet
-a user in person or that you use some out of bound safe channel. Since our
-initial problem is that we do not trust the cloud provider we do not want to
-use a trusted third party either. This pretty much leaves verifying another
-user in person, although a scheme similar to \ac{PGP} could be used. In
-\ac{PGP} users can publish that they have verified other users and to which
-degree they trust them. Other users can use this information to calculate the
-probability that a certain user is legit. The reason why we do not implement this
-scheme is that it is fairly complex for a standard user. There are however
-nothing that stops a user that want to use \ac{PGP} to transfer capabilities
-through it.
+user and transfer a key, it is possible to choose from the following methods:
 
-If our cryptographic scheme should be used in an organization a \ac{PKI} is
-probably the best solution. In this setting the organization can itself be the
-trusted third party, who enforces that all certificates granted to users are
-correct. A user could then be simply prompted by the name of the user she would
-like to share a file with, and the rest could be handled by logic and the trust
-of the \ac{PKI}.
+\begin{itemize}
+ \item Use a trusted third party
+ \item Meet a user in person
+ \item Use some sort of out of bound safe channel
+\end{itemize}
+
+Since one of the basic problems of this thesis is that the cloud provider is
+not to be trusted, it is not desirable to use a trusted third party. This
+implies that the only option left, is to verify another user in person,
+although a scheme similar to \ac{PGP} could be used. 
+
+In \ac{PGP}, users can publish that they have verified other users and to which
+degree they trust them \cite{stallings}. Other users can use this information
+to calculate the probability that a certain user is legit. The reason why this
+scheme is not implemented, is that it is fairly complex for a standard user to
+grasp. There are however nothing that stops a user that want to use the
+\ac{PGP} scheme to transfer capabilities through it.
+
+If the cryptographic scheme presented in Section \ref{chap:CS} should be used
+in an organization, a \ac{PKI} is probably the best solution. In this setting,
+the organization can itself be the trusted third party that enforces that all
+certificates granted to users are correct. A user could then simply be prompted
+by the name of the user he would like to share a file with, and the rest could
+be handled by software logic and the trust of the \ac{PKI}.
 
 \subsection{Deviations in the Choice of Cryptographic Primitives}
 
 The implementation of the proof of concept client deviates in two points from
 the recommendation given in Section \ref{sec:cryptoprimitivechoice}. 
 These discoveries where done during the analysis of the system, and are
-corrected with a patch file submitted alongside the code attachment.
+corrected with a patch file submitted alongside the code attachment, as
+described in Appendix \ref{ap:attachments}.
 
 \paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
 bits, in contrast to the argued 2048 bits. Because this was discovered after
@@ -2908,9 +2919,9 @@ the development phase, all the measurements presented in Chapter
 1024 bits.
 
 \paragraph{PBKDF2 Salt} As argued in Section \ref{sec:cryptoprimitivechoice},
-the salt length used with the \ac{PBKDF2} should be as long as the key length.
-In the implementation, this salt value is only 8 bytes, as opposed to the key
-length of 16 bytes.
+the length of the salt used with the \ac{PBKDF2} should be as long as the
+length of the key. In the implementation, the salt value is only 8 bytes, as
+opposed to the key length of 16 bytes.
 
 \section{Performance}
 
