@@ -3085,8 +3085,8 @@ only accessible by its authorized users. In other words, the confidentiality of
 the encrypted keyring relies primarily on the client security.
 
 \subsubsection{The Weakest Link}
-Considering the weaknesses discussed above, the weakest link of the Cloud
-Storage Vault is, in no doubt, the locally encrypted keyring. To provide
+Considering the weaknesses discussed above, the weakest link in the Cloud
+Storage Vault is, by no doubt, the locally encrypted keyring. To provide
 usability, users are given the possibility of choosing their own passwords, to
 indirectly encrypt their keyring. However, it is fairly known that users can not
 be trusted to generate and use long, secure passwords. 
@@ -3099,14 +3099,15 @@ user's keyring is further dependent on the client security.
 \subsection{Client Security}
 Given enough users, sooner or later, there will be a user who looses his client.
 Additionally, a user's client might also be broken into without the user's
-knowledge. This section will look at the application's security in both
-scenarios and further discuss the security of the encrypted keyring stored
-inside a user client.
+knowledge. This section will look at the application security in both
+scenarios.
 
-\subsubsection{Loosing the Client}
-If a user looses his client and the client is logged on to the user's Cloud
+\subsubsection{Lost Client}
+If a user looses his client and the client is logged on to the Cloud
 Storage Vault, anyone who finds the client can get access to the user's private
-files and folders. While logged on to the service, it is also possible for an
+files and folders. 
+
+While logged on to the service, it is also possible for an
 experienced attacker to reveal the user's server access password as well as the
 password to decrypt the locally stored keyring. The attacker can achieve the passwords by
 scanning the client's memory while it is logged into the Cloud Storage Vault.
@@ -3116,24 +3117,27 @@ values stored in memory right after a successful login session.
 
 Even though this mechanism prevents disclosure of critical access data when
 loosing a client, it does not prevent a logged in attacker from disclosing the
-user's encrypted files and folders. To minimize this problem the Cloud Storage Vault should implement a
+user's encrypted files and folders. To reduce this problem the Cloud Storage Vault should implement a
 timeout mechanism for inactive users. If a user has been inactive for a given
-amount of time, the user should be logged out of the application. In this way,
+time interval, the user should be logged out of the application. In this way,
 the application will reduce the consequence of losing the client. It is
 important that the timeout is set to a value between what is acceptable by the users
-and what can be defined as secure timeout\footnote{Users would not like to write
+and what can be defined as a secure timeout\footnote{Users will not like to write
 their password for every 30th second. Additionally, a timeout value of 30 minutes is
 not secure, as it is long enough for someone to posses the user's client.}.
 
 Even though a timeout value may deny an attacker access to the storage vault, it
 can not prevent the attacker from accessing files that have already been downloaded from
-the Cloud. There is, however, two solutions to handle this problem. The first
-solution is to avoid that downloaded files are written to the client's storage
+the Cloud. There is, however, two solutions to handle this problem.
+
+The first solution is to avoid writing downloaded files to the client's storage
 medium. This can be implemented using a temporary filesystem in the client's
 memory\footnote{ramfs and tmpfs are examples of temporary filesystems for
 clients running Unix-like operating systems}. However, using only the
 client memory to store files, will greatly limit the possible size of the downloaded
-files. In case limited file size is not an acceptable solution, it is possible to use a temporary filesystem
+files. 
+
+In case limited file size is not an acceptable solution, it is possible to use a temporary filesystem
 that supports swapping. This will, however, keep parts of a large file in the
 client's storage medium, revealing information about a downloaded file. The most
 important feature with the temporary filesystem is that the downloaded files are
@@ -3141,18 +3145,18 @@ only stored temporary, while they are opened by the application etc.. This will
 prevent an attacker from revealing previously downloaded files from the cloud.
 
 It is important to mention that a temporary filesystem for downloaded files can
-not be used in case users want to store their downloaded files. A solution would
+not be used in case users want to store their downloaded files. A second solution would
 be for the Cloud Storage Vault to store downloaded files in their encrypted
 form. The downloaded files could then only be opened locally through the Cloud Storage
 Vault application, which would further decrypt and send the file to the
 appropriate application. It is worth noticing that this mechanism will also
 enable the possibility of file synchronization between the client and the cloud,
-similar to the one of Dropbox.
+similar to the functionality of Dropbox.
 
-\subsubsection{Possessing a Compromised Client}
+\subsubsection{Compromised Client}
 As mentioned earlier, an attacker can also break into a user's client, using a backdoor,
 trojan horse etc.. Depending on the attack, a worst case scenario would
-enable the attacker to obtain root access on a user client. With root access,
+enable the attacker to obtain root access on a user's client. With root access,
 the attacker is given complete control and privileges over the client and can access whatever
 data resource desired within the client. With this in mind, the attacker can read,
 write and execute every file that has been downloaded by the Cloud Storage
@@ -3166,12 +3170,14 @@ Cloud Storage vault is dependent on storing the keyring password in memory
 during the login procedure. Capabilities are also stored in memory during
 browsing of contents in the cloud. Both passwords and capabilities are therefore
 retrievable by the attacker, even though their necessary storage time in memory is kept to a
-minimum by the application. Another unmanageable scenario would involve the
-attacker installing a keylogger on the compromised client. The keylogger can
-further detect the keyring password, when the user logs in to the application.
+minimum by the application. 
 
-It should be concluded that a compromised client, in a worst case scenario, will not be able
-to support secure usage of the Cloud Storage Vault.
+Another and more plausible scenario would involve the attacker installing a
+keylogger on the compromised client. The keylogger can further detect the
+keyring password when the user logs in to the application.
+
+It should therefore be concluded that the Cloud Storage Vault, in a worst case
+scenario, can not support secure storage in case of a compromised client.
 
 %\subsection{Active attacks}
 % MITM - Dersom vi f.eks. skrur av SSL-laget
