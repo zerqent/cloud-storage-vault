@@ -1068,7 +1068,7 @@ called \emph{friend net}.}, as illustrated in Figure \ref{fig:B:tahoe}.
 
 \subsubsection{Architecture of Tahoe-LAFS}
 
-Tahoe-\ac{LAFS} has a three layer architecture: the key-value store, the filesystem, and
+Tahoe-\ac{LAFS} has a three layer architecture: the key-value store, the file system, and
 the application \cite{tahoe}.
 
 The \textbf{key-value store}, is the lowest layer and is implemented by a grid
@@ -1078,7 +1078,7 @@ are short ASCII strings, containing information on where to find a file, and
 how to verify it.  Nodes in the grid learn about each other through an
 \emph{introducer}.
 
-The \textbf{filesystem} layer is responsible for mapping human-meaningful
+The \textbf{file system} layer is responsible for mapping human-meaningful
 pathnames to pieces of data. Each directory contains a table of capabilities
 for its children, i.e. subdirectories or files. Two forms of capabilities is
 available for each file, read-only and read-write, and these can be distributed
@@ -2197,7 +2197,7 @@ tapping a folder will open that folder.
 
 An upload is treated in a similar way. To reveal this option, the user have to
 press the \textbf{Menu}-button. The user will then be allowed to browse his
-local filesystem for the file he wishes to upload, and tapping that file will
+local file system for the file he wishes to upload, and tapping that file will
 start the upload.
 
 A long press on a file, or a folder item, will reveal the context menu shown in
@@ -3291,7 +3291,7 @@ The environment is based upon a software framework from Apache called
 \subsubsection{Apache Hadoop}
 
 Apache Hadoop makes it possible for multiple machines to cooperate
-and run computational work together. Hadoop also provides a distributed filesystem
+and run computational work together. Hadoop also provides a distributed file system
 \ac{HDFS}, that can store data across multiple cooperating machines \cite{hadoop}. The
 computational work in Hadoop is organized and distributed using \emph{MapReduce}.
 
