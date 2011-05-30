@@ -194,6 +194,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{CBC}{Cipher Block Chaining}
 \acro{CDA}{Cluster Dictionary Attack}
 \acro{CG}{Credential Generator}
+\acro{CSPRNG}{Cryptographically Secure Pseudorandom Number Generator}
 \acro{CPU}{Central Processing Unit}
 \acro{CSV}{Cloud Storage Vault}
 \acro{CTR}{Counter}
@@ -230,7 +231,6 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
 \acro{PoC}{Proof-of-concept}
-\acro{PRNG}{Pseudorandom Number Generator}
 \acro{QR}{Quick Response}
 \acro{RAM}{Random Access Memory}
 \acro{ROM}{Read Only Memory}
@@ -543,9 +543,9 @@ primitives rely on, and hence deserves an explanation. Random data is
 informally defined as unpredictable to the attacker, even if he is taking
 active steps to defeat the randomness \cite[p. 137]{schneier}.
 
-A \emph{Cryptographic \ac{PRNG}} deterministically produce numbers based on a
-seed, and it should be infeasible to determine the next number without knowing
-the seed \cite[p. 140]{schneier}.
+A \emph{\ac{CSPRNG}} deterministically produce numbers based on a seed, with
+properties making it suitable for use in cryptography.  It should be infeasible
+to determine the next number without knowing the seed \cite[p. 140]{schneier}.
 
 \subsection{Encryption}
 
@@ -1689,8 +1689,6 @@ and for password guidelines we therefore recommend:
 \item Password must include at least one capital letter, one small letter and
 one number.
 \end{itemize}
-%TODO: Reduce text!
-
 
 \section{Server Implementation}
 
