@@ -145,13 +145,10 @@ public class CryptoutilTest {
 					.toByteArray().length);
 			Assert.assertEquals(Cryptoutil.ASYM_SIZE / 8 + 1, pub.getModulus()
 					.toByteArray().length);
-			// Assert.assertEquals(Cryptoutil.ASYM_SIZE / 8, priv
-			// .getPrivateExponent().toByteArray().length);
 			byte[] privExp = priv.getPrivateExponent().toByteArray();
 			if (privExp.length == Cryptoutil.ASYM_SIZE / 8 + 1) {
 				Assert.assertEquals(0, privExp[0]);
 			}
-
 			Assert.assertEquals(3, pub.getPublicExponent().toByteArray().length);
 		}
 	}

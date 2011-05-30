@@ -51,7 +51,7 @@ public class LocalCredentials {
 			byte[] b = new byte[(int) tmp.length()];
 			in.read(b);
 			in.close();
-			byte[] salt = new byte[8];
+			byte[] salt = new byte[KeyChain.SALT_SIZE / 8];
 			byte[] cipherText = new byte[b.length - salt.length];
 			System.arraycopy(b, 0, salt, 0, salt.length);
 			System.arraycopy(b, salt.length, cipherText, 0, cipherText.length);
@@ -96,7 +96,6 @@ public class LocalCredentials {
 
 	public static LocalCredentials createNewLocalCredentials(Activity activity,
 			String password) {
-
 		CSVFolder rootFolder = new CSVFolder();
 		CSVFolder shareFolder = new CSVFolder();
 

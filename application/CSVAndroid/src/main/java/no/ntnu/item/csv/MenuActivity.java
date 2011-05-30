@@ -3,6 +3,7 @@ package no.ntnu.item.csv;
 import no.ntnu.item.csv.capability.Capability;
 import no.ntnu.item.csv.capability.CapabilityImpl;
 import no.ntnu.item.csv.firststart.FirstStartActivity;
+import no.ntnu.item.csv.workers.Benchmarkworker;
 import no.ntnu.item.csv.workers.ImportShareTask;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -81,6 +82,7 @@ public class MenuActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Exit program");
+		menu.add("Benchmark");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -128,6 +130,11 @@ public class MenuActivity extends Activity {
 		if (item.getTitle().equals("Exit program")) {
 			finish();
 			return true;
+		} else if (item.getTitle().equals("Benchmark")) {
+			// TestSpeedOfFolders tsof = new TestSpeedOfFolders(CSVActivity.fm);
+			// tsof.doIt();
+			Benchmarkworker worker = new Benchmarkworker(this, CSVActivity.fm);
+			worker.execute((Void[]) null);
 		}
 		return false;
 	}
@@ -158,5 +165,32 @@ public class MenuActivity extends Activity {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public void foo(String s) {
+		// final Intent emailIntent = new Intent(
+		// android.content.Intent.ACTION_SEND);
+		// emailIntent.setType("text");
+		// emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
+		// new String[] { "eiriha@stud.ntnu.no" });
+		// emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+		// "Results");
+		// emailIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+		// "Her er litt text");
+		// startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+		final Intent emailIntent = new Intent(
+				android.content.Intent.ACTION_SEND);
+
+		emailIntent.setType("message/rfc822");
+
+		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
+				new String[] { "eiriha@stud.ntnu.no" });
+
+		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+				"Results from device");
+
+		emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, s);
+
+		startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 	}
 }

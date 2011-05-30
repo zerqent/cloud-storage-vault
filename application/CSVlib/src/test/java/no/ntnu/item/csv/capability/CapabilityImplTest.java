@@ -35,7 +35,8 @@ public class CapabilityImplTest {
 	@Test
 	public void testStorageIndexEncoding() {
 		String base32 = this.cap.getStorageIndex();
-		// Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, base32.length());
+		Assert.assertEquals((int) Math.ceil(Cryptoutil.SYM_SIZE / 5.0),
+				base32.length());
 		Assert.assertTrue(isBase32(base32));
 		Assert.assertArrayEquals(this.cap.getStorageIndexByte(),
 				Base32.decode(this.cap.getStorageIndex()));
@@ -70,6 +71,22 @@ public class CapabilityImplTest {
 		CapabilityImpl capimpl = new CapabilityImpl(CapabilityType.RW,
 				Cryptoutil.generateSymmetricKey().getEncoded(), null, false);
 		Assert.assertNotNull(capimpl.getWriteEnabler());
+	}
+
+	@Test
+	public void testKeyLengths() {
+		SecretKey sks = Cryptoutil.generateSymmetricKey();
+		SecretKey verify = Cryptoutil.generateSymmetricKey();
+
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, sks.getEncoded().length);
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, verify.getEncoded().length);
+
+		Capability cap = new CapabilityImpl(CapabilityType.RW,
+				sks.getEncoded(), verify.getEncoded(), false);
+
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8, cap.getKey().length);
+		Assert.assertEquals(Cryptoutil.SYM_SIZE / 8,
+				cap.getVerificationKey().length);
 	}
 
 	public boolean isBase32(String input) {
