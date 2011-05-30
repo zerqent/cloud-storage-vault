@@ -6,7 +6,6 @@ import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.crypto.spec.IvParameterSpec;
@@ -27,10 +26,11 @@ public class CSVFolder implements CSVObject {
 	private Map<String, Capability> contents;
 
 	private byte[] ciphertext;
-	private byte[] plainText;
+	public byte[] plainText;
 	private byte[] iv;
 
 	private byte[] signature;
+	public boolean hack_do_not_create_plaintext = false;
 
 	public CSVFolder() {
 		generateKeys();
@@ -42,20 +42,21 @@ public class CSVFolder implements CSVObject {
 	}
 
 	public void download(byte[] packet) {
-		byte[] pubkey = new byte[132];
+		byte[] pubkey = new byte[Cryptoutil.ASYM_SIZE / 8 + 1 + 3];
 		System.arraycopy(packet, 0, pubkey, 0, pubkey.length);
 		this.setPubKey(pubkey);
 
-		byte[] signature = new byte[128];
+		byte[] signature = new byte[Cryptoutil.ASYM_SIZE / 8];
+
 		System.arraycopy(packet, pubkey.length, signature, 0, signature.length);
 		this.signature = signature;
 
-		byte[] iv = new byte[16];
+		byte[] iv = new byte[Cryptoutil.SYM_BLOCK_SIZE / 8];
 		System.arraycopy(packet, pubkey.length + signature.length, iv, 0,
 				iv.length);
 		this.iv = iv;
 
-		byte[] encPrivKey = new byte[272];
+		byte[] encPrivKey = new byte[2 * (Cryptoutil.ASYM_SIZE / 8) + 1 + 15];
 		System.arraycopy(packet, pubkey.length + signature.length + iv.length,
 				encPrivKey, 0, encPrivKey.length);
 		this.encPrivKey = encPrivKey;
@@ -82,7 +83,7 @@ public class CSVFolder implements CSVObject {
 
 		byte[] write = Cryptoutil.hash(this.privkey.getEncoded(),
 				Cryptoutil.SYM_SIZE / 8);
-		// byte[] read = Cryptoutil.hash(write, 16);
+
 		RSAPublicKey pub = (RSAPublicKey) this.pubkey;
 		byte[] mod = pub.getModulus().toByteArray();
 		byte[] pubexp = pub.getPublicExponent().toByteArray();
@@ -97,13 +98,13 @@ public class CSVFolder implements CSVObject {
 		this.capability = writecap;
 	}
 
-	private void sign() {
+	public void sign() {
 		assert this.ciphertext != null;
 		byte[] hash = Cryptoutil.hash(this.ciphertext, -1);
 		this.signature = Cryptoutil.signature(hash, this.privkey);
 	}
 
-	private void encrypt() {
+	public void encrypt() {
 		byte[] read;
 		if (this.capability.getType() == CapabilityType.RW) {
 			read = Cryptoutil.hash(this.capability.getKey(),
@@ -111,7 +112,11 @@ public class CSVFolder implements CSVObject {
 		} else {
 			read = this.capability.getKey();
 		}
-		this.createPlainText();
+		// 1
+		if (!this.hack_do_not_create_plaintext) {
+			this.createPlainText();
+		}
+
 		SecretKeySpec sks = new SecretKeySpec(read, Cryptoutil.SYM_CIPHER);
 		this.iv = Cryptoutil.generateIV();
 		this.ciphertext = Cryptoutil.symEncrypt(this.plainText, sks,
@@ -240,15 +245,16 @@ public class CSVFolder implements CSVObject {
 		this.contents = contents;
 	}
 
-	protected void createPlainText() {
+	public void createPlainText() {
 		if (this.contents != null) {
 			String plaintext = "";
-			for (Iterator<String> iterator = this.getContents().keySet()
-					.iterator(); iterator.hasNext();) {
-				String key = iterator.next();
-				Capability cap = this.getContents().get(key);
-				plaintext += key + ";" + cap.toString() + "\n";
+
+			for (Map.Entry<String, Capability> entry : this.getContents()
+					.entrySet()) {
+				plaintext += entry.getKey() + ";" + entry.getValue().toString()
+						+ "\n";
 			}
+
 			this.plainText = plaintext.getBytes();
 		}
 	}

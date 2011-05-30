@@ -51,7 +51,7 @@ public class CryptoStreamer {
 	public CryptoStreamer() {
 		this.secretKey = Cryptoutil.generateSymmetricKey();
 		this.iv = new IvParameterSpec(Cryptoutil.nHash(
-				this.secretKey.getEncoded(), 2, 16));
+				this.secretKey.getEncoded(), 2, Cryptoutil.SYM_BLOCK_SIZE / 8));
 		initCipher();
 	}
 
@@ -88,9 +88,13 @@ public class CryptoStreamer {
 			this.md = MessageDigest.getInstance(Cryptoutil.HASH_ALGORITHM);
 
 		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
+			e.printStackTrace();
 		} catch (InvalidKeyException e) {
+			e.printStackTrace();
 		} catch (InvalidAlgorithmParameterException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -149,7 +153,7 @@ public class CryptoStreamer {
 	public byte[] finish() {
 		closeStreams();
 		byte[] tmp = this.md.digest();
-		this.digest = Cryptoutil.singlehash(tmp, 16);
+		this.digest = Cryptoutil.singlehash(tmp, Cryptoutil.SYM_SIZE / 8);
 		this.md.reset();
 		return this.digest;
 	}

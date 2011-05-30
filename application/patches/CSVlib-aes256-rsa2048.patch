@@ -1,0 +1,31 @@
+From 10843041e9a816490e4afcabcbae43a7d2b45077 Mon Sep 17 00:00:00 2001
+From: Eirik Haver <eiriha@gmail.com>
+Date: Mon, 30 May 2011 13:47:43 +0200
+Subject: [PATCH] RSA to 2048 and AES to 256 (bits)
+
+---
+ .../java/no/ntnu/item/cryptoutil/Cryptoutil.java   |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/application/CSVlib/src/main/java/no/ntnu/item/cryptoutil/Cryptoutil.java b/application/CSVlib/src/main/java/no/ntnu/item/cryptoutil/Cryptoutil.java
+index 6e4b4f3..112ab4d 100644
+--- a/application/CSVlib/src/main/java/no/ntnu/item/cryptoutil/Cryptoutil.java
++++ b/application/CSVlib/src/main/java/no/ntnu/item/cryptoutil/Cryptoutil.java
+@@ -38,12 +38,12 @@ public class Cryptoutil {
+ 	public static final String SYM_CIPHER = "AES";
+ 	public static final String SYM_PADDING = "PKCS5Padding"; // TODO
+ 	public static final String SYM_MODE = "CBC";
+-	public static final int SYM_SIZE = 128;
++	public static final int SYM_SIZE = 256;
+ 	public static final int SYM_BLOCK_SIZE = 128;
+ 
+ 	// Asymmetric Cipher
+ 	public static final String ASYM_CIPHER = "RSA";
+-	public static final int ASYM_SIZE = 1024;
++	public static final int ASYM_SIZE = 2048;
+ 
+ 	// Signatures
+ 	public static final String SIGN_ALG = "SHA256withRSA";
+-- 
+1.7.1
+

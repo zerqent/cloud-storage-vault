@@ -141,10 +141,14 @@ public class CryptoutilTest {
 			RSAPrivateKey priv = (RSAPrivateKey) pair.getPrivate();
 			RSAPublicKey pub = (RSAPublicKey) pair.getPublic();
 
-			Assert.assertEquals(129, priv.getModulus().toByteArray().length);
-			Assert.assertEquals(129, pub.getModulus().toByteArray().length);
-			Assert.assertEquals(128,
-					priv.getPrivateExponent().toByteArray().length);
+			Assert.assertEquals(Cryptoutil.ASYM_SIZE / 8 + 1, priv.getModulus()
+					.toByteArray().length);
+			Assert.assertEquals(Cryptoutil.ASYM_SIZE / 8 + 1, pub.getModulus()
+					.toByteArray().length);
+			byte[] privExp = priv.getPrivateExponent().toByteArray();
+			if (privExp.length == Cryptoutil.ASYM_SIZE / 8 + 1) {
+				Assert.assertEquals(0, privExp[0]);
+			}
 			Assert.assertEquals(3, pub.getPublicExponent().toByteArray().length);
 		}
 	}
