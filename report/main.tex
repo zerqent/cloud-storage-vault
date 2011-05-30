@@ -2224,7 +2224,14 @@ This chapter will explain the experimental procedures performed on the Cloud
 Storage Vault. It will start by explaining the measurements on the performance
 of the application. The performance is further compared to similar existing
 network applications. Finally, the chapter will go through the experimental
-procedures of measuring some aspects of the security of the system.
+procedures taken to measure the security of the weakest link in the cryptographic
+scheme.
+
+The security of the weakest link is measured by attacking the encrypted keyring
+stored by the cryptographic scheme. It is important to mention that it is the
+keyring pass phrase that is utilized during the attacks rather than the employed
+cryptographic primitives. Recall from Section \ref{sec:cryptoprimitivechoice} that the
+cryptographic primitives are considered secure. 
 
 \section{Performance}
 
@@ -2331,6 +2338,13 @@ prone to a brute force or dictionary attack. If an attacker is able to decrypt
 the keyring, he will obtain enough information to access a user's root folder,
 and thus all the other files stored by the user as well.
 
+When considering brute force attacks, it must be emphasized that it is the
+user's password, indirectly encrypting the keyring, that is the target weakness.
+Brute forcing the 256-bit AES encryption key directly will be very inefficient
+as it involves a key space of $2^{256}$ keys. The possibility of dictionary
+attacks would additionally disappear, as the encryption key is generated in a
+pseudo random manner.
+
 This section describes our approach to attack the keyring.
 
 \subsubsection{Keyring Format}
@@ -2360,7 +2374,7 @@ must decrypt the keyring for each password guessed. The decryption involves
 both key derivation with \ac{PBKDF2}, and decryption with 128-bit \ac{AES} in
 \ac{ECB} mode. The \ac{PBKDF2} is a function that can be used with a
 varying number of iterations, with the purpose of having a customizable way for
-users to increase key strenght. Our attacks are tested on 500, 1000, 2000 and
+users to increase key strength. Our attacks are tested on 500, 1000, 2000 and
 4000 iterations.
 
 %We verified a successful attack based on our knowledge of the
@@ -2906,22 +2920,22 @@ be handled by software logic and the trust of the \ac{PKI}.
 
 \subsection{Deviations in the Choice of Cryptographic Primitives}
 
-The implementation of the proof of concept client deviates in two points from
+The implementation of the proof of concept client deviates from
 the recommendation given in Section \ref{sec:cryptoprimitivechoice}. 
-These discoveries where done during the analysis of the system, and are
-corrected with a patch file submitted alongside the code attachment, as
-described in Appendix \ref{ap:attachments}.
+These deviations occurred as a result of new discoveries that were made while analysing
+the system. All unfortunate deviations are corrected with a patch file submitted
+along with the code attachment, described in Appendix \ref{ap:attachments}. The
+following deviations exist.
 
 \paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
-bits, in contrast to the argued 2048 bits. Because this was discovered after
-the development phase, all the measurements presented in Chapter
-\ref{ch:experimental} and \ref{ch:results} are based on an RSA key length of
-1024 bits.
+bits, in contrast to the argued 2048 bits. It is therefore important to notice
+that all measurements, presented in Chapter \ref{ch:experimental} and
+\ref{ch:results}, are based on an RSA key length of 1024 bits.
 
 \paragraph{PBKDF2 Salt} As argued in Section \ref{sec:cryptoprimitivechoice},
 the length of the salt used with the \ac{PBKDF2} should be as long as the
 length of the key. In the implementation, the salt value is only 8 bytes, as
-opposed to the key length of 16 bytes.
+opposed to the key length of 32 bytes.
 
 \subsection{Simplifying the Server}
 
