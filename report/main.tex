@@ -3170,31 +3170,31 @@ Section \ref{sec:existing}.
 
 \subsubsection{Compromised Client}
 
-As mentioned earlier, an attacker can also break into a user's client, using a
-backdoor, trojan horse etc.. Depending on the attack, a worst case scenario
-would enable the attacker to obtain root access on a user's client. With root
-access, the attacker is given complete control and privileges over the client
-and can access whatever data resource desired within the client. With this in
-mind, the attacker can read, write and execute every file that has been
-downloaded by the Cloud Storage Vault. However, this can be prevented by using
-a temporary filesystem or storing downloaded files in their encrypted form as
-previously described.
+As mentioned earlier, an attacker could also break into the user equipment of a
+user, using a backdoor, trojan horse or similar. Depending on the attack, a
+worst case scenario would be that the attacker is able to obtain root access on
+the user equipment. 
 
-Given root access, the attacker can also utilize software to read live content
-from the client's memory. In this case, it is unfortunately not possible to
-protect against disclosure of passwords or capabilities used in the Cloud
-Storage Vault. The Cloud Storage vault is dependent on storing the keyring
-password in memory during the login procedure. Capabilities are also stored in
-memory during browsing of contents in the cloud. Both passwords and
-capabilities are therefore retrievable by the attacker, even though their
-necessary storage time in memory is kept to a minimum by the application. 
+With root access, the attacker has gained complete control over the client and
+can access whatever data resource desired within the client. With this in mind,
+the attacker can read, write and execute every file that has been downloaded by
+the \acl{CSV}.
 
-Another and more plausible scenario would involve the attacker installing a
-keylogger on the compromised client. The keylogger can further detect the
-keyring password when the user logs in to the application.
+\paragraph{Reading Memory} Given root access, the attacker can also utilize
+software to read live content from the memory of the client. In this case, it
+is unfortunately not possible to protect against disclosure of passwords or
+capabilities, as the software is dependent on storing the keyring password in
+memory during the login procedure.
 
-It should therefore be concluded that the Cloud Storage Vault, in a worst case
-scenario, can not support secure storage in case of a compromised client.
+Capabilities are also stored in memory during browsing of contents in the
+cloud. Both passwords and capabilities are therefore retrievable by the
+attacker, even though their necessary storage time in memory is kept to a
+minimum by the application. 
+
+\paragraph{Keylogger} Another and more plausible scenario, would involve the
+attacker installing a keylogger on the compromised client. This peace of
+software can further detect the keyring password when the user logs in to the
+application.
 
 %**************************************%
 \chapter{Conclusion and Future Work}
