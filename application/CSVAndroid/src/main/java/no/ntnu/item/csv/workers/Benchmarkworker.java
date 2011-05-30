@@ -1,6 +1,5 @@
 package no.ntnu.item.csv.workers;
 
-import no.ntnu.item.csv.MenuActivity;
 import no.ntnu.item.csv.filemanager.CSVFileManager;
 import no.ntnu.item.csv.foldertest.TestSpeedOfFolders;
 import android.app.Activity;
@@ -25,8 +24,8 @@ public class Benchmarkworker extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected void onPostExecute(Void result) {
-		MenuActivity ac = (MenuActivity) caller;
-		ac.foo(this.s);
+		// MenuActivity ac = (MenuActivity) caller;
+		// ac.foo(this.s);
 	}
 
 }

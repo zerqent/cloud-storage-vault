@@ -43,8 +43,6 @@ public class Cryptoutil {
 
 	// Asymmetric Cipher
 	public static final String ASYM_CIPHER = "RSA";
-	// public static final String ASYM_PADDING = "PKCS1Padding"; // TODO
-	// public static final String ASYM_MODE = "ECB";
 	public static final int ASYM_SIZE = 2048;
 
 	// Signatures

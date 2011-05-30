@@ -7,72 +7,66 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import de.rtner.security.auth.spi.PBKDF2Engine;
-import de.rtner.security.auth.spi.PBKDF2Formatter;
-import de.rtner.security.auth.spi.PBKDF2HexFormatter;
 import de.rtner.security.auth.spi.PBKDF2Parameters;
 
 public class KeyChain {
 
 	private String password;
 	private byte[] salt;
-	private int iterations;
 	private SecretKey key;
 
-	// Creating key chain
-	public KeyChain(String password) {
-		System.out.println("KEYCHAIN CONSTRUCTOR");
-		this.password = password;
-		this.salt = new byte[8];
-		this.iterations = 1000;
+	public static final int SALT_SIZE = Cryptoutil.SYM_SIZE;
+	public static final String HASH_ALG = Cryptoutil.HMAC_ALG;
+	public static final String RANDOM_GENERATOR = "SHA1PRNG";
+	public static final int ITERATION_COUNT = 4096;
+	public static final String ENCODING = "UTF-8";
 
-		PBKDF2Formatter formatter = new PBKDF2HexFormatter();
+	/**
+	 * Generate a new PBKDF2 key
+	 * 
+	 * @param password
+	 */
+	public KeyChain(String password) {
+		assert password != null;
+		this.password = password;
+		this.salt = new byte[SALT_SIZE / Byte.SIZE];
+
 		SecureRandom sr;
 		try {
-			sr = SecureRandom.getInstance("SHA1PRNG");
+			sr = SecureRandom.getInstance(RANDOM_GENERATOR);
 			sr.nextBytes(this.salt);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-
-		PBKDF2Parameters param = new PBKDF2Parameters("HmacSHA1", "ISO-8859-1",
-				this.salt, this.iterations);
-		PBKDF2Engine engine = new PBKDF2Engine(param);
-
-		param.setDerivedKey(engine.deriveKey(password,
-				(Cryptoutil.SYM_SIZE / Byte.SIZE)));
-
-		String tmp = formatter.toString(param).split(":")[2];
-		this.key = new SecretKeySpec(tmp.getBytes(), Cryptoutil.SYM_CIPHER);
+		common();
 	}
 
-	// Creating key chain from salt
+	/**
+	 * Generate existing PBKDF2 key
+	 * 
+	 * @param password
+	 * @param salt
+	 */
 	public KeyChain(String password, byte[] salt) {
+		assert salt != null;
+		assert password != null;
+
 		this.password = password;
-		this.iterations = 1000;
+		this.salt = salt;
 
-		PBKDF2Formatter formatter = new PBKDF2HexFormatter();
-		if (salt == null || salt.length != 8) {
-			this.salt = new byte[8];
-			SecureRandom sr;
-			try {
-				sr = SecureRandom.getInstance("SHA1PRNG");
-				sr.nextBytes(this.salt);
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
-		} else {
-			this.salt = salt;
-		}
+		common();
+	}
 
-		PBKDF2Parameters param = new PBKDF2Parameters("HmacSHA1", "ISO-8859-1",
-				this.salt, this.iterations);
+	private void common() {
+		PBKDF2Parameters param = new PBKDF2Parameters(HASH_ALG, ENCODING,
+				this.salt, ITERATION_COUNT);
 		PBKDF2Engine engine = new PBKDF2Engine(param);
 
 		param.setDerivedKey(engine.deriveKey(password,
 				(Cryptoutil.SYM_SIZE / Byte.SIZE)));
 
-		String tmp = formatter.toString(param).split(":")[2];
-		this.key = new SecretKeySpec(tmp.getBytes(), Cryptoutil.SYM_CIPHER);
+		byte tmp[] = param.getDerivedKey();
+		this.key = new SecretKeySpec(tmp, Cryptoutil.SYM_CIPHER);
 	}
 
 	public SecretKey getKey() {
@@ -88,6 +82,6 @@ public class KeyChain {
 	}
 
 	public int getIterations() {
-		return this.iterations;
+		return ITERATION_COUNT;
 	}
 }
