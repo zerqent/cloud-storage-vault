@@ -2956,23 +2956,23 @@ should not pose any great problems.
 
 \section{Performance}
 
-The measurements of performed on our client reveal that it is not as fast as
+The measurements performed on our client reveal that it is not as fast as
 desirable. For files, a perfect client would render the network or the SD card
 as the bottleneck, but our measurements state that this is clearly not the
 case. 
 
-The speed we get when downloading or uploading a file is decreased by about
+The download and upload speed for a given file is decreased by around
 50-80\% on all three test devices. The results for the individual operations
 performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint}, clearly
 indicates that encryption and decryption are the slowest elements in the
 process pipeline, and responsible for most of the performance drop. 
 
 \paragraph{Limitations of Libraries} Another thing to note, is that the
-implementations of the \texttt{InputStreams} and \texttt{OutputStreams} stream
-objects in Java and the Apache HttpComponents seem to read and write the
+implementations of the \texttt{InputStream} and \texttt{OutputStream}
+objects in Java and the Apache HttpComponents seems to read and write the
 requested number of bytes stream by stream. This implies that the
-implementation will never reach even the speed of the slowest component in the
-pipeline.
+implementation will never reach the speed achieved by even the slowest
+component in the pipeline.
 
 \paragraph{Multiple CPU Cores} Branching the operations in the pipeline to
 different threads should make it possible to gain better performance,
@@ -2998,13 +2998,13 @@ something we expect an ordinary user of our Android client to have, but if we
 change the scenario to backing up an entire computer, the serialization part
 might become a problem. 
 
-The reason why this serialization operation is slow, it to be blamed on our
-implementation alone. The folder items are stored in a \texttt{HashMap}, which
+The slow serialization operation can partially be blamed on our own
+implementation. The folder items are stored in a \texttt{HashMap}, which
 is serialized to a string to make it ready for encryption. Ideally, this step
-is not necessary, if the contents exists in the correct form in memory by
-default. Even though this might not be possible for other reasons, such as
-decreased performance when manipulating the folder contents, we believe a
-faster implementation of a serialization algorithm is possible to find.
+is not necessary, given that folder content exists in its correct form in
+memory. This might not be possible due to reasons such as decreased performance
+when manipulating the folder content. However, we believe there exist a
+faster implementation of the currently utilized serialization algorithm.
 
 \paragraph{Cache} Since opening folders is a relatively expensive procedure,
 given that it has to be downloaded from the server, decrypted and verified, we
