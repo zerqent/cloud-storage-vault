@@ -252,6 +252,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{URL}{Uniform Resource Locator}
 \acro{USB}{Universal Serial Bus}
 \acro{VM}{Virtual Machine}
+\acro{WPA}{Wi-Fi Protected Access}
 \acro{WSGI}{Web Server Gateway Interface}
 \end{acronym}
 
@@ -678,24 +679,24 @@ To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
 \ac{HTTPS}.
 
 \subsection{Key Derivation Functions}
-% FIXME: Dette kapitellet og MAC er det primitiver eller applications?
 \label{sec:PBKDF2}
+
 A key derivation function is a function which takes a key, a password, a
-passphrase or similar and creates a new key from it. One of the applications of
-such a function is to create a stronger key from a weaker key, such as a
-password. This technique is called \emph{Key Stretching}. What the process
-involves is making the derivation of a key from a password an expensive
-process in terms of computing power, which in turn makes it more resistant to
-brute force attacks.
+passphrase or similar, and creates a new key from it. One of the applications
+of such a function, is to create a stronger key from a weaker key, such as a
+password. This technique is called \emph{key stretching}. The process
+involves making the derivation of a key from a password an expensive process
+in terms of computing power, which in turn makes it more resistant to brute
+force attacks.
 
 \ac{PBKDF2} is a key derivation function which uses key stretching. It uses a
-password together with a randomly generated salt and a pseudorandom function to
-do this\cite{rfc2898}. The function will combine this in a specific way, and
-can repeat the process for a specified number of times, the iteration count.
-A higher iteration count results in a stronger key. The salt provides defense
-against a precomputed collection of keys, a \emph{rainbow table}, in the sense
-that it will make sure that a password will not derive the same key if the same
-salt is not used.
+password, together with a randomly generated salt and a pseudorandom function
+\cite{rfc2898}. The function will combine these inputs in a specific way, and
+can repeat the process for a specified number of times, called the
+\emph{iteration count}. A higher iteration count results in a stronger key. The
+salt provides defense against a precomputed collection of keys, i.e. a
+\emph{rainbow table}, in the sense that it will make sure that a password will
+not derive the same key if different salts are used.
 
 \section{Security Attacks}
 
@@ -745,7 +746,7 @@ to obtain a secret by testing the algorithm with up to all possible inputs. The
 secret might be an encryption key, or the data fed into a cryptographic hash
 function.
 
-A related attack is the \emph{Dictionary attack}, where the attacker
+A related attack is the \emph{dictionary attack}, where the attacker
 tries to obtain a secret by trying a subset of all known inputs, i.e. a
 predefined dictionary of words.
 
@@ -1571,35 +1572,7 @@ long the primitives will be secure. \citet{keylength} compares studies listing
 predictions on how long primitives will be secure based on different sources
 with different predictions.
 
-% TODO: finn ut hvordan vi skal liste kilder her
-
-% Poeng: Det skal være trygt lenge nok
-% For filer: Vi bruker hver nøkkel 1 gang
-% For mapper: Vi bruker hver nøkkel flere ganger, men forskjellig IV
-% CBC > CTR fordi det er "enklere å implementere"
-% "Med blokker på 128 bit får man aldri 128 bit sikkerhet
-
-% AES key length, keylength.org, Ecrypt II. AES 128 er bra nok, men viktig at
-% man kan endre det. AES-256 dersom vi skulle gått kommerst
-
-% Viktige ting
-% Alle IVer brukes bare 1 gang (per nøkkel)
-% Alle fil-nøkler brukes kun 1 gang
-% Alle
-
-% Nøkkellengde på SHA-256, og hva er poenget med konkatinering
-
-% Framtiden: Quantum Computing, Moores law
-
-% Hva er problemet om hva som blir knukket?
-
-% SchneieR:
-% AES-256 for å være sikker
-% SHAd-++
-% RSA: ??
-
 \subsubsection{Symmetric Cipher}
-% Argumentasjon skal kanskje være delvis i background
 \defcitealias{ecrypt2_2010}{ECRYPT II}
 
 For a symmetric cipher the choice is pretty simple -- \ac{AES}. \ac{AES} is the
@@ -1652,11 +1625,11 @@ signatures. Verification, in the form of opening a folder, is an operation we
 believe most users will do significantly more than signing, updating and
 creating folders.
 
-For the key length we have implemented 1024 bit, but in retrospect this is a
-bad choice. All sources at this point recommends at least 2048 bit.
-%TODO FIX KILDE
+Multiple sources \cite{keylength} recommend at least 2048 bit as the key length
+used in \ac{RSA}.
 
 \subsubsection{\ac{MAC}}
+
 The use of the \ac{MAC} function in \ac{CSV} is somewhat special. The
 definition states that MAC function is used for authenticating messages.  As
 depicted in Figure \ref{fig:CS:CD}, the result of the \ac{MAC} function is
@@ -1673,58 +1646,41 @@ this, \citet{schneier} recommend HMAC-SHA256.
 
 \subsubsection{Password Based Key Derivation} 
 \label{sec:PBKD}
-To protect the secret that has to be stored on a users terminal our
-recommendation is \ac{PBKDF2}. \ac{PBKDF2} makes a key that a user can remember
-into a key which with greater resistance to brute force and dictionary attacks.
-\ac{PBKDF2} has further been recommended by \ac{NIST} in \cite{pbkdf_nist}.
-The salt that is used should be randomly generated and the length is
-recommended by \ac{NIST} to be at least 128 bits long. The recommendation for
-the iteration count 
 
-\ac{NIST} recommends that the iteration count for \ac{PBKDF2} should be as long
-as possible while at the same time maintaining acceptable
-performance\cite{pbkdf_nist}. To come up with a secure recommendation, we
-looked at the usage of \ac{PBKDF2} in WPA\footnote{WPA is a security protocol
-for wireless networks} and what security it provides against brute force
-attacks. WPA is an excellent measuring unit, since the utilization of
-\ac{PBKDF2} is quiet similar to the one in our scheme. So far, the most
-sensational brute force attack against WPA was published on Black Hat DC 2011
-by a security researcher named Thomas Roth. He proved that anyone can crack WPA
+To protect the secret that has to be stored on the terminal of the users, our
+recommendation is the key derivation function \ac{PBKDF2}, as backed up by the
+\ac{NIST} \cite{pbkdf_nist}. The iteration count for \ac{PBKDF2} should be as
+high as possible, while at the same time maintaining acceptable performance,
+and the salt length should be at least 128 bit and randomly generated
+\cite{pbkdf_nist}. 
+
+To come up with a secure recommendation, we looked at the usage of \ac{PBKDF2}
+in \ac{WPA}, and what security it provides against brute force attacks.
+\ac{WPA} is an excellent measuring unit, since the utilization of \ac{PBKDF2}
+is quite similar to the one in our scheme. So far, the most sensational brute
+force attack against \ac{WPA} was published on Black Hat DC 2011 by a security
+researcher named Thomas Roth. He proved that anyone can crack \ac{WPA}
 passwords with a speed of up to about 400 000 passwords per second, using
 multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
 findings also indicate that Amazon them selves can reach an even higher unknown
 brute force speed. The same researcher has also hinted that he might be able to
-reach 1 million keys per second on the same equipment\cite{rothblog}.
+reach 1 million keys per second on the same equipment \cite{rothblog}.
 
-The mayor difference between our scheme and WPA is that the necessary data to
-launch a brute force attack in WPA can be sniffed by anyone with a wireless
-device and with no risk. For our scheme one would have to get physical or
-virtual access to it, which has a high risk. In the event that an attacker
-obtains this access installing a keylogger or similar might be a better
-approach than to try an attack on the encrypted keyring. But in the event that
-the attacker is someone who steals or finds a lost device it will be his only
-option. In this event it is however possible for the owner of the terminal to
-simply replace his root capability with a new one to make the information that
-the attacker can obtain almost harmless. There of course exist a theoretical
-scenario where the cloud provider is actually the party which steals the
-terminal, and can protect the server-side encrypted data.
-
-With this in mind, we recommend at least the same amount of iterations
-to be used in our scheme as in WPA, that being over 4000. This should deal
-acceptable performance on most devices. However the strength of \ac{PBKDF2} is
-not enough alone, if the password used is to weak.
+With this in mind, we recommend at least the same amount of iterations to be
+used in our scheme as in \ac{WPA}, i.e. 4096. This should yield acceptable
+performance on most devices. 
 
 \paragraph{Password requirements}
 
 If we assume every password can only consist of the English letters, both
-uppercase and lowercase, and the numbers 0-9, there exists 62\^n different
-passwords for a password of length n. With Roths theoretical results of 1
-million passwords per second this means that any password of length 6, 7 and 8
-is cracked in about 0,66, 40 and 2527 days respectively. But this is the case
-where the attacker finds a password on the last try, which is not plausible.
-These results also only holds if we can guarantee that a user actually chooses
+uppercase and lowercase, and the numbers 0-9, there exists $62^n$ different
+passwords for a password of length $n$. With the stated theoretical results of
+1 million passwords per second, this means that any password of length 6, 7 and
+8 is cracked in about 0.66, 40 and 2527 days respectively.
+
+These results only holds if we can guarantee that a user actually chooses
 a random password, which is probably not true either. A more realistic setting
-is that the attacker uses some dictionary, and that a users password is not
+is that the attacker uses some dictionary, and that a user's password is not
 strictly random. By this rationale, it is more important to be safe than sorry,
 and for password guidelines we therefore recommend:
 
