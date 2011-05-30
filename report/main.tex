@@ -2973,7 +2973,9 @@ implementation is quite good, if we look at only the cryptographic
 functionality. We identify the slowest operation to be the generation of
 new cryptographic keys. For a user of the Android client, this should not be a
 problem, since the folder creation is done as an asynchronous task while the
-user enters the name of the new folder.
+user enters the name of the new folder. Another solution is to have the
+application generate a pool of keys before they are requested by the user, in
+this way a key can almost always be ready for the user when he needs it.
 
 The other cryptographic operations on folders completes quite quickly, but the
 performance for serializing the folder contents is too low when folders contain
