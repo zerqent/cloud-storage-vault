@@ -1,0 +1,8 @@
+CSVlib is a Java library to support encrypted storage in the cloud. The
+implementation only contains sufficient operations to support the server
+implementation also available in this repo.
+
+To fully build this library you will also need to obtain:
+http://www.rtner.de/software/PBKDF2.html
+
+Other dependencies are available from Maven.
