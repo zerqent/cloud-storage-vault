@@ -142,7 +142,7 @@ proof of concept sever and Android client.
 
 When implementing the solution, we first created an underlying framework to support the
 proposed and necessary cryptographic functionality. The framework was further
-utilized to implement an Android application, to test wheter or not it provided
+utilized to implement an Android application, to test whether or not it provided
 suitable performance on a constrained device.
 
 Application Results:
@@ -153,9 +153,18 @@ Conclusion:
 \chapter*{Preface}
 \addcontentsline{toc}{chapter}{Preface}
 
-The work behind this project report was carried out during the spring semester
+The work behind this report was carried out during the spring semester
 in 2011 at the Norwegian University of Science and Technology (NTNU), Department
-of Telematics (ITEM).
+of Telematics (ITEM). The report is a final result from a Master thesis in
+information security written by three graduate students at NTNU. The
+thesis was assigned by Earnst \& Young AS Norway, and acknowledged by ITEM.
+
+We would like to thank our external supervisors Carsten Maartmann-Moe and
+Antonio Martiradonna, at Earns \& Young AS, for their valuable contributions.
+Additionally, we would like to thank Danilo Gligorosky at the Department of
+Telematics for providing constructive feedback on the report and for giving us the opportunity
+to write this thesis. 
+ 
 \vspace{13pt}
 
 \begin{center}
@@ -2970,7 +2979,7 @@ nearest future. In addition, dedicated cryptographic co-processors may
 relieve the \ac{CPU} from additional work.
 
 \paragraph{Folders} The performance of the folder operations in the
-implementation is quite good, if we look at only the cryptographic
+implementation is quite good, if we look at the cryptographic
 functionality. We identify the slowest operation to be the generation of
 new cryptographic keys. For a user of the Android client, this should not be a
 problem, since the folder creation is done as an asynchronous task while the
