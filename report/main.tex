@@ -1104,27 +1104,28 @@ Since it is not practical for users to remember strings containing random
 characters, the \textbf{application} layer is used for providing a user-friendly
 interface to the directories and files.
 
-\paragraph{File Types}
+\paragraph{File Types} There are two kinds of files in the Tahoe-\ac{LAFS} --
+\textbf{immutable} and \textbf{mutable} files. An immutable file is created
+exactly once, i.e. it cannot be modified, and can be read repeatedly. Mutable
+files can be modified, and everyone who has access to the signing key can make
+new versions of the mutable file. Directories are implemented as mutable files.
 
-There are two kinds of files in the Tahoe-\ac{LAFS} -- \textbf{immutable} and
-\textbf{mutable} files. An immutable file is created exactly once, i.e. it
-cannot be modified, and can be read repeatedly. Mutable files can be modified,
-and everyone who has access to the signing key can make new versions of
-the mutable file. Directories are implemented as mutable files.
+\paragraph{Erasure Coding} Erasure-coding with the Solomon-Reed scheme, enables
+Tahoe-\ac{LAFS} to recover a file using only a predefined subset of the parts
+distributed to the storage servers. Erasure coding is a type of \ac{FEC} code,
+which extends a message with $C$ characters into a longer message with $N$
+symbols \cite{t_reed-solomon}. The original $C$ characters can then be
+recovered from a subset of the $N$ symbols.
 
-\paragraph{Erasure Coding}
-
-Erasure-coding with the Solomon-Reed scheme, enables Tahoe-\ac{LAFS} to recover
-a file using only a predefined subset of the parts distributed to the storage
-servers. Erasure coding is a type of \ac{FEC} code, which extends a message
-with $C$ characters into a longer message with $N$ symbols
-\cite{t_reed-solomon}. The original $C$ characters can then be recovered from a
-subset of the $N$ symbols.
+\paragraph{Sharing} To share a folder, and hence its subfolders and files, the
+corresponding capability of the folder has to be distributed. Tahoe-\ac{LAFS}
+in itself does not provide a specific way of doing this, and leaves it up to
+the user to distribute keys in a secure manner.
 
 \subsection{Wuala}
 
-Wuala\footnote{\url{http://www.wuala.com/}} is a closed source secure cloud
-storage file system. It is written in the Java programming language, and
+Wuala\footnote{\url{http://www.wuala.com/}} is a software offering a secure
+cloud storage file system. It is written in the Java programming language, and
 hence has easily been ported to a number of platforms, e.g. Windows, Linux, OS
 X and Android.
 
@@ -1132,23 +1133,60 @@ X and Android.
 cryptographic tree structure for the file system that Wuala uses, called
 Cryptree \cite{cryptree}, but other details of how the system works is hard to
 come by. The only source of technical information of this system found, was a
-Google Tech Talk \cite{wuala}. 
+Google Tech Talk \cite{wuala}.
 
-\paragraph{Network Scheme} Wuala boasts strong focus on reliability, by both
-providing storage on their own central servers, in addition to a \emph{\ac{P2P}
-cloud} of Wuala users that has donated capacity to the system. There are also
-some other advantages coming directly from using a distribution scheme based on
-\ac{P2P}, as no maximum file size or traffic limit.
+A side from this, Wuala is closed source, and hence no one can verify that the
+software indeed does what stated.
+
+\paragraph{Network Scheme} Wuala boasts strong focus on reliability and
+availability, by both providing storage on their own central servers, in
+addition to a \emph{\ac{P2P} cloud} of Wuala users that has donated capacity to
+the system. There are also some other advantages coming directly from using a
+distribution scheme based on \ac{P2P}, as no maximum file size or traffic
+limit.
+
+Similar to the Tahoe-\ac{LAFS}, Wuala uses an erasure-coding scheme in the
+family of Reed-Solomon \cite{wuala} to enable the logic behind splitting and
+combining parts of a file and creating redundancy.
 
 \paragraph{Sharing} Files and folders can be either \emph{private},
-\emph{shared} or \emph{public}. In addition, there exist a concept of
-\emph{groups}, which can be used to manage access control over shared folders
-and files.
+\emph{shared} or \emph{public}. In addition, there exist a concept of public
+and private \emph{groups} of users, which can be used to manage access control
+over shared folders and files.
 
-\paragraph{Security} All files are encrypted client-side, and the password used
-never leaves the user equipment.
+When creating a new group in the Wuala client, as depicted in Figure
+\ref{fig:wuala:newgroup}, the default choice is to create a private group, but
+provide access through a \emph{secret link} via the Wuala web page.
+This implies a key distribution where the group members has to rely on Wuala as
+a trusted third party.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{wuala_create_group.png}
+    \caption{Creating a new group in Wuala}
+    \label{fig:wuala:newgroup}
+\end{figure}
+
+\paragraph{Security} When adding a new file to Wuala, the file and its meta
+data is encrypted with 128 bit \ac{AES}, before encoded into redundant
+fragments using erasure codes, and lastly uploaded to the network. 2048 bit
+\ac{RSA} is used for authentication. All cryptographic operations are performed
+locally on the client-side, and the password used by the client never leaves
+the user equipment.
+
+Access control are provided using the efficient cryptographic tree structure
+Cryptree \cite{cryptree, wuala}, which is based on the notion that no
+information should be revealed to the computer holding the access control
+structure, i.e. the hosting server or the \ac{P2P} network. Keys for nodes in
+the tree are derived from the keys of the parents, implying that if a user has
+a key to a folder, he also has access to all the subfolders and files.
+
+Though, none of these security features can be verified, since the source is
+not available for scrutiny by the public.
+
 
 % Bring up closed source again.
+% Groups.
 
 %**************************************%
 \chapter{Technical Procedure}
