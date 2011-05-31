@@ -1039,7 +1039,7 @@ The core components are suggested to support \emph{searchable encryption},
 \label{sec:existing}
 
 There are a number of existing solutions for storing data in the cloud,
-with more or less of the functionality required to fulfill the problem
+with more or less the functionality required to fulfill the problem
 description for this thesis. The section highlights some of them.
 
 \subsection{Dropbox}
@@ -1048,23 +1048,22 @@ Dropbox\footnote{\url{http://www.dropbox.com/}} is a popular commercial
 application for storing data in the cloud, claiming more than 25 million users
 \cite{dropbox_users}. All files are saved using Amazons S3 storage service.
 
-The company boasts strong encryption and strict access control
+The company boasts of strong encryption and strict access control
 \cite{dropbox_security}, but has received criticism for its lack of security
 \cite{dropbox_concerns}. Among these concerns, is the \emph{Forgotten Password}
-feature, which implies that Dropbox can read the users files if they really
-want to -- because they have the password -- and that the encryption is
-performed server-side.
+feature, that enables Dropbox to hold their users' passwords. This
+implies that the encryption is performed server-side and that Dropbox can read
+the users' files if desired.
 
-In addition, Dropbox is not Open Source, and hence one has no way of verifying
+In addition, Dropbox is not Open Source, and hence there is no way of verifying
 that the security features actually work as claimed.
 
 \subsection{Tahoe-LAFS}
 \label{sec:tahoe}
 
 Tahoe-\ac{LAFS}\footnote{\url{http://www.tahoe-lafs.org/}} is an open source,
-distributed and secure cloud storage file system, which does fulfill
-the criteria set in Section \ref{sec:criteria}.
-The integrity and confidentiality of the
+distributed and secure cloud storage file system, fulfilling the criteria in
+Section \ref{sec:criteria}. The integrity and confidentiality of the
 files are guaranteed by the algorithms used on the client, and is independent
 of the storage servers, which may be operated by untrusted people.
 This is defined as \emph{provider-independent security} \cite{tahoe}.
@@ -1136,14 +1135,13 @@ come by. The only source of technical information of this system found, was a
 Google Tech Talk \cite{wuala}.
 
 A side from this, Wuala is closed source, and hence no one can verify that the
-software indeed does what stated.
+software indeed does what it states.
 
-\paragraph{Network Scheme} Wuala boasts strong focus on reliability and
+\paragraph{Network Scheme} Wuala boasts of strong focus on reliability and
 availability, by both providing storage on their own central servers, in
 addition to a \emph{\ac{P2P} cloud} of Wuala users that has donated capacity to
-the system. There are also some other advantages coming directly from using a
-distribution scheme based on \ac{P2P}, as no maximum file size or traffic
-limit.
+the system. There are also additional advantages resulting directly from using a
+distribution scheme based on \ac{P2P}.  Examples are no maximum file size and no traffic limit.
 
 Similar to the Tahoe-\ac{LAFS}, Wuala uses an erasure-coding scheme in the
 family of Reed-Solomon \cite{wuala} to enable the logic behind splitting and
@@ -1181,8 +1179,8 @@ structure, i.e. the hosting server or the \ac{P2P} network. Keys for nodes in
 the tree are derived from the keys of the parents, implying that if a user has
 a key to a folder, he also has access to all the subfolders and files.
 
-Though, none of these security features can be verified, since the source is
-not available for scrutiny by the public.
+However, since the source of Wuala is not available for scrutiny by the public, none of
+these security features can actually be verified.
 
 
 % Bring up closed source again.
