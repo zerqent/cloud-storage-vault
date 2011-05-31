@@ -2619,10 +2619,6 @@ Tahoe-\ac{LAFS}. By using the combination of symmetric keys derived from
 asymmetric keys, the scheme supports safe sharing of folders in both read-only
 and read-write modes.
 
-\paragraph{Cryptographic Primitives} A significant design difference, is that
-it is substantially more difficult to change cryptographic primitives for the
-user in Tahoe-\ac{LAFS} than in \ac{CSV}.
-
 \subsection{Sharing}
 % Read/write keys, integrity, the general key distribution problem
 
@@ -2820,6 +2816,22 @@ hinder duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
+\subsection{Supporting several cryptographic primitives} The main problem with
+selecting cryptographic primitives for our scheme is that one can not be sure
+how long a cipher, cryptographic hash function or signature scheme will remain
+secure. A recommended approach is to build systems that can easily change the
+cryptographic primitives if one is broken\cite{schneier}. The main problem with
+this approach is that if for instance \ac{AES} is broken and the cloud provider
+keeps backups of all user data on their server, that information is
+compromised. However, a quick change of a broken cryptographic primitive is
+preferable to secure future stored files. This is however not supported by our
+scheme.  A change of a cryptographic primitive in our scheme would lead to
+backward compatibility being broken, e.g. one would be unable to obtain files
+or folders stored before the change. This could be remedied by a meta-block for
+each file and folder, containing the cryptographic primitives. In addition the
+capability would have to contain which cryptographic hash function that should
+be used, to be able to deduce the storage index from the key.
+
 \section{Implementation}
 \label{sec:DIS:impl}
 
@@ -2890,11 +2902,6 @@ following deviations exist.
 bits, in contrast to the argued 2048 bits. It is therefore important to notice
 that all measurements, presented in Chapter \ref{ch:experimental} and
 \ref{ch:results}, are based on an RSA key length of 1024 bits.
-
-\paragraph{PBKDF2 Salt} As argued in Section \ref{sec:cryptoprimitivechoice},
-the length of the salt used with the \ac{PBKDF2} should be as long as the
-length of the key. In the implementation, the salt value is only 8 bytes, as
-opposed to the key length of 32 bytes.
 
 \subsection{Simplifying the Server}
 
