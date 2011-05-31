@@ -3205,13 +3205,24 @@ application.
 \label{ch:conclusion}
 %**************************************%
 
-As it turns out, one of the greatest challenges when developing a software
-application, is the choice and implementation of the cryptographic primitives.
-Good references and external recommendations can help, but only so far.
-The \ac{CSV} does indeed utilize functions from the whole cryptographic
-spectrum, so the choice of basing the cryptographic architecture on an already
-well tested solution -- i.e. the Tahoe-\ac{LAFS} -- has proven to be a good
-idea.
+As it turns out, one of the greatest challenges when developing a secure cloud
+file system, is the choice and implementation of the cryptographic primitives.
+Good references and external recommendations can help, but only so far. Key
+distribution is also a problem that will always be hard to accomplish if a
+trusted third party is not included. Another challenge experienced is that all
+features one would want from a secure cloud file system are hard to implement
+without compromising security (searchable encryption, deduplication).
+
+This thesis propose a scheme for secure cloud storage based on Tahoe-\ac{LAFS},
+it also encompass an open source, free, implementation of this scheme, that
+works satisfiable on a constrained device, an Android smartphone.
+
+While our scheme solves some of the basic challenges of secure cloud storage,
+there are several features which would improve the scheme. The most important
+being a better approach to verifying files, to allow streaming them, and the
+possibility of deleting files. For our implementation it would be interesting
+to see a modified version of this implemented to work directly with an existing
+cloud storage solution such as Amazon S3.
 
 \section{Compared with Other Solutions}
 % BibTeX bibliography lives in external file
