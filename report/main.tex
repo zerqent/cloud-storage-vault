@@ -224,6 +224,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
 \acro{OS}{Operating System}
+\acro{P2P}{Peer-to-Peer}
 \acro{PBKDF2}{Password-Based Key Derivation Function version 2}
 \acro{PaaS}{Platform as a Service}
 \acro{PasS}{Privacy as a Service}
@@ -1114,12 +1115,31 @@ subset of the $N$ symbols.
 \subsection{Wuala}
 
 Wuala\footnote{\url{http://www.wuala.com/}} is a closed source secure cloud
-storage file system, that seemingly operates very similar to Tahoe-\ac{LAFS}.
+storage file system. It is written in the Java programming language, and
+hence has easily been ported to a number of platforms, e.g. Windows, Linux, OS
+X and Android.
 
-The authors have released a paper on a cryptographic tree structure for file
-systems, called Cryptree \cite{cryptree}, and has strong focus on reliability
-by both providing central servers, in addition to a \emph{P2P cloud} of Wuala
-users that has donated capacity to the system.
+\paragraph{Sources of Information} The authors have released a paper on a
+cryptographic tree structure for the file system that Wuala uses, called
+Cryptree \cite{cryptree}, but other details of how the system works is hard to
+come by. The only source of technical information of this system found, was a
+Google Tech Talk \cite{wuala}. 
+
+\paragraph{Network Scheme} Wuala boasts strong focus on reliability, by both
+providing storage on their own central servers, in addition to a \emph{\ac{P2P}
+cloud} of Wuala users that has donated capacity to the system. There are also
+some other advantages coming directly from using a distribution scheme based on
+\ac{P2P}, as no maximum file size or traffic limit.
+
+\paragraph{Sharing} Files and folders can be either \emph{private},
+\emph{shared} or \emph{public}. In addition, there exist a concept of
+\emph{groups}, which can be used to manage access control over shared folders
+and files.
+
+\paragraph{Security} All files are encrypted client-side, and the password used
+never leaves the user equipment.
+
+% Bring up closed source again.
 
 %**************************************%
 \chapter{Technical Procedure}
