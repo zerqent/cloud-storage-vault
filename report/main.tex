@@ -1599,9 +1599,10 @@ This is based more on practical advice than on security consideration.
 requires that the plaintext is an exact multiple of the block length, i.e.
 128-bit. Since this is not always the case, a padding scheme will be required.
 A padding scheme does not have any security implications as long as it is
-reversible \cite{schneier}, at least not for \ac{CBC}. We decided on
-\emph{PKCS5Padding} in our implementation, based on its existence in the
-cryptographic libraries we utilized.
+reversible \cite{schneier}, at least not for \ac{CBC}. We decided to use
+\emph{PKCS5Padding} in our implementation, based on its availability in the
+cryptographic libraries we utilized. The PKCS5 standard was written in 2000 by
+RSA Laboratories and is available in RFC 2898 \cite{rfc2898}.
 
 \subsubsection{Cryptographic Hash Function}
 
