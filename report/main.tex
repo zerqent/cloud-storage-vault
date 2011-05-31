@@ -2663,11 +2663,14 @@ to decide who should be granted access to delete files.
 \paragraph{Write Enabler} Similarly, the server could grant removal rights to
 whoever provides the write enabler, in the same manner as when updating
 folders. This requires that \emph{delete enablers} is produced for immutable
-files as well as folders.
+files.
 
 \paragraph{Link Count} The files could include a link count in its meta data,
 updated whenever a user links or unlinks it from a folder. When the link count
-reach zero, the user notifies the server to delete it.
+reach zero, the user notifies the server to delete it. But the server would
+have to know for certain that the removal is legit. In other words the server
+must actually know the directory tree, and changing this must be done with
+someone who presents a write enabler.
 
 \subsubsection{Loop Detection in a Directed Acyclic Graph}
 
@@ -2705,8 +2708,8 @@ supposed to be. If it turns out that the file does not pass this check, and
 the error was in the very first byte, the user has wasted time and bandwidth
 downloading a lot of useless data.
 
-If the file is a movie file, and the user only wants to look at a
-small part of this file, this is not possible with the current verification
+If the file is a movie, and the user only wants to look at a
+small part of this movie, this is not possible with the current verification
 scheme. There is no way for the user to verify only parts of a
 file, and he will have to download the whole file, which is suboptimal.
 
@@ -2789,7 +2792,7 @@ time to upload it to the server. If this is the case, they can file a petition
 to get the company hosting the server to yield the contact information for the
 users in question.
 
-\paragraph{Customizable Deduplication} The Tahoe-\ac{LAFS} tries to provide a
+\paragraph{Customizable Deduplication} Tahoe-\ac{LAFS} tries to provide a
 solution that has all the advantages and none of the issues related to
 deduplication, by \emph{convergent encryption with an added secret}
 \cite{tahoe}.
