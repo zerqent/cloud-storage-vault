@@ -2574,9 +2574,12 @@ to an \emph{Out of Memory} exception during execution.
 
 We observe that the slowest part of folders operations are the initial key
 generation and more important, the serialization speed. Verification,
-encryption and signing is pretty fast for all devices. We also note that our
-implementation struggle to handle folders with a certain amount of items on the
-HTC Hero.
+encryption and signing is pretty fast for all devices. We also note that the
+performance of signing and encryption as well as verification seems to increase
+(in bytes/time) as the amount of data gets larger. The serialization part is
+the exact opposite where performance drops when the amount of data gets larger.
+We also note that our implementation struggle to handle folders with a large
+amount of items on the HTC Hero.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
