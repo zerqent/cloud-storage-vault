@@ -126,26 +126,25 @@ design.\\
 %  creativity.
 
 Today, major IT-companies, such as Microsoft, Amazon and Google, are offering
-storage as a cloud service to their customers. This is a preferable solution to
-regular storage in terms of low hardware costs, reliability, scalability and capacity.
+online storage services to their customers. This is a favorable solution -- as
+opposed to regular storage -- in terms of low hardware costs, reliability,
+scalability and capacity, but is often often lacking security features by not
+yielding data privacy and integrity.
 
-However, the idea of storing customer data by an untrusted cloud provider
-introduces the issue of data privacy and integrity. The customer is no longer in
-position to control the physical access to the stored data, and is therefore
-not guaranteed data privacy or integrity by the cloud provider.
+To address these issues, a cryptographic architecture is proposed, that ensures
+the confidentiality and integrity of the data stored by users, independent of
+the trust of the underlying provider. It also includes secure sharing of
+private data among customers of the same cloud provider. The scheme were
+further implemented in a proof of concept server and client.
 
-To solve this problem, we have proposed a solution that ensures
-privacy and integrity of customers' data stored by an untrusted cloud provider.
-The proposed solution does also support sharing of private data among customers
-of the same cloud provider. The solution has further been implemented as a
-proof of concept sever and Android client.
+The underlying cryptographic architecture were made based on existing open
+source systems and cryptographic primitives. The architecture were further
+implemented as a highly reusable general library in Java, and an Android client
+were created to be able to test performance on a constrained device.
 
-When implementing the solution, we first created an underlying framework to support the
-proposed and necessary cryptographic functionality. The framework was further
-utilized to implement an Android application, to test whether or not it provided
-suitable performance on a constrained device.
-
-Application Results:
+In general, the proof of concept system performs well, and the additional
+cryptographic operations does not significantly affect the user experience on a
+constrained device. 
 
 Conclusion:
 
@@ -277,7 +276,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 
 % TODO: Generic introduction
 
-The term \emph{Cloud Computing}, and the common shorthand \emph{The Cloud},
+The term \emph{Cloud Computing}, and the common short \emph{The Cloud},
 is not yet clearly defined \cite{clouddef}, but involves the provision of
 software or computational resources available by demand via the Internet.
 In a draft \cite{cloud_nistdef}, the \ac{NIST} defines cloud computing as:
@@ -1041,7 +1040,7 @@ The core components are suggested to support \emph{searchable encryption},
 \label{sec:existing}
 
 There are a number of existing solutions for storing data in the cloud,
-with more or less of the functionality required to fulfill the problem
+with more or less the functionality required to fulfill the problem
 description for this thesis. The section highlights some of them.
 
 \subsection{Dropbox}
@@ -1050,23 +1049,22 @@ Dropbox\footnote{\url{http://www.dropbox.com/}} is a popular commercial
 application for storing data in the cloud, claiming more than 25 million users
 \cite{dropbox_users}. All files are saved using Amazons S3 storage service.
 
-The company boasts strong encryption and strict access control
+The company boasts of strong encryption and strict access control
 \cite{dropbox_security}, but has received criticism for its lack of security
 \cite{dropbox_concerns}. Among these concerns, is the \emph{Forgotten Password}
-feature, which implies that Dropbox can read the users files if they really
-want to -- because they have the password -- and that the encryption is
-performed server-side.
+feature, that enables Dropbox to hold their users' passwords. This
+implies that the encryption is performed server-side and that Dropbox can read
+the users' files if desired.
 
-In addition, Dropbox is not Open Source, and hence one has no way of verifying
+In addition, Dropbox is not Open Source, and hence there is no way of verifying
 that the security features actually work as claimed.
 
 \subsection{Tahoe-LAFS}
 \label{sec:tahoe}
 
 Tahoe-\ac{LAFS}\footnote{\url{http://www.tahoe-lafs.org/}} is an open source,
-distributed and secure cloud storage file system, which does fulfill
-the criteria set in Section \ref{sec:criteria}.
-The integrity and confidentiality of the
+distributed and secure cloud storage file system, fulfilling the criteria in
+Section \ref{sec:criteria}. The integrity and confidentiality of the
 files are guaranteed by the algorithms used on the client, and is independent
 of the storage servers, which may be operated by untrusted people.
 This is defined as \emph{provider-independent security} \cite{tahoe}.
@@ -1138,14 +1136,13 @@ come by. The only source of technical information of this system found, was a
 Google Tech Talk \cite{wuala}.
 
 A side from this, Wuala is closed source, and hence no one can verify that the
-software indeed does what stated.
+software indeed does what it states.
 
-\paragraph{Network Scheme} Wuala boasts strong focus on reliability and
+\paragraph{Network Scheme} Wuala boasts of strong focus on reliability and
 availability, by both providing storage on their own central servers, in
 addition to a \emph{\ac{P2P} cloud} of Wuala users that has donated capacity to
-the system. There are also some other advantages coming directly from using a
-distribution scheme based on \ac{P2P}, as no maximum file size or traffic
-limit.
+the system. There are also additional advantages resulting directly from using a
+distribution scheme based on \ac{P2P}.  Examples are no maximum file size and no traffic limit.
 
 Similar to the Tahoe-\ac{LAFS}, Wuala uses an erasure-coding scheme in the
 family of Reed-Solomon \cite{wuala} to enable the logic behind splitting and
@@ -1183,8 +1180,8 @@ structure, i.e. the hosting server or the \ac{P2P} network. Keys for nodes in
 the tree are derived from the keys of the parents, implying that if a user has
 a key to a folder, he also has access to all the subfolders and files.
 
-Though, none of these security features can be verified, since the source is
-not available for scrutiny by the public.
+However, since the source of Wuala is not available for scrutiny by the public, none of
+these security features can actually be verified.
 
 
 % Bring up closed source again.
@@ -2898,19 +2895,21 @@ hinder duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
-\subsection{Supporting several cryptographic primitives} The main problem with
-selecting cryptographic primitives for our scheme is that one can not be sure
-how long a cipher, cryptographic hash function or signature scheme will remain
-secure. A recommended approach is to build systems that can easily change the
-cryptographic primitives if one is broken\cite{schneier}. The main problem with
-this approach is that if for instance \ac{AES} is broken and the cloud provider
-keeps backups of all user data on their server, that information is
-compromised. However, a quick change of a broken cryptographic primitive is
-preferable to secure future stored files. This is however not supported by our
-scheme.  A change of a cryptographic primitive in our scheme would lead to
-backward compatibility being broken, e.g. one would be unable to obtain files
-or folders stored before the change. This could be remedied by a meta-block for
-each file and folder, containing the cryptographic primitives. In addition the
+\subsection{Supporting Multiple Cryptographic Primitives} 
+
+The main problem with selecting cryptographic primitives for our scheme, is
+that one can not be sure how long a cryptographic cipher, hash function or
+signature scheme will remain secure. A recommended approach is to build systems
+that can easily change the cryptographic primitives, in case of discoveries
+enabling an attacker to break a primitive \cite{schneier}. The main problem
+with this approach is that if for instance \ac{AES} is broken, and the cloud
+provider keeps backups of all user data on their server, that information is
+compromised with regard to the provider.
+
+A change of a cryptographic primitive in our scheme would lead to backward
+compatibility being broken, e.g. one would be unable to obtain files or folders
+stored before the change. This could be remedied by a meta-block for each file
+and folder, containing the utilized cryptographic primitives. In addition, the
 capability would have to contain which cryptographic hash function that should
 be used, to be able to deduce the storage index from the key.
 
@@ -3263,20 +3262,42 @@ application.
 \label{ch:conclusion}
 %**************************************%
 
-As it turns out, one of the greatest challenges when developing a secure cloud
-file system, is the choice and implementation of the cryptographic primitives.
-Good references and external recommendations can help, but only so far. Key
-distribution is also a problem that will always be hard to accomplish if a
-trusted third party is not included. Another challenge experienced is that all
-features one would want from a secure cloud file system are hard to implement
-without compromising security (searchable encryption, deduplication).
+The main purpose of this thesis was to create and implement a proof of concept
+solution to a secure cloud storage service. The scheme was to provide what we
+defined in Section \ref{sec:criteria} as a secure storage system. 
 
-This thesis propose a scheme for secure cloud storage based on Tahoe-\ac{LAFS},
-it also encompass an open source, free, implementation of this scheme, that
-works satisfiable on a constrained device, an Android smartphone.
+An important part of the proposed cryptographic scheme is based on a steady and
+secure functionality from TAHOE LAFS. With this in mind, and the use of
+cryptographic primitives, recommended in Section \ref{sec:cryptoprimitivechoice}, the proposed
+cryptographic scheme is believed to offer, what we defined as, a secure
+storage system. 
+
+In addition, findings in Section \ref{sec:R:BFLK} showed that the presumed weakest link of
+the system, the encrypted keyring, is able to withstand heavy brute force attacks. However,
+using a easy and commonly used password will make the keyring vulnerable to
+dictionary attacks. Measuring performance on constrained devices proved additionally that an
+acceptable level of usability was sustained while offering the desired security.
+
+In addition to security, the proposed cryptographic scheme does also support
+secure sharing of stored files, as well as an implementation of an enterprise
+use case scenario. An implementation of sharing, using barcode scanning to
+create trust between users, proved to sustain existing security. 
+
+When developing a secure cloud file system, one of the greatest challenges
+turned out to be the choice and implementation of cryptographic primitives.
+Good references and external recommendations can help, but only to a certain
+degree. Key distribution is also a problem that will always be hard to accomplish if a
+trusted third party is not included. Another challenge experienced is that all
+additional features desired from a secure cloud file system are hard to implement
+without compromising security. Searchable encryption and deduplication are
+examples of subjected features.
+
+%This thesis propose a scheme for secure cloud storage based on Tahoe-\ac{LAFS},
+%it also encompass an open source, free, implementation of this scheme, that
+%works satisfiable on a constrained device, an Android smartphone.
 
 While our scheme solves some of the basic challenges of secure cloud storage,
-there are several features which would improve the scheme. The most important
+there are several features that will improve the scheme. The most important
 being a better approach to verifying files, to allow streaming them, and the
 possibility of deleting files. For our implementation it would be interesting
 to see a modified version of this implemented to work directly with an existing
