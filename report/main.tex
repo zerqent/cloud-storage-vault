@@ -2541,6 +2541,7 @@ individual, isolated operations in the process pipeline on the HTC Desire.
 \input{tables/performance_files_unencrypted.tex}
 \input{tables/result_desire_pinpoint.tex}
 
+
 We observe that the performance of the Android devices for uploads is severely
 lower for uploads than for downloads, and that this is not the case for the
 computer client. We also observe that the speed with encryption and hashing
@@ -2553,17 +2554,25 @@ part is the most time consuming operation.
 Table \ref{tbl:folder:createblank} shows the average time it takes to create an
 empty folder on the different devices. The Tables
 \ref{tbl:folder:serializefolder} and \ref{tbl:folder:encryptsign} shows the
-respective time it takes to serialize, encrypt and sign the folder. These three
-actions are what has to be performed every time a folder is changed, while the
-operation of creating a blank folder is added if the content should be added to
-a new folder. Table \ref{tbl:folder:verify} displays the time the devices used
-to verify an existing folder, a step which is taken by the client every time a
-folder is opened. Results noted as \emph{N/A} for the HTC Hero, is operations
-that lead to an \emph{Out of Memory} exception during execution.
+respective time it takes to serialize, encrypt and sign the folder. The
+encryption and signing of folders is also visualized in Figure
+\ref{fig:results:signencrypt}. These three actions are what has to be performed
+every time a folder is changed, while the operation of creating a blank folder
+is added if the content should be added to a new folder. Table
+\ref{tbl:folder:verify} displays the time the devices used to verify an
+existing folder, a step which is taken by the client every time a folder is
+opened. Results noted as \emph{N/A} for the HTC Hero, is operations that lead
+to an \emph{Out of Memory} exception during execution.
 
 \input{tables/result_perf_createblankfolder}
 \input{tables/result_perf_serializefolder}
 \input{tables/result_perf_encryptsignfolder}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{graph_signandencrypt.pdf}
+    \caption{Encrypt and sign a folder}
+    \label{fig:results:signencrypt}
+\end{figure}
 \input{tables/result_perf_verifyfolder}
 
 We observe that the slowest part of folders operations are the initial key
