@@ -127,7 +127,7 @@ design.\\
 
 Today, major IT-companies, such as Microsoft, Amazon and Google, are offering
 online storage services to their customers. This is a favorable solution -- as
-opposed to regular storage -- in terms of low hardware costs, reliability,
+opposed to regular storage -- in terms of low costs, reliability,
 scalability and capacity, but is often often lacking security features by not
 yielding data privacy and integrity.
 
@@ -144,9 +144,14 @@ were created to be able to test performance on a constrained device.
 
 In general, the proof of concept system performs well, and the additional
 cryptographic operations does not significantly affect the user experience on a
-constrained device. 
+constrained device. Potential weaknesses of the system are identified, and the
+\emph{weakest link} is derived as to be the password encrypted keyring stored
+on the client device.
 
-Conclusion:
+We have presented a scheme for secure sharing of files on an untrusted server,
+and argued for its validity. To support streaming functionality, the scheme
+could be extended with hash trees to validate small parts of a file at the
+time.
 
 
 \chapter*{Preface}
