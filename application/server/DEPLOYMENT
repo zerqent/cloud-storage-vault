@@ -1,0 +1,35 @@
+This quick guide were made using Ubuntu 10.10
+
+1. Install apache2 and postgres8.4:
+
+    $ sudo aptitude install postgresql-8.4 apache2 libapache2-mod-wsgi
+
+2. Install Postgres-bindings for Python:
+
+    $ sudo aptitude install python-psycopg2
+
+3. Install Pyroutes (choose one):
+
+    1. Using PIP:
+        $ pip install pyroutes
+    2. Using easyinstall:
+        $ easy_install pyroutes
+    3. Download source from Github and install:
+        $ git clone git://github.com/klette/pyroutes.git
+        $ cd pyroutes
+        $ sudo python setup.py install
+
+4. Add database schemas found in the cloudstorage/sql folder:
+
+    $ sudo -u postgres createuser {user_name} -P # (Will ask for password)
+    $ sudo -u postgres createdb -O {user_name} {destination_db}
+    $ psql -U {user_name} -d {destination_db} -f cloudstorage/sql/write_enablers.sql
+
+5. Add the chosen database credentials to the file cloudstorage/settings.py
+    
+6. Update /etc/apache2/sites-enabled/000-default to include directives found in the
+   apache/000-default-example. Remember to edit paths specified in the example.
+
+7. Restart Apache:
+    
+    $ sudo apache2ctl restart

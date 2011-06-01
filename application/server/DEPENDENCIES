@@ -1,0 +1,9 @@
+Software:
+---------------------------------
+apache2 with mod_wsgi
+postgres
+
+Python packages:
+---------------------------------
+pyroutes > v0.40 - http://www.pyroutes.com/
+python-psycopg2 
