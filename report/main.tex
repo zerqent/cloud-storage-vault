@@ -126,26 +126,25 @@ design.\\
 %  creativity.
 
 Today, major IT-companies, such as Microsoft, Amazon and Google, are offering
-storage as a cloud service to their customers. This is a preferable solution to
-regular storage in terms of low hardware costs, reliability, scalability and capacity.
+online storage services to their customers. This is a favorable solution -- as
+opposed to regular storage -- in terms of low hardware costs, reliability,
+scalability and capacity, but is often often lacking security features by not
+yielding data privacy and integrity.
 
-However, the idea of storing customer data by an untrusted cloud provider
-introduces the issue of data privacy and integrity. The customer is no longer in
-position to control the physical access to the stored data, and is therefore
-not guaranteed data privacy or integrity by the cloud provider.
+To address these issues, a cryptographic architecture is proposed, that ensures
+the confidentiality and integrity of the data stored by users, independent of
+the trust of the underlying provider. It also includes secure sharing of
+private data among customers of the same cloud provider. The scheme were
+further implemented in a proof of concept server and client.
 
-To solve this problem, we have proposed a solution that ensures
-privacy and integrity of customers' data stored by an untrusted cloud provider.
-The proposed solution does also support sharing of private data among customers
-of the same cloud provider. The solution has further been implemented as a
-proof of concept sever and Android client.
+The underlying cryptographic architecture were made based on existing open
+source systems and cryptographic primitives. The architecture were further
+implemented as a highly reusable general library in Java, and an Android client
+were created to be able to test performance on a constrained device.
 
-When implementing the solution, we first created an underlying framework to support the
-proposed and necessary cryptographic functionality. The framework was further
-utilized to implement an Android application, to test whether or not it provided
-suitable performance on a constrained device.
-
-Application Results:
+In general, the proof of concept system performs well, and the additional
+cryptographic operations does not significantly affect the user experience on a
+constrained device. 
 
 Conclusion:
 
