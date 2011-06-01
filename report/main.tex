@@ -2886,19 +2886,21 @@ hinder duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
-\subsection{Supporting several cryptographic primitives} The main problem with
-selecting cryptographic primitives for our scheme is that one can not be sure
-how long a cipher, cryptographic hash function or signature scheme will remain
-secure. A recommended approach is to build systems that can easily change the
-cryptographic primitives if one is broken\cite{schneier}. The main problem with
-this approach is that if for instance \ac{AES} is broken and the cloud provider
-keeps backups of all user data on their server, that information is
-compromised. However, a quick change of a broken cryptographic primitive is
-preferable to secure future stored files. This is however not supported by our
-scheme.  A change of a cryptographic primitive in our scheme would lead to
-backward compatibility being broken, e.g. one would be unable to obtain files
-or folders stored before the change. This could be remedied by a meta-block for
-each file and folder, containing the cryptographic primitives. In addition the
+\subsection{Supporting Multiple Cryptographic Primitives} 
+
+The main problem with selecting cryptographic primitives for our scheme, is
+that one can not be sure how long a cryptographic cipher, hash function or
+signature scheme will remain secure. A recommended approach is to build systems
+that can easily change the cryptographic primitives, in case of discoveries
+enabling an attacker to break a primitive \cite{schneier}. The main problem
+with this approach is that if for instance \ac{AES} is broken, and the cloud
+provider keeps backups of all user data on their server, that information is
+compromised with regard to the provider.
+
+A change of a cryptographic primitive in our scheme would lead to backward
+compatibility being broken, e.g. one would be unable to obtain files or folders
+stored before the change. This could be remedied by a meta-block for each file
+and folder, containing the utilized cryptographic primitives. In addition, the
 capability would have to contain which cryptographic hash function that should
 be used, to be able to deduce the storage index from the key.
 
