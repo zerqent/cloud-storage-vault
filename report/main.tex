@@ -8,6 +8,7 @@
 \usepackage{graphicx} % We *may* use images
 \graphicspath{{images/}} % and it is clean to put them in a separate dir
 \usepackage{amstext} % To support \text in math mode
+\usepackage{amsmath}
 \usepackage{hyperref} % Internal and external links is nice
 \hypersetup{
     pdfborder=0 0 0, % ..especially without red borders
@@ -2639,12 +2640,19 @@ found that there was a small difference where the local computer achieved about
 expected, with respect to the difference in \ac{CPU} power between the local
 computer and a single cluster instance \cite{cpubench}. 
 
-With 20 nodes in the cluster, we were able to test around 35 000 passwords per
-second, given \emph{PBKDF2} with 1000 iterations. Running the \ac{CDA} in a
-cluster of 200 nodes, would further reach a speed of 350 000 passwords per
-second. The latter case would in average use about 7 minutes and 20 seconds to
-crack a password with a length of 6 characters, consisting of only small
-letters.
+With 20 nodes in the cluster, we were able to test around 8600 passwords per
+second, given \emph{PBKDF2} with 4000 iterations. Running the \ac{CDA} in a
+cluster of 200 nodes, would further reach a speed of 86 000 passwords per
+second. Given a plain brute force attack with a speed of 86 000
+password per second, it will take around 2496 years in average to brute force a password
+with the password constraints in Section \ref{sec:PBKD}. Calculations are
+as follows.
+
+\begin{align*}
+\frac{62^9 \text{ passwords}}{86000 \text{ passwords/second}} &= 157407983096.09 \text{ seconds} \\
+\frac{157407983096.09}{60 * 60 * 24 * 365} &= 4991.37 \text{ years} \\
+\frac{4991.37}{2} &= 2495.69 \text{ years in average}
+\end{align*}
 
 At the time of writing, renting a single \emph{Amazon EC2 high-CPU extra large}
 instance costs 0.68 USD per hour. This unit price results in an hourly cost of
