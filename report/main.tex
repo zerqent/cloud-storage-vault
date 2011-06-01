@@ -126,28 +126,32 @@ design.\\
 %  creativity.
 
 Today, major IT-companies, such as Microsoft, Amazon and Google, are offering
-storage as a cloud service to their customers. This is a preferable solution to
-regular storage in terms of low hardware costs, reliability, scalability and capacity.
+online storage services to their customers. This is a favorable solution -- as
+opposed to regular storage -- in terms of low costs, reliability,
+scalability and capacity, but is often often lacking security features by not
+yielding data privacy and integrity.
 
-However, the idea of storing customer data by an untrusted cloud provider
-introduces the issue of data privacy and integrity. The customer is no longer in
-position to control the physical access to the stored data, and is therefore
-not guaranteed data privacy or integrity by the cloud provider.
+To address these issues, a cryptographic architecture is proposed, that ensures
+the confidentiality and integrity of the data stored by users, independent of
+the trust of the underlying provider. It also includes secure sharing of
+private data among customers of the same cloud provider. The scheme were
+further implemented in a proof of concept server and client.
 
-To solve this problem, we have proposed a solution that ensures
-privacy and integrity of customers' data stored by an untrusted cloud provider.
-The proposed solution does also support sharing of private data among customers
-of the same cloud provider. The solution has further been implemented as a
-proof of concept sever and Android client.
+The underlying cryptographic architecture were made based on existing open
+source systems and cryptographic primitives. The architecture were further
+implemented as a highly reusable general library in Java, and an Android client
+were created to be able to test performance on a constrained device.
 
-When implementing the solution, we first created an underlying framework to support the
-proposed and necessary cryptographic functionality. The framework was further
-utilized to implement an Android application, to test whether or not it provided
-suitable performance on a constrained device.
+In general, the proof of concept system performs well, and the additional
+cryptographic operations does not significantly affect the user experience on a
+constrained device. Potential weaknesses of the system are identified, and the
+\emph{weakest link} is derived as to be the password encrypted keyring stored
+on the client device.
 
-Application Results:
-
-Conclusion:
+We have presented a scheme for secure sharing of files on an untrusted server,
+and argued for its validity. To support streaming functionality, the scheme
+could be extended with hash trees to validate small parts of a file at the
+time.
 
 
 \chapter*{Preface}
@@ -2539,6 +2543,7 @@ individual, isolated operations in the process pipeline on the HTC Desire.
 \input{tables/performance_files_unencrypted.tex}
 \input{tables/result_desire_pinpoint.tex}
 
+
 We observe that the performance of the Android devices for uploads is severely
 lower for uploads than for downloads, and that this is not the case for the
 computer client. We also observe that the speed with encryption and hashing
@@ -2551,24 +2556,35 @@ part is the most time consuming operation.
 Table \ref{tbl:folder:createblank} shows the average time it takes to create an
 empty folder on the different devices. The Tables
 \ref{tbl:folder:serializefolder} and \ref{tbl:folder:encryptsign} shows the
-respective time it takes to serialize, encrypt and sign the folder. These three
-actions are what has to be performed every time a folder is changed, while the
-operation of creating a blank folder is added if the content should be added to
-a new folder. Table \ref{tbl:folder:verify} displays the time the devices used
-to verify an existing folder, a step which is taken by the client every time a
-folder is opened. Results noted as \emph{N/A} for the HTC Hero, is operations
-that lead to an \emph{Out of Memory} exception during execution.
+respective time it takes to serialize, encrypt and sign the folder. The
+encryption and signing of folders is also visualized in Figure
+\ref{fig:results:signencrypt}. These three actions are what has to be performed
+every time a folder is changed, while the operation of creating a blank folder
+is added if the content should be added to a new folder. Table
+\ref{tbl:folder:verify} displays the time the devices used to verify an
+existing folder, a step which is taken by the client every time a folder is
+opened. Results noted as \emph{N/A} for the HTC Hero, is operations that lead
+to an \emph{Out of Memory} exception during execution.
 
 \input{tables/result_perf_createblankfolder}
 \input{tables/result_perf_serializefolder}
 \input{tables/result_perf_encryptsignfolder}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{graph_signandencrypt.pdf}
+    \caption{Encrypt and sign a folder}
+    \label{fig:results:signencrypt}
+\end{figure}
 \input{tables/result_perf_verifyfolder}
 
 We observe that the slowest part of folders operations are the initial key
 generation and more important, the serialization speed. Verification,
-encryption and signing is pretty fast for all devices. We also note that our
-implementation struggle to handle folders with a certain amount of items on the
-HTC Hero.
+encryption and signing is pretty fast for all devices. We also note that the
+performance of signing and encryption as well as verification seems to increase
+(in bytes/time) as the amount of data gets larger. The serialization part is
+the exact opposite where performance drops when the amount of data gets larger.
+We also note that our implementation struggle to handle folders with a large
+amount of items on the HTC Hero.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
@@ -2887,19 +2903,21 @@ hinder duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
-\subsection{Supporting several cryptographic primitives} The main problem with
-selecting cryptographic primitives for our scheme is that one can not be sure
-how long a cipher, cryptographic hash function or signature scheme will remain
-secure. A recommended approach is to build systems that can easily change the
-cryptographic primitives if one is broken\cite{schneier}. The main problem with
-this approach is that if for instance \ac{AES} is broken and the cloud provider
-keeps backups of all user data on their server, that information is
-compromised. However, a quick change of a broken cryptographic primitive is
-preferable to secure future stored files. This is however not supported by our
-scheme.  A change of a cryptographic primitive in our scheme would lead to
-backward compatibility being broken, e.g. one would be unable to obtain files
-or folders stored before the change. This could be remedied by a meta-block for
-each file and folder, containing the cryptographic primitives. In addition the
+\subsection{Supporting Multiple Cryptographic Primitives} 
+
+The main problem with selecting cryptographic primitives for our scheme, is
+that one can not be sure how long a cryptographic cipher, hash function or
+signature scheme will remain secure. A recommended approach is to build systems
+that can easily change the cryptographic primitives, in case of discoveries
+enabling an attacker to break a primitive \cite{schneier}. The main problem
+with this approach is that if for instance \ac{AES} is broken, and the cloud
+provider keeps backups of all user data on their server, that information is
+compromised with regard to the provider.
+
+A change of a cryptographic primitive in our scheme would lead to backward
+compatibility being broken, e.g. one would be unable to obtain files or folders
+stored before the change. This could be remedied by a meta-block for each file
+and folder, containing the utilized cryptographic primitives. In addition, the
 capability would have to contain which cryptographic hash function that should
 be used, to be able to deduce the storage index from the key.
 
