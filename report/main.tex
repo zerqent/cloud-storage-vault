@@ -277,7 +277,7 @@ Eirik Haver, Eivind Melvold and Pål Ruud
 
 % TODO: Generic introduction
 
-The term \emph{Cloud Computing}, and the common shorthand \emph{The Cloud},
+The term \emph{Cloud Computing}, and the common short \emph{The Cloud},
 is not yet clearly defined \cite{clouddef}, but involves the provision of
 software or computational resources available by demand via the Internet.
 In a draft \cite{cloud_nistdef}, the \ac{NIST} defines cloud computing as:
@@ -3252,20 +3252,42 @@ application.
 \label{ch:conclusion}
 %**************************************%
 
-As it turns out, one of the greatest challenges when developing a secure cloud
-file system, is the choice and implementation of the cryptographic primitives.
-Good references and external recommendations can help, but only so far. Key
-distribution is also a problem that will always be hard to accomplish if a
-trusted third party is not included. Another challenge experienced is that all
-features one would want from a secure cloud file system are hard to implement
-without compromising security (searchable encryption, deduplication).
+The main purpose of this thesis was to create and implement a proof of concept
+solution to a secure cloud storage service. The scheme was to provide what we
+defined in Section \ref{sec:criteria} as a secure storage system. 
 
-This thesis propose a scheme for secure cloud storage based on Tahoe-\ac{LAFS},
-it also encompass an open source, free, implementation of this scheme, that
-works satisfiable on a constrained device, an Android smartphone.
+An important part of the proposed cryptographic scheme is based on a steady and
+secure functionality from TAHOE LAFS. With this in mind, and the use of
+cryptographic primitives, recommended in Section \ref{sec:cryptoprimitivechoice}, the proposed
+cryptographic scheme is believed to offer, what we defined as, a secure
+storage system. 
+
+In addition, findings in Section \ref{sec:R:BFLK} showed that the presumed weakest link of
+the system, the encrypted keyring, is able to withstand heavy brute force attacks. However,
+using a easy and commonly used password will make the keyring vulnerable to
+dictionary attacks. Measuring performance on constrained devices proved additionally that an
+acceptable level of usability was sustained while offering the desired security.
+
+In addition to security, the proposed cryptographic scheme does also support
+secure sharing of stored files, as well as an implementation of an enterprise
+use case scenario. An implementation of sharing, using barcode scanning to
+create trust between users, proved to sustain existing security. 
+
+When developing a secure cloud file system, one of the greatest challenges
+turned out to be the choice and implementation of cryptographic primitives.
+Good references and external recommendations can help, but only to a certain
+degree. Key distribution is also a problem that will always be hard to accomplish if a
+trusted third party is not included. Another challenge experienced is that all
+additional features desired from a secure cloud file system are hard to implement
+without compromising security. Searchable encryption and deduplication are
+examples of subjected features.
+
+%This thesis propose a scheme for secure cloud storage based on Tahoe-\ac{LAFS},
+%it also encompass an open source, free, implementation of this scheme, that
+%works satisfiable on a constrained device, an Android smartphone.
 
 While our scheme solves some of the basic challenges of secure cloud storage,
-there are several features which would improve the scheme. The most important
+there are several features that will improve the scheme. The most important
 being a better approach to verifying files, to allow streaming them, and the
 possibility of deleting files. For our implementation it would be interesting
 to see a modified version of this implemented to work directly with an existing
