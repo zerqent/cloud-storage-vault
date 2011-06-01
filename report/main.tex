@@ -284,8 +284,6 @@ June, 2011
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
-% TODO: Generic introduction
-
 The term \emph{Cloud Computing}, and the common short \emph{The Cloud},
 is not yet clearly defined \cite{clouddef}, but involves the provision of
 software or computational resources available by demand via the Internet.
@@ -1202,8 +1200,6 @@ these security features can actually be verified.
 \label{ch:technical}
 %**************************************%
 
-% TODO: Complete this
-
 This chapter will describe our original architectural and cryptographic
 scheme for providing secure storage of data on a remote untrusted system. It will
 further explain the procedures carried out to create a proof of concept
@@ -1625,10 +1621,9 @@ read key and the content is obtained.
 
 In addition to read the contents of a directory, the user might want to write
 to it as well. The process of doing this, is similar to initially creating the
-first directory. The key difference, is that the user has the write key in a
-capability, and must use this to decrypt the encrypted signing key which he
-downloads from the server, instead of generating a new one.
-% TODO: Is the sentence above making any sense?
+first directory. The key difference, is that the user already has the write key
+in the form of a capability, and must use this to decrypt the encrypted signing
+key which resides on the server, instead of generating a new one.
 
 A new \ac{IV} is generated, and the content of the folder is encrypted, and
 signed by the signing key. The fresh \ac{IV}, the signature and the encrypted
@@ -2284,23 +2279,24 @@ main objective, since that is what the client is primarily
 \input{tables/exp_hero.tex}
 \input{tables/exp_computer.tex}
 
-\subsection{What is Measured}
+\subsection{Measured Operations}
 
-The construction we use to encrypt, hash and upload \emph{files} is a pipeline
+The construction used to encrypt, hash and upload \textbf{files}, is a pipeline
 as described in Section \ref{sec:cryptoentities}. The interesting thing to
-measure is the overall speed of the pipeline compared to a simple file upload
-with no extra operations such as hashing and encryption. To try to pinpoint the
-exact bottlenecks in the pipeline we also measure the bandwidth we get from
-each of the operations in the pipeline on one of the Android devices, the HTC
-Desire.
+measure, is the overall speed of the pipeline, compared to a simple file upload
+with no \emph{extra} operations such as hashing and encryption. To try to
+pinpoint the exact bottlenecks in the pipeline, we also measure the bandwidth
+we get from each of the isolated operations in the pipeline on one of the
+Android devices, the HTC Desire.
 
-\emph{Folders} are relatively small in size, and the implementation is not a
+\textbf{Folders} are relatively small in size, and the implementation is not a
 pipeline. Compared to files, the heavy operations are done client side before
 the content is uploaded to the server. We therefore measure the speed of these
-operations, more specifically we measure:
+operations, more specifically the following:
 
 \begin{enumerate}
-    \item The average time it takes to create a folder (initial key generation)
+    \item The average time it takes to create a folder, i.e. initial key
+        generation
     \item The time it takes to encrypt and sign a folder, with varying amount
         of data
     \item The time it takes to verify a newly downloaded folder, with varying
@@ -2308,30 +2304,27 @@ operations, more specifically we measure:
     \item The time it takes to serialize a folder, with varying amount of data
 \end{enumerate}
 
-\subsection{How we Measure}
+\subsection{The Measurement Procedure}
 
 To test the bandwidth of the pipeline for files, we measure the incoming
-traffic to our server using the tool \emph{nload}\footnote{
-\url{http://www.roland-riegel.de/nload/}} during a file upload.  We measure the
-average bandwidth from a few seconds after the file upload has been started,
-until the file upload is nearly complete. Granted this does not take overhead
-such as the initial key generation into account, but for any file of some size
-this overhead should be neglectable.
+traffic to our server using the tool \texttt{nload}\footnote{
+\url{http://www.roland-riegel.de/nload/}} during a file upload. 
 
-% TODO: neglectable slår ut i stavekontrollen min!
+The average bandwidth are observed for a few seconds after the file upload has
+been started, until the file upload is nearly complete. This does not take
+overhead into consideration, such as the initial key generation, but for any
+file with a certain size this overhead should be neglectable.
 
-To test the different folder operations we have to measure in the program code,
-we do this by the use of the Java function
-\emph{System.currentTimeMillis()}
-\footnote{\url{http://download.oracle.com/javase/6/docs/api/java/lang/System.html\#currentTimeMillis()}},
-which we call before and after an operation and calculate the difference. When
-we test operations that are dependant on the contents of a folder we do this
-with folder entries of 86 Byte.
+To be able to test the different folder operations in the program code, we use
+the Java function \emph{System.currentTimeMillis()}, which we call before and
+after an operation, and calculate the difference to get the time spent. When we
+test operations that are dependant on the contents of a folder, we do this with
+a folder size of 86 bytes.
 
 \subsection{Eliminating Bottlenecks on Android Devices}
 
 On the Android devices, we identify three possible bottlenecks that we might be
-able to control: The \emph{network}, our \emph{application} by itself and the
+able to control: the \emph{network}, our \emph{application} by itself and the
 \emph{memory card}.
 
 The mobile phones will normally obtain their network connection through a
@@ -2347,7 +2340,6 @@ fragmented state \cite{sdcard}. The class number $X$ represents this guarantee
 in $X$ MB, so a Class 2 card guarantees a speed of 2 MB/s. However, there are
 the possibility that the card can perform significantly better than what the
 class number indicates.
-
 
 \subsection{Sources of Error}
 
@@ -2691,7 +2683,6 @@ described in detail, followed by subsections scrutinizing how the scheme does
 or does not support various features and functionality.
 
 \subsection{Influence of Tahoe-LAFS}
-%TODO: This subsection lacks the 'why' questions (and answers!)
 
 The general idea behind the development of the cryptographic scheme, was that
 we would use the scheme of Tahoe-\ac{LAFS} as a basis, and simplify it where
