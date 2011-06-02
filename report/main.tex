@@ -127,7 +127,7 @@ design.\\
 %  creativity.
 
 Today, major IT-companies, such as Microsoft, Amazon and Google, are offering
-online storage services to their customers. This is a favorable solution -- as
+online storage services to their customers. This is a favourable solution -- as
 opposed to regular storage -- in terms of low costs, reliability,
 scalability and capacity, but is often often lacking security features by not
 yielding data privacy and integrity.
@@ -240,7 +240,7 @@ June, 2011
 \acro{JRE}{Java Runtime Environment}
 \acro{JVM}{Java Virtual Machine}
 \acro{LAFS}{Least Authority File System}
-\acro{MAC}{Message Autentication Code}
+\acro{MAC}{Message Authentication Code}
 \acro{MITM}{Man-in-the-middle}
 \acro{NIST}{National Institute of Standards and Technology}
 \acro{OS}{Operating System}
@@ -303,7 +303,7 @@ provides, can be quite extensive.
 Today, we take the services that the established cloud providers offer us for
 granted. For example, both Google and Microsoft provides the services of online
 document editing, email, picture collections, file storage and a lot more for
-free, and available at anytime from anywhere \cite{googleservices,
+free, and available at any time from anywhere \cite{googleservices,
 microsoftservices}.
 
 However, this often comes at a cost of reduced privacy, as the control over the
@@ -334,7 +334,7 @@ or more features towards being, as we will define it, a completely secure
 storage solution.
 
 This situation has given motivation to implement a proof of concept
-application, that fulfills all of the criteria for what we define as a secure
+application, that fulfils all of the criteria for what we define as a secure
 cloud storage service.
 
 Additionally, we do also see this as a golden opportunity to learn more
@@ -439,7 +439,7 @@ concept application.
 \paragraph{SCRUM} We will work after SCRUM principles -- an iterative and
 incremental based framework for project management \cite{scrum}. There does not
 exist a SCRUM \emph{product owner} for the system we will create, nor do we
-fulfill the requirements and characteristics \cite{scrum} of a traditional
+fulfil the requirements and characteristics \cite{scrum} of a traditional
 SCRUM \emph{team}. Hence, we will use the principles that are practically
 possible for us to follow:
 
@@ -463,7 +463,7 @@ representation within a system.
 
 \noindent This principle can be taken further, as to not develop something that
 has already been developed in the past. If there exist a library for a given
-task that does fulfill the requirements set for the specific task, we will
+task that does fulfil the requirements set for the specific task, we will
 choose to utilize the library instead of developing similar code by ourselves.
 
 \section{Outline}
@@ -655,7 +655,7 @@ verifies that an entity approves with or has written a message. It can also
 verify the date the signature was made. In addition, it should be verifiable by
 a third party \cite[p.  379]{stallings}.
 
-It should logically not be possible, or at least unfeasible, to fake a digital
+It should logically not be possible, or at least infeasible, to fake a digital
 signature.
 
 The \ac{RSA} cipher can be used to generate signatures. In addition, there is also a
@@ -716,7 +716,7 @@ password, together with a randomly generated salt and a pseudorandom function
 \cite{rfc2898}. The function will combine these inputs in a specific way, and
 can repeat the process for a specified number of times, called the
 \emph{iteration count}. A higher iteration count results in a stronger key. The
-salt provides defense against a precomputed collection of keys, i.e. a
+salt provides defence against a precomputed collection of keys, i.e. a
 \emph{rainbow table}, in the sense that it will make sure that a password will
 not derive the same key if different salts are used.
 
@@ -1048,7 +1048,7 @@ The core components are suggested to support \emph{searchable encryption},
 \label{sec:existing}
 
 There are a number of existing solutions for storing data in the cloud,
-with more or less the functionality required to fulfill the problem
+with more or less the functionality required to fulfil the problem
 description for this thesis. The section highlights some of them.
 
 \subsection{Dropbox}
@@ -1531,7 +1531,7 @@ form the \ac{IV} for the file.
 
 Next, the file is hashed and the resulting digest is stored together with the
 encryption key in the capability. Lastly, the file is encrypted with the
-encryption key and the \ac{IV}, and is transfered to the server.
+encryption key and the \ac{IV}, and is transferred to the server.
 
 \begin{figure}[h!]
     \centering
@@ -1748,7 +1748,7 @@ performance on most devices.
 \paragraph{Password requirements}
 
 If we assume every password can only consist of the English letters, both
-uppercase and lowercase, and the numbers 0-9, there exists $62^n$ different
+upper-case and lower-case, and the numbers 0-9, there exists $62^n$ different
 passwords for a password of length $n$. With the stated theoretical results of
 1 million passwords per second, this means that any password of length 6, 7 and
 8 is cracked in about 0.66, 40 and 2527 days respectively.
@@ -1880,7 +1880,7 @@ application uses to return data to the requesting user via the server.
 
 \paragraph{Pyroutes} To adhere to the \ac{DRY} principles, we chose to make use
 of a micro framework around \ac{WSGI} called
-Pyroutes\footnote{\url{http://www.pyroutes.com/}}. It provides shortcuts for the
+Pyroutes\footnote{\url{http://www.pyroutes.com/}}. It provides short cuts for the
 most frequently used functionality when developing web services, as that of
 \ac{URL} handling and processing of submitted user data in the form of
 \texttt{GET} and \texttt{POST} requests.
@@ -2163,7 +2163,7 @@ meet and do the capability exchange again. The identity has thus been verified.
 
 Using more clients, or different devices, is almost the exact same as sharing,
 and is solved in the same manner. The only difference is that the capability
-that needs to be transfered, is that of the \emph{root folder}. It is also
+that needs to be transferred, is that of the \emph{root folder}. It is also
 possible to take any other folder and use as a new root for the new client if
 that is the users wish.
 
@@ -2876,7 +2876,7 @@ level.
 \paragraph{Privacy} Implicitly, using deduplication globally -- i.e. for the
 whole system, for all users -- gives any user of the system the possibility to
 check a file for existence. This could for instance be utilized by anti piracy
-companies working for the movie industry, by first uploading a file known to be
+companies working for the film industry, by first uploading a file known to be
 illegally spread over the Internet, and then see if it takes next to nothing
 time to upload it to the server. If this is the case, they can file a petition
 to get the company hosting the server to yield the contact information for the
@@ -2927,7 +2927,7 @@ be used, to be able to deduce the storage index from the key.
 \section{Implementation}
 \label{sec:DIS:impl}
 
-This section will discuss and deal with the different choices taken to fulfill
+This section will discuss and deal with the different choices taken to fulfil
 the implementation of the cryptographic scheme. We will start by discussing the
 use case we chose to implement. Further on, we will analyse our choice of key
 distribution and look at alternative solutions. The section will end by a
@@ -3211,11 +3211,11 @@ right after a successful login session.
 Even though this mechanism prevents disclosure of critical access data in the
 event of loosing a client, it does not prevent a logged in attacker from
 disclosing the user's encrypted files and folders. To reduce this problem, the
-client software could implement a timeout mechanism for inactive users. If a
+client software could implement a time out mechanism for inactive users. If a
 user has been inactive for a reasonable given time interval, the user should be
 logged out of the application. 
 
-\paragraph{Downloaded Files} Even though a timeout value may deny an attacker
+\paragraph{Downloaded Files} Even though a time out value may deny an attacker
 access to the storage vault, it can not prevent the attacker from accessing
 files that have already been downloaded from the system. There is, however, two
 ways of handling this problem.
@@ -3450,7 +3450,7 @@ A class named \texttt{Processor} initializes the \ac{CDA} attack by configuring
 the mapper and reducer tasks. The number of mappers is set equal to the number
 of nodes used in the cluster. This is to ensure that each machine only runs one
 mapper at a time. The number of reducers are set to zero, because their
-behavior in MapReduce is not needed.
+behaviour in MapReduce is not needed.
 
 \paragraph{Notice} The for-loop at Line 10 in Listing \ref{lst:mapfunc}
 requires the number of words per line, in the dictionary, to be equal to a
