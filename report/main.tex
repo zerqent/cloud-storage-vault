@@ -145,9 +145,8 @@ several performance tests were conducted.
 
 The proof of concept system shows that it is possible to implement the proposed
 scheme and that the cryptographic operations does not significantly affect the
-user experience on an Android device. Potential weaknesses of the system are
-identified, and the \emph{weakest link} is derived as to be the password
-encrypted keyring stored on the client device.
+user experience on an Android device. Weaknesses of the scheme are identified,
+and the key that has to be stored client side is found to be the greatest risk.
 
 We have presented a scheme for secure storage and sharing of files on an
 untrusted server, and argued for its validity. To support streaming
@@ -248,7 +247,6 @@ June, 2011
 \acro{PEP}{Python Enhancement Proposal}
 \acro{PGP}{Pretty Good Privacy}
 \acro{PKI}{Public Key Infrastructure}
-\acro{PoC}{Proof-of-concept}
 \acro{QR}{Quick Response}
 \acro{RAM}{Random Access Memory}
 \acro{ROM}{Read Only Memory}
@@ -408,7 +406,7 @@ However, due to time and resource constraints, we will focus less on the followi
 \end{itemize}
 
 \section{Methodology}
-
+\label{methodology}
 The work behind this thesis, is carried out by the three authors in
 cooperation. The methodology used, can be categorized based on the three main
 parts of this work; the \emph{research}, the \emph{design and abstraction}
@@ -648,10 +646,10 @@ to other \acp{VM} on the same host \cite{cloud_getoff}. The highest risk of
 this is in a public cloud where almost anyone can gain access.
 
 
-\section{Cryptographic Primitives}
+\section{Cryptographic Primitives and Applications}
 
-This section describes the low level security primitives used throughout this
-thesis.
+This section describes the low level security primitives and applications used
+throughout this thesis.
 
 \subsection{Randomness}
 
@@ -747,8 +745,26 @@ with a message -- i.e. it authenticates the message. A \ac{MAC} can be
 constructed in different ways. One example is H\ac{MAC} which constructs the
 \ac{MAC} using a secret key, the message and a hash function \cite{rfc2104}. 
 
-\section{Applications of Cryptographic Primitives}
-% TODO: intro
+\subsection{Key Derivation Functions}
+\label{sec:PBKDF2}
+
+A key derivation function is a function which takes a key, a password, a
+passphrase or similar, and creates a new key from it. One of the applications
+of such a function, is to create a stronger key from a weaker key, such as a
+password. This technique is called \emph{key stretching}. The process
+involves making the derivation of a key from a password an expensive process
+in terms of computing power, which in turn makes it more resistant to brute
+force attacks.
+
+\ac{PBKDF2} is a key derivation function that utilizes key stretching. It uses a
+password, together with a randomly generated salt and a pseudorandom function
+\cite{rfc2898}. The function will combine these inputs in a specific way, and
+can repeat the process for a specified number of times, called the
+\emph{iteration count}. A higher iteration count results in a stronger key. The
+salt provides defence against a precomputed collection of keys, i.e. a
+\emph{rainbow table}, in the sense that it will make sure that a password will
+not derive the same key if different salts are used.
+% TODO: gjør pbkdf2 konsekvent
 
 \subsection{Digital Signatures}
 
@@ -798,25 +814,6 @@ and primitives, but a digital certificate is required for authentication.
 To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
 \ac{HTTPS}.
 
-\subsection{Key Derivation Functions}
-\label{sec:PBKDF2}
-
-A key derivation function is a function which takes a key, a password, a
-passphrase or similar, and creates a new key from it. One of the applications
-of such a function, is to create a stronger key from a weaker key, such as a
-password. This technique is called \emph{key stretching}. The process
-involves making the derivation of a key from a password an expensive process
-in terms of computing power, which in turn makes it more resistant to brute
-force attacks.
-
-\ac{PBKDF2} is a key derivation function that utilizes key stretching. It uses a
-password, together with a randomly generated salt and a pseudorandom function
-\cite{rfc2898}. The function will combine these inputs in a specific way, and
-can repeat the process for a specified number of times, called the
-\emph{iteration count}. A higher iteration count results in a stronger key. The
-salt provides defence against a precomputed collection of keys, i.e. a
-\emph{rainbow table}, in the sense that it will make sure that a password will
-not derive the same key if different salts are used.
 
 \section{Research on Security in Cloud Computing}
 \label{sec:research}
@@ -1252,8 +1249,9 @@ objects. This could potentially be done client side, but a problem arises if
 the user wants to use several terminals. Thus, we introduce the \emph{root
 folder}, a folder from which all other files and folders can be reached. The
 user will only need to know of one single capability to reach all his stored
-data. The resulting structure is a directed graph, as illustrated in Figure
-\ref{fig:AS:filesystem}.
+data. This capability has to be stored in a secure manner, e.g. in an
+\emph{encrypted keyring}. The resulting structure is a directed graph, as
+illustrated in Figure \ref{fig:AS:filesystem}.
 
 \begin{figure}[h!]
     \centering
@@ -1471,6 +1469,7 @@ software. Since it might happen that this terminal is either broken in to,
 lost or stolen, precautions should be taken to protect the capability on the
 device. The normal approach to this, is by using password protection.
 
+% TODO: Her anbefaler vi 10 tegn, senere anbefaler vi mindre
 The strength of a password is related to its length and randomness properties.
 Passwords shorter than 10 characters are usually considered to be weak
 \cite{pbkdf_nist}. In the event of loosing one of the clients, and thus the
@@ -1670,9 +1669,9 @@ compared to single, is to prevent a length-extension attack \cite{schneier}.
 
 \subsubsection{Signature Algorithm}
 
-For a signature scheme, the standard seems to be either \ac{RSA} or \ac{DSA}.
-Both functions would work, but we recommend \ac{RSA}, primarily because
-Tahoe-\ac{LAFS} made the same choice.
+For a signature scheme, the most commonly used algorithm seem to be either
+\ac{RSA} or \ac{DSA}.  Both functions would work, but we recommend \ac{RSA},
+primarily because Tahoe-\ac{LAFS} made the same choice.
 
 There might however be a performance bonus in selecting \ac{RSA}. An internet
 draft \cite{dsa_sha2} suggests that \ac{DSA} is about three times faster than
@@ -1689,17 +1688,17 @@ used in \ac{RSA}.
 \subsubsection{\ac{MAC}}
 
 The use of the \ac{MAC} function in \ac{CSV} is somewhat special. The
-definition states that MAC function is used for authenticating messages.  As
-depicted in Figure \ref{fig:CS:CD}, the result of the \ac{MAC} function is
+definition states that a MAC function is used for authenticating messages.  As
+depicted in Figure \ref{fig:CS:CD}, the output of the \ac{MAC} function is
 another key. By presenting this key, a user verifies \emph{to the server} that
-he is in posession of the write key for a folder and thereby his is
-authenticated and authorized to change the folder contents. The main difference
-between the ``normal" use of a \ac{MAC} is that the user will always present
-the same \ac{MAC} for the same folder.
+he is in possession of the write key for a folder and thereby authenticated and
+authorized to change the folder contents. The key difference is that the
+\ac{MAC} is used to verify that a user has write access, and not the contents
+of the message sent.
 
 Because of the usage of the \ac{MAC} as a simple key derivation function, the
 most important factor to consider when choosing a primitive, is that it should
-be infeasible to go from the result back to the origin key. On the basis of
+be infeasible to go from the result, back to the original key. On the basis of
 this, \citet{schneier} recommend HMAC-SHA256.
 
 \subsubsection{Password Based Key Derivation} 
@@ -1707,10 +1706,10 @@ this, \citet{schneier} recommend HMAC-SHA256.
 
 To protect the secret that has to be stored on the terminal of the users, our
 recommendation is the key derivation function \ac{PBKDF2}, as backed up by the
-\ac{NIST} \cite{pbkdf_nist}. The iteration count for \ac{PBKDF2} should be as
-high as possible, while at the same time maintaining acceptable performance,
-and the salt length should be at least 128 bit and randomly generated
-\cite{pbkdf_nist}. 
+\ac{NIST} \cite{pbkdf_nist}. The iteration count for \ac{PBKDF2} is recommended
+to be as high as possible, while at the same time maintaining acceptable
+performance, while the salt length should be at least 128 bit and randomly
+generated. 
 
 To come up with a secure recommendation, we looked at the usage of \ac{PBKDF2}
 in \ac{WPA}, and what security it provides against brute force attacks.
@@ -1720,9 +1719,12 @@ force attack against \ac{WPA} was published on Black Hat DC 2011 by a security
 researcher named Thomas Roth. He proved that anyone can crack \ac{WPA}
 passwords with a speed of up to about 400 000 passwords per second, using
 multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
-findings also indicate that Amazon them selves can reach an even higher unknown
+findings also indicate that Amazon themselves can reach an even higher unknown
 brute force speed. The same researcher has also hinted that he might be able to
 reach 1 million keys per second on the same equipment \cite{rothblog}.
+
+% TODO: Det beste hadde egentlig vært at hver enkel klient setter noe som er
+% greit for den klienten.
 
 With this in mind, we recommend at least the same amount of iterations to be
 used in our scheme as in \ac{WPA}, i.e. 4096. This should yield acceptable
@@ -1741,9 +1743,9 @@ a random password, which is probably not true either. A more realistic setting
 is that the attacker uses some dictionary, and that a user's password is not
 strictly random. By this rationale, it is more important to be safe than sorry,
 and for password guidelines we therefore recommend:
-
+% TODO: Dette må henge på greip med evt tidligere 
 \begin{itemize}
-\item Password length >= 9.
+\item Password length $>= 9$.
 \item Password must include at least one capital letter, one small letter and
 one number.
 \end{itemize}
@@ -1751,19 +1753,19 @@ one number.
 \section{Server Implementation}
 
 The server, in the most basic form, has to support two operations -- sending
-and receiving files. In addition, an \ac{ACL} layer is needed to support user
-management and access control to able to allow the deletion of files from the
-server.
+and receiving files. In addition, an extra layer is needed to support user
+management and access control to able to allow modification of folders.
 
 \subsection{Communication and Architectural Patterns}
 
 By definition, cloud applications are accessible over the Internet. The system
 we are creating, should be able to send and receive files and information from
 a server in the cloud. The \acf{HTTP} is the foundation of data communication
-for the World Wide Web, it is well tested, will pass through most firewalls and
-has a multitude of libraries in programming languages. To get a working server
-we can also use any existing web server as a foundation, which saves a lot of
-work. Thus \ac{HTTP} was chosen as our communication protocol.
+for the World Wide Web. The protocol is well tested, will pass through most
+firewalls and has a multitude of available libraries in programming languages.
+To get a working server, we can also use any existing web server as a
+foundation, which will decrease total development time. Thus, \ac{HTTP} was
+chosen as our communication protocol.
 
 \subsubsection{\acs{REST}} The Web is built around an architectural style called
 \ac{REST} \cite[ch. 5]{fielding}, which is defined by four interface
@@ -1772,12 +1774,11 @@ representations, self-descriptive messages, and, hypermedia as the engine of
 application state. In addition, \ac{REST} dictates five\footnote{And one
 optional, Code on demand, which is not applicable for our system.} architectural
 constraints \cite{fielding}. Our server application adheres to these
-constraints or \emph{patterns} as follows:
+constraints, or \emph{patterns}, as follows:
 
 \begin{description}
   \item[Client-server] \hfill \\
-    The server is our server application, and the client is the various client
-    applications,
+    This server will be the server part of the client-server pattern.
 
   \item[Stateless] \hfill \\
     Since the server is just a simple key-value file store, it does
@@ -1785,7 +1786,7 @@ constraints or \emph{patterns} as follows:
 
   \item[Cacheable] \hfill \\
     The server could easily add caching, by putting each encrypted file in
-    memory as downloaded, and using the Least-Frequently Used algorithm for
+    memory as downloaded, and e.g. using the Least-Frequently Used algorithm for
     choosing which items to swap out. In addition, for every update of a folder,
     the corresponding cache item has to be marked as invalid.
 
@@ -1795,8 +1796,9 @@ constraints or \emph{patterns} as follows:
 
   \item[Uniform interface] \hfill \\
     The interface between clients and server(s) are given by the URI scheme in
-    Table \ref{tbl:IM:restinterface}. When a folder is uploaded a Write Enabler
-    must also be provided together with the storage index..
+    Table \ref{tbl:IM:restinterface}. A Write Enabler
+    must also be provided together with the storage index when a folder is
+    uploaded.
 \end{description}
 
 \begin{figure}[h!]
@@ -1828,10 +1830,10 @@ whole. Thus, the server application are designed in a \acs{REST}ful manner.
 \subsubsection{Network Security} Since we are utilizing \ac{HTTP}, we can
 easily add an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more
 difficult for potential attackers to intercept messages, and also provides
-protection against the most basic form of \ac{MITM} attacks. It also provides
-protection against eavesdropping, which would have revealed the Write Enabler
-for folders and could be used by an attacker to delete user files. The top-most
-layer of Figure \ref{fig:IM:layers} thus refers to \ac{TLS}.
+protection against the \ac{MITM} attacks. It also provides protection against
+eavesdropping, which would have revealed the Write Enabler for folders and
+enabling an attacker to delete folders. The top-most layer of Figure
+\ref{fig:IM:layers} thus refers to \ac{TLS}.
 
 \subsection{Environment}
 
@@ -1855,14 +1857,15 @@ specifies both sides of the interface -- the \emph{application} and the
 \emph{server}. The server side is implemented in the form of an Apache
 module, namely \texttt{mod\_wsgi}, and the application is where we put our
 code.
+% TODO: PEP Skal være kilde
 
-For each of the requests the server (i.e. \texttt{mod\_wsgi}) receives, a call
+For each of the requests the server receives, a call
 to the application function is made with two arguments -- a data structure
 containing the environment variables, and a callback function for which the
 application uses to return data to the requesting user via the server.
 
 \paragraph{Pyroutes} To adhere to the \ac{DRY} principles, we chose to make use
-of a micro framework around \ac{WSGI} called
+of an open source micro framework around \ac{WSGI}, called
 Pyroutes\footnote{\url{http://www.pyroutes.com/}}. It provides short cuts for the
 most frequently used functionality when developing web services, as that of
 \ac{URL} handling and processing of submitted user data in the form of
@@ -1870,6 +1873,8 @@ most frequently used functionality when developing web services, as that of
 
 Pyroutes did not, however, support the HTTP \texttt{PUT} request, so this was
 implemented and contributed back to the project.
+
+% TODO: Referer til commit/ticket
 
 \subsection{Implementation Details}
 
@@ -1910,50 +1915,48 @@ database.
 \lstinputlisting[language=Python,breaklines=false,label=lst:IM:get, caption=URL mapping in fileserver.py]
 {listings/fileserver.py}
 
-\subsubsection{\acs{ACL} functionality}
+\subsubsection{Authorization functionality}
 
-The only \ac{ACL} functionality implemented, is the server-side verification
-that a client has proper access to overwrite a file, e.g. when a client wishes
-to update a folder with new contents. We call this \textbf{Write-Enabler
-Verification}.
+The only functionality of the authorization layer implemented, is the
+server-side verification that a client has proper access to overwrite a folder,
+e.g. when a client wishes to update a folder with new contents.
 
-When a client first uploads a new folder, it also provides a
-\emph{Write-Enabler Key}, which the server adds to the database along with the
-\emph{Storage Index} of the folder.  For every subsequent request to write to a
-file with this specific Storage Index, the server verifies that the provided
-Write-Enabler Key is equal to that in the database.
+When a client first uploads a new folder, it provides a \emph{Write enabler},
+which the server adds to the database along with the \emph{Storage Index} of
+the folder.  For every subsequent request to write to this folder, the server
+verifies that the provided Write enabler is equal to that in the database.
 
-If a client tries to put a file with a Storage Index that already exists, the
-server replies with an error code if the client in addition does not provide a
-valid Write-Enabler Key.
+If a client tries to put a folder with a Storage Index that already exists, the
+server replies with an error code if the client in addition does not provide
+the correct Write enabler.
 
 \section{Client Implementation - Android}
 
-The \ac{PoC} client we have implemented, is made for devices using the Android
-operating system, which is based on Linux. The \ac{SDK} for making Android
-applications, is essentially a somewhat modified version of Java.
+The proof of concept client we have implemented, is made for devices using the
+Android operating system, which is based on Linux. The \ac{SDK} for making
+Android applications, is essentially a somewhat modified version of Java.
 
 Most devices that use the Android operating system are mobile phones or
-tablets, which implies that they are limited in terms of speed and
-memory. The point of making the \ac{PoC} client for such a device, i.e. a
+tablets, which implies that they are limited in terms of computational power
+and memory. The point of making the client for such a device, i.e. a
 \emph{smart phone}, is the growing availability, and the flexibility these
-devices provide. A user carries the device everywhere, it has a network
-connections, and it is always on.
+devices provide. A user carries the device everywhere, it provides network
+connectivity, and is almost always on.
 
 A nice side effect of developing on a smart phone platform, is that if the
-software performs well on a constrained device, it will almost certainly also
-have good performance on any faster device as well.
+software performs well on a constrained device, it will almost certainly
+perform just as well on any faster device.
 
 \subsection{Environment}
 
-The \ac{PoC} client was made on the Android platform and written in the Java
-programming language, together with a set of frameworks. The rationale for
-these are as follows.
+The client was made on the Android platform and written in the Java programming
+language, together with a set of frameworks. The rationale for these are as
+follows.
 
 \paragraph{Android} The Android operating system is made by Google, and is most
 commonly found on mobile phones and tablets. The platform choice of Android was
 done based on hardware availability and familiarity with developing on the
-platform and the programming language (Java).
+platform and the programming language.
 
 \paragraph{Java} Java is a high-level, object-oriented programming language.
 Applications written in Java runs in a \ac{JVM}, which implies that a Java
@@ -1968,19 +1971,21 @@ tool transforms them to another class file format called \texttt{.dex}
 \paragraph{HttpComponents} Apache HttpComponents are a set of libraries for
 \ac{HTTP} transport in Java. The part used in our client is called HttpClient.
 Android incorporates parts of this client in its runtime environment. The use
-of this library adheres to the \ac{DRY} principles.
+of this library adheres to the \ac{DRY} principles as defined in Section
+\ref{methodology}.
 
 \paragraph{\ac{JCA}} \ac{JCA} is an architecture for doing cryptographic
 operations in Java. The architecture is based on principles of implementation
 independence, implementation interoperability and algorithm extensibility.
-Basically what this means, is that each implementation of the \ac{JVM} can have
-different implementations of the cryptographic primitives, but the developer
-does not need to know which implementation is available.
+Basically what this means, is that each \ac{JVM} can have different
+implementations of the cryptographic primitives, but the developer does not
+necessarily need to know which ones are available.  
 
-\paragraph{ZXing Barcode Scanner} ZXing Barcode Scanner is a popular Android
-application which can be used by other Android applications to both scan and
-generate barcodes. By the use of this application, we adhere to the \ac{DRY}
-principles, by not creating our own code to generate barcodes.
+\paragraph{ZXing Barcode Scanner} ZXing Barcode Scanner\footnote
+{\url{http://code.google.com/p/zxing/}} is a popular Android application which
+can be used by other Android applications to both scan and generate barcodes.
+By the use of this application, we adhere to the \ac{DRY} principles by not
+creating our own code to generate barcodes.
 
 \subsection{Architectural Patterns}
 
@@ -1993,26 +1998,25 @@ the input of the next element. We use this for file uploads and downloads to
 limit the memory usage of the client, as well as to increase performance.
 
 \paragraph{Asynchronous Pattern} We use asynchronous calls to slow operations
--- e.g. file upload and key generation -- extensively, to prevent the interface
-from hanging and to deliver a smoother user experience in general.
+-- e.g. file upload and key generation -- extensively, to prevent the user
+interface from hanging and to deliver a smoother user experience in general.
 
 \subsection{Implementation Details}
 \label{sec:cli:impl:det}
 
 \subsubsection{Structure}
-% Package Structure, some nice UML (?)
-% Which qualities do we wish to achive? Security, Performance, Usability
-
 The source of our client is logically separated into two entities --
-\textbf{CSVlib} and \textbf{CSVAndroid}. CSVlib is a pure Java library which
+\texttt{CSVlib} and \texttt{CSVAndroid}. \texttt{CSVlib} is a pure Java library which
 contain the necessary entities, cryptographic operations and communication
-calls required for the client. CSVAndroid contains primarily a graphical user
-interface to make use of CSVlib on an Android device.
+calls required for the client. \texttt{CSVAndroid} contains primarily a graphical user
+interface to make use of \texttt{CSVlib} on an Android device.
 
-\subsubsection{Cryptographic Entities}
-\label{sec:cryptoentities}
-All the cryptographic entities -- namely folders, files and capabilities -- are all
-part of CSVlib. Their relationship can be seen in Figure \ref{fig:CSVlib:overview}.
+\subsubsection{Cryptographic Entities} 
+\label{sec:cryptoentities} 
+
+All the cryptographic entities -- namely folders, files and capabilities -- are
+all part of \texttt{CSVlib}. Their relationship can be seen in Figure
+\ref{fig:CSVlib:overview}.
 
 \begin{figure}[h!]
     \centering
@@ -2022,13 +2026,13 @@ part of CSVlib. Their relationship can be seen in Figure \ref{fig:CSVlib:overvie
 \end{figure}
 
 \paragraph{Capabilities} Capabilities are containers for
-cryptographic keys and information to identify a corresponding object. A
-capability will contain information to identify an object as either a file or a
+cryptographic keys and information to identify a corresponding object. They
+will will contain information to identify an object as either a file or a
 folder, and have the information to read, write or verify that object.
 
-Capabilities are stored server side in folders, in it's serialized form shown
+Capabilities are stored server side in folders in its serialized form shown
 in Figure \ref{fig:CAP:serial}. \emph{Object Type} specifies if the capability
-represents a file or a folder, with values \emph{F} or \emph{D}
+represents a file or a directory, with values \emph{F} or \emph{D}
 respectively.
 
 \begin{figure}[h!]
@@ -2038,11 +2042,10 @@ respectively.
     \label{fig:CAP:serial}
 \end{figure}
 
-\emph{Key Type} specifies the permissions the key will grant on the object and
-can be either \emph{RO} (Read Only), \emph{RW} (Read and write) or \emph{V}
-(Verify).
+\emph{Key Type} specifies the permissions the key will grant on the object, and
+can be either \emph{RO} (Read Only) or \emph{RW} (Read and write).
 
-The different parts are separated by the character \textbf{:}. The key and
+The different parts are separated by the colon character. The key and
 verify string are encoded in Base32, which means that the 128 bits these
 strings are represented by, will be replaced by an alphabet of 32 different
 symbols, namely A-Z and 2-7. This transformation will give some overhead in
@@ -2051,7 +2054,7 @@ with few mistakes or misunderstandings.
 
 \paragraph{Folders}
 
-A folder is represented by the class \textbf{CSVFolder}. A CSVFolder object is
+A folder is represented by the class \texttt{CSVFolder}. A \texttt{CSVFolder} object is
 a collection of aliases and their corresponding capabilities. For
 the most part, the data stored in a folder is so small that it can easily live for
 as long as needed in the memory of the client.
@@ -2063,13 +2066,12 @@ itself is also serialized.
 
 \paragraph{Files}
 
-A file is represented by the class \textbf{CSVFile}. While a folder in general is small,
-a file can be of any size, even larger than the space the \ac{RAM} on the
-device itself represents.
+A file is represented by the class \texttt{CSVFile}. While a folder in general is small,
+a file can be of any size, even larger than the \ac{RAM} on the device.
 
 To keep the memory footprint low, we use the pipe-and-filter architectural
-pattern to stream data all the way from the cloud to the disk, or vice versa,
-through encryption and verification.
+pattern to stream data all the way from the server to the device, or vice
+versa, through encryption and verification.
 
 An example of how we do this for uploads is shown in Listing
 \ref{lst:inputstream}.
@@ -2077,29 +2079,30 @@ An example of how we do this for uploads is shown in Listing
 \lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a file]
 {listings/fileupload_example.java}
 
-The \emph{InputStreams} are chained together, with the effect that a read from
-\emph{readBuffer} will trigger a read trough the whole pipe. The
-\emph{DigestInputStream} will update the state of the hash function, but is
-transparent in the sense that whatever goes into the stream will also be what
-comes out. The \emph{CipherInputStream} on the other hand, will output an encrypted
-stream of the data from the file. Buffers are placed between each step of the
-stream for some performance increase.
+The \texttt{InputStreams} are chained together, with the effect that a read
+from \texttt{readBuffer} will trigger a read trough the whole pipe. The
+\texttt{DigestInputStream} will update the state of the hash function, but is
+transparent in the sense that what goes into the stream will also be what comes
+out. The \texttt{CipherInputStream} on the other hand, will output an encrypted
+stream of the data from the file. To handle different input/output speeds,
+buffers are placed between each step of the stream to gain some performance.
 
 \subsubsection{Communication with Server}
 % Do not repeat what is said in Server equivalent section
 % Apache commons, Serialization of objects
 
-For \ac{HTTP} transport we utilize the Apache Software Foundations
-HttpComponents Client\footnote{ \url http://hc.apache.org/} also known as
-HttpClient.
+For \ac{HTTP} transport, we utilize the Apache Software Foundations
+HttpComponents Client\footnote{ \url http://hc.apache.org/}, also known as
+HttpClient. This Client offers support for authenticated requests to a server, and both
+upload and download through \texttt{PUT} and \texttt{GET} requests
+respectively.  
 
-This Client offers support for authenticated requests to a server, and both
-upload and download through \textbf{PUT} and \textbf{GET} requests respectively.
 We wrap communication with the server in two classes,
 \texttt{Communication.java} and \texttt{CSVFileManager.java}.
 \texttt{Communication.java} provides functionality for sending and retrieving
 data from our server, while \texttt{CSVFileManager.java} provides specific
-methods for sending and receiving the encrypted objects, CSVFile and CSVFolder.
+methods for sending and receiving the encrypted objects, \texttt{CSVFile} and
+\texttt{CSVFolder}.
 
 \subsection{Sharing}
 % Sequence Diagram - How we use the cryptographic solutions (and which ones) to
@@ -2113,11 +2116,12 @@ you are actually sharing with the correct person. The data, or \emph{secret},
 that will have to be shared, is a serialized form of the capability of the
 shared folder, as shown in Figure \ref{fig:CAP:serial}.
 
-The client supports two methods of doing this. The most cumbersome
-is having to manually copying the key from one users client to another, and
-afterwards verifying that the key for the selected folder is correct. An example
-of this can be seen in Figure \ref{fig:CSVAndroid:manualimport}. This feature
-is also needed to support out-of-band methods for establishing a share.
+The client supports two methods of doing this. The most cumbersome is having to
+manually copy the key from one user's client to another, and afterwards verify
+that the key for the selected folder is correct. An example of this can be seen
+in Figure \ref{fig:CSVAndroid:manualimport}. This feature is also needed to
+support out-of-band methods for establishing a share, e.g. through the use of
+\ac{PGP}.
 
 \begin{figure}[h!]
     \centering
@@ -2126,8 +2130,8 @@ is also needed to support out-of-band methods for establishing a share.
     \label{fig:CSVAndroid:manualimport}
 \end{figure}
 
-The other possibility is to make use of a \emph{\ac{QR} code}, which is a matrix
-barcode that can store information. What this means is that one user will
+The other possibility is to make use of a \emph{\ac{QR} code}, which is a
+matrix barcode that can store information. This means that one user will
 generate a barcode on his device, and the other user can scan that code using
 the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
 this code will look. The barcode contains both the key and the verification for
@@ -2146,22 +2150,22 @@ meet and do the capability exchange again. The identity has thus been verified.
 
 Using more clients, or different devices, is almost the exact same as sharing,
 and is solved in the same manner. The only difference is that the capability
-that needs to be transferred, is that of the \emph{root folder}. It is also
-possible to take any other folder and use as a new root for the new client if
-that is the users wish.
+that needs to be transferred, is that of the root folder. It is also possible
+to take any other folder and use as a new root for the new client if that is
+the wish of the user.
 
 \subsection{Securing the Client}
 
 For a user to access his root folder, the client will have to know the
-capability of that folder. This is clearly to much for a user to remember, so
-the capability will have to be stored on the client. However, the client might
-be stolen or broken into by some means, and if the capability is stored in
-clear text, it is easily stolen.
+capability of that folder. This is clearly too much random data for most users
+to remember, so the capability will have to be stored on the client.  The
+client might be stolen or broken into by some means, and if the capability is
+stored in clear text, it is easily compromised. We therefore implement a local
+encrypted keyring which contain this capability. We use \ac{PBKDF2} together
+with a user defined password to derive the encryption key, and encrypt the
+keyring using \ac{AES}-256.
+% TODO: Litt avhengig hvor mye vi skal si om PBKDF2. Sjekk AEs-256
 
-We partially remedy this by the use of the \ac{PBKDF2} algorithm, which makes
-an encryption key from a password. This generated key is used to encrypt the
-root capability in a file stored on the client. We call this the encrypted
-keyring.
 
 \subsection{User Interface}
 % goal: As easy as possible!
@@ -2178,14 +2182,14 @@ in the client.
 \paragraph{Main Screen}
 
 The main screen of the application is shown in Figure
-\ref{fig:CSVAndroid:mainscreen}. However, before the user gets to this screen,
-he will have to unlock his local keyring with his password. If it is the first
-time the user starts the application, he will have to enter his online
-credentials, and gets a choice to either import an existing root folder, or to
-generate a new one. In both cases the user will have to choose a password to
-encrypt the root capability in to the local keyring. From the main screen the
-most common action would be to \emph{Browse the vault} -- in other words to see
-the files that the user has stored in the cloud.
+\ref{fig:CSVAndroid:mainscreen}. Before the user gets to this screen, he will
+have to unlock his local keyring with his password. If it is the first time the
+user starts the application, he will have to enter his online credentials, and
+gets a choice to either import an existing root folder, or to generate a new
+one. In both cases the user will have to choose a password to encrypt the root
+capability in to the local keyring. The most common action from the main screen
+would be to \emph{Browse the vault} -- in other words to see the files that the
+user has stored on the server.
 
 \begin{figure}[h!]
     \centering
@@ -2196,7 +2200,7 @@ the files that the user has stored in the cloud.
 
 \paragraph{Browse the Cloud}
 
-The interface for browsing the files stored in the cloud is made in what we
+The interface for browsing files stored in the cloud, is made in what we
 understand as a common and understandable way of interpreting users actions on
 the android platform, and can be seen in Figure
 \ref{fig:CSVAndroid:remotebrowse}. Tapping a file will download that file, and
@@ -2209,18 +2213,17 @@ tapping a folder will open that folder.
     \label{fig:CSVAndroid:remotebrowse}
 \end{figure}
 
-An upload is treated in a similar way. To reveal this option, the user have to
-press the \textbf{Menu}-button. The user will then be allowed to browse his
-local file system for the file he wishes to upload, and tapping that file will
-start the upload.
+Selecting files to upload is treated in a similar way. To reveal this option,
+the user have to press the \emph{Menu}-button. The user will then be allowed to
+browse his local file system for the file he wishes to upload, and tapping that
+file will start the upload.
 
 A long press on a file, or a folder item, will reveal the context menu shown in
 Figure \ref{fig:CSVAndroid:remotecontext}. The least understandable action is
-probably \emph{Unlink}, which remove a file or a folder from the parent folder.
-The reason why it says unlink and not delete, is that a file can potentially be
-linked in a number of different folders, and it is impossible by our design to
-reveal which folders the file has been linked to, except the one that we are
-unlinking from.
+probably \emph{Unlink}, which will remove a file or a folder from the parent
+folder.  The reason why it says unlink and not delete, is that the architecture
+does not specify a way for deleting files. This is further discussed in Section
+\ref{sec:deletion_of_files}.
 
 \begin{figure}[h!]
     \centering
@@ -2712,7 +2715,7 @@ requirements. The procedure used in the proof of concept system developed, are
 described in Section \ref{sec:DIS:impl}.
 
 \subsection{Deletion of Files}
-
+\label{sec:deletion_of_files}
 To support deletion of files, various alternatives has to be assessed.
 Consider the following scenarios:
 
