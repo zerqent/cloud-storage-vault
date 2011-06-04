@@ -128,31 +128,31 @@ design.\\
 
 Today, major IT-companies, such as Microsoft, Amazon and Google, are offering
 online storage services to their customers. This is a favourable solution -- as
-opposed to regular storage -- in terms of low costs, reliability,
-scalability and capacity, but is often often lacking security features by not
-yielding data privacy and integrity.
+opposed to regular storage -- in terms of low costs, reliability, scalability
+and capacity, however important security features such as data privacy and
+integrity are absent.
 
 To address these issues, a cryptographic architecture is proposed, that ensures
 the confidentiality and integrity of the data stored by users, independent of
 the trust of the underlying provider. It also includes secure sharing of
-private data among customers of the same cloud provider. The scheme were
-further implemented in a proof of concept server and client.
+private data among customers of the same provider. The scheme was further
+implemented in a proof of concept server and client.
 
-The underlying cryptographic architecture were made based on existing open
-source systems and cryptographic primitives. The architecture were further
-implemented as a highly reusable general library in Java, and an Android client
-were created to be able to test performance on a constrained device.
+The underlying cryptographic architecture is based on existing open source
+systems and cryptographic primitives. The architecture was further implemented
+as a highly reusable general library in Java. An Android client was created and
+several performance tests were conducted.
 
-In general, the proof of concept system performs well, and the additional
-cryptographic operations does not significantly affect the user experience on a
-constrained device. Potential weaknesses of the system are identified, and the
-\emph{weakest link} is derived as to be the password encrypted keyring stored
-on the client device.
+The proof of concept system shows that it is possible to implement the proposed
+scheme and that the cryptographic operations does not significantly affect the
+user experience on an Android device. Potential weaknesses of the system are
+identified, and the \emph{weakest link} is derived as to be the password
+encrypted keyring stored on the client device.
 
-We have presented a scheme for secure sharing of files on an untrusted server,
-and argued for its validity. To support streaming functionality, the scheme
-could be extended with hash trees to validate small parts of a file at the
-time.
+We have presented a scheme for secure storage and sharing of files on an
+untrusted server, and argued for its validity. To support streaming
+functionality, the scheme could be extended with hash trees to validate small
+parts of a file at the time.
 
 \chapter*{Preface}
 \addcontentsline{toc}{chapter}{Preface}
@@ -213,16 +213,13 @@ June, 2011
 \acro{CA}{Certification Authority}
 \acro{CBC}{Cipher Block Chaining}
 \acro{CDA}{Cluster Dictionary Attack}
-\acro{CG}{Credential Generator}
 \acro{CSPRNG}{Cryptographically Secure Pseudorandom Number Generator}
 \acro{CPU}{Central Processing Unit}
 \acro{CSV}{Cloud Storage Vault}
 \acro{CTR}{Counter}
-\acro{DP}{Data Processor}
 \acro{DRY}{Don't Repeat Yourself}
 \acro{DSA}{Digital Signature Algorithm}
 \acro{DSS}{Digital Signature Scheme}
-\acro{DV}{Data Verifier}
 \acro{EC2}{Elastic Compute Cloud}
 \acro{ECB}{Electronic Codebook}
 \acro{FAQ}{Frequently Asked Questions}
@@ -264,7 +261,6 @@ June, 2011
 \acro{SSL}{Secure Socket Layer}
 \acro{TCCP}{Trusted Cloud Computing Platform}
 \acro{TCG}{Trusted Computing Group}
-\acro{TG}{Token Generator}
 \acro{TLS}{Transport Layer Security}
 \acro{TPM}{Trusted Platform Module}
 \acro{TTP}{Trusted Third Party}
@@ -284,34 +280,32 @@ June, 2011
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
-The term \emph{Cloud Computing}, and the common short \emph{The Cloud},
-is not yet clearly defined \cite{clouddef}, but involves the provision of
-software or computational resources available by demand via the Internet.
-In a draft \cite{cloud_nistdef}, the \ac{NIST} defines cloud computing as:
-\begin{quote}\it
-``Cloud computing is a model for enabling ubiquitous, convenient,
-on-demand network access to a shared pool of configurable computing resources
-(e.g., networks, servers, storage, applications, and services) that can be
-rapidly provisioned and released with minimal management effort or service
-provider interaction.''
-\end{quote}
+The term \emph{Cloud Computing} is not yet clearly defined \cite{clouddef}, but
+involves the provision of software or computational resources available by
+demand via the Internet.  In a draft \cite{cloud_nistdef}, the \ac{NIST}
+defines cloud computing as: 
 
-More and more of the traditionally locally hosted services of businesses is
-moving to the cloud. The amount of flexibility and cost savings this
-provides, can be quite extensive.
+\begin{quote}\it ``Cloud computing is a model for enabling ubiquitous,
+convenient, on-demand network access to a shared pool of configurable computing
+resources (e.g., networks, servers, storage, applications, and services) that
+can be rapidly provisioned and released with minimal management effort or
+service provider interaction.'' \end{quote}
+
+More and more of the traditionally locally hosted services is moving to the
+cloud. The amount of flexibility and cost savings this provides, can be quite
+extensive.
 
 Today, we take the services that the established cloud providers offer us for
 granted. For example, both Google and Microsoft provides the services of online
-document editing, email, picture collections, file storage and a lot more for
-free, and available at any time from anywhere \cite{googleservices,
-microsoftservices}.
+document editing, email, file storage and more for free, and available at any
+time from anywhere \cite{googleservices, microsoftservices}.
 
 However, this often comes at a cost of reduced privacy, as the control over the
-hosting environment is lost. Users is therefore forced to increasingly think
+hosting environment is lost. Users are therefore forced to increasingly think
 about how the data stored online can leak to unwanted people, either by
-accident, or by purpose by unfaithful servants at the cloud provider. Should it
-be sufficient to trust the security policies of the cloud providers, or is it
-possible to handle the privacy issues locally before giving away the files?
+accident, or by purpose by unfaithful servants. Should it be sufficient to
+trust the security policies of the providers, or is it possible to handle the
+privacy issues locally?
 
 \section{Motivation}
 
@@ -323,19 +317,15 @@ capacity.
 
 However, storing data at a remote location prevents users from physically
 protecting their storage medium. With this in mind, there is no guarantee that
-a customer's data is kept private and secure from disloyal employees at the
+the data of customers is kept private and secure from unfaithful servants at the
 storage provider.
 
 To solve this issue, there has lately been introduced numerous applications and
-architectures \cite{dropbox_security, tahoe, tccp, PasS} providing solutions to
-ensure privacy and integrity of customer data stored at the \emph{insecure}
-cloud provider. However, all of these alternative systems are missing one
-or more features towards being, as we will define it, a completely secure
-storage solution.
-
-This situation has given motivation to implement a proof of concept
-application, that fulfils all of the criteria for what we define as a secure
-cloud storage service.
+architectures \cite{tahoe, tccp, PasS} that ensure privacy and integrity of
+data stored at the provider. However, all of these alternative systems are
+missing one or more properties towards being, as we will define it, a
+completely secure cloud storage solution. This has motivated us to create a
+scheme that answers all of these challenges.
 
 Additionally, we do also see this as a golden opportunity to learn more
 about software development, development methodologies, team work, and practical
@@ -343,13 +333,13 @@ use of information security and cryptography.
 
 \section{Related Work}
 
-In the later years, there has been quite a lot of research done in the field of
-security in cloud computing. The problems that arise, are fundamentally not
+In the later years, there has been a lot of research done in the field of
+security in cloud computing. The problems that arise are fundamentally not
 different from those revealed by classic information security scenarios. The
-key point, is that when using a service hosted by someone you do not know if
-you can trust, you have to treat that \emph{someone} as untrusted and as a
-possible attacker. Generally speaking, you loose control over the hosting
-environment, and hence has to deal with the security issues this implies.
+key point is that when using a service hosted by someone you do not know, you
+have to treat that \emph{someone} as untrusted and as a possible attacker.
+Generally speaking, you loose control over the hosting environment, and hence
+has to deal with the security issues this implies.
 
 In Section \ref{sec:research}, we present four papers \cite{PasS,
 privacymanager, tccp, microsoftresearch} which try to solve security issues in
@@ -359,61 +349,58 @@ on special, secure and tamper-proof hardware and/or a trusted third party.
 Another way of providing a solution to the same problem, is to give the
 responsibility of the security operations to the client, i.e. in an environment
 that the user has control of. In Section \ref{sec:existing}, we present three
-commercially and publicly available software services that relates to this way
-of thinking.
+publicly available software services that relates to this approach.
 
 One of these applications, Tahoe-\ac{LAFS} \cite{tahoe}, is given special
-attention. This is because it is an Open Source and a well documented piece of
+attention. This is because it is an open source and a well documented piece of
 software, that answers most of the problems arising in an untrusted cloud
 storage environment, and relates closely to the work performed in this thesis.
 
 \section{Scope and Objectives}
 \label{sec:criteria}
 
-There are two main objectives of this thesis. The first objective is to create
+This thesis has two main objectives. The first objective is to create
 a cryptographic scheme that can provide secure storage of data by using an
 untrusted cloud storage provider. We define the criteria of a secure storage
 system by the following points:
 
 \begin{enumerate}
-  \item Data should be encrypted in a safe environment trusted by the owner,
-      before it is stored on the server.
-  \item It should be possible to verify the integrity of the stored data.
-  \item Only authorized people should have access to the data.
-  \item The storage scheme should be documented in detail, such that users can
-      easily understand the scheme and accept/reject it on that basis.
-  \item An implementation of the storage scheme should be Open Source.
-  \item An intrusion of the server should not affect the security of
-      the stored files.
+  \item It is possible to verify the integrity of the stored data.
+  \item Only authorized people can access the data.
+  \item Confidentiality is to be assured in a safe environment prior to
+  storing data at the provider.
+  \item The storage scheme is documented in detail, such that users can
+      easily understand the scheme and accept it on that basis.
+  \item An implementation of the storage scheme is open source.
+  \item An intrusion of the server does not affect the confidentiality of the
+  data.
+  \item The use of a trusted third party is not mandatory.
 \end{enumerate}
 
-The cryptographic scheme should, in addition to the mentioned security, provide
-the possibility of sharing stored data between multiple cloud storage
-customers. The security requirements above should also be valid for the shared
-data. The underlying scheme for sharing data should be applicable for both
-enterprise and regular customer scenarios.
+The cryptographic scheme shall in addition provide the possibility of sharing
+stored data between multiple cloud storage users, while sustaining desired
+security. The underlying scheme for sharing data should further be applicable
+for both enterprise and personal user scenarios.
 
 The second main objective is to implement the proposed scheme as part of a
-proof of concept application for Android devices. The application should be
-designed for regular customers, although the underlying cryptographic scheme
-should additionally support enterprise scenarios. It is further important that
-the server side of the application is compatible with as many existing cloud
-storage providers as possible.
+proof of concept application for Android devices. The application shall be
+designed for personal users and implement the most necessary features,
+and be measured in security and performance.
 
 Finally, it is important that the implementation of the cryptographic scheme
-is available as Open Source.
+is available as open source.
 
 \section{Limitations}
 
 We will focus on making an architecture that covers the scope and objectives,
-in an easy to understand and complete way. In addition, making core
+in an easy to understand and thorough way. In addition, making core
 functionality, that demonstrates the most important security features in a proof
 of concept system, will be prioritized.
 
 However, due to time and resource constraints, we will focus less on the following:
 \begin{itemize}
   \item The language in the proof of concept client should be clear, but the
-    \ac{GUI} in itself will not get special attention
+    \ac{GUI} itself will not be prioritized
   \item Experimentation with the proof of concept code, other
     than basic performance and security measurements
   \item Experimentation with the proof of concept client on hardware equipment
@@ -439,8 +426,8 @@ concept application.
 \paragraph{SCRUM} We will work after SCRUM principles -- an iterative and
 incremental based framework for project management \cite{scrum}. There does not
 exist a SCRUM \emph{product owner} for the system we will create, nor do we
-fulfil the requirements and characteristics \cite{scrum} of a traditional
-SCRUM \emph{team}. Hence, we will use the principles that are practically
+fulfil the requirements and characteristics of a traditional SCRUM
+\emph{team}\cite{scrum}. Hence, we will use the principles that are practically
 possible for us to follow:
 
 \begin{itemize}
@@ -483,20 +470,19 @@ implementation of the proof of concept system is described.
 
 \paragraph{Chapter \ref{ch:experimental} -- Experimental Procedure} presents
 the measurements and practical experimentation done to look at how the system
-performs performance- and security-wise.
+behaves performance- and security-wise.
 
 \paragraph{Chapter \ref{ch:results} -- Results} illustrates the findings from
 the experimentation.
 
 \paragraph{Chapter \ref{ch:discussion} -- Discussion} reflects on the specific
-implementation and results from the previous chapters. In addition, associated
-functionality to a secure cloud storage system, that has not been mentioned
-earlier, is presented and discussed.
+implementation and results from the previous chapters. Associated functionality
+to a secure cloud storage system is presented and discussed.
 
-\paragraph{Chapter \ref{ch:conclusion} -- Conclusion} extracts the most
-important results and findings, and concludes the work done in this thesis.
-Further work that can be applied to the created system and scheme,
-are prioritized and presented as final ideas.
+\paragraph{Chapter \ref{ch:conclusion} -- Conclusion and future work} extracts
+the most important results and findings, and concludes the work done in this
+thesis.  Further work that can be applied to the created system and scheme, are
+prioritized and presented as final ideas.
 
 \bigskip
 
@@ -506,7 +492,7 @@ are prioritized and presented as final ideas.
 presents the implementations created to carry out the security experiments.
 
 \paragraph{Appendix \ref{ap:attachments} -- Attachments} describes the contents
-of the supplied attachments provided.
+of the supplied attachments.
 
 %**************************************%
 \chapter{Background}
@@ -514,21 +500,62 @@ of the supplied attachments provided.
 %**************************************%
 
 The basis and underlying technologies for a secure storage service in the
-cloud, are quite numerous and quite often complex.
+cloud, are numerous and often complex. In the following sections, we will go
+through the security services, cryptographic primitives and attacks that are
+relevant. In addition, we present related research and existing solutions
+available at the time of writing.
 
-In the following sections, we will go through the security services, cryptographic
-services and attacks that are relevant to such a service. In addition, we present
-related research and existing solutions available at the time of writing.
+\section{Cloud Computing}
 
-This chapter forms the basis for the architecture of the proposed solution
-presented in this thesis.
+In this section, we will extend from the definitions given in Chapter
+\ref{ch:intro}, and further describe terms that are associated with
+\emph{Cloud Computing}.
+
+\subsection{Service Models} \ac{NIST} defines three service models which deals
+with what kind of service the consumer can rent from a provider
+\cite{cloud_nistdef}.
+
+\paragraph{\ac{SaaS}} The capability of a consumer to run application of the
+provider on cloud infrastructure, using a thin-client, browser or similar, is
+called \ac{SaaS}. The web-based email service
+GMail\footnote{\url{http://www.gmail.com/}} can be seen as an example of this.
+
+\paragraph{\ac{PaaS}} The capability for a consumer to deploy software onto
+the cloud, but without actually controlling the underlying platform, operating
+system and so on, is called \ac{PaaS}.
+
+\paragraph{\ac{IaaS}} The capability provided to the consumer to provision
+processing, storage, networks and other fundamental computing resources where
+he can run arbitrary software, including operating systems and applications, is
+called \ac{IaaS}. An example is when renting a \ac{VM}.
+
+\subsection{Deployment Models}
+
+The \ac{NIST} draft lists several deployment models which deals with how the
+cloud is organized in terms of where it is hosted, and who has access to it.
+
+\paragraph{Private Cloud} A private cloud is a cloud infrastructure operated
+solely for an organization. The party managing the cloud, and where it is
+located is not defined.
+
+\paragraph{Community Cloud} A community cloud is a cloud infrastructure shared
+by several organizations to serve a common concern. Where it is located, and
+who manages it, is not given.
+
+\paragraph{Public Cloud} A public cloud is a cloud infrastructure where
+everyone, or at least a large group, can have access, and is owned by an external
+provider of cloud services.
+
+\paragraph{Hybrid Cloud} A hybrid cloud is a cloud infrastructure composed of
+two or more clouds of any other model.
+
 
 \section{Security Services}
 
-This section explains the security services and technology used in this thesis. A security
-service is any processing or communication service that enhances the security of
-the data processing systems and the information transfers of any organization,
-as defined by \citet[p. 12]{stallings}.
+This section explains the security services used in this thesis. A security
+service is any processing or communication service that enhances the security
+of the data processing systems and the information transfers of any
+organization, as defined by \citet[p. 12]{stallings}.
 
 \paragraph{Confidentiality} Confidentiality is the act of keeping a message
 secret from unauthorized parties \cite[p. 18]{stallings}. This can typically be
@@ -552,75 +579,148 @@ receiver of a message from refuting the authenticity of transmitted message. In
 other words, one party can prove the involvement of the other party
 \cite{stallings}.
 
+\section{Security Attacks}
+
+This section briefly list security attacks relevant to this thesis, as defined
+by \citet[Ch. 1.3]{stallings}.
+
+\paragraph{Active and Passive Attacks} Two general classifications of security
+attacks exist, where a \emph{passive attack} attempts to learn or make use of
+information from the system, but does not affect system resources. An
+\emph{active attack} attempts to alter system resources or affect their
+operation.
+
+\paragraph{Traffic Analysis} Traffic Analysis is the act of capturing and
+examining communication data sent between two parties. This information might
+contain secrets, or for instance leak enough information about an encryption key
+to recover it.
+
+\paragraph{Masquerade} Masquerade is an active attack where the attacker pretends to be
+one of the legitimate parties.
+
+\paragraph{Replay} Replay is an active attack where the attacker capture some
+data in a communication session and subsequently retransmit that information.
+
+\paragraph{Modification of Messages} Modification of messages is an active
+attack where the attacker alters some of the contents of a message sent between
+two communicating parties.
+
+\paragraph{Denial of Service} Denial of Service is an active attack where the
+attacker seeks to make resources unavailable for legit users, i.e. by
+overloading an application by sending a great amount of traffic.
+
+\paragraph{\acl{MITM}} In the \ac{MITM} attack, an attacker intercepts messages
+between the communicating parties and then either relay or substitute the
+intercepted message. This an active attack.
+
+\subsection{Attacks on Cryptographic Primitives}
+
+Even though cryptographic primitives are designed to be secure, they might have
+implementation flaws and be used in an improper fashion, e.g. by using wrong
+parameters.
+
+\paragraph{Cryptanalysis Attack} A cryptanalysis attack is an attempt to deduce
+a specific plaintext or to deduce the key being used in a ciphertext.
+
+\paragraph{Brute-Force Attack} In a brute-force attack, an attacker tries
+to obtain a secret by testing the algorithm with up to all possible inputs. The
+secret might be an encryption key, or the data fed into a cryptographic hash
+function.
+
+A related attack is the \emph{dictionary attack}, where the attacker
+tries to obtain a secret by trying a subset of all known inputs, i.e. a
+predefined dictionary of words.
+
+% TODO: Vi må kort beskrive side channel attacks
+
+\subsection{Security Considerations in Cloud Computing}
+
+There are some considerations when using cloud services from an external
+provider, as opposed to self controlled hardware, software and platforms. Most
+notably is that you loose the control of selecting the people which will have
+physical and digital access to the infrastructure \cite{cloud_getoff}. In
+essence, this means that the provider can read every data sent to and from the
+cloud as well as the data saved in the cloud.
+
+Another risk is that information might be leaked to other users of the same
+cloud. For instance it might be possible for a \ac{VM} to leak information
+to other \acp{VM} on the same host \cite{cloud_getoff}. The highest risk of
+this is in a public cloud where almost anyone can gain access.
+
+
 \section{Cryptographic Primitives}
 
-This section describes the low level security primitives used in the results of
-this thesis.
+This section describes the low level security primitives used throughout this
+thesis.
 
-\emph{Randomness} is a basic property that multiple of the cryptographic
+\subsection{Randomness}
+
+Randomness is a basic property that multiple of the cryptographic
 primitives rely on, and hence deserves an explanation. Random data is
 informally defined as unpredictable to the attacker, even if he is taking
 active steps to defeat the randomness \cite[p. 137]{schneier}.
 
-A \emph{\ac{CSPRNG}} produces pseudo random numbers based on a generated seed from a
-deterministic algorithm. To be Cryptographically secure, a PRNG should have
-properties making it suitable for use in cryptography. In other words, a PRNG should
-pass statistical randomness tests while simultaneously resisting serious attacks
-and predictions. Predictions should not be possible even if an attacker sees
-much of the random data generated by the PRNG \cite[p. 140]{schneier}.
+A \emph{\ac{CSPRNG}} produces pseudo random numbers based on a generated seed
+from a deterministic algorithm. What separates a \ac{CSPRNG} from a PRNG is
+that it has properties making it suitable for use in cryptography. In other
+words, a \ac{CSPRNG} should pass statistical randomness tests while
+simultaneously resisting serious attacks and predictions. Predictions should
+not be possible even if an attacker sees much of the random data generated by
+the \ac{CSPRNG} \cite[p. 140]{schneier}.
 
 \subsection{Encryption}
 
 Encryption is the process of transforming some information into an unreadable
-form. It is primarily used to enforce confidentiality, but can also be
-used for other purposes, e.g. authentication.
+form for anyone not possessing a secret, \emph{the key}. It is primarily used
+to enforce confidentiality, but can also be used for other purposes, e.g.
+authentication.
 
-In its very basic form, an encryption scheme consist of an encryption algorithm
+In its basic form, an encryption scheme consist of an encryption algorithm
 (the \emph{cipher}), a key and a message (the \emph{plaintext}), that is all
 used to create an encrypted message, i.e. the \emph{ciphertext}. If a strong
-cipher is used, knowledge of the cipher, or multiple plaintext and multiple
-ciphertext, should not be enough to obtain the key, or to decrypt ciphertext
+cipher is used, knowledge of the cipher, and multiple plaintext and ciphertext
+pairs, should not be enough to obtain the key, or to decrypt ciphertext
 with a corresponding unknown plaintext \cite{schneier}.
 
 \paragraph{Block Cipher and Stream Cipher} There are different classifications
-on how a cipher treats data \cite[p. 32]{stallings}. A \emph{block cipher} will
+of how a cipher treats data \cite[p. 32]{stallings}. A \emph{block cipher} will
 encrypt a block of data of a specific size. If the data is larger than the
 block size used by the application, a \emph{mode of operation} is needed. In a
 \emph{stream cipher}, the plaintext will usually be combined with a pseudorandom key
 stream to generate the ciphertext.
 
-\paragraph{Symmetric Encryption} Symmetric-key encryption is an encryption scheme
-where the same key is used for both encryption and decryption \cite[p.
-32]{stallings}. The \ac{AES} is a block cipher and is the current standard for
-symmetric encryption. The \ac{AES} works on a block of 128 bits at a time,
-and support keys with length of 128, 192 and 256 bits.
+\paragraph{Symmetric-key Encryption} A cipher where the same key is used for
+both encryption and decryption, is known as a symmetric-key algorithm \cite[p.
+32]{stallings}. The \ac{AES} is a block cipher that works on a block of 128
+bits, and support keys with length of 128, 192 and 256 bits. \ac{NIST}
+standardized \ac{AES} in 2001. % TODO: KILDE FIPS-197
 
-\paragraph{The Mode of Operation} The mode of operation used for a
+\paragraph{The Mode of Operation} The mode of operation used for 
 symmetric-key encryption enables subsequent safe use of the same key.
 
 In a simple scenario, this could be to encrypt the normal data block-by-block
-with pure \ac{AES}, which is called the \ac{ECB} mode of operation. The problem
-with this is that some information of the plaintext will leak, i.e. the same
+with which is called the \ac{ECB} mode of operation. The problem with
+this, is that some information of the plaintext will leak, i.e. the same
 plaintext will always be encrypted as the same ciphertext.
 
-An other mode is \emph{\ac{CBC}}. In \ac{CBC}, a non-predictable and not reused
+Another mode is \emph{\ac{CBC}}. In \ac{CBC}, a non-predictable and unique
 \ac{IV} is used. The \ac{IV} is XORed with the first block of plaintext, which
-again is encrypted with \ac{AES}. The resulting ciphertext is used as an
+again is encrypted with the cipher. The resulting ciphertext is used as an
 ``\ac{IV}'' for the next block \cite[p. 183]{stallings}, and so on.
 
-\paragraph{Asymmetric Encryption} Asymmetric key encryption is an encryption scheme
+\paragraph{Asymmetric-key Encryption} Asymmetric-key encryption is an encryption scheme
 where different keys are used for encryption and decryption
 \cite[p. 259]{stallings}.
 
-An asymmetric encryption scheme is often called a \emph{public-key
+An asymmetric-key encryption scheme is often called a \emph{public-key
 encryption} scheme, where one key is defined as private and the other as public.
 The public key is shared to allow other parties to encrypt messages that only the
 owner of the private key can decrypt.
 
-The downside of asymmetric encryption compared to symmetric is that it requires
-a larger key, and that it has a larger computational overhead to obtain the
-same level of confidentiality as comparable symmetric-key encryption. The
-probably best known asymmetric cipher is \ac{RSA}.
+The downside of asymmetric compared to symmetric cipher is that it requires a
+larger key, and that it has a larger computational overhead to obtain the same
+level of confidentiality. The probably best known asymmetric cipher is
+\ac{RSA}.
 
 \subsection{Cryptographic Hash Functions}
 
@@ -633,34 +733,34 @@ Another property of a cryptographic hash function, is that the
 smallest change in the input data, e.g. one bit, should completely change the
 output of the hash function. In other words, it should be infeasible to find the
 reverse of a cryptographic hash function \cite[p. 335]{stallings}. It should
-also be infeasible to find two blocks of data which produce the same hash value
-(a \emph{collision}).
+also be infeasible to find two blocks of data which produce the same hash
+value, i.e. a \emph{collision}.
 
 The standard for cryptographic hash functions today, are \ac{SHA}-1 and the
-\ac{SHA}-2 family.
+\ac{SHA}-2 family. % TODO: KILDE (NIST). Simpel figur?
+
 
 \subsection{MAC Functions} 
 
 \citet{schneier} defines a \ac{MAC} to be a construction that detects tampering
 with a message -- i.e. it authenticates the message. A \ac{MAC} can be
-constructed in different ways, one example is H\ac{MAC} which constructs the
+constructed in different ways. One example is H\ac{MAC} which constructs the
 \ac{MAC} using a secret key, the message and a hash function \cite{rfc2104}. 
 
 \section{Applications of Cryptographic Primitives}
+% TODO: intro
 
 \subsection{Digital Signatures}
 
 A digital signature is the digital equivalent of a normal signature, i.e. it
 verifies that an entity approves with or has written a message. It can also
 verify the date the signature was made. In addition, it should be verifiable by
-a third party \cite[p.  379]{stallings}.
-
-It should logically not be possible, or at least infeasible, to fake a digital
-signature.
+a third party \cite[p.  379]{stallings}. A digital signature should not be
+feasible to fake.
 
 The \ac{RSA} cipher can be used to generate signatures. In addition, there is also a
 standard for digital signatures, called \ac{DSS}, which uses \ac{DSA} as the
-underlying algorithm.
+underlying algorithm. %TODO: Kilde for standard.
 
 \subsection{Digital Certificates and PKI}
 
@@ -668,11 +768,11 @@ A digital certificate is the pairing of a digital signature and a public key
 \cite{stallings}. By this scheme, the services confidentiality, authentication
 and non-repudiation can be achieved.
 
-For example, a person has a certificate with some clues about the identity
-in it, e.g. the e-mail, together with a public key. This certificate can then
-be signed using digital signatures, to verify that some other entity trusts this
+For example, a person has a certificate with some clues about an identity in
+it, e.g. an e-mail, together with a public key. This certificate can then be
+signed using digital signatures, to verify that some other entity trusts this
 certificate.
-
+% TODO: Dra in TTP her
 In practice, the entity which signs certificates is the \ac{CA}, which all
 clients have the public key information for, and trusts. The \ac{CA} will also
 contain information about which certificates has been revoked, i.e. should not
@@ -683,12 +783,10 @@ be trusted in use. Such a scheme is usually referred to as a \ac{PKI}.
 \ac{PGP} is a scheme similar to \ac{PKI}, but with no \ac{CA} that all users
 trust \cite{stallings}. Instead, trust is made between users by somehow
 verifying their public key, for instance by meeting face to face. A user can
-then sign another users key, set a trust level for the user, and publish this
-information to a key server.
-
-Another user can then calculate a trust on an unknown person, based on the trust
-set by peoples that he trusts, from information located on publicly
-available key servers.
+then sign the key of another user, set a trust level for the user, and publish
+this information to a key server. Other users can then calculate a trust on an
+unknown person, based on the trust set by people that they trust, from
+information located on publicly available key servers.
 
 \subsection{SSL/TLS}
 
@@ -711,7 +809,7 @@ involves making the derivation of a key from a password an expensive process
 in terms of computing power, which in turn makes it more resistant to brute
 force attacks.
 
-\ac{PBKDF2} is a key derivation function which uses key stretching. It uses a
+\ac{PBKDF2} is a key derivation function that utilizes key stretching. It uses a
 password, together with a randomly generated salt and a pseudorandom function
 \cite{rfc2898}. The function will combine these inputs in a specific way, and
 can repeat the process for a specified number of times, called the
@@ -720,132 +818,28 @@ salt provides defence against a precomputed collection of keys, i.e. a
 \emph{rainbow table}, in the sense that it will make sure that a password will
 not derive the same key if different salts are used.
 
-\section{Security Attacks}
-
-This section briefly list security attacks relevant to this thesis, as defined
-by \citet[Ch. 1.3]{stallings}.
-
-\paragraph{Active and Passive Attacks} Two general classifications of security
-attacks exist, where a \emph{passive attack} attempts to learn or make use of
-information from the system, but does not affect system resources. An
-\emph{active attack} attempts to alter system resources or affect their
-operation.
-
-\paragraph{Traffic Analysis} Traffic Analysis is the act of capturing and
-examining communication data sent between two parties. This information might
-contain secrets or for instance leak enough information about an encryption key
-to make it breakable.
-
-\paragraph{Masquerade} Masquerade is an active attack where the attacker pretends to be
-one of the legitimate parties.
-
-\paragraph{Replay} Replay is an active attack where the attacker capture some
-data in a communication session and subsequently retransmit that information.
-
-\paragraph{Modification of Messages} Modification of messages is an active
-attack where the attacker alters some of the contents of a message sent between
-two communicating parties.
-
-\paragraph{Denial of Service} Denial of Service is an active attack where the
-attacker seeks to make resources unavailable for legit users, i.e. by
-overloading an application by sending it lots of traffic.
-
-\paragraph{\acl{MITM}} \ac{MITM} is an attack where an attacker intercepts messages
-between the communicating parties and then either relay or substitute the
-intercepted message.
-
-\subsection{Attacks on Cryptographic Primitives}
-
-Even though cryptographic primitives are designed to be secure, they might have
-implementation flaws and be used in an improper fashion, e.g. by using wrong
-parameters.
-
-\paragraph{Cryptanalysis Attack} A cryptanalysis attack is an attempt to deduce
-a specific plaintext or to deduce the key being used in a ciphertext.
-
-\paragraph{Brute-Force Attack} In a brute-force attack, an attacker tries
-to obtain a secret by testing the algorithm with up to all possible inputs. The
-secret might be an encryption key, or the data fed into a cryptographic hash
-function.
-
-A related attack is the \emph{dictionary attack}, where the attacker
-tries to obtain a secret by trying a subset of all known inputs, i.e. a
-predefined dictionary of words.
-
-\section{Cloud Computing}
-
-In this section, we will extend from the definitions given in Chapter
-\ref{ch:intro}, and further describe terms that are associated with
-\emph{Cloud Computing}.
-
-\subsection{Service Models}
-The \ac{NIST} also defines three service models which deals with what kind of
-service the consumer can rent from a provider.
-
-\paragraph{\ac{SaaS}} The capability for a consumer to run the provider's
-application running on cloud infrastructure, using a thin-client, browser or
-similar, is called \ac{SaaS}. The web-based email service
-GMail\footnote{\url{http://www.gmail.com}} can be seen as an example of this.
-
-\paragraph{\ac{PaaS}} The capability for a consumer to deploy software onto
-the cloud, but without actually controlling the underlying platform, operating
-system and so on, is called \ac{PaaS}.
-
-\paragraph{\ac{IaaS}} The capability provided to the consumer to provision
-processing, storage, networks and other fundamental computing resources where
-he can run arbitrary software, including operating systems and applications, is
-called \ac{IaaS}. An example is when renting a \ac{VM}.
-
-\subsection{Deployment Models}
-
-The \ac{NIST} draft \cite{cloud_nistdef} also lists several deployment models
-which deals with how the cloud is organized in terms of where it is hosted, and
-who has access to it.
-
-\paragraph{Private Cloud} A private cloud is a cloud infrastructure operated
-solely for an organization. Which party manages the cloud, and where it is
-located is not defined.
-
-\paragraph{Community Cloud} A community cloud is a cloud infrastructure is
-shared by several organizations to serve a common concern. Where it is located
-and who manages it is not given.
-
-\paragraph{Public Cloud} A public cloud is a cloud infrastructure where
-everyone, or at least a large group, can have access, and is owned by an external
-provider of cloud services.
-
-\paragraph{Hybrid Cloud} A hybrid cloud is a cloud infrastructure composed of
-two or more clouds of any other model.
-
-\subsection{Security Considerations in Cloud Computing}
-
-There are some considerations when using cloud services from an external
-provider, as opposed to self controlled hardware, software and platforms. Most
-notably is that you loose the control of selecting the people which will have
-physical and digital access to the infrastructure \cite{cloud_getoff}. In
-essence, this means that the provider can read every data sent to and from the
-cloud as well as the data saved in the cloud.
-
-Another risk is that information might be leaked to other users of the same
-cloud. For instance it might be able possible for a \ac{VM} to leak information
-to other \acp{VM} on the same host \cite{cloud_getoff}.
-
-\section{Research}
+\section{Research on Security in Cloud Computing}
 \label{sec:research}
 
-This section will elaborate on selected previous research concerning privacy
-within cloud computing. The research on this subject can be divided into
+This section will elaborate on selected research concerning privacy
+within cloud computing. The scrutiny on this subject can be divided into
 proactive solutions that either reduce, or prevent the risk of leaking privacy
 related information. Only the latter type of solutions are further discussed.
 
 We choose to present these papers as they provide possible solutions to the
-same problems this thesis is set out to solve, although from a different angle.
-A criterion of the scheme presented in this thesis, as described in Section
-\ref{sec:criteria}, is that unauthorized access to the encrypted files stored
-on the server should be avoided, but that it should not be crucial for the
-security of the content of the files. The following first three security
-systems seeks to secure the cloud server itself, and the last one argues for
-building a secure system on top of non-trusted cloud servers.
+same problems handled in this thesis, although with a different approach.  
+
+A
+criterion for secure cloud storage, as described in Section \ref{sec:criteria},
+is that unauthorized access to the encrypted files stored on the server should
+be avoided, but that it should not be crucial for the security of the content
+of the files. 
+
+% TODO: Eivind
+
+The following first three security systems seek to secure the cloud server
+itself, and the last one argues for building a secure system on top of
+non-trusted cloud servers.
 
 \subsection{Privacy as a Service}
 
@@ -868,30 +862,28 @@ The \ac{PasS} system model is shown in Figure \ref{fig:RW:PasS}.
 
 It is important to notice that the \ac{PasS} system model is dependent on
 pre-installed cryptographic coprocessors in the hardware running the cloud
-service.
-
-A cryptographic coprocessor is a small hardware card, including a processor,
-\ac{RAM}, \ac{ROM}, backup battery, persistent storage and an Ethernet network
-card. A coprocessor interfaces with a server in the cloud, and provides a safe
-environment for processing of a customer's sensitive data.
+service. A cryptographic coprocessor is a small hardware card, including a
+processor, \ac{RAM}, \ac{ROM}, backup battery, persistent storage and an
+Ethernet network card. A coprocessor interfaces with a server in the cloud, and
+provides a safe environment for processing of customer's data
 
 The cryptographic coprocessors are used in the cloud because they are
-tamper-proof against physical attacks. The coprocessors are pre-configured by
-the \ac{TTP} before they are installed. By using this procedure, the \ac{TTP}
-provides a safe computational environment for the cloud customer, which is kept
-secret from the cloud provider.
+supposedly tamper-proof against physical attacks. The coprocessors are
+pre-configured by the \ac{TTP} before they are installed. By using this
+procedure,a safe computational environment for the cloud customer is provided,
+which is kept secret from the cloud provider.
 
 The main task of the \ac{TTP} is to compute a set of public/private key pairs,
 load them into the persistent storage of the co-processor, and further send
 them to the customer. The \ac{TTP} also loads its own secret key into the
 coprocessor. This key distribution ensures secure communication between the
-\ac{TTP}, coprocessors and the cloud customer. The customer's key pair is sent
-through a secure communication channel.
+three parties. The key pair of the customer is sent through a secure
+communication channel.
 
 With cryptographic coprocessors in the cloud and a secure communication, the
 cloud customer can choose between three different levels of privacy towards the
 cloud provider -- no privacy, privacy with a trusted provider and privacy with
-a none-trusted provider.
+a non-trusted provider.
 
 \emph{No privacy} implies storing data as clear text in the cloud.
 \emph{Privacy with a trusted provider} involves storing encrypted data in the
@@ -907,7 +899,7 @@ facility. The stored data is encrypted and unknown to the cloud provider.
 
 \subsection{Privacy Manager}
 
-In 2009, HP Labs proposed a way to manage and control a user's private data,
+In 2009, HP Labs proposed a way to manage and control the private data of users,
 stored and processed in a cloud facility \cite{privacymanager}. Their solution
 was partially implemented as a software program called a \emph{privacy manager}.
 
@@ -959,15 +951,9 @@ consist of a \emph{cloud manager}, which manages a cluster of nodes running one 
 images into its own nodes.  Each node has a \emph{\ac{VM} monitor} which will further
 launch and monitor \acp{VM} from the received corresponding images.
 
-\ac{TCCP} is based upon the \acf{TPM} chip designed by the \acl{TCG}. The
-\ac{TPM} contains a private/public key pair that it uses to uniquely identify
-itself. The public key is additionally signed by the manufacturer to guarantee
-correctness of the \ac{TPM} chip.
-
-With this in mind, \ac{TCCP} is based upon a \emph{remote attestation scheme}.
-The scheme enables a network entity to verify whether another remote entity
-runs a \ac{TPM} chip or not. A detailed description of the remote attestation scheme
-is given by \citet{tccp}.
+\ac{TCCP} is based upon the \ac{TPM} chip and is a \emph{remote attestation
+scheme}.  The scheme enables a network entity to verify whether another remote
+entity runs a \ac{TPM} chip or not.
 
 The \ac{TCCP} system architecture is illustrated in Figure \ref{fig:RW:TCCP}.
 The trusted computing base of \ac{TCCP} includes a \emph{trusted coordinator}
@@ -986,8 +972,7 @@ The coordinator maintains a record of the nodes located in the security
 perimeter, and use remote attestation to ensure nodes are trusted. Each trusted
 node in a cluster contains a \ac{TPM} chip and a corresponding trusted monitor.
 The main task of the trusted monitor, is to enforce a local closed box
-protection of a client's running \ac{VM}. Details about the design of the
-trusted \ac{VM} monitor, are given by \citet{tccp}.
+protection of a client's running \ac{VM}.
 
 Each trusted virtual machine monitor cooperates with a trusted coordinator to
 protect the transmission of \acp{VM} between trusted nodes, and to ensure that
@@ -1032,12 +1017,12 @@ enterprise architecture is shown in Figure \ref{fig:RW:CCS:EA}.\\
 
 \noindent Each architecture consists of the following computational components:
 \begin{description}
-  \item[\ac{DP}] \hfill \\Processes data before it is sent to the cloud.
-  \item[\ac{DV}] \hfill \\Checks whether data stored in the cloud has been
+  \item[Data Processor] \hfill \\Processes data before it is sent to the cloud.
+  \item[Data Verifier] \hfill \\Checks whether data stored in the cloud has been
   tampered with.
-  \item[\ac{TG}] \hfill \\Generates tokens that enable the cloud provider to
+  \item[Token Generator] \hfill \\Generates tokens that enable the cloud provider to
   retrieve segments of customer data.
-  \item[\ac{CG}] \hfill \\Responsible for creating and distributing access
+  \item[Credential Generator] \hfill \\Responsible for creating and distributing access
   policies.
 \end{description}
 
@@ -1060,11 +1045,11 @@ application for storing data in the cloud, claiming more than 25 million users
 The company boasts of strong encryption and strict access control
 \cite{dropbox_security}, but has received criticism for its lack of security
 \cite{dropbox_concerns}. Among these concerns, is the \emph{Forgotten Password}
-feature, that enables Dropbox to hold their users' passwords. This
+feature, that enables Dropbox to hold the passwords of their users. This
 implies that the encryption is performed server-side and that Dropbox can read
-the users' files if desired.
+all data stored with their service.
 
-In addition, Dropbox is not Open Source, and hence there is no way of verifying
+In addition, Dropbox is not open source, and hence it is difficult to verify
 that the security features actually work as claimed.
 
 \subsection{Tahoe-LAFS}
@@ -1078,9 +1063,8 @@ of the storage servers, which may be operated by untrusted people.
 This is defined as \emph{provider-independent security} \cite{tahoe}.
 
 In Tahoe-\ac{LAFS}, files are exclusively encrypted client-side, then split up
-using \emph{Erasure-coding}, before being uploaded into the cloud\footnote{The
-\emph{cloud} in the Tahoe-\ac{LAFS} sense, often refers to other nodes in a so
-called \emph{friend net}.}, as illustrated in Figure \ref{fig:B:tahoe}.
+using \emph{erasure coding}, before being uploaded to the cloud, as illustrated
+in Figure \ref{fig:B:tahoe}.
 
 \begin{figure}[h!]
     \centering
@@ -1098,15 +1082,15 @@ the application \cite{tahoe}.
 The \textbf{key-value store}, is the lowest layer and is implemented by a grid
 of Tahoe-LAFS storage servers. Data is kept on the storage servers in the form
 of \emph{shares}, which are encrypted and encoded parts of files. Capabilities
-are short ASCII strings, containing information on where to find a file, and
-how to verify it.  Nodes in the grid learn about each other through an
+are short ASCII strings, containing information on where to find, decrypt and
+verify a file or folder.  Nodes in the grid learn about each other through an
 \emph{introducer}.
 
 The \textbf{file system} layer is responsible for mapping human-meaningful
 pathnames to pieces of data. Each directory contains a table of capabilities
-for its children, i.e. subdirectories or files. Two forms of capabilities is
-available for each file, read-only and read-write, and these can be distributed
-to e.g. share a file with friends.
+for its children, i.e. subdirectories or files. Two main forms of capabilities
+are available for each file, read-only and read-write, and these can be
+distributed to e.g. share a file with friends.
 
 Since it is not practical for users to remember strings containing random
 characters, the \textbf{application} layer is used for providing a user-friendly
@@ -1114,11 +1098,11 @@ interface to the directories and files.
 
 \paragraph{File Types} There are two kinds of files in the Tahoe-\ac{LAFS} --
 \textbf{immutable} and \textbf{mutable} files. An immutable file is created
-exactly once, i.e. it cannot be modified, and can be read repeatedly. Mutable
-files can be modified, and everyone who has access to the signing key can make
-new versions of the mutable file. Directories are implemented as mutable files.
+exactly once. Mutable files can be modified, and everyone who has access to the
+signing key can make new versions of the mutable file. Directories are
+implemented as mutable files.
 
-\paragraph{Erasure Coding} Erasure-coding with the Solomon-Reed scheme, enables
+\paragraph{Erasure Coding} Erasure coding with the Solomon-Reed scheme, enables
 Tahoe-\ac{LAFS} to recover a file using only a predefined subset of the parts
 distributed to the storage servers. Erasure coding is a type of \ac{FEC} code,
 which extends a message with $C$ characters into a longer message with $N$
@@ -1143,16 +1127,17 @@ Cryptree \cite{cryptree}, but other details of how the system works is hard to
 come by. The only source of technical information of this system found, was a
 Google Tech Talk \cite{wuala}.
 
-A side from this, Wuala is closed source, and hence no one can verify that the
+A side from this, Wuala is closed source, and hence no one can easily verify that the
 software indeed does what it states.
 
-\paragraph{Network Scheme} Wuala boasts of strong focus on reliability and
+\paragraph{Network Scheme} Wuala claims strong focus on reliability and
 availability, by both providing storage on their own central servers, in
 addition to a \emph{\ac{P2P} cloud} of Wuala users that has donated capacity to
-the system. There are also additional advantages resulting directly from using a
-distribution scheme based on \ac{P2P}.  Examples are no maximum file size and no traffic limit.
+the system. There are also additional advantages resulting directly from using
+a distribution scheme based on \ac{P2P}.  Examples of this are no maximum file
+size and no traffic limit.
 
-Similar to the Tahoe-\ac{LAFS}, Wuala uses an erasure-coding scheme in the
+Similar to the Tahoe-\ac{LAFS}, Wuala uses an erasure coding scheme in the
 family of Reed-Solomon \cite{wuala} to enable the logic behind splitting and
 combining parts of a file and creating redundancy.
 
@@ -1175,11 +1160,10 @@ a trusted third party.
 \end{figure}
 
 \paragraph{Security} When adding a new file to Wuala, the file and its meta
-data is encrypted with 128 bit \ac{AES}, before encoded into redundant
+data are encrypted with 128 bit \ac{AES}, before encoded into redundant
 fragments using erasure codes, and lastly uploaded to the network. 2048 bit
 \ac{RSA} is used for authentication. All cryptographic operations are performed
-locally on the client-side, and the password used by the client never leaves
-the user equipment.
+locally on the client-side, and the password used never leaves the client.
 
 Access control are provided using the efficient cryptographic tree structure
 Cryptree \cite{cryptree, wuala}, which is based on the notion that no
@@ -1189,7 +1173,7 @@ the tree are derived from the keys of the parents, implying that if a user has
 a key to a folder, he also has access to all the subfolders and files.
 
 However, since the source of Wuala is not available for scrutiny by the public, none of
-these security features can actually be verified.
+these security features can easily be verified.
 
 
 % Bring up closed source again.
@@ -1205,12 +1189,12 @@ scheme for providing secure storage of data on a remote untrusted system. It wil
 further explain the procedures carried out to create a proof of concept
 application, that implements the proposed architectural and cryptographic
 scheme. The application, named \emph{\ac{CSV}}, is implemented as an
-Android application, and consists of a separate server and client functionality.
+Android application, and consists of separate server and client functionality.
 
-The chapter will start by giving an overview of the proposed architectural
-scheme followed by a more detailed description of the corresponding
-cryptographic scheme. The chapter will end by describing the implementation
-details for both the server and client side functionality of the Cloud Storage Vault.
+The chapter will start by giving an overview of the proposed architecture
+followed by a more detailed description of the corresponding cryptographic
+scheme. The chapter will end by describing the implementation details for both
+the server and client side functionality of the Cloud Storage Vault.
 
 \section{Architectural Overview}
 %**************************************%
@@ -1219,14 +1203,14 @@ details for both the server and client side functionality of the Cloud Storage V
 The architectural solution of a secure cloud file sharing system has to
 convince its users that the functions indeed are secure, and that the concepts
 are easy to understand and accept. The following sections will elaborate on the
-architecture designed by us, favouring simplicity and familiar concepts, such
-as files and directories. We also introduce the concept of \emph{capabilities}.
+architecture, favouring simplicity and familiar concepts, such as files and
+directories. We also introduce the concept of \emph{capabilities}.
 
 Figure \ref{fig:AS:overview} represents an overview of the functionality that
 the architecture must support. The illustration exhibits a user uploading a
 file to the cloud, and adding this to a parent directory. After he has done
-this, it is possible for him to distribute the capability to other users to
-realize sharing of files or directories.
+this, it is possible for him to distribute the capability of the file to other
+users to realize sharing of files or directories.
 
 \begin{figure}[h!]
     \centering
@@ -1244,33 +1228,32 @@ index for a specific value, while the corresponding value equals an encrypted
 file object. The server will be required to support the operations of uploading
 and downloading key-value pairs to this store.
 
-From the users perspective however, a file object can have multiple forms -- it
-can either be a \emph{mutable} or an \emph{immutable} file. A mutable file can
-be changed, and is what a user will see as a directory, while an immutable file
-is utilized as a normal file.
+From the users perspective, a file object can have multiple forms -- it can
+either be a \emph{mutable} or an \emph{immutable} file. A mutable file can be
+changed, and is what a user will see as a directory, while an immutable file is
+as a normal file but cannot be changed.
 
 A user will need certain information to be able to reach and read a file
-object, we define these properties as the \emph{capability} of a file object.
-For now, the capability represents the ability to find, read, verify that a
-file has not been tampered with, and possibly write to the file object.
+object, and we define these properties as the \emph{capability} of a file
+object.  For now, the capability represents the ability to find, read, verify
+that a file has not been tampered with, and write to a mutable file.
 
 \subsubsection{Directory Structure}
 
 The contents of a directory are files and other directories. More specifically,
 a directory contains the means to find files or directories, namely the
-capabilities of these file objects. In addition, there exist a human readable
-name, an \emph{alias}, for each entry in a directory. This design gives a
-flexible and space-conservative structure, since any file object may be found
-from multiple directory, but does only exist once in the cloud.
+corresponding capabilities. In addition, there exist a human readable name, an
+\emph{alias}, for each entry in a directory. This design gives a flexible and
+space-conservative structure, since any file object may be found in multiple
+directories, but does only exist once in the cloud.
 
 A user will have to have some way of storing the capabilities of his file
 objects. This could potentially be done client side, but a problem arises if
 the user wants to use several terminals. Thus, we introduce the \emph{root
 folder}, a folder from which all other files and folders can be reached. The
 user will only need to know of one single capability to reach all his stored
-data. This capability needs to be stored and protected by the client in a
-password protected \emph{keyring}. The resulting structure is a
-directed graph, as illustrated in Figure \ref{fig:AS:filesystem}.
+data. The resulting structure is a directed graph, as illustrated in Figure
+\ref{fig:AS:filesystem}.
 
 \begin{figure}[h!]
     \centering
@@ -1278,44 +1261,43 @@ directed graph, as illustrated in Figure \ref{fig:AS:filesystem}.
     \caption{File system structure}
     \label{fig:AS:filesystem}
 \end{figure}
+% TODO: Legend for farger
 
-\subsection{ACL/Authentication Layer}
+\subsection{Authorization, Authentication and Accounting Layer}
 
 The possession of a capability gives a user access to read a file or read or
-write a folder, and hence serve as the primary access control. There are
+write a folder, and hence serves as the primary access control. There are
 however some properties that the server provider might want that can not be
 given by the capability. Therefore a layer implementing authentication,
-accountability and possibly more access control could be preferable.
+accounting and authorization might be preferable.
 
 \subsubsection{Block Access to Encrypted Data}
 
 The capability for a file or folder might be intentionally or unintentionally
 leaked by a user. In this case, it would be preferable that the server can
 block access to a particular object. The server could also potentially enforce
-access rights on all encrypted objects, based on who a user has shared a file
-with. This does however require the client to notify the server every time it
-shares a file object with a new person, and is strictly not necessary from a
-security standpoint.
+access rights on all encrypted objects, so that they are only retrievable by
+the owner. This would however complicate sharing. 
 
-\subsubsection{Modification and deletion of objects}
+\subsubsection{Modification and Deletion of Files}
 
 For each directory, there exist a different capability for read and write
 operations, though the read capability can be deduced from the write
 capability. From the write capability, it is possible to deduce another secret,
 the \emph{write enabler}, which the server also knows of.  Knowledge of the
-write enabler is needed for the server to grant access to modify or delete a
-folder.
+write enabler is needed for the server to grant access to modify or possibly
+delete a folder.
 
-For immutable files, there is no concept of write-access, only read. It is both
-illogical and impractical to assume that read access should also yield delete
-access. A layer that identifies the creators of a file, can by the same method
-decide who should have the rights to delete it.
+For immutable files, there is no concept of write access, only read. A user
+might not want to pay for storage of files that he no longer needs.  A layer
+that identifies the creators of a file, can by the same method decide who
+should have the rights to delete it.
 
 \subsubsection{Accounting}
 
-If the server side of the system is held by a cloud storage provider, it
-is important to be able to decide which users should be billed for the file
-\emph{storage} and generated \emph{network traffic}.
+If the server side of the system is held by a cloud storage provider, it is
+important to be able to decide which users should be billed for the \emph{file
+storage} and generated \emph{network traffic}.
 
 In the case of an immutable file, the storage costs can be billed to the user
 creating the file. The costs of network traffic can further be charged to the
@@ -1324,7 +1306,7 @@ users retrieving the file.
 Accounting might also be interesting for an organization using a third party
 cloud provider. For instance an employee who leaves the organization, might be
 tempted to copy all the data stored on the server. The organization should then
-be able to discover what he has done.
+be able to discover what has been done, using some form of an audit trail.
 
 It is however worth noting that if the accounting happens server side, there is
 no real way to verify that all logs stored there are correct, since the cloud
@@ -1352,17 +1334,16 @@ The user will use the capability to decrypt the directory.
 
 In the directory, the user finds the aliases and necessary capabilities to gain
 access to the children of that folder. If the user now wants to download a file
-from the accessed folder, he obtains the identifier for this file through the
-capability of the file, and requests the server for this file. Once downloaded,
-the capability provides means of decrypting and verifying that the file has not
-been tampered with.
+from the accessed folder, he obtains the identifier from the capability, and
+requests the server for this file. Once downloaded, the capability provides
+means of decrypting and verifying that the data has not been tampered with.
 
 \subsubsection{Upload File}
 
-Figure \ref{fig:AS:upload} shows the process of uploading new files. The
-capability for the new file is generated by the client, and used to encrypt the
-file. The file is then uploaded to the cloud, and the capability and an alias
-is linked in to the parent folder of the file.
+Figure \ref{fig:AS:upload} shows the process of uploading a new file. The
+capability is generated by the client, and used to encrypt the data. The file
+is then uploaded to the server, and the capability and an alias is linked in to
+the parent folder.
 
 \begin{figure}[h!]
     \centering
@@ -1382,12 +1363,12 @@ channel where Bob and Alice can share their own folders and files.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureShare.pdf}
-    \caption{Scenario: Sharing files}
+    \caption{Scenario: Alice shares a file with Bob}
     \label{fig:AS:sharing}
 \end{figure}
 
-Before transferring the capabilities to Bob, Alice links the shared directory
-to a parent directory, so she can easily find it again at a later time. She can
+Before transferring the capability to Bob, Alice links the shared directory
+to a parent directory, so she can easily retrieve it at a later time. She can
 also link files and other directories to the shared directory.
 
 The capability distribution is a key design issue, and has to be performed in a
@@ -1404,10 +1385,10 @@ where his own.
 If Alice wants to share a directory in Read-Only mode, she can simply share the
 read capability with Bob, instead of the write capability. This will work as
 intended, but might prove somewhat cumbersome for Alice. If Alice wants to
-write to the directory she has shared with Bob, she can not enter it through
+write to the directory she has shared with Bob, she cannot enter it through
 the parent folder shared with Bob, since this will only grant her the read
-capability. The implication is that Alice will have to find the directory
-another place in her directory tree, to get the write capability.
+capability. The implication is that Alice will have to access the directory
+through another path in her directory tree, to get the write capability.
 
 A more simple solution is to enable Alice to store the write capability
 individually among her private files, while storing the read capability in the
@@ -1420,19 +1401,18 @@ in Figure \ref{fig:AS:readonly}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureShareReadOnlyFolder.pdf}
-    \caption{Sharing write-protected folders}
+    \caption{Sharing read only folders}
     \label{fig:AS:readonly}
 \end{figure}
+% TODO: Fix avstand mellom bokser på topp
 
 \subsection{Constraints}
 
 The software using this architecture should be able to run on restricted
 devices, i.e. equipment with limited memory and \ac{CPU} power, often in
-addition to constraints on power and network utilization.
-
-This has implications for the design of the software, since all cryptographic
-operations has to be performed client-side. These considerations will be
-brought up throughout the further description of the software.
+addition to constraints on power and network utilization. This has implications
+for the design of the software, since all cryptographic operations has to be
+performed client-side.
 
 %**************************************%
 \section{Cryptographic Architecture}
@@ -1440,28 +1420,25 @@ brought up throughout the further description of the software.
 \label{chap:CS}
 
 This section elaborates on the cryptographic solutions applied to the
-architectural scheme in Section \ref{chap:AS}. It will take a closer look at
-how confidentiality and integrity can be integrated into the proposed
-architecture.
+architecture in Section \ref{chap:AS}. It will take a closer look at
+how confidentiality and integrity are solved.
 
 We will start with a brief introduction explaining the fundamental security
-concepts utilized by the cryptographic architecture. The cryptographic
-architecture is further described in terms of file and directory operations.
-Key concepts are based on equivalent operations found in the Tahoe-\ac{LAFS}
-\cite{tahoe}.
+concepts. The cryptographic architecture is further described in terms of file
+and directory operations.  Key concepts are based on equivalent operations
+found in Tahoe-\ac{LAFS} \cite{tahoe}.
 
 \subsection{Security Concepts}
 
 The basic security concept of the application is to keep the files of a user
 confidential to a third-party storage provider. To solve this, the application
-encrypts files locally at the user's terminal before uploading them to the
-third-party storage provider.
+encrypts data locally at the user terminal before uploading them.
 
-When accessing a file, the application first downloads the encrypted file
-before decrypting it locally. To enable this simple encryption scheme, a user's
-terminal is required to locally possess the knowledge of at least one
-capability, which contains cryptographic keys to decrypt and verify the
-contents of the \emph{root folder}.
+When accessing a file, the application downloads the encrypted file before
+decrypting it locally. To enable this simple encryption scheme, the user is
+required to possess the knowledge of at least one capability, which contains
+cryptographic keys to decrypt and verify the contents of the \emph{root
+folder}.
 
 The root folder will in turn contain the capabilities for its own children,
 which enables the client to decrypt files and folders stored in the root
@@ -1477,14 +1454,17 @@ on files and folders.
 necessary information to locate, encrypt, decrypt, verify and possibly write
 file objects. The contents is summarized in Table \ref{tbl:capability}, and
 will vary somewhat for files and folders, since they are implemented by
-respectively immutable and mutable files.
+immutable and mutable files respectively.
 
 \input{tables/capability.tex}
 
 \paragraph{Encrypted Keychain} Every user will need to keep a copy of his root
 capability somewhere. The capability contains both an encryption key and
 verification data that a user will need to safely access his files.
-
+% TODO: Dette skal flyttes PBKDF2
+% Her skal vi kun nevne at den smarte usability måten å gjøre dette på er å
+% legge capabilities på disken, og at denne må beskyttes i hva vi kaller en
+% chain/ring
 This amount of random data will be hard for a person to remember, and therefore
 the capability will have to be stored on the terminal which runs the client
 software. Since it might happen that this terminal is either broken in to,
@@ -1499,7 +1479,7 @@ to try to compromise the root folder keys. As an precaution for this, we will
 use \ac{PBKDF2}/RFC2898\footnote{http://tools.ietf.org/html/rfc2898} with a
 salt value, to create additional computational work for the process of
 unlocking the keychain. This method is known as key stretching
-\cite{keystretch}.
+\cite{keystretch}. % TODO: Denne kilden trenger sannsynligvis ikke?
 
 \subsection{File and Directory Operations}
 \label{sec:CS:DO}
@@ -1507,15 +1487,14 @@ unlocking the keychain. This method is known as key stretching
 This section describes the elementary file and directory operations supported
 by the application. The basic file operations are \emph{upload file} and
 \emph{download file}, and correspondingly for directories, \emph{create
-directory} and \emph{open directory}.
+directory}, \emph{open directory} and \emph{modify directory}.
 
 For simplicity, the illustrations in the following sections includes naming of
 cryptographic primitives. However, it is important to note that this
 cryptographic scheme will work with other primitives. Any symmetric cipher
 could work instead of \ac{AES}, any signing function that uses both a private
-and public key could be used, any \ac{MAC} could be used instead of
-HMAC-\ac{SHA}1, and any cryptographic hash function could be used instead of
-\ac{SHA}-256.
+and public key could be used instead of \ac{RSA}, any \ac{MAC} could be used
+instead of HMAC-\ac{SHA} and any cryptographic hash function could be used.
 
 Though, the security of the system does rely on these choices, and a
 recommendation with rationale for each of the needed primitives will be given
@@ -1531,7 +1510,7 @@ form the \ac{IV} for the file.
 
 Next, the file is hashed and the resulting digest is stored together with the
 encryption key in the capability. Lastly, the file is encrypted with the
-encryption key and the \ac{IV}, and is transferred to the server.
+encryption key and the \ac{IV}, before transferred to the server.
 
 \begin{figure}[h!]
     \centering
@@ -1559,9 +1538,9 @@ capability. If these two match, the file has not been tampered with.
 
 \subsubsection{Create Directory}
 
-Creating and uploading a directory from the user terminal, is illustrated in
-Figure \ref{fig:CS:CD}. The process is a bit more complex than for files,
-because it has to support changing the contents of the folder.
+Creating and uploading a directory are illustrated in Figure \ref{fig:CS:CD}.
+The process is a bit more complex than for files, because it has to support
+changing the contents of the folder.
 
 \begin{figure}[h!]
     \centering
@@ -1572,7 +1551,7 @@ because it has to support changing the contents of the folder.
 
 Firstly, an asymmetric key pair is generated, and forms the private
 \emph{signing key} and the public key. The signing key is hashed to form the
-\emph{write key}, and again to form the \emph{read key}, and even once more to
+\emph{write key}, and again to form the \emph{read key}, and once more to
 form the \emph{storage index}.
 
 The contents of the folder, which may be empty, is encrypted with the read key
@@ -1580,15 +1559,16 @@ and the resulting ciphertext is signed with the signing key. The signing key is
 further encrypted with the read key, and together with the ciphertext, the
 public key, the \ac{IV} and the signature, uploaded to the server.
 
-The \emph{write enabler} is made from the write key with a \ac{MAC} function
-and sent alongside the file. The write key is stored together with a hash of
-the public key in the capability.
+The \emph{write enabler} is deduced from the write key with the use of a
+\ac{MAC} function and a fixed message. It is transferred alongside the
+directory.  The write key is stored together with a hash of the public key in
+the capability.
 
 \subsubsection{Open Directory}
 
 Opening a directory involves both downloading, verifying and decrypting the
-directory. The verification illustrated in Figure \ref{fig:CS:VOD} and
-decryption is illustrated in Figure \ref{fig:CS:OD}.
+directory. The verification process is illustrated in Figure \ref{fig:CS:VOD}
+and decryption is illustrated in Figure \ref{fig:CS:OD}.
 
 \begin{figure}[h!]
     \centering
@@ -1605,17 +1585,13 @@ decryption is illustrated in Figure \ref{fig:CS:OD}.
     \label{fig:CS:OD}
 \end{figure}
 
-From the capability, the user either obtains the read key or the write key. If
-the write key is found, it can be hashed to obtain the read key. The read key
-is again hashed to form the storage index, which is used to request content
-from the server.
-
-From the server, the user receives the encrypted contents of the folder, the
-signature for the folder and the public key. The user verifies that the public
-key is correct by hashing it and matching it against a hash stored in the
-corresponding capability. Afterwards, the public key is used to verify the
-signature. If both these checks pass, the folder is decrypted with the
-read key and the content is obtained.
+From the capability, the user either obtains the read key or the write key
+together with the storage index. From the server, the user receives the
+encrypted contents of the folder, the signature for the folder and the public
+key. The user verifies that the public key is correct by hashing it and
+matching it against a hash stored in the corresponding capability. Afterwards,
+the public key is used to verify the signature. If both these checks pass, the
+folder is decrypted with the read key and the content is obtained.
 
 \subsubsection{Modify Directory}
 
@@ -1626,7 +1602,7 @@ in the form of a capability, and must use this to decrypt the encrypted signing
 key which resides on the server, instead of generating a new one.
 
 A new \ac{IV} is generated, and the content of the folder is encrypted, and
-signed by the signing key. The fresh \ac{IV}, the signature and the encrypted
+signed by the signing key. The \ac{IV}, the signature and the encrypted
 contents are then uploaded to the server. The write enabler is also sent
 alongside, which is deduced in the same way as when creating a new folder.
 
@@ -1636,7 +1612,7 @@ alongside, which is deduced in the same way as when creating a new folder.
 For the proposed cryptographic scheme to be secure, it needs secure
 cryptographic primitives. More specific, it needs a symmetric cipher, a
 cryptographic hash function, a \ac{MAC} function, a key stretching function,
-and a function for digital signatures, as found in Figures \ref{fig:CS:CF},
+and a function for digital signatures, as observed in Figures \ref{fig:CS:CF},
 \ref{fig:CS:OF}, \ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}.
 
 These primitives needs to be set in accordance with the security requirements
@@ -1649,46 +1625,53 @@ with different predictions.
 \subsubsection{Symmetric Cipher}
 \defcitealias{ecrypt2_2010}{ECRYPT II}
 
-For a symmetric cipher the choice is pretty simple -- \ac{AES}. \ac{AES} is the
-NIST standard for symmetric encryption and is readily available in most
-programming languages. We have chosen a key size of 128-bit.
-\citetalias{ecrypt2_2010} \cite{ecrypt2_2010} has one of the more pessimistic
-predictions on how long this will be secure, saying data encrypted with this
-key size should be secure until 2030-2040.
+For a symmetric cipher we recommend the \ac{NIST} standard \ac{AES}.  We
+recommend a key size of at least 128 bit. \citetalias{ecrypt2_2010}
+\cite{ecrypt2_2010} has one of the more pessimistic predictions on how how
+secure this choice is, saying data encrypted with this key size should be
+secure until 2030-2040. 
 
 The gain of not choosing a larger key is a somewhat greater
 performance -- \ac{AES}-128 is 10 rounds while \ac{AES}-256 is 14
 rounds -- and of course that the keys are smaller to store.
 
-\paragraph{Mode of operation} The mode of operation we have chosen is \ac{CBC}.
-This is based more on practical advice than on security consideration.
-\citet{schneier} advices the use of either \ac{CBC} or \ac{CTR} mode, where
-\ac{CBC} mode is easier to implement correctly.
+% TODO: Få fram at man like godt kan velge AES 256
+
+\paragraph{Mode of operation} The mode of operation we recommend is \ac{CBC}
+for the encryption of file and folder contents.  This is based more on
+practical advice than on security considerations.  \citet{schneier} advices the
+use of either \ac{CBC} or \ac{CTR} mode, where \ac{CBC} mode is easier to
+implement correctly. 
+
+For the encryption of the private key, \ac{ECB} can be used, since the key is
+encrypted exactly once and the data is random.
+
 %, while \ac{CTR} mode, at least in theory, leaks the least information.
 
 \paragraph{Padding} One negative consequence of using \ac{CBC}, is that it
-requires that the plaintext is an exact multiple of the block length, i.e.
-128-bit. Since this is not always the case, a padding scheme will be required.
-A padding scheme does not have any security implications as long as it is
-reversible \cite{schneier}, at least not for \ac{CBC}. We decided to use
-\emph{PKCS5Padding} in our implementation, based on its availability in the
-cryptographic libraries we utilized. The PKCS5 standard was written in 2000 by
-RSA Laboratories and is available in RFC 2898 \cite{rfc2898}.
+requires that the plaintext is an exact multiple of the block length, i.e.  128
+bit. Since this is not always the case, a padding scheme will be required.  A
+padding scheme does not have any security implications as long as it is
+reversible \cite{schneier}, at least not for \ac{CBC}. Based on this, any
+available padding scheme can be used, but all clients need to use the same
+scheme.
 
 \subsubsection{Cryptographic Hash Function}
 
 The \ac{SHA}-family is the current standard for cryptographic hash functions,
-and from this we chose double \ac{SHA}-256. The cryptographic scheme requires
-the hash function to have an output of at least the size of the key used for
-encryption. The \ac{SHA}-1 has an output of 160 bits and could have been used,
-but more and more attacks are discovered %(e.g. by \citet{sha1})
-and are not recommended for use in new systems. The use of double \ac{SHA}-256 compared to
-single, is to prevent a length-extension attack \cite{schneier}.
+and from this we recommend double \ac{SHA}-256. The cryptographic scheme
+requires the hash function to have an output of at least the size of the key
+used for encryption. The \ac{SHA}-1 has an output of 160 bits and could have
+been used, but more and more attacks are discovered %(e.g. by \citet{sha1}) and
+are not recommended for use in new systems. The use of double \ac{SHA}-256
+compared to single, is to prevent a length-extension attack \cite{schneier}.
+
+% TODO: Kilde på hvorfor vi ikke kan bruke SHA-1
 
 \subsubsection{Signature Algorithm}
 
 For a signature scheme, the standard seems to be either \ac{RSA} or \ac{DSA}.
-Both functions would work, but we went with \ac{RSA}, primarily because
+Both functions would work, but we recommend \ac{RSA}, primarily because
 Tahoe-\ac{LAFS} made the same choice.
 
 There might however be a performance bonus in selecting \ac{RSA}. An internet
@@ -1697,8 +1680,8 @@ draft \cite{dsa_sha2} suggests that \ac{DSA} is about three times faster than
 signature. A performance comparison from \citet{msdn_perf} suggest that
 \ac{DSA} is 29\% faster at signing and \ac{RSA} is 29\% faster at verifying
 signatures. Verification, in the form of opening a folder, is an operation we
-believe most users will do significantly more than signing, updating and
-creating folders.
+believe most users will do significantly more than updating and creating
+folders.
 
 Multiple sources \cite{keylength} recommend at least 2048 bit as the key length
 used in \ac{RSA}.
