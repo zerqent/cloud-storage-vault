@@ -2237,37 +2237,33 @@ does not specify a way for deleting files. This is further discussed in Section
 \label{ch:experimental}
 %**************************************%
 
-This chapter will explain the experimental procedures performed on the Cloud
-Storage Vault. It will start by explaining the measurements on the performance
-of the application. The performance is further compared to similar existing
-network applications. Finally, the chapter will go through the experimental
-procedures taken to measure the security of the weakest link in the cryptographic
-scheme.
+This chapter describes the experimentation performed on the \acl{CSV}. It will
+start by explaining the measurements on the performance of the application.
+Finally, the chapter will go through the experimental procedures taken to
+measure the security of locally encrypted keyring.
 
-The security of the weakest link is measured by attacking the encrypted keyring
-stored by the cryptographic scheme. It is important to mention that it is the
-keyring pass phrase that is utilized during the attacks rather than the employed
-cryptographic primitives. Recall from Section \ref{sec:cryptoprimitivechoice} that the
-cryptographic primitives are considered secure. 
-
-\section{Performance}
+\section{Performance of the Client}
 
 We have tested the android client on two Android smartphones, an HTC Desire and
 an HTC Hero. We have also tested the Java libraries on a desktop computer. The
 specifications for HTC Desire can be seen in Table \ref{tbl:device:desire}, for
 HTC Hero in Table \ref{tbl:device:hero}, and the desktop computer in Table
-\ref{tbl:device:computer}. We emphasis that the measurements are meant to be
-taken as indications of the performance of the scheme and implementation and
-not exact measurements. We also emphasis that the Android measurements are our
-main objective, since that is what the client is primarily
+\ref{tbl:device:computer}. The server has identical specifications as the
+computer used. We emphasize that the measurements are meant to be taken as
+indications of the performance of the scheme and implementation and not exact
+measurements. The Android measurements are our main objective, since that is
+what the client is primarily made for. The server was never considered as a
+possible bottleneck for the system, due to all heavy operations being performed
+client side.
 
 \input{tables/exp_desire.tex}
 \input{tables/exp_hero.tex}
 \input{tables/exp_computer.tex}
+% TODO: samkjør exp_computer med PBKDF2 bruteforce
 
 \subsection{Measured Operations}
 
-The construction used to encrypt, hash and upload \textbf{files}, is a pipeline
+The construction used to encrypt, hash and upload \emph{files}, is a pipeline
 as described in Section \ref{sec:cryptoentities}. The interesting thing to
 measure, is the overall speed of the pipeline, compared to a simple file upload
 with no \emph{extra} operations such as hashing and encryption. To try to
@@ -2275,10 +2271,10 @@ pinpoint the exact bottlenecks in the pipeline, we also measure the bandwidth
 we get from each of the isolated operations in the pipeline on one of the
 Android devices, the HTC Desire.
 
-\textbf{Folders} are relatively small in size, and the implementation is not a
-pipeline. Compared to files, the heavy operations are done client side before
-the content is uploaded to the server. We therefore measure the speed of these
-operations, more specifically the following:
+\emph{Folders} are relatively small in size, and the implementation does not
+include the use of a pipeline. All cryptographic operations are completed for
+the whole folder prior to sending any data. The speed of these operations are
+therefore measured and includes the following:
 
 \begin{enumerate}
     \item The average time it takes to create a folder, i.e. initial key
@@ -2299,24 +2295,24 @@ traffic to our server using the tool \texttt{nload}\footnote{
 The average bandwidth are observed for a few seconds after the file upload has
 been started, until the file upload is nearly complete. This does not take
 overhead into consideration, such as the initial key generation, but for any
-file with a certain size this overhead should be neglectable.
+file with a certain size, this overhead should be neglectable.
 
 To be able to test the different folder operations in the program code, we use
-the Java function \emph{System.currentTimeMillis()}, which we call before and
+the Java function \texttt{System.currentTimeMillis()}, which we call before and
 after an operation, and calculate the difference to get the time spent. When we
 test operations that are dependant on the contents of a folder, we do this with
-a folder size of 86 bytes.
+each containing item being 86 bytes.
 
 \subsection{Eliminating Bottlenecks on Android Devices}
 
-On the Android devices, we identify three possible bottlenecks that we might be
-able to control: the \emph{network}, our \emph{application} by itself and the
+On the Android devices, three possible bottlenecks that we might be able to
+control are identified: the \emph{network}, the \emph{application} and the
 \emph{memory card}.
 
 The mobile phones will normally obtain their network connection through a
-wireless protocol that varies naturally in throughput, e.g. \ac{UMTS}. While
-these protocols work just fine, from a measurement standpoint, we want to have
-a fast and stable connection. Our solution was therefore to connect the Android
+wireless protocol that varies naturally in throughput, e.g. \ac{UMTS}. These
+protocols work just fine, but from a measurement standpoint, we want to have a
+fast and stable connection. The solution was therefore to connect the Android
 devices to the test computer, and use the computers network through the
 \ac{USB} interface.
 
@@ -2333,7 +2329,7 @@ The trouble with measuring performance on operations that are relatively quick,
 is that they are very vulnerable to \emph{noise} from the system. The Android
 system comes with a lot of built-in services that runs sporadically, and hence
 affect the measurements. However, the small and quick operations are not
-necessarily facinating to measure -- the interesting behaviour to observe is
+necessarily fascinating to measure -- the interesting behaviour to observe is
 how their performance is affected when the amount of data is increased. The
 goal of the client is to deliver a quick and smooth experience for the user.
 
@@ -2342,8 +2338,14 @@ card are, and this is thus another error source. But by comparing the speed for
 file operations in \ac{CSV} with the modified version without encryption and
 hashing, we should get an indication about how quick the software can be.
 
-\section{Security}
+\section{Security of the Encrypted Keyring}
 \label{sec:BFLK}
+% TODO: Dette er bare sakset hit foreløbig
+The security of the weakest link is measured by attacking the encrypted keyring
+stored by the cryptographic scheme. It is important to mention that it is the
+keyring pass phrase that is utilized during the attacks rather than the employed
+cryptographic primitives. Recall from Section \ref{sec:cryptoprimitivechoice} that the
+cryptographic primitives are considered secure. 
 
 The locally stored and encrypted keyring can be considered a security risk if
 it somehow ends up in an attacker's hands, either by a device being lost or by
@@ -2397,8 +2399,8 @@ users to increase key strength. Our attacks are tested on 500, 1000, 2000 and
 \subsubsection{Implemented Attacks}
 
 We created two programs designed to crack the keyring password. The first
-program, named \ac{BFDA}, was designed for a single computer, while the second
-program, named \ac{CDA}, was created to perform attacks by a cluster of
+program, named \acf{BFDA}, was designed for a single computer, while the second
+program, named \acf{CDA}, was created to perform attacks by a cluster of
 cooperating computers.
 
 Both use dictionary attacks, but the firstly mentioned is also capable of a
@@ -2408,10 +2410,9 @@ given in Appendix \ref{ap:other}.
 
 \subsubsection{Configuration}
 
-\ac{BFDA} requires Java with the \ac{JCE} and Jurisdiction Policy
-files\footnote{Policy files enables Java to use stronger encryption than what
-is allowed by US export law.} installed. It also depends on Java being
-configured to use Bouncy Castle as its primary \ac{JCE} provider. These
+\ac{BFDA} requires Java with the \ac{JCE} and Jurisdiction Policy files which
+enables Java to use stronger cryptographic primitives. It also depends on Java
+being configured to use Bouncy Castle as its primary \ac{JCE} provider. These
 prerequisites are required because the keyring is encrypted using Bouncy
 Castle, as this is used by default on the Android platform.
 
@@ -2503,51 +2504,51 @@ $ /path/to/Hadoop/bin/hadoop jar /path/to/CDA.jar \
 \label{ch:results}
 %**************************************%
 
-In this chapter we will present the quantifiable numbers retrieved when doing
-the experimentation in Chapter \ref{ch:experimental}. This includes performance
-measurements of the proof of concept client, and figures on the attacks
-presented, that target the local keyring.
+In this chapter we present the quantifiable numbers retrieved when doing the
+experimentation described in Chapter \ref{ch:experimental}. This includes
+performance measurements of the implemented client, and figures on the attacks
+presented that target the local keyring.
 
-\section{Client Performance}
+\section{Performance of the Client}
 
-This section presents the results of the benchmarking of the proof of concept
-client, and highlights the most important results.
+This section presents the numbers obtained from benchmarking the client, and
+highlights the most important results.
 
 \subsection{Files}
 
-The following results shows the network speed obtained when uploading and
-downloading files. Table \ref{tbl:files:encrypted} shows the speed when using
-the \emph{unmodified} client, while Table \ref{tbl:files:unencrypted} shows the
-speed obtained when using the same client, but with \emph{encryption and
-hashing disabled}. Table \ref{tbl:desire:pinpoint} shows the speed of the
-individual, isolated operations in the process pipeline on the HTC Desire.
+The following sections shows the network speed obtained when uploading and
+downloading files. Table \ref{tbl:files:encrypted} displays the obtained
+bandwidth when using the \emph{unmodified} client, while Table
+\ref{tbl:files:unencrypted} shows the obtained bandwidth when using the same
+client, but with \emph{encryption and hashing disabled}. Table
+\ref{tbl:desire:pinpoint} shows the speed of the individual, isolated
+operations in the process pipeline on the HTC Desire.
 
 \input{tables/performance_files.tex}
 \input{tables/performance_files_unencrypted.tex}
 \input{tables/result_desire_pinpoint.tex}
-
+%TODO: Model -> Device
 
 We observe that the performance of the Android devices for uploads is severely
 lower for uploads than for downloads, and that this is not the case for the
-computer client. We also observe that the speed with encryption and hashing
-disabled, is severely higher for all three devices. From the individual
-results for the HTC Desire, we identify that the encryption and decryption
-part is the most time consuming operation.
+computer client. We also notice that the speed with encryption and hashing
+disabled, is severely higher for all three devices. From the individual results
+of the HTC Desire, we identify that the encryption and decryption is the most
+time consuming operation.
 
 \subsection{Folders}
 
 Table \ref{tbl:folder:createblank} shows the average time it takes to create an
-empty folder on the different devices. The Tables
-\ref{tbl:folder:serializefolder} and \ref{tbl:folder:encryptsign} shows the
-respective time it takes to serialize, encrypt and sign the folder. The
-encryption and signing of folders is also visualized in Figure
-\ref{fig:results:signencrypt}. These three actions are what has to be performed
-every time a folder is changed, while the operation of creating a blank folder
-is added if the content should be added to a new folder. Table
-\ref{tbl:folder:verify} displays the time the devices used to verify an
-existing folder, a step which is taken by the client every time a folder is
-opened. Results noted as \emph{N/A} for the HTC Hero, is operations that lead
-to an \emph{Out of Memory} exception during execution.
+empty folder on the different devices. Table \ref{tbl:folder:serializefolder}
+exhibits figures on serialization of folders and Table
+\ref{tbl:folder:encryptsign} shows the time it takes to encrypt and sign the
+folder, and is visualized in Figure \ref{fig:results:signencrypt}. These three
+actions are what has to be performed every time a folder is changed, while the
+operation of creating a blank folder is added if the content should be added to
+a new folder. Table \ref{tbl:folder:verify} displays the time the devices used
+to verify an existing folder, a step which is taken by the client every time a
+folder is opened. Results noted as \emph{N/A} for the HTC Hero, are operations
+that lead to an \emph{Out of Memory} exception during execution.
 
 \input{tables/result_perf_createblankfolder}
 \input{tables/result_perf_serializefolder}
@@ -2563,15 +2564,15 @@ to an \emph{Out of Memory} exception during execution.
 We observe that the slowest part of folders operations are the initial key
 generation and more important, the serialization speed. Verification,
 encryption and signing is pretty fast for all devices. We also note that the
-performance of signing and encryption as well as verification seems to increase
-(in bytes/time) as the amount of data gets larger. The serialization part is
-the exact opposite where performance drops when the amount of data gets larger.
-We also note that our implementation struggle to handle folders with a large
-amount of items on the HTC Hero.
+performance of signing and encrypting, as well as verifying, seems to increase
+(in bytes/time) as the amount of data gets larger. The serialization part
+behaves the exact opposite where performance drops when the amount of data gets
+larger. We also note that our implementation struggle to handle large folders
+on the HTC Hero.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
-
+%TODO: Gjentagelse
 In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
 by implementing and executing two different programs. The first program, named
 \acf{BFDA}, was designed to run on a single computer, and supports both brute
@@ -2580,7 +2581,7 @@ to run in a computational cluster. As the name implies, the \ac{CDA} attack
 does only support dictionary attacks. The results for both programs are given
 in the following sections.
 
-\subsection{Brute Force and Dictionary Attack (BFDA)}
+\subsection{\acl{BFDA}}
 
 With \ac{BFDA}, we executed both a brute force and a dictionary attack to
 estimate the amount of passwords we could test during the course of a second.
@@ -2591,9 +2592,8 @@ per second than the dictionary attack. A cause of this, might be due to the
 file reading overhead in the dictionary attack. 
 
 The results for both attacks are illustrated in Table \ref{tab:res_bf}. Results
-are given for different numbers of \ac{PBKDF2} iterations, in the matter of
-passwords per second. Figure \ref{fig:bfres} exhibits these numbers in the form
-of a histogram.
+are given for different numbers of \ac{PBKDF2} iterations in passwords per
+second (PW/s). Figure \ref{fig:bfres} exhibits these numbers.
 
 \input{tables/res_bf.tex}
 
@@ -2605,15 +2605,15 @@ of a histogram.
 \end{figure}
 
 Figure \ref{fig:bfres} indicates that by doubling the number of iterations in
-\emph{PBKDF2}, the efficiency of a brute force attack would decrease by half of
-its value.
+PBKDF2, the efficiency of a brute force attack would decrease by half of
+its value, as expected.
 
 Using 1000 iterations in \ac{PBKDF2}, as recommended by \citet{pbkdf2std}, the
 brute force attack was able to reach a speed of around 1800 passwords per
 second. With this speed, it will take, in average, 24 hours to crack a password
 with a length of 6 characters, consisting of only small letters.
 
-\subsection{Cluster Dictionary Attack (CDA)}
+\subsection{\acl{CDA}}
 
 When running \ac{CDA}, each node of the cluster achieved approximately the same
 results as a single computer running a dictionary attack with \ac{BFDA}. We
@@ -3445,7 +3445,7 @@ dictionary follows this requirement.
 
 In this occasion, we have created a Bash script, named \texttt{dictmaker.sh},
 that changes a regular dictionary into an $N$ words-per-line dictionary. The
-script can be found on the attached CD-ROM.
+script can be found on the attached disc.
 
 %**************************************%
 \chapter{Attachments}
