@@ -918,12 +918,13 @@ confidentiality to the cloud provider \cite{obfuscationmethod}.
 
 In addition to installing a privacy manager at the user's terminal, HP Labs
 suggests the use of trusted computing solutions to address the lower-level
-protection of data. The \ac{TCG} is an example of an organization developing
-and providing trusted computing solutions \cite{tcg}. A tamper-proof piece of
-hardware called a \ac{TPM} is recommended \cite{privacymanager}, which is
-designed by \ac{TCG}. The \ac{TPM} is installed in the machine running the
-privacy manager, to ensure that processes carried out by the privacy manager can
-be fully trusted.
+protection of data. The
+\ac{TCG}\footnote{\url{http://www.trustedcomputinggroup.org/}} is an example of
+an organization developing and providing trusted computing solutions. A
+tamper-proof piece of hardware called a \ac{TPM} is recommended
+\cite{privacymanager}, which is designed by \ac{TCG}. The \ac{TPM} is installed
+in the machine running the privacy manager, to ensure that processes carried
+out by the privacy manager can be fully trusted.
 
 The privacy manager is suggested to work in three different use cases. It can
 be implemented to support a \emph{single client}, the use of \emph{hybrid
@@ -1450,9 +1451,12 @@ on files and folders.
 
 \paragraph{Capabilities} Capabilities are containers which contain the
 necessary information to locate, encrypt, decrypt, verify and possibly write
-file objects. The contents is summarized in Table \ref{tbl:capability}, and
-will vary somewhat for files and folders, since they are implemented by
-immutable and mutable files respectively.
+file objects. The possession of a capability grants these rights, which can be
+either read access or read and write access. Such an access scheme is known as
+\emph{capabilities as keys} \cite{capabilitymyths}. The contents of a
+capability is summarized in Table \ref{tbl:capability}, and will vary somewhat
+for files and folders, since they are implemented by immutable and mutable
+files respectively.
 
 \input{tables/capability.tex}
 
@@ -1624,17 +1628,15 @@ with different predictions.
 \subsubsection{Symmetric Cipher}
 \defcitealias{ecrypt2_2010}{ECRYPT II}
 
-For a symmetric cipher we recommend the \ac{NIST} standard \ac{AES}.  We
-recommend a key size of at least 128 bit. \citetalias{ecrypt2_2010}
-\cite{ecrypt2_2010} has one of the more pessimistic predictions on how how
-secure this choice is, saying data encrypted with this key size should be
-secure until 2030-2040. 
+For a symmetric cipher we recommend the \ac{NIST} standard \ac{AES}, and a key
+size of 128 bit should suffice. \citetalias{ecrypt2_2010} \cite{ecrypt2_2010}
+has one of the more pessimistic predictions on how how secure this choice is,
+saying data encrypted with this key size should be secure until 2030-2040. 
 
-The gain of not choosing a larger key is a somewhat greater
-performance -- \ac{AES}-128 is 10 rounds while \ac{AES}-256 is 14
-rounds -- and of course that the keys are smaller to store.
-
-% TODO: Få fram at man like godt kan velge AES 256
+The gain of not choosing a larger key is a somewhat greater performance --
+\ac{AES}-128 is 10 rounds while \ac{AES}-256 is 14 rounds -- and of course that
+the keys are smaller to store. However, for a new system there are not really
+any reason to not select a key size of 256 bit \cite{schneier}.
 
 \paragraph{Mode of operation} The mode of operation we recommend is \ac{CBC}
 for the encryption of file and folder contents.  This is based more on
@@ -2620,21 +2622,21 @@ results as a single computer running a dictionary attack with \ac{BFDA}. We
 found that there was a small difference where the local computer achieved about
 100 passwords per second more, compared to an instance in the cluster. This was
 expected, with respect to the difference in \ac{CPU} power between the local
-computer and a single cluster instance \cite{cpubench}. 
+computer and a single cluster instance. 
 
 With 20 nodes in the cluster, we were able to test around 8600 passwords per
-second, given \emph{PBKDF2} with 4000 iterations. Running the \ac{CDA} in a
-cluster of 200 nodes, would further reach a speed of 86 000 passwords per
-second. Given a plain brute force attack with a speed of 86 000
-password per second, it will take around 2496 years in average to brute force a password
-with the password constraints in Section \ref{sec:PBKD}. Calculations are
-as follows.
+second, given \emph{PBKDF2} with 4000 iterations. Running \ac{CDA} in a cluster
+of 200 nodes, would further reach a speed of 86 000 passwords per second. Given
+a brute force attack with a speed of 86 000 password per second, it will take
+about 2496 years on average to brute force a password with the password
+constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
 
 \begin{align*}
 \frac{62^9 \text{ passwords}}{86000 \text{ passwords/second}} &= 157407983096.09 \text{ seconds} \\
 \frac{157407983096.09}{60 * 60 * 24 * 365} &= 4991.37 \text{ years} \\
 \frac{4991.37}{2} &= 2495.69 \text{ years in average}
 \end{align*}
+% TODO / 2 bør forklares.
 
 At the time of writing, renting a single \emph{Amazon EC2 high-CPU extra large}
 instance costs 0.68 USD per hour. This unit price results in an hourly cost of
@@ -2644,21 +2646,9 @@ instance costs 0.68 USD per hour. This unit price results in an hourly cost of
 \chapter{Discussion}
 \label{ch:discussion}
 %**************************************%
-%\section{Complexity}
-% Hvordan vi lagrer filer
-% Lagring av nøkler
-% Hvordan direktorier fungerer
-% Hvordan vi deler
 
-%Vår løsning VS relatert research og existing solutions
-
-%\subsection{Keys}
-%Type of keys, what distribution scheme was chosen
-%\subsection{Files}
-
-%\subsection{Folders}
-
-%\subsection{Sharing}
+%TODO: introduksjon
+% Vi må dra inn sikkerhets servicer mot scheme vårt (background).
 
 \section{Cryptographic Scheme}
 %What is/is not used from TAHOE?
@@ -2688,17 +2678,17 @@ the scheme is significantly simplified.
 
 \paragraph{Key Generation} The process of generating keys for directories, as
 described in Section \ref{sec:CS:DO}, are heavily based on the scheme of
-Tahoe-\ac{LAFS}. By using the combination of symmetric keys derived from
-asymmetric keys, the scheme supports safe sharing of folders in both read-only
-and read-write modes.
+Tahoe-\ac{LAFS}. By using a combination of symmetric keys and asymmetric keys,
+the scheme supports secure sharing of folders in both read-only and read-write
+modes.
 
 \subsection{Sharing}
 % Read/write keys, integrity, the general key distribution problem
 
-One of the major advantages of \ac{CSV} over other cloud storage systems, is
-the possibility to share files and folders in a secure manner. If the read
+One of the major advantages of \ac{CSV} over many cloud storage systems, is the
+possibility to share files and folders in a secure manner. If the read
 capability of a folder is shared, the user holding the write capability are
-guaranteed to be the only one capable of making changes to the folder.
+guaranteed to be the only one capable of making valid changes to the folder.
 
 The server denies people with only the read capability to make changes to the
 folder by the use of the \emph{write enabler}. The write enabler serves the
@@ -2707,12 +2697,37 @@ If someone with access to the file system on the server, e.g. a cloud
 provider employee, decides to make changes on a folder, the integrity check
 will warn the user of this.
 
-\paragraph{Key Distribution} The sharing of files and directories implicitly
-deals with the general problem of key distribution. The cryptographic scheme
-does not propose specific solutions for this, and leaves it up to the
-implementation to choose the best suiting method in light of the specific
-requirements. The procedure used in the proof of concept system developed, are
-described in Section \ref{sec:DIS:impl}.
+\paragraph{Key Distribution}
+\label{sec:DI:keydist}
+
+The challenge of key distribution in a user friendly way is hard. To
+successfully authenticate a user and transfer a key, it is possible to choose
+from the following methods:
+
+\begin{itemize}
+ \item Use a trusted third party
+ \item Meet a user in person
+ \item Use some sort of safe out of bound channel
+\end{itemize}
+
+Since one of the basic problems of this thesis is that the cloud provider is
+not to be trusted, it is not desirable to use a trusted third party. This
+implies that the only option left, is to verify another user in person,
+although an out of band scheme like \ac{PGP} could be used. 
+
+In \ac{PGP}, users can publish that they have verified other users and to which
+degree they trust them \cite{stallings}. Other users can use this information
+to calculate the probability that a certain user is legit. The reason why this
+scheme is not implemented, is that it is fairly complex for a standard user to
+grasp. There are however nothing that stops a user that want to use the
+\ac{PGP} scheme to transfer capabilities through it.
+
+If the cryptographic scheme presented in Section \ref{chap:CS} should be used
+in an organization, a \ac{PKI} is probably the best solution. In this setting,
+the organization can itself be the trusted third party that enforces that all
+certificates granted to users are correct. A user could then simply be prompted
+by the name of the user he would like to share a file with, and the rest could
+be handled by software logic and the trust of the \ac{PKI}.
 
 \subsection{Deletion of Files}
 \label{sec:deletion_of_files}
@@ -2743,16 +2758,14 @@ files.
 
 \paragraph{Link Count} The files could include a link count in its meta data,
 updated whenever a user links or unlinks it from a folder. When the link count
-reach zero, the user notifies the server to delete it. But the server would
-have to know for certain that the removal is legit. In other words the server
-must actually know the directory tree, and changing this must be done with
-someone who presents a write enabler.
+reaches zero, the user notifies the server to delete it. This would have to be
+combined with the use of delete enablers for files.
 
 \subsubsection{Loop Detection in a Directed Acyclic Graph}
 
-In remedy of the problem of cascading deletion with loops, the system could
-utilize an algorithm for finding strongly connected components of a graph,
-before actually deleting any files.
+To remedy the problem of cascading deletion with loops, the system could
+utilize an algorithm for finding \emph{strongly connected components} of a
+graph, before actually deleting any files.
 
 Two components are strongly connected if there exist a path from $A$ to $B$,
 and from $B$ to $A$, as depicted in Figure \ref{fig:DSC:cycles} where a
@@ -2774,30 +2787,23 @@ with a stack containing visited nodes.
 
 \subsection{Verification of Files}
 
-The verification scheme for immutable files is suboptimal in pretty much every
-way a user wants to use an ordinary file, with the exception of the case where
-the user wants the entire file and the file has not been tampered with.
+The verification scheme for immutable files is suboptimal in every way a user
+wants to use an ordinary file. The problem is that the user will have to
+download the entire file, before he can verify that the file is what it is
+supposed to be. If it turns out that the file does not pass this check, and the
+error was in the very first byte, the user has wasted time and bandwidth
+downloading a lot of useless data. The same scenario applies if the user only
+wants to look at a small part of a file, e.g. the middle section of a movie.
 
-The problem with the scheme, is that the user will have to download the whole
-file, before he can verify by absolute certainty that the file is what it is
-supposed to be. If it turns out that the file does not pass this check, and
-the error was in the very first byte, the user has wasted time and bandwidth
-downloading a lot of useless data.
-
-If the file is a movie, and the user only wants to look at a
-small part of this movie, this is not possible with the current verification
-scheme. There is no way for the user to verify only parts of a
-file, and he will have to download the whole file, which is suboptimal.
-
-A possible solution to support this kind of streaming, would be to build a
+A possible solution to support this kind of verification, would be to build a
 \emph{hash tree} of the whole file, as shown in Figure \ref{fig:hashtree}. With
-a hash tree, smaller bits of the file can be verified, and errors can be
+a hash tree, smaller parts of the file can be verified, and errors can be
 detected earlier. The hash tree could be stored encrypted on the server
-together with the ciphertext, and the capability could hold information to
-verify the hash tree. The downside to this approach, is that performance would
-be affected due to the substantial amount of hash operations required to
-compute the hash tree. This idea of a hash tree is implemented in the
-Tahoe-\ac{LAFS} \cite{tahoe}.
+together with the encrypted file, and the capability could hold the root hash
+of the tree. The downside to this approach, is that performance would be
+affected due to the substantial amount of hash operations required to compute
+the hash tree.  This idea of a hash tree is implemented in Tahoe-\ac{LAFS}
+\cite{tahoe}.
 
 \begin{figure}[!h]
 \centering
@@ -2813,8 +2819,9 @@ mentioned in Section \ref{sec:existing}, support a kind of \emph{version
 control} of the files stored. This means that the data lost during a
 modification of a file are saved alongside the current file, so that the user
 has enough information to restore the file to a previous state.  In practice,
-this often mean to store multiple versions of the same file.  This could be
-implemented in \ac{CSV} as follows.
+this often mean to store multiple versions of the same file, or the difference
+between two versions. This could be implemented in \ac{CSV} by one of the
+following methods.
 
 \paragraph{Extension to Folders} By adding a nested list to the directory
 structure exemplified in Section \ref{sec:cli:impl:det}, we can link previous
@@ -2826,10 +2833,10 @@ versions of a file in the serialization form:
 \end{quote}
 
 To make this feasible and user friendly, a time stamp would have to be added to
-the capability.
+the capability. This would increase the size of the folder.
 
 \paragraph{Type of Mutable File} A new form of mutable file could be
-implemented in practically the same shape as a directory, containing timestamps
+implemented in practically the same form as a directory, containing timestamps
 instead of aliases, and pointing to corresponding storage indexes. With this
 procedure, it should be easy to configure for the user which files and folders
 that should be under version control.
@@ -2838,11 +2845,11 @@ that should be under version control.
 
 The term \emph{data deduplication} implies not having to store redundant data.
 By implementing a deduplication scheme, multiple advantages can arise in the
-sense of a secure cloud storage system. For the service provider, this could
-mean cost savings in the form of not having to store the same file twice, but
-still claim money from users for the given storage. For the users of the
-service, this could mean better network utilization, as uploading a big file
-that already exist on the server would take no time at all.
+sense of a storage system. For the service provider, this could mean cost
+savings in the form of not having to store the same file twice, but still claim
+money from users for the given storage. For the users of the service, this
+could mean better network utilization, as uploading a big file that already
+exist on the server would take no time at all.
 
 However, there are practical disadvantages and great privacy concerns related
 to deduplication, in addition to some solutions that address these issues.
@@ -2859,6 +2866,7 @@ Further on, the additional hash operations and queries to the server pose
 extra computational overhead, which increase if the deduplication is on block
 level.
 
+% TODO: Gjøre noe med dette eksempelet
 \paragraph{Privacy} Implicitly, using deduplication globally -- i.e. for the
 whole system, for all users -- gives any user of the system the possibility to
 check a file for existence. This could for instance be utilized by anti piracy
@@ -2877,10 +2885,10 @@ Convergent encryption implies using the hash of the plaintext as the key to the
 symmetric encryption algorithm, i.e. the same plaintext will always yield the
 same ciphertext, making it relatively easy to implement deduplication.
 
-Tahoe-\ac{LAFS} adds an extra per-client secret to the hashing procedure, as
+Tahoe-\ac{LAFS} adds a per-client secret to the hashing procedure, as
 depicted in Figure \ref{fig:tahoe:dedup}, before using the result as a key to
 encrypt the file. This enables per-client deduplication, or per-group
-duplication if the user shares the secret with other users. Since the storage
+deduplication if the user shares the secret with other users. Since the storage
 index is based on the encryption key, and the plaintext will always lead to the
 same encryption key, the client can check for file existence on the server and
 hinder duplication.
@@ -2895,16 +2903,15 @@ hinder duplication.
 \subsection{Supporting Multiple Cryptographic Primitives} 
 
 The main problem with selecting cryptographic primitives for our scheme, is
-that one can not be sure how long a cryptographic cipher, hash function or
-signature scheme will remain secure. A recommended approach is to build systems
-that can easily change the cryptographic primitives, in case of discoveries
-enabling an attacker to break a primitive \cite{schneier}. The main problem
-with this approach is that if for instance \ac{AES} is broken, and the cloud
-provider keeps backups of all user data on their server, that information is
-compromised with regard to the provider.
+that one can not be sure how long they will remain secure. A recommended
+approach is to build systems that can easily change the cryptographic
+primitives, in case of discoveries enabling an attacker to break a primitive
+\cite{schneier}. The main problem with this approach is that if for instance
+\ac{AES} is broken, and the cloud provider keeps backups of all user data on
+their server, that information is compromised with regard to the provider.
 
 A change of a cryptographic primitive in our scheme would lead to backward
-compatibility being broken, e.g. one would be unable to obtain files or folders
+compatibility being broken, i.e. one would be unable to obtain files or folders
 stored before the change. This could be remedied by a meta-block for each file
 and folder, containing the utilized cryptographic primitives. In addition, the
 capability would have to contain which cryptographic hash function that should
@@ -2916,70 +2923,40 @@ be used, to be able to deduce the storage index from the key.
 This section will discuss and deal with the different choices taken to fulfil
 the implementation of the cryptographic scheme. We will start by discussing the
 use case we chose to implement. Further on, we will analyse our choice of key
-distribution and look at alternative solutions. The section will end by a
-discussion of the most important cryptographic primitives chosen and utilized
-in our implementation.
+distribution scheme and look at alternative solutions. 
 
 \subsection{Choice of Use Case}
 
 There are mainly two types of user groups interested in a cloud storage
 solution -- personal or enterprise. The proof of concept implementation is more
-aimed against the personal use case, than the enterprise market. The main
-difference between these two use cases, is that in an enterprise there will
-usually be some kind of IT department which will have the possibility of
-initially setting up the terminals before handing them out to the users.
+aimed against the personal use case, than the enterprise market. 
 
-An additional fundamental difference is that it would usually be more defined
-who the users are supposed to share files with, and what they should have
-access to. An organization might not approve of a model where all users can
-forward read rights to every other users.
+In an enterprise, the use of a \ac{TTP} are often already in place, usually in
+the form of an IT department. An additional fundamental difference, is that it
+would usually be more defined who the users are supposed to share files with,
+and what they should have access to. An organization might not approve of a
+model where all users can forward read rights to other users.
 
-\subsection{Choice of Key Distribution}
-\label{sec:DI:keydist}
-%Describe possible key distributions schemes
-%Argue why we chose our scheme
-
-The challenge of key distribution is a hard one. To successfully authenticate a
-user and transfer a key, it is possible to choose from the following methods:
-
-\begin{itemize}
- \item Use a trusted third party
- \item Meet a user in person
- \item Use some sort of out of bound safe channel
-\end{itemize}
-
-Since one of the basic problems of this thesis is that the cloud provider is
-not to be trusted, it is not desirable to use a trusted third party. This
-implies that the only option left, is to verify another user in person,
-although a scheme similar to \ac{PGP} could be used. 
-
-In \ac{PGP}, users can publish that they have verified other users and to which
-degree they trust them \cite{stallings}. Other users can use this information
-to calculate the probability that a certain user is legit. The reason why this
-scheme is not implemented, is that it is fairly complex for a standard user to
-grasp. There are however nothing that stops a user that want to use the
-\ac{PGP} scheme to transfer capabilities through it.
-
-If the cryptographic scheme presented in Section \ref{chap:CS} should be used
-in an organization, a \ac{PKI} is probably the best solution. In this setting,
-the organization can itself be the trusted third party that enforces that all
-certificates granted to users are correct. A user could then simply be prompted
-by the name of the user he would like to share a file with, and the rest could
-be handled by software logic and the trust of the \ac{PKI}.
+\subsection{Key Distribution}
+% TODO: Skryt av hvor enkelt vi gjør det.
 
 \subsection{Deviations in the Choice of Cryptographic Primitives}
 
-The implementation of the proof of concept client deviates from
-the recommendation given in Section \ref{sec:cryptoprimitivechoice}. 
-These deviations occurred as a result of new discoveries that were made while analysing
-the system. All unfortunate deviations are corrected with a patch file submitted
-along with the code attachment, described in Appendix \ref{ap:attachments}. The
-following deviations exist.
+The implementation of the proof of concept client deviates from the
+recommendation given in Section \ref{sec:cryptoprimitivechoice}.  This occurred
+as a result of new discoveries that were made while analysing the system. All
+unfortunate deviations are corrected with a patch file submitted along with the
+code attachment, described in Appendix \ref{ap:attachments}. The following
+deviations exist.
 
 \paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
 bits, in contrast to the argued 2048 bits. It is therefore important to notice
 that all measurements, presented in Chapter \ref{ch:experimental} and
 \ref{ch:results}, are based on an RSA key length of 1024 bits.
+
+\paragraph{AES Key Length} The key length used in our implementation is 128 bit
+for \ac{AES}. The reason to prefer a shorter key length in \ac{CSV} is to make
+manual key exchange less cumbersome. 256 bits are however preferred.
 
 \subsection{Simplifying the Server}
 
@@ -2988,7 +2965,8 @@ never identified as a bottleneck during the performance measurements. However,
 by making the server-side contain less logic, \ac{CSV} could be used against
 for instance the Amazon S3 service. This would more easily enable users that
 are not comfortable with setting up a web server, to set up the whole system
-from scratch.
+from scratch. Another possibility is that the cloud provider could offer the
+\ac{CSV} as \ac{SaaS}.
 
 By redesigning the scheme to use a \emph{dumb file store}, the \ac{ACL}
 functionality will be lost. However, a service like Amazon S3 do provide some
@@ -2996,27 +2974,26 @@ access control, and in the scenario of a \emph{friend net}, this could actually
 be considered as a better solution. Luckily, the cryptographic architecture
 presented in Section \ref{chap:CS}, are loosely coupled with the \ac{ACL}
 layer, so extending the proof of concept software to use a dumb file store
-should not pose any great problems.
+should not pose any great concerns.
 
 \section{Performance}
 
 The measurements performed on our client reveal that it is not as fast as
 desirable. For files, a perfect client would render the network or the SD card
-as the bottleneck, but our measurements state that this is clearly not the
-case. 
+as the bottleneck, but our measurements state that this is not the case. 
 
-The download and upload speed for a given file is decreased by around
-50-80\% on all three test devices. The results for the individual operations
-performed on HTC Desire shown in Table \ref{tbl:desire:pinpoint}, clearly
-indicates that encryption and decryption are the slowest elements in the
-process pipeline, and responsible for most of the performance drop. 
+Because of the cryptographic operations, the download and upload speed for a
+given file is decreased by around 50-80\% on all three devices. The results for
+the individual operations performed on HTC Desire shown in Table
+\ref{tbl:desire:pinpoint}, indicates that encryption and decryption are the
+slowest elements in the process pipeline, and responsible for most of the
+performance drop. 
 
 \paragraph{Limitations of Libraries} Another thing to note, is that the
-implementations of the \texttt{InputStream} and \texttt{OutputStream}
-objects in Java and the Apache HttpComponents seems to read and write the
-requested number of bytes stream by stream. This implies that the
-implementation will never reach the speed achieved by even the slowest
-component in the pipeline.
+implementations of the \texttt{InputStream} and \texttt{OutputStream} objects
+in Java and the Apache HttpComponents seems to read and write the requested
+number of bytes stream by stream. This implies that the implementation will
+never reach the speed achieved by the slowest component in the pipeline.
 
 \paragraph{Multiple CPU Cores} Branching the operations in the pipeline to
 different threads should make it possible to gain better performance,
@@ -3032,7 +3009,7 @@ functionality. We identify the slowest operation to be the generation of
 new cryptographic keys. For a user of the Android client, this should not be a
 problem, since the folder creation is done as an asynchronous task while the
 user enters the name of the new folder. Another solution is to have the
-application generate a pool of keys before they are requested by the user, in
+application maintain a pool of keys before they are requested by the user. In
 this way a key can almost always be ready for the user when he needs it.
 
 The other cryptographic operations on folders completes quite quickly, but the
@@ -3043,11 +3020,11 @@ change the scenario to backing up an entire computer, the serialization part
 might become a problem. 
 
 The slow serialization operation can partially be blamed on our own
-implementation. The folder items are stored in a \texttt{HashMap}, which
-is serialized to a string to make it ready for encryption. Ideally, this step
-is not necessary, given that folder content exists in its correct form in
+implementation. The folder items are stored in a \texttt{HashMap}, which is
+serialized to a string to make it ready for encryption. Ideally, this step is
+not necessary, given that the folder contents exists in its correct form in
 memory. This might not be possible due to reasons such as decreased performance
-when manipulating the folder content. However, we believe there exist a
+when manipulating the folder content. But we believe it is possible to create a
 faster implementation of the currently utilized serialization algorithm.
 
 \paragraph{Cache} Since opening folders is a relatively expensive procedure,
@@ -3067,7 +3044,7 @@ This section will discuss the general security provided by the \acl{CSV}, and
 is further divided into security of the cryptographic scheme and security of
 the user client.
 
-\subsection{Security of Cryptographic Scheme}
+\subsection{Security of the Cryptographic Scheme}
 
 The proposed cryptographic scheme is subject to certain weaknesses that
 currently, or in the future, may be utilized by an attacker. The following
@@ -3090,12 +3067,9 @@ contained in which folders.
 Considering the findings in various research, information can also be leaked to
 other potential attackers besides the untrusted cloud provider. External
 attackers can locate the server in the cloud, used by the application, and
-further set up a \ac{VM} on the same server \cite{cloud_getoff}. The \ac{VM}
-can then be used to mount cross-\ac{VM} side-channel attacks to extract
-information from the server side application. This will, however, in a worst
-case scenario, enable an attacker to achieve the exact same information as the
-untrusted cloud provider, hence, no more information is leaked from the
-application than expected.
+further set up a \ac{VM} on the same server \cite{cloud_getoff}. In a worst
+case scenario the attacker gets access to the same amount of information as the
+cloud provider, which should not be dangerous.
 
 \subsubsection{Content Disclosure}
 
@@ -3120,47 +3094,11 @@ specific file. It is also important to note that if the confidentiality of a
 user's root folder is breached, all files, belonging to that user, are
 effectively compromised.
 
-\subsubsection{Disclosing the Keyring Content}
-
-The confidentiality of the cryptographic root key and user passwords is held by
-a single encrypted keyring that is stored locally client-side.
-
-The keyring is encrypted with a cryptographic key derived from a password
-provided by the user. Unfortunately, using a password to encrypt the keyring,
-makes the keyring a suitable target for brute force and dictionary attacks. The
-vulnerability of the keyring against brute force and dictionary attacks was
-questioned in Section \ref{sec:BFLK}.
-
-\paragraph{Brute Forcing the Keyring} From the results in Section
-\ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed that the choice of
-iterations in \ac{PBKDF2} were conclusive to the efficiency of a brute force
-attack against the local keyring. By doubling the number of iterations in
-\ac{PBKDF2}, the efficiency of a brute force attack would decrease by a
-corresponding 50\%.
-
-It is important to notice that both of the \ac{CDA} and the \ac{BFDA} programs
-were written in Java. With this in mind, it is reasonable to believe that
-general performance can be improved by using a lower-layer programming
-language, such as C, to implement the attacks. Another way to increase
-performance is to design both attacks to run on \acp{GPU} rather than
-\acp{CPU}.
-
-When following the recommendations for \ac{PBKDF2} and password constraints
-given in Section \ref{sec:PBKD}, it is impossible to perform a plain brute
-force attack against the local keyring. However, even though the keyring is
-secured against a plain brute force attack, it is still vulnerable to
-dictionary attacks.
-
-To completely avoid brute force and dictionary attacks against the keyring, the
-most efficient and preventive action is to simply ensure that the encrypted
-keyring is only accessible by its authorized users. In other words, the
-confidentiality of the encrypted keyring relies primarily on the security of
-the client software itself.
 
 \subsubsection{The Weakest Link}
 
 Considering the potential weaknesses discussed above, the weakest link in the
-secure cloud storage scheme presented, is, by no doubt, the locally encrypted
+secure cloud storage scheme presented, is potentially the locally encrypted
 keyring. To provide usability, users are given the possibility of choosing
 their own password, to indirectly encrypt their keyring. However, it is fairly
 well known that users can not be trusted to generate and use long, secure
@@ -3169,119 +3107,113 @@ passwords.
 As mentioned earlier, even with the recommended password constraints, the
 keyring is still vulnerable to dictionary attacks. However, disclosing the
 keyring is only possible if the keyring is accessible to an attacker. Getting
-access to a user's keyring is defined as an \emph{active attack}, and is
+access to a locally stored keyring is defined as an \emph{active attack}, and is
 further discussed in the next section.
 
 \subsection{Client Security}
 
-Given enough users, sooner or later, there will be a user who looses the
-control over the equipment where the client software is installed.
-Additionally, a user's client might also be broken into without the user even
-knowing it. This section will look at the security of the application in both
-scenarios.
+If a user physically looses his device, and the \ac{CSV} software is running,
+anyone who finds the device can get access to the user's private files and
+folders. This is because the client software will have to keep the root
+capability from the keyring in memory, and will potentially have copies of the
+files on the device. The same applies if the device is broken into, e.g.
+through a vulnerability in the operating system.
 
-\subsubsection{Lost Client}
+\subsubsection{Downloaded Files} 
 
-If a user physically looses his client, and the client is logged on to the
-\acl{CSV}, anyone who finds the client can get access to the user's
-private files and folders. 
-
-While logged on to the service, it is also possible for an experienced attacker
-to reveal the server access username and password, as well as the password to
-decrypt the locally stored keyring. This is possible due to the fact that all
-information is stored in memory while logged on to the system. Although this is
-a severe security breach, it can be avoided by adding additional functionality,
-e.g. by simply flushing or overwriting the password values stored in memory
-right after a successful login session.
-
-Even though this mechanism prevents disclosure of critical access data in the
-event of loosing a client, it does not prevent a logged in attacker from
-disclosing the user's encrypted files and folders. To reduce this problem, the
-client software could implement a timeout mechanism for inactive users. If a
-user has been inactive for a reasonable given time interval, the user should be
-logged out of the application. 
-
-\paragraph{Downloaded Files} Even though a timeout value may deny an attacker
-access to the storage vault, it can not prevent the attacker from accessing
-files that have already been downloaded from the system. There is, however, two
-ways of handling this problem.
-
-The first solution is to avoid writing downloaded files to the persistent
-storage medium. This can be implemented using a temporary file system that only
-persists in the memory of the client, e.g. \emph{ramfs} and \emph{tmpfs} are
-two temporary file systems for clients running Unix-like operating systems.
-However, by utilizing this method, will limit the possible size of the
-downloaded files to the size of the available memory. 
+An attacker who gains access to the device running \ac{CSV} will have be able
+to read files downloaded. We can avoid writing downloaded files to the
+persistent storage medium. This can be implemented using a temporary file
+system that only persists in the memory of the client, e.g. \emph{ramfs}. This
+is a file system for clients running Unix-like operating systems.  However, by
+utilizing this method, will limit the possible size of the downloaded files to
+the size of the available memory. 
 
 In case limited file size is not an acceptable solution, it is possible to use
-a temporary file system that supports swapping, as in the case of \emph{tmpfs}.
-This will, however, potentially keep parts of a large file on the persistent
-storage medium, revealing information about a downloaded file.
+a temporary file system that supports swapping, e.g. \emph{tmpfs}.  This will,
+however, potentially keep parts of a large file on the persistent storage
+medium, revealing information about a downloaded file. A practical feature
+would be to store the encrypted files on the persistent storage medium, and
+only put them in the temporary file system when needed. 
 
-A second solution would be for the \acl{CSV} to store downloaded files in their
-encrypted form. The downloaded files could then only be opened locally through
-the client application itself, which would further decrypt and enable the user
-to open the file through other programs. It is worth noting that this
-mechanism resembles the procedure of \emph{file synchronization} between the
-client and the cloud, similar to the functionality of Dropbox, mentioned in
-Section \ref{sec:existing}.
+\subsubsection{Disclosing the Root Capability}
 
-\subsubsection{Compromised Client}
+The confidentiality of the root capability is held by an encrypted keyring that
+is stored client-side. The keyring is encrypted with a key derived from a
+password provided by the user. Unfortunately, using a password to encrypt the
+keyring, makes the keyring a suitable target for brute force and dictionary
+attacks. The vulnerability of the keyring against brute force and dictionary
+attacks was questioned in Section \ref{sec:BFLK}.
 
-As mentioned earlier, an attacker could also break into the user equipment of a
-user, using a backdoor, trojan horse or similar. Depending on the attack, a
-worst case scenario would be that the attacker is able to obtain root access on
-the user equipment. 
+\paragraph{Brute Forcing the Keyring} From the results in Section
+\ref{sec:R:BFLK} and Figure \ref{fig:bfres}, we noticed that the choice of
+iterations in \ac{PBKDF2} were conclusive to the efficiency of a brute force
+attack against the local keyring. By doubling the number of iterations in
+\ac{PBKDF2}, the efficiency of a brute force attack would decrease by a
+corresponding 50\%.
 
-With root access, the attacker has gained complete control over the client and
-can access whatever data resource desired within the client. With this in mind,
-the attacker can read, write and execute every file that has been downloaded by
-the \acl{CSV}.
 
-\paragraph{Reading Memory} Given root access, the attacker can also utilize
-software to read live content from the memory of the client. In this case, it
-is unfortunately not possible to protect against disclosure of passwords or
-capabilities, as the software is dependent on storing the keyring password in
-memory during the login procedure.
 
-Capabilities are also stored in memory during browsing of contents in the
-cloud. Both passwords and capabilities are therefore retrievable by the
-attacker, even though their necessary storage time in memory is kept to a
-minimum by the application. 
+%TODO:  Det eneste som er vits her er GPU-griene. Dra også inn ROTH.
+It is important to notice that both of the \ac{CDA} and the \ac{BFDA} programs
+were written in Java. With this in mind, it is reasonable to believe that
+general performance can be improved by using a lower-layer programming
+language, such as C, to implement the attacks. Another way to increase
+performance is to design both attacks to run on \acp{GPU} rather than
+\acp{CPU}.
 
-\paragraph{Keylogger} Another and more plausible scenario, would involve the
-attacker installing a keylogger on the compromised client. This peace of
-software can further detect the keyring password when the user logs in to the
-application.
+When following the recommendations for \ac{PBKDF2} and password constraints
+given in Section \ref{sec:PBKD}, it is infeasible to perform a brute force
+attack against the local keyring. However, even though the keyring is secured
+against a plain brute force attack, it is still vulnerable to dictionary
+attacks. To completely prevent such attacks, one would have to make sure that
+the encrypted keyring is never disclosed.
+
+\paragraph{Active Attacks}
+
+While the encrypted key ring may resist some dictionary and brute force
+attacks, other problems arise when facing an active attacker. If the attacker
+is able to read the memory of the device, he can also read the root capability
+if this is unlocked by the user. 
+
+A mechanism that decrease the risk of this happening, is to have the software
+time out after a specified interval. At the timeout the software can overwrite
+the sensitive information in memory.
+
+Another scenario would involve the attacker installing a \emph{keylogger} on
+the compromised client. This type of software can further detect the keyring
+password when the user logs in to the application.
 
 %**************************************%
 \chapter{Conclusion and Future Work}
 \label{ch:conclusion}
 %**************************************%
 
-The main purpose of this thesis was to create and implement a proof of concept
-solution to a secure cloud storage service. The scheme was to provide what we
-defined in Section \ref{sec:criteria} as a secure storage system. 
+The main purpose of this thesis was to create and implement a solution to a
+secure cloud storage service. The scheme was to provide what we defined in
+Section \ref{sec:criteria} as a secure storage system. 
 
 Key elements of the proposed cryptographic scheme is based on the secure and
 relatively scrutinized file system Tahoe-\ac{LAFS}. With this in mind, and the
 use of cryptographic primitives recommended in Section
 \ref{sec:cryptoprimitivechoice}, the proposed cryptographic architecture is
-believed to offer, what we defined as, a secure storage system. 
+believed to offer a secure storage system. 
 
 Findings in Section \ref{sec:R:BFLK} showed that the presumably weakest link of
-the system, the encrypted keyring, is able to withstand heavy brute force
-attacks. However, to acquire the keyring, an active attack on the client device
-is required. In addition, measuring performance on constrained devices proved
-that the trade-off between the levels of usability and security did not
-undermine the desired strength of the underlying cryptographic primitives.
+the system, the encrypted keyring, is able to withstand brute force attacks.
+However, to acquire the keyring, an active attack on the client device is
+required. In addition, measuring performance on constrained devices proved that
+the trade-off between the levels of usability and security did not undermine
+the desired strength of the underlying cryptographic primitives.
+% TODO: Hvor god er egentlig performance - Vå må få fram sikkerhettradeof
+% mellom usability og security
 
 In addition to confidentiality, the proposed cryptographic scheme support
 secure sharing of the files stored on the server. A solution to the problem of
 key distribution -- to be able to create a \emph{trust} between users -- were
 implemented using barcode scanning, and proved to sustain existing security.
-The scheme does not describe key distribution, so it is also compatible with a
-\ac{PKI} in an enterprise setting.
+The scheme does not require a specific key distribution method, but it should
+be possible to implement any solution on top.
 
 When developing a secure cloud file system, one of the greatest challenges
 turned out to be the choice and implementation of cryptographic primitives.
@@ -3290,14 +3222,14 @@ degree. Key distribution is also a general problem that will always be hard to
 accomplish, if a trusted third party is not to be included. Yet another
 challenge experienced, is that all additional features desired for a secure
 cloud file system, are hard to implement without compromising security.
-Searchable encryption and deduplication are examples of this.
+Deduplication is an example of this.
 
 In this thesis, we have shown that it is possible to create and implement a
 fundamental cryptographic scheme for a secure cloud storage system, supporting
 sharing. Our main contribution is a simple, yet secure, cryptographic scheme
 for securely storing and sharing data in the cloud. We have also implemented an
-open source, proof of concept server and application for Android devices, that
-have further been measured in performance and security.
+open source, proof of concept server and client for Android devices, that have
+further been measured in performance and evaluated in security.
 
 While our scheme solves some of the basic challenges of security within cloud
 storage, there are several features that could improve the scheme. The most
@@ -3317,13 +3249,12 @@ an existing \emph{dumb} cloud storage solution, such as Amazon S3.
 \addappheadtotoc
 %**************************************%
 %**************************************%
-\chapter{Other Relevant Implementations}
+\chapter{\ac{BFDA} and \ac{CDA} Implementations}
 \label{ap:other}
 %**************************************%
 
-This chapter will study implementation details from applications that were
-created, but not a part of the thesis' main topic. Applications considered are
-Brute Force and Dictionary Attack (BFDA) and the Cluster Dictionary Attack (CDA).
+This chapter contains details about the implementations of \ac{BFDA} and
+\ac{CDA}.
 
 \section{Brute Force and Dictionary Attack}
 
