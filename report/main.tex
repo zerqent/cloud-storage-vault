@@ -1664,11 +1664,10 @@ The \ac{SHA}-family is the current standard for cryptographic hash functions,
 and from this we recommend double \ac{SHA}-256. The cryptographic scheme
 requires the hash function to have an output of at least the size of the key
 used for encryption. The \ac{SHA}-1 has an output of 160 bits and could have
-been used, but more and more attacks are discovered %(e.g. by \citet{sha1}) and
-are not recommended for use in new systems. The use of double \ac{SHA}-256
-compared to single, is to prevent a length-extension attack \cite{schneier}.
+been used for 128 bit key size, but is not not recommended for use in new
+systems\cite{nist_sha1}. The use of double \ac{SHA}-256 compared to single, is
+to prevent a length-extension attack \cite{schneier}.
 
-% TODO: Kilde på hvorfor vi ikke kan bruke SHA-1
 
 \subsubsection{Signature Algorithm}
 
