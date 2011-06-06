@@ -788,11 +788,12 @@ For example, a person has a certificate with some clues about an identity in
 it, e.g. an e-mail, together with a public key. This certificate can then be
 signed using digital signatures, to verify that some other entity trusts this
 certificate.
-% TODO: Dra in TTP her
+
 In practice, the entity which signs certificates is the \ac{CA}, which all
-clients have the public key information for, and trusts. The \ac{CA} will also
-contain information about which certificates has been revoked, i.e. should not
-be trusted in use. Such a scheme is usually referred to as a \ac{PKI}.
+clients have the public key information for, and trusts. This is refered to as
+a \ac{TTP}. The \ac{CA} will also contain information about which certificates
+has been revoked, i.e. should not be trusted in use. Such a scheme is usually
+referred to as a \ac{PKI}.
 
 \subsubsection{PGP}
 
@@ -1725,12 +1726,12 @@ findings also indicate that Amazon themselves can reach an even higher unknown
 brute force speed. The same researcher has also hinted that he might be able to
 reach 1 million keys per second on the same equipment \cite{rothblog}.
 
-% TODO: Det beste hadde egentlig vært at hver enkel klient setter noe som er
-% greit for den klienten.
-
 With this in mind, we recommend at least the same amount of iterations to be
 used in our scheme as in \ac{WPA}, i.e. 4096. This should yield acceptable
-performance on most devices. 
+performance on most devices. The most elegant solution would be to fine tune
+this on a per-device bases. For instance, if the implementation records how long
+it takes to do 4096 iterations, and finds that this is relatively quick, it can
+increase the number of iterations.
 
 \paragraph{Password requirements}
 
