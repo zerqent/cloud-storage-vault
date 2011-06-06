@@ -17,7 +17,8 @@ public void bruteForceAttack(String[] input) {
 		pushWord(current_word.length - 1);
 		char[] tmp = new char[current_word.length + 1];
 		tmp[tmp.length - 1] = ' ';
-		System.arraycopy(current_word, 0, tmp, 0, current_word.length);
+		System.arraycopy(current_word, 0, tmp, 0, 
+                current_word.length);
 		current_word = tmp;
 	}
 }
