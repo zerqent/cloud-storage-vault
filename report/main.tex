@@ -2160,12 +2160,11 @@ For a user to access his root folder, the client will have to know the
 capability of that folder. This is clearly too much random data for most users
 to remember, so the capability will have to be stored on the client.  The
 client might be stolen or broken into by some means, and if the capability is
-stored in clear text, it is easily compromised. We therefore implement a local
-encrypted keyring which contain this capability. We use \ac{PBKDF2} together
-with a user defined password to derive the encryption key, and encrypt the
-keyring using \ac{AES}-256.
-% TODO: Litt avhengig hvor mye vi skal si om PBKDF2. Sjekk AEs-256
-
+stored in clear text, it is easily compromised. We therefore implement a
+locally stored encrypted keyring which contain this capability. We use
+\ac{PBKDF2} with 4096 iterations and \ac{HMAC}-\ac{SHA}256 together with a user
+defined password to derive a 128 bit encryption key. The keyring is then
+encrypted with \ac{AES} and the derived key.
 
 \subsection{User Interface}
 % goal: As easy as possible!
