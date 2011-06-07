@@ -1050,22 +1050,16 @@ in \cite{proofofstorage1, proofofstorage2}.
 The solution for an enterprise scenario is similar to the one of a regular
 user, however computational components are rather dedicated to separated
 machines to provide scalability. The suggested architecture for an enterprise
-scenario is shown in Figure \ref{fig:RW:CCS:EA}. It is important to notice that
-each employee will need an initial credential from the credential generator to
-use the cloud storage application. The distribution of these credentials is not
-discussed.
-
+scenario is shown in Figure \ref{fig:RW:CCS:EA}. 
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{ArchitectureCCSE.pdf}
     \caption{Cryptographic cloud storage, enterprise scenario.}
     \label{fig:RW:CCS:EA}
 \end{figure}
-%TODO: Replace "token and credential"  with "token" in enterprise scenario.
-%Two-sided arrows on encrypted data
-
-%The core components are suggested to support \emph{searchable encryption},
-%\emph{attribute-based encryption} and a \emph{proofs of storage} protocol.
+It is important to notice that each employee will need an initial credential
+from the credential generator to use the cloud storage application. The
+distribution of these credentials is not discussed.
 
 \section{Existing Solutions}
 \label{sec:existing}
@@ -2604,23 +2598,24 @@ on the HTC Hero.
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
 %TODO: Gjentagelse
-In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
-by implementing and executing two different programs. The first program, named
-\acf{BFDA}, was designed to run on a single computer, and supports both brute
-force and dictionary attacks. The second program, named \acf{CDA}, was created
-to run in a computational cluster. As the name implies, the \ac{CDA} attack
-does only support dictionary attacks. The results for both programs are given
-in the following sections.
+%In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
+%by implementing and executing two different programs. The first program, named
+%\acf{BFDA}, was designed to run on a single computer, and supports both brute
+%force and dictionary attacks. The second program, named \acf{CDA}, was created
+%to run in a computational cluster. As the name implies, the \ac{CDA} attack
+%does only support dictionary attacks. 
+Results from running the BFDA and CDA against an encrypted keyring are
+given in the following sections.
 
 \subsection{\acl{BFDA}}
 
 With \ac{BFDA}, we executed both a brute force and a dictionary attack to
 estimate the amount of passwords we could test during the course of a second.
 
-The brute force and dictionary attacks achieved approximately the same results,
-although the brute force attack turned out to manage about 30 passwords more
-per second than the dictionary attack. A cause of this, might be due to the
-file reading overhead in the dictionary attack. 
+%The brute force and dictionary attacks achieved approximately the same results,
+%although the brute force attack turned out to manage about 30 passwords more
+%per second than the dictionary attack. A cause of this, might be due to the
+%file reading overhead in the dictionary attack. 
 
 The results for both attacks are illustrated in Table \ref{tab:res_bf}. Results
 are given for different numbers of \ac{PBKDF2} iterations in passwords per
@@ -2631,7 +2626,7 @@ second (PW/s). Figure \ref{fig:bfres} exhibits these numbers.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{graph_pbkdf2.pdf}
-\caption{Results from running brute force and dictionary attacks against encrypted keyring.}
+\caption{Results from running brute force and dictionary attacks against an encrypted keyring.}
 \label{fig:bfres}
 \end{figure}
 
@@ -2657,7 +2652,7 @@ With 20 nodes in the cluster, we were able to test around 8600 passwords per
 second, given \emph{PBKDF2} with 4000 iterations. Running \ac{CDA} in a cluster
 of 200 nodes, would further reach a speed of 86 000 passwords per second. Given
 a brute force attack with a speed of 86 000 password per second, it will take
-about 2496 years on average to brute force a password with the password
+about 2496 years in average to brute force a password with the password
 constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
 
 \begin{align*}
@@ -2665,7 +2660,11 @@ constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
 \frac{157407983096.09}{60 * 60 * 24 * 365} &= 4991.37 \text{ years} \\
 \frac{4991.37}{2} &= 2495.69 \text{ years in average}
 \end{align*}
-% TODO / 2 bør forklares.
+
+Given that the correct password is chosen completely random
+from the possible set of passwords, the average time will represent the time
+used to brute force half of the possible password space. The calculated time for
+brute forcing the whole password space is therefore divided by two to get the average time.
 
 At the time of writing, renting a single \emph{Amazon EC2 high-CPU extra large}
 instance costs 0.68 USD per hour. This unit price results in an hourly cost of
