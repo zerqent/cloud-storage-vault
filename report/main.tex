@@ -2584,13 +2584,6 @@ on the HTC Hero.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
-%TODO: Gjentagelse
-%In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
-%by implementing and executing two different programs. The first program, named
-%\acf{BFDA}, was designed to run on a single computer, and supports both brute
-%force and dictionary attacks. The second program, named \acf{CDA}, was created
-%to run in a computational cluster. As the name implies, the \ac{CDA} attack
-%does only support dictionary attacks. 
 Results from running the \ac{BFDA} and \ac{CDA} against an encrypted keyring are
 given in the following sections.
 
@@ -2598,11 +2591,6 @@ given in the following sections.
 
 With \ac{BFDA}, we executed both a brute force and a dictionary attack to
 estimate the amount of passwords we could test during the course of a second.
-
-%The brute force and dictionary attacks achieved approximately the same results,
-%although the brute force attack turned out to manage about 30 passwords more
-%per second than the dictionary attack. A cause of this, might be due to the
-%file reading overhead in the dictionary attack. 
 
 The results for both attacks are shown in Table \ref{tab:res_bf}. Results
 are given for different numbers of \ac{PBKDF2} iterations in passwords per
