@@ -2451,7 +2451,7 @@ Table \ref{tab:hwcda}.
 
 \subsubsection{Running \ac{BFDA}}
 
-The command used for executing a plain brute force attack with \ac{BFDA} can be
+The command used for executing a brute force attack with \ac{BFDA} can be
 seen in Listing \ref{lst:bf}. The command for running a local dictionary attack
 is seen in Listing \ref{lst:da}.
 
@@ -2626,9 +2626,9 @@ computer and a single cluster instance.
 With 20 nodes in the cluster, we were able to test around 4600 passwords per
 second, given \ac{PBKDF2} with 4000 iterations. Running \ac{CDA} in a cluster
 of 200 nodes, would further reach a speed of 46 000 passwords per second. Given
-a plain brute force attack with a speed of 46 000 password per second, it will take
-about 289 283 years in average to brute force a password with the password
-constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
+a brute force attack with a speed of 46 000 password per second, it will take
+about 289 283 years in average to brute force a password with the 10 character
+long alphanumeric password. Calculations are as follows.
 
 \begin{align*}
 \frac{62^{10} \text{ passwords}}{46000 \text{ passwords/second}} &= 18245638388442.18 \text{ seconds} \\
@@ -2636,10 +2636,10 @@ constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
 \frac{578565.40}{2} &= 289282.70 \text{ years in average}
 \end{align*}
 
-Given that the correct password is chosen completely random
-from the possible set of passwords, the average time will represent the time
-used to brute force half of the possible password space. The calculated time for
-brute forcing the whole password space is therefore divided by two to get the average time.
+Given that the correct password is chosen completely random from the possible
+set of passwords, the average time will represent the time used to brute force
+half of the possible password space. The calculated time for brute forcing the
+whole password space is therefore divided by two to get the average time.
 
 At the time of writing, renting a single \emph{Amazon EC2 high-CPU extra large}
 instance costs 0.68 USD per hour. This unit price results in an hourly cost of
