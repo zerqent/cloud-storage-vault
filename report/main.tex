@@ -281,7 +281,7 @@ June, 2011
 The term \emph{Cloud Computing} is not yet clearly defined \cite{clouddef}, but
 involves the provision of software or computational resources available by
 demand via the Internet.  In a draft \cite{cloud_nistdef}, the \ac{NIST}
-defines cloud computing as: 
+defines cloud computing as:
 
 \begin{quote}\it ``Cloud computing is a model for enabling ubiquitous,
 convenient, on-demand network access to a shared pool of configurable computing
@@ -695,7 +695,7 @@ both encryption and decryption, is known as a symmetric-key algorithm \cite[p.
 bits, and support keys with length of 128, 192 and 256 bits. \ac{NIST}
 standardized \ac{AES} in 2001 \cite{AES-FIPS}.
 
-\paragraph{The Mode of Operation} The mode of operation used for 
+\paragraph{The Mode of Operation} The mode of operation used for
 symmetric-key encryption enables subsequent safe use of the same key.
 
 In a simple scenario, this could be to encrypt the normal data block-by-block
@@ -740,12 +740,12 @@ The standard defined by \ac{NIST} for cryptographic hash functions today, are
 \ac{SHA}-1 and the \ac{SHA}-2 family \cite{SHA-FIPS}. % TODO:Simpel figur?
 
 
-\subsection{MAC Functions} 
+\subsection{MAC Functions}
 
 \citet{schneier} defines a \ac{MAC} to be a construction that detects tampering
 with a message -- i.e. it authenticates the message. A \ac{MAC} can be
 constructed in different ways. One example is H\ac{MAC} which constructs the
-\ac{MAC} using a secret key, the message and a hash function \cite{rfc2104}. 
+\ac{MAC} using a secret key, the message and a hash function \cite{rfc2104}.
 
 \subsection{Key Derivation Functions}
 \label{sec:PBKDF2}
@@ -776,7 +776,7 @@ feasible to fake.
 
 The \ac{RSA} cipher can be used to generate signatures. In addition, there is
 also a standard for digital signatures defined by \ac{NIST}, called
-\ac{DSS}\cite{DSS-FIPS}.  \ac{DSS} uses \ac{DSA} as the underlying algorithm.  
+\ac{DSS}\cite{DSS-FIPS}.  \ac{DSS} uses \ac{DSA} as the underlying algorithm.
 
 \subsection{Digital Certificates and PKI}
 
@@ -820,17 +820,17 @@ To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
 \label{sec:research}
 
 This section will elaborate on selected research concerning privacy
-within cloud computing. The scrutiny of this subject will focus on 
+within cloud computing. The scrutiny of this subject will focus on
 solutions that provide confidentiality within the cloud. Solutions that partially
 provide privacy are not considered as they are not topical to our research.
 
 We choose to present the following papers as they provide possible solutions to the
-same problems handled in this thesis, although with a different approach.  
+same problems handled in this thesis, although with a different approach.
 
 %A criterion for secure cloud storage, as described in Section \ref{sec:criteria},
 %is that unauthorized access to the encrypted files stored on the server should
 %be avoided, but that it should not be crucial for the security of the content
-%of the files. 
+%of the files.
 
 The first three security systems seek to secure the cloud server
 itself, and the last one argues for building a secure system on top of
@@ -990,54 +990,57 @@ to ensure a secure environment for executing the client's \ac{VM}.
 In 2010, researchers at Microsoft were looking at the problem of building a
 secure cloud storage service on top of a non-trusted storage provider
 \cite{microsoftresearch}. They describe architectural solutions related to both
-personal and enterprise use cases. The architectures is explained in high level
-and is designed to utilize and combine recent and non-standard cryptographic
-primitives. The personal scenario is depicted in Figure \ref{fig:RW:CCS:CA}.  
+personal and enterprise use cases. The architectures are explained in high
+level and are designed to utilize and combine recent and non-standard
+cryptographic primitives. The personal scenario is depicted in Figure
+\ref{fig:RW:CCS:CA}.
 
-\begin{figure}[h!] 
+\begin{figure}[h!]
     \centering
-    \includegraphics[scale=0.6]{ArchitectureCCSC.pdf} 
-    \caption{Cryptographic cloud storage, personal scenario.} 
-    \label{fig:RW:CCS:CA} 
+    \includegraphics[scale=0.6]{ArchitectureCCSC.pdf}
+    \caption{Cryptographic cloud storage, personal scenario.}
+    \label{fig:RW:CCS:CA}
 \end{figure}
 
 The architecture consists of the following computational components:
 \begin{itemize}
   \item Data Processor
-  \item Data Verifier 
-  \item Token Generator  
+  \item Data Verifier
+  \item Token Generator
   \item Credential Generator
 \end{itemize}
 
-The Data processor is responsible for encrypting data before it is sent to the
+The Data Processor is responsible for encrypting data before it is sent to the
 cloud, and decrypting data when it is retrieved.
 
-Integrity is supported through a data verifier component. The data verifier
-checks whether specific data has been tampered with. The verification procedure
-is independent of the download and upload procedures, and can be called at any
-time by the user. 
+Integrity is supported through a Data Verifier component, which checks whether
+specific data has been tampered with. The verification procedure is independent
+of the download and upload procedures, and can be called at any time by the
+user.
 
-The token generator is used by the user to generate tokens that works like
+The Token Generator is used by the user to generate tokens that works like
 data identifiers. Tokens are given to and utilized by the provider to
 find data requested.
 
 To enable sharing of data, the architectural scheme is suggested to use a
-credential generator. The credential generator is responsible for generating
+Credential Generator. The Credential Generator is responsible for generating
 and sending credentials to other users. These credentials are cryptographic
-keys that can be used to decrypt defined portions of data.  The user must also
+keys that can be used to decrypt defined portions of data. The user must also
 send the corresponding tokens together with the credentials to share data. How
 tokens and credentials are sent between users is not discussed.
 
-Microsoft propose to utilize attribute based encryption for confidentiality. In
-attribute based encryption data is encrypted using a public key and series of
-attributes defined as a \emph{policy}. This ciphertext can further be decrypted
-by a set of decryption keys. A decryption key is associated with a set of
-attributes, and is able to decrypt the ciphertext if it contains a given number
-of the attributes used to encrypt the ciphertext \cite{microsoftresearch}. The
-private keys are meant to be implemented as the distributed credentials
-mentioned above. It is important to mention that attribute based encryption is
-a relatively new technique in cryptography and a non-standard cryptographic
-primitive, which makes it hard to define it's level of security. 
+Microsoft propose to utilize \emph{attribute based encryption} for
+confidentiality. In attribute based encryption, data is encrypted using a public
+key and series of attributes defined as a \emph{policy}. This ciphertext can
+further be decrypted by a set of decryption keys. A decryption key is
+associated with a set of attributes, and is able to decrypt the ciphertext if
+it contains a given number of the attributes used to encrypt the ciphertext
+\cite{microsoftresearch}. The private keys are meant to be implemented as the
+distributed credentials mentioned above.
+
+It is important to mention that attribute based encryption is a relatively new
+technique in cryptography and considered to be a non-standard cryptographic
+primitive, which makes it hard to define its level of security.
 
 The verification procedure is proposed to utilize a proof of storage
 protocol to provide integrity. The protocol utilize small portions of
@@ -1313,7 +1316,7 @@ The capability for a file or folder might be intentionally or unintentionally
 leaked by a user. In this case, it would be preferable that the server can
 block access to a particular object. The server could also potentially enforce
 access rights on all encrypted objects, so that they are only retrievable by
-the owner. This would however complicate sharing. 
+the owner. This would however complicate sharing.
 
 \subsubsection{Modification and Deletion of Files}
 
@@ -1652,7 +1655,7 @@ with different predictions.
 For a symmetric cipher we recommend the \ac{NIST} standard \ac{AES}, and a key
 size of 128 bit should suffice. \citetalias{ecrypt2_2010} \cite{ecrypt2_2010}
 has one of the more pessimistic predictions on how how secure this choice is,
-saying data encrypted with this key size should be secure until 2030-2040. 
+saying data encrypted with this key size should be secure until 2030-2040.
 
 The gain of not choosing a larger key is a somewhat greater performance --
 \ac{AES}-128 is 10 rounds while \ac{AES}-256 is 14 rounds -- and of course that
@@ -1663,7 +1666,7 @@ any reason to not select a key size of 256 bit \cite{schneier}.
 for the encryption of file and folder contents.  This is based more on
 practical advice than on security considerations.  \citet{schneier} advices the
 use of either \ac{CBC} or \ac{CTR} mode, where \ac{CBC} mode is easier to
-implement correctly. 
+implement correctly.
 
 For the encryption of the private key, \ac{ECB} can be used, since the key is
 encrypted exactly once and the data is random.
@@ -2004,7 +2007,7 @@ operations in Java. The architecture is based on principles of implementation
 independence, implementation interoperability and algorithm extensibility.
 Basically what this means, is that each \ac{JVM} can have different
 implementations of the cryptographic primitives, but the developer does not
-necessarily need to know which ones are available.  
+necessarily need to know which ones are available.
 
 \paragraph{ZXing Barcode Scanner} ZXing Barcode Scanner\footnote
 {\url{http://code.google.com/p/zxing/}} is a popular Android application which
@@ -2036,8 +2039,8 @@ contain the necessary entities, cryptographic operations and communication
 calls required for the client. \texttt{CSVAndroid} contains primarily a graphical user
 interface to make use of \texttt{CSVlib} on an Android device.
 
-\subsubsection{Cryptographic Entities} 
-\label{sec:cryptoentities} 
+\subsubsection{Cryptographic Entities}
+\label{sec:cryptoentities}
 
 All the cryptographic entities -- namely folders, files and capabilities -- are
 all part of \texttt{CSVlib}. Their relationship can be seen in Figure
@@ -2120,7 +2123,7 @@ For \ac{HTTP} transport, we utilize the Apache Software Foundations
 HttpComponents Client\footnote{ \url http://hc.apache.org/}, also known as
 HttpClient. This Client offers support for authenticated requests to a server, and both
 upload and download through \texttt{PUT} and \texttt{GET} requests
-respectively.  
+respectively.
 
 We wrap communication with the server in two classes,
 \texttt{Communication.java} and \texttt{CSVFileManager.java}.
@@ -2313,7 +2316,7 @@ therefore measured and includes the following:
 
 To test the bandwidth of the pipeline for files, we measure the incoming
 traffic to our server using the tool \texttt{nload}\footnote{
-\url{http://www.roland-riegel.de/nload/}} during a file upload. 
+\url{http://www.roland-riegel.de/nload/}} during a file upload.
 
 The average bandwidth are observed for a few seconds after the file upload has
 been started, until the file upload is nearly complete. This does not take
@@ -2363,6 +2366,7 @@ hashing, we should get an indication about how quick the software can be.
 
 \section{Security of the Encrypted Keyring}
 \label{sec:BFLK}
+
 The locally stored and encrypted keyring can be considered a security risk if
 it somehow ends up in an attacker's hands, either by a device being lost or by
 an intrusion in to a device. Even though the keyring is encrypted, it might be
@@ -2603,7 +2607,7 @@ estimate the amount of passwords we could test during the course of a second.
 The brute force and dictionary attacks achieved approximately the same results,
 although the brute force attack turned out to manage about 30 passwords more
 per second than the dictionary attack. A cause of this, might be due to the
-file reading overhead in the dictionary attack. 
+file reading overhead in the dictionary attack.
 
 The results for both attacks are illustrated in Table \ref{tab:res_bf}. Results
 are given for different numbers of \ac{PBKDF2} iterations in passwords per
@@ -2634,7 +2638,7 @@ results as a single computer running a dictionary attack with \ac{BFDA}. We
 found that there was a small difference where the local computer achieved about
 100 passwords per second more, compared to an instance in the cluster. This was
 expected, with respect to the difference in \ac{CPU} power between the local
-computer and a single cluster instance. 
+computer and a single cluster instance.
 
 With 20 nodes in the cluster, we were able to test around 8600 passwords per
 second, given \emph{PBKDF2} with 4000 iterations. Running \ac{CDA} in a cluster
@@ -2652,7 +2656,7 @@ constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
 
 At the time of writing, renting a single \emph{Amazon EC2 high-CPU extra large}
 instance costs 0.68 USD per hour. This unit price results in an hourly cost of
-13.6 USD and 136 USD for clusters of 20 and 200 instances respectively. 
+13.6 USD and 136 USD for clusters of 20 and 200 instances respectively.
 
 %**************************************%
 \chapter{Discussion}
@@ -2726,7 +2730,7 @@ from the following methods:
 Since one of the basic problems of this thesis is that the cloud provider is
 not to be trusted, it is not desirable to use a trusted third party. This
 implies that the only option left, is to verify another user in person,
-although an out of band scheme like \ac{PGP} could be used. 
+although an out of band scheme like \ac{PGP} could be used.
 
 In \ac{PGP}, users can publish that they have verified other users and to which
 degree they trust them \cite{stallings}. Other users can use this information
@@ -2913,7 +2917,7 @@ hinder duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
-\subsection{Supporting Multiple Cryptographic Primitives} 
+\subsection{Supporting Multiple Cryptographic Primitives}
 
 The main problem with selecting cryptographic primitives for our scheme, is
 that one can not be sure how long they will remain secure. A recommended
@@ -2936,13 +2940,13 @@ be used, to be able to deduce the storage index from the key.
 This section will discuss and deal with the different choices taken to fulfil
 the implementation of the cryptographic scheme. We will start by discussing the
 use case we chose to implement. Further on, we will analyse our choice of key
-distribution scheme and look at alternative solutions. 
+distribution scheme and look at alternative solutions.
 
 \subsection{Choice of Use Case}
 
 There are mainly two types of user groups interested in a cloud storage
 solution -- personal or enterprise. The proof of concept implementation is more
-aimed against the personal use case, than the enterprise market. 
+aimed against the personal use case, than the enterprise market.
 
 In an enterprise, the use of a \ac{TTP} are often already in place, usually in
 the form of an IT department. An additional fundamental difference, is that it
@@ -2950,7 +2954,7 @@ would usually be more defined who the users are supposed to share files with,
 and what they should have access to. An organization might not approve of a
 model where all users can forward read rights to other users.
 
-\subsection{Key Distribution} 
+\subsection{Key Distribution}
 
 Our scheme for key distribution is by no means revolutionary, it does require
 two users to meet each other to exchange keys. However, the scheme only require
@@ -2958,7 +2962,7 @@ that users meet each other once, all sharing after that can be none with no
 contact between the two parties. The use of barcodes for transferring keys on
 smart phones also makes the process of actually handing over a key much easier.
 In addition the manual import option in the client grants every user the
-possibility of using any other channel for transferring keys. 
+possibility of using any other channel for transferring keys.
 
 \subsection{Deviations in the Choice of Cryptographic Primitives}
 
@@ -3000,14 +3004,14 @@ should not pose any great concerns.
 
 The measurements performed on our client reveal that it is not as fast as
 desirable. For files, a perfect client would render the network or the SD card
-as the bottleneck, but our measurements state that this is not the case. 
+as the bottleneck, but our measurements state that this is not the case.
 
 Because of the cryptographic operations, the download and upload speed for a
 given file is decreased by around 50-80\% on all three devices. The results for
 the individual operations performed on HTC Desire shown in Table
 \ref{tbl:desire:pinpoint}, indicates that encryption and decryption are the
 slowest elements in the process pipeline, and responsible for most of the
-performance drop. 
+performance drop.
 
 \paragraph{Limitations of Libraries} Another thing to note, is that the
 implementations of the \texttt{InputStream} and \texttt{OutputStream} objects
@@ -3037,7 +3041,7 @@ performance for serializing the folder contents is too low when folders contain
 a large number of items. A folder with thousands of children is not
 something we expect an ordinary user of our Android client to have, but if we
 change the scenario to backing up an entire computer, the serialization part
-might become a problem. 
+might become a problem.
 
 The slow serialization operation can partially be blamed on our own
 implementation. The folder items are stored in a \texttt{HashMap}, which is
@@ -3076,7 +3080,7 @@ The storage provider can access all encrypted data on the server, and also know
 whether a stored data object corresponds to a file or a folder. This is
 revealed by the difference in header content and size between folder and file
 objects. Folders are specially recognizable by the server, as their write
-enabler is revealed during upload procedure. 
+enabler is revealed during upload procedure.
 
 Additionally, a user's root folder is known, since it is the first object
 accessed in a newly created session. It is also possible for the provider to
@@ -3139,7 +3143,7 @@ capability from the keyring in memory, and will potentially have copies of the
 files on the device. The same applies if the device is broken into, e.g.
 through a vulnerability in the operating system.
 
-\subsubsection{Downloaded Files} 
+\subsubsection{Downloaded Files}
 
 An attacker who gains access to the device running \ac{CSV} will have be able
 to read files downloaded. We can avoid writing downloaded files to the
@@ -3147,14 +3151,14 @@ persistent storage medium. This can be implemented using a temporary file
 system that only persists in the memory of the client, e.g. \emph{ramfs}. This
 is a file system for clients running Unix-like operating systems.  However, by
 utilizing this method, will limit the possible size of the downloaded files to
-the size of the available memory. 
+the size of the available memory.
 
 In case limited file size is not an acceptable solution, it is possible to use
 a temporary file system that supports swapping, e.g. \emph{tmpfs}.  This will,
 however, potentially keep parts of a large file on the persistent storage
 medium, revealing information about a downloaded file. A practical feature
 would be to store the encrypted files on the persistent storage medium, and
-only put them in the temporary file system when needed. 
+only put them in the temporary file system when needed.
 
 \subsubsection{Disclosing the Root Capability}
 
@@ -3194,7 +3198,7 @@ the encrypted keyring is never disclosed.
 While the encrypted key ring may resist some dictionary and brute force
 attacks, other problems arise when facing an active attacker. If the attacker
 is able to read the memory of the device, he can also read the root capability
-if this is unlocked by the user. 
+if this is unlocked by the user.
 
 A mechanism that decrease the risk of this happening, is to have the software
 time out after a specified interval. At the timeout the software can overwrite
@@ -3211,13 +3215,13 @@ password when the user logs in to the application.
 
 The main purpose of this thesis was to create and implement a solution to a
 secure cloud storage service. The scheme was to provide what we defined in
-Section \ref{sec:criteria} as a secure storage system. 
+Section \ref{sec:criteria} as a secure storage system.
 
 Key elements of the proposed cryptographic scheme is based on the secure and
 relatively scrutinized file system Tahoe-\ac{LAFS}. With this in mind, and the
 use of cryptographic primitives recommended in Section
 \ref{sec:cryptoprimitivechoice}, the proposed cryptographic architecture is
-believed to offer a secure storage system. 
+believed to offer a secure storage system.
 
 Findings in Section \ref{sec:R:BFLK} showed that the presumably weakest link of
 the system, the encrypted keyring, is able to withstand brute force attacks.
@@ -3286,7 +3290,7 @@ a users encrypted keyring. Details about the implementation follows.
 \ac{BFDA} is written in Java and utilize the \texttt{javax.crypto} library with
 Bouncy Castle version 1.34 as JCE provider to decrypt the encrypted keyring.
 The Bouncy Castle JCE provider seems to be necessary as Android 2.2 uses it by
-default to encrypt the keyring. For \ac{PBKDF2} \ac{BFDA} utilizes a free 
+default to encrypt the keyring. For \ac{PBKDF2} \ac{BFDA} utilizes a free
 Java library\footnote{\url{http://rtner.de/software/PBKDF2.html}}.
 
 The program is divided into two functions, named \texttt{bruteForceAttack} and
