@@ -2451,7 +2451,7 @@ Table \ref{tab:hwcda}.
 
 \subsubsection{Running \ac{BFDA}}
 
-The command used for executing a plain brute force attack with \ac{BFDA} can be
+The command used for executing a brute force attack with \ac{BFDA} can be
 seen in Listing \ref{lst:bf}. The command for running a local dictionary attack
 is seen in Listing \ref{lst:da}.
 
@@ -2584,12 +2584,6 @@ on the HTC Hero.
 
 \section{Brute Force Local Keyring}
 \label{sec:R:BFLK}
-%In Section \ref{sec:BFLK}, we tried to brute force the locally stored keyring,
-%by implementing and executing two different programs. The first program, named
-%\acf{BFDA}, was designed to run on a single computer, and supports both brute
-%force and dictionary attacks. The second program, named \acf{CDA}, was created
-%to run in a computational cluster. As the name implies, the \ac{CDA} attack
-%does only support dictionary attacks. 
 Results from running the \ac{BFDA} and \ac{CDA} against an encrypted keyring are
 given in the following sections.
 
@@ -2597,11 +2591,6 @@ given in the following sections.
 
 With \ac{BFDA}, we executed both a brute force and a dictionary attack to
 estimate the amount of passwords we could test during the course of a second.
-
-%The brute force and dictionary attacks achieved approximately the same results,
-%although the brute force attack turned out to manage about 30 passwords more
-%per second than the dictionary attack. A cause of this, might be due to the
-%file reading overhead in the dictionary attack. 
 
 The results for both attacks are shown in Table \ref{tab:res_bf}. Results
 are given for different numbers of \ac{PBKDF2} iterations in passwords per
@@ -2637,9 +2626,9 @@ computer and a single cluster instance.
 With 20 nodes in the cluster, we were able to test around 4600 passwords per
 second, given \ac{PBKDF2} with 4000 iterations. Running \ac{CDA} in a cluster
 of 200 nodes, would further reach a speed of 46 000 passwords per second. Given
-a plain brute force attack with a speed of 46 000 password per second, it will take
-about 289 283 years in average to brute force a password with the password
-constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
+a brute force attack with a speed of 46 000 password per second, it will take
+about 289 283 years in average to brute force a password with the 10 character
+long alphanumeric password. Calculations are as follows.
 
 \begin{align*}
 \frac{62^{10} \text{ passwords}}{46000 \text{ passwords/second}} &= 18245638388442.18 \text{ seconds} \\
@@ -2647,10 +2636,10 @@ constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
 \frac{578565.40}{2} &= 289282.70 \text{ years in average}
 \end{align*}
 
-Given that the correct password is chosen completely random
-from the possible set of passwords, the average time will represent the time
-used to brute force half of the possible password space. The calculated time for
-brute forcing the whole password space is therefore divided by two to get the average time.
+Given that the correct password is chosen completely random from the possible
+set of passwords, the average time will represent the time used to brute force
+half of the possible password space. The calculated time for brute forcing the
+whole password space is therefore divided by two to get the average time.
 
 At the time of writing, renting a single \emph{Amazon EC2 high-CPU extra large}
 instance costs 0.68 USD per hour. This unit price results in an hourly cost of
@@ -2881,15 +2870,13 @@ Further on, the additional hash operations and queries to the server pose
 extra computational overhead, which increase if the deduplication is on block
 level.
 
-% TODO: Gjøre noe med dette eksempelet
-\paragraph{Privacy} Implicitly, using deduplication globally -- i.e. for the
-whole system, for all users -- gives any user of the system the possibility to
-check a file for existence. This could for instance be utilized by anti piracy
-companies working for the film industry, by first uploading a file known to be
-illegally spread over the Internet, and then see if it takes next to nothing
-time to upload it to the server. If this is the case, they can file a petition
-to get the company hosting the server to yield the contact information for the
-users in question.
+\paragraph{Privacy} If deduplication is used on file-basis globally -- i.e.
+for all users -- there exist a privacy risk. The provider will be able to prove
+that a certain file exists on the system, and has the ability to figure out
+which user has saved this file thus effectively compromising the
+confidentiality of that file. If the deduplication scheme works in a manner
+in which the file is not uploaded if it already exists on the server any is
+able to prove that a file is already stored, which also compromises privacy.
 
 \paragraph{Customizable Deduplication} Tahoe-\ac{LAFS} tries to provide a
 solution that has all the advantages and none of the issues related to
