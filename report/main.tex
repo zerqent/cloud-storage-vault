@@ -993,16 +993,17 @@ to ensure a secure environment for executing the client's \ac{VM}.
 \subsection{Cryptographic Cloud Storage}
 
 In 2010, researchers at Microsoft were looking at the problem of building a
-secure cloud storage service on top of a non-trusted cloud storage provider
-\cite{microsoftresearch}. They described architectural solutions related to
-both consumers and enterprises. The architectures were explained in high level
-and were designed to utilize and combine recent and non-standard cryptographic
-primitives. The consumer scenario is depicted in Figure \ref{fig:RW:CCS:CA}. 
-\begin{figure}[h!]
+secure cloud storage service on top of a non-trusted storage provider
+\cite{microsoftresearch}. They describe architectural solutions related to both
+personal and enterprise use cases. The architectures is explained in high level
+and is designed to utilize and combine recent and non-standard cryptographic
+primitives. The personal scenario is depicted in Figure \ref{fig:RW:CCS:CA}.  
+
+\begin{figure}[h!] 
     \centering
-    \includegraphics[scale=0.6]{ArchitectureCCSC.pdf}
-    \caption{Cryptographic cloud storage, consumer scenario.}
-    \label{fig:RW:CCS:CA}
+    \includegraphics[scale=0.6]{ArchitectureCCSC.pdf} 
+    \caption{Cryptographic cloud storage, personal scenario.} 
+    \label{fig:RW:CCS:CA} 
 \end{figure}
 
 The architecture consists of the following computational components:
@@ -1013,38 +1014,35 @@ The architecture consists of the following computational components:
   \item Credential Generator
 \end{itemize}
 
-The Data processor is responsible for encrypting data before it is sent to the cloud, and
-decrypting data when it is retrieved from the cloud. This process provides
-consumers with confidentiality in the cloud. 
+The Data processor is responsible for encrypting data before it is sent to the
+cloud, and decrypting data when it is retrieved.
 
-Integrity is supported through a data verifier component. The data verifier checks whether specific
-data, stored in the cloud, has been tampered with. The verification procedure is
-independent of the download and upload procedures, and can be called at any time
-by the consumer. 
+Integrity is supported through a data verifier component. The data verifier
+checks whether specific data has been tampered with. The verification procedure
+is independent of the download and upload procedures, and can be called at any
+time by the user. 
 
-The token generator is used by the consumer to generate tokens
-that works like data identifiers. Tokens are given to and utilized by the cloud
-provider to find data requested by the consumer.
+The token generator is used by the user to generate tokens that works like
+data identifiers. Tokens are given to and utilized by the provider to
+find data requested.
 
-To enable sharing of data stored in the cloud, the architectural scheme is
-suggested to use a credential generator. The credential generator is responsible
-for generating and sending credentials to other consumers. These credentials are
-cryptographic keys that can be used to decrypt defined portions of data stored
-in the cloud. The consumer must also send the corresponding tokens together with
-the credentials to share data. How tokens and credentials are sent between
-consumer is, however, not discussed.
+To enable sharing of data, the architectural scheme is suggested to use a
+credential generator. The credential generator is responsible for generating
+and sending credentials to other users. These credentials are cryptographic
+keys that can be used to decrypt defined portions of data.  The user must also
+send the corresponding tokens together with the credentials to share data. How
+tokens and credentials are sent between users is not discussed.
 
-Regarding the encryption scheme, Microsoft propose to utilize attribute based
-encryption. In attribute based encryption data is encrypted using a public key
-and series of attributes defined as a policy. This ciphertext can further be
-decrypted by a set of decryption keys. A decryption key is associated with a set
-of attributes, and is able to decrypt the ciphertext if it contains a given
-number of the attributes used to encrypt the ciphertext
-\cite{microsoftresearch}. The private keys are meant to be implemented as the
-distributed credentials mentioned above. It is important to mention that
-attribute based encryption is a relatively new technique in cryptography and a
-non-standard cryptographic primitive, which makes it hard to define it's level
-of security. 
+Microsoft propose to utilize attribute based encryption for confidentiality. In
+attribute based encryption data is encrypted using a public key and series of
+attributes defined as a \emph{policy}. This ciphertext can further be decrypted
+by a set of decryption keys. A decryption key is associated with a set of
+attributes, and is able to decrypt the ciphertext if it contains a given number
+of the attributes used to encrypt the ciphertext \cite{microsoftresearch}. The
+private keys are meant to be implemented as the distributed credentials
+mentioned above. It is important to mention that attribute based encryption is
+a relatively new technique in cryptography and a non-standard cryptographic
+primitive, which makes it hard to define it's level of security. 
 
 The verification procedure is proposed to utilize a proof of storage
 protocol to provide integrity. The protocol utilize small portions of
@@ -1052,12 +1050,12 @@ information independent of the size of the verified data and can be executed an
 arbitrary number of times. The protocol is defined in \cite{proofofstorage}.
 
 The solution for an enterprise scenario is similar to the one of a regular
-consumer, however computational components are rather dedicated to separated
+user, however computational components are rather dedicated to separated
 machines to provide scalability. The suggested architecture for an enterprise
 scenario is shown in Figure \ref{fig:RW:CCS:EA}. It is important to notice that
 each employee will need an initial credential from the credential generator to
-use the cloud storage application. The distribution of these credentials is
-,however, not discussed.
+use the cloud storage application. The distribution of these credentials is not
+discussed.
 
 \begin{figure}[h!]
     \centering
@@ -1067,8 +1065,6 @@ use the cloud storage application. The distribution of these credentials is
 \end{figure}
 %TODO: Replace "token and credential"  with "token" in enterprise scenario.
 %Two-sided arrows on encrypted data
-
-
 
 %The core components are suggested to support \emph{searchable encryption},
 %\emph{attribute-based encryption} and a \emph{proofs of storage} protocol.
