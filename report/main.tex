@@ -2591,7 +2591,7 @@ on the HTC Hero.
 %force and dictionary attacks. The second program, named \acf{CDA}, was created
 %to run in a computational cluster. As the name implies, the \ac{CDA} attack
 %does only support dictionary attacks. 
-Results from running the BFDA and CDA against an encrypted keyring are
+Results from running the \ac{BFDA} and \ac{CDA} against an encrypted keyring are
 given in the following sections.
 
 \subsection{\acl{BFDA}}
@@ -2604,7 +2604,7 @@ estimate the amount of passwords we could test during the course of a second.
 %per second than the dictionary attack. A cause of this, might be due to the
 %file reading overhead in the dictionary attack. 
 
-The results for both attacks are illustrated in Table \ref{tab:res_bf}. Results
+The results for both attacks are shown in Table \ref{tab:res_bf}. Results
 are given for different numbers of \ac{PBKDF2} iterations in passwords per
 second (PW/s). Figure \ref{fig:bfres} exhibits these numbers.
 
@@ -2621,9 +2621,9 @@ Figure \ref{fig:bfres} indicates that by doubling the number of iterations in
 PBKDF2, the efficiency of a brute force attack would decrease by half of
 its value, as expected.
 
-Using 1000 iterations in \ac{PBKDF2}, as recommended by \citet{pbkdf2std}, the
-brute force attack was able to reach a speed of around 1800 passwords per
-second. With this speed, it will take, in average, 24 hours to crack a password
+Using 1000 iterations in \ac{PBKDF2}, as recommended by \ac{NIST} \cite{pbkdf_nist}, the
+brute force attack was able to reach a speed of around 1100 passwords per
+second. With this speed, it will take, in average, 39 hours to crack a password
 with a length of 6 characters, consisting of only small letters.
 
 \subsection{\acl{CDA}}
@@ -2631,21 +2631,21 @@ with a length of 6 characters, consisting of only small letters.
 When running \ac{CDA}, each node of the cluster achieved approximately the same
 results as a single computer running a dictionary attack with \ac{BFDA}. We
 found that there was a small difference where the local computer achieved about
-100 passwords per second more, compared to an instance in the cluster. This was
+50 passwords per second more, compared to an instance in the cluster. This was
 expected, with respect to the difference in \ac{CPU} power between the local
 computer and a single cluster instance.
 
-With 20 nodes in the cluster, we were able to test around 8600 passwords per
-second, given \emph{PBKDF2} with 4000 iterations. Running \ac{CDA} in a cluster
-of 200 nodes, would further reach a speed of 86 000 passwords per second. Given
-a brute force attack with a speed of 86 000 password per second, it will take
-about 2496 years in average to brute force a password with the password
+With 20 nodes in the cluster, we were able to test around 4600 passwords per
+second, given \ac{PBKDF2} with 4000 iterations. Running \ac{CDA} in a cluster
+of 200 nodes, would further reach a speed of 46 000 passwords per second. Given
+a plain brute force attack with a speed of 46 000 password per second, it will take
+about 289 283 years in average to brute force a password with the password
 constraints specified in Section \ref{sec:PBKD}. Calculations are as follows.
 
 \begin{align*}
-\frac{62^9 \text{ passwords}}{86000 \text{ passwords/second}} &= 157407983096.09 \text{ seconds} \\
-\frac{157407983096.09}{60 * 60 * 24 * 365} &= 4991.37 \text{ years} \\
-\frac{4991.37}{2} &= 2495.69 \text{ years in average}
+\frac{62^{10} \text{ passwords}}{46000 \text{ passwords/second}} &= 18245638388442.18 \text{ seconds} \\
+\frac{18245638388442.18}{60 * 60 * 24 * 365} &= 578565.40 \text{ years} \\
+\frac{578565.40}{2} &= 289282.70 \text{ years in average}
 \end{align*}
 
 Given that the correct password is chosen completely random
