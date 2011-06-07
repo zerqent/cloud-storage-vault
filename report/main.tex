@@ -2870,15 +2870,13 @@ Further on, the additional hash operations and queries to the server pose
 extra computational overhead, which increase if the deduplication is on block
 level.
 
-% TODO: Gjøre noe med dette eksempelet
-\paragraph{Privacy} Implicitly, using deduplication globally -- i.e. for the
-whole system, for all users -- gives any user of the system the possibility to
-check a file for existence. This could for instance be utilized by anti piracy
-companies working for the film industry, by first uploading a file known to be
-illegally spread over the Internet, and then see if it takes next to nothing
-time to upload it to the server. If this is the case, they can file a petition
-to get the company hosting the server to yield the contact information for the
-users in question.
+\paragraph{Privacy} If deduplication is used on file-basis globally -- i.e.
+for all users -- there exist a privacy risk. The provider will be able to prove
+that a certain file exists on the system, and has the ability to figure out
+which user has saved this file thus effectively compromising the
+confidentiality of that file. If the deduplication scheme works in a manner
+in which the file is not uploaded if it already exists on the server any is
+able to prove that a file is already stored, which also compromises privacy.
 
 \paragraph{Customizable Deduplication} Tahoe-\ac{LAFS} tries to provide a
 solution that has all the advantages and none of the issues related to
