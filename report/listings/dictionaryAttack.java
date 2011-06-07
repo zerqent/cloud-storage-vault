@@ -15,7 +15,7 @@ public void dictionaryAttack(String[] input) {
 		}
 
 	} else {
-		System.out.println("ERROR: Dictionary file does not exist!");
+		System.out.println("ERROR: Dictionary does not exist!");
 		printHelp();
 		System.exit(0);
 	}

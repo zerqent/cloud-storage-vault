@@ -1771,9 +1771,8 @@ reach 1 million keys per second on the same equipment \cite{rothblog}.
 With this in mind, we recommend at least the same amount of iterations to be
 used in our scheme as in \ac{WPA}, i.e. 4096. This should yield acceptable
 performance on most devices. The most elegant solution would be to fine tune
-this on a per-device bases. For instance, if the implementation records how long
-it takes to do 4096 iterations, and finds that this is relatively quick, it can
-increase the number of iterations.
+this on a per device basis. The client can time the calculation of 4096
+iterations, and increase the number if this is too fast.
 
 \paragraph{Password requirements}
 
@@ -2290,7 +2289,7 @@ We have tested the android client on two Android smartphones, an HTC Desire and
 an HTC Hero. We have also tested the Java libraries on a desktop computer. The
 specifications for HTC Desire can be seen in Table \ref{tbl:device:desire}, for
 HTC Hero in Table \ref{tbl:device:hero}, and the desktop computer in Table
-\ref{tbl:device:computer}. The server has identical specifications as the
+\ref{tab:hwbf}. The server has identical specifications as the
 computer used. We emphasize that the measurements are meant to be taken as
 indications of the performance of the scheme and implementation and not exact
 measurements. The Android measurements are our main objective, since that is
@@ -2301,7 +2300,6 @@ client side.
 \input{tables/exp_desire.tex}
 \input{tables/exp_hero.tex}
 \input{tables/exp_computer.tex}
-% TODO: samkjør exp_computer med PBKDF2 bruteforce
 
 \subsection{Measured Operations}
 
@@ -2469,13 +2467,12 @@ configuring Apache Hadoop in a Cluster using Ubuntu Server, are made by
 
 \subsubsection{Hardware Specifications}
 
-The hardware specifications for the \acl{BFDA} are given in Table
-\ref{tab:hwbf}. The \acl{CDA} was executed over a cluster of Amazon \ac{EC2}
-instances, of type \emph{High-CPU Extra Large Instances}. The hardware
+The hardware specifications for the computer running \acl{BFDA} are given in
+Table \ref{tab:hwbf}. The \acl{CDA} was executed over a cluster of Amazon
+\ac{EC2} instances, of type \emph{High-CPU Extra Large Instances}. The hardware
 specification for a single instance, used in the cluster attack, is given in
 Table \ref{tab:hwcda}.
 
-\input{tables/hw_bf.tex}
 \input{tables/hw_cda.tex}
 
 \subsubsection{Running \ac{BFDA}}
@@ -3301,6 +3298,7 @@ an existing \emph{dumb} cloud storage solution, such as Amazon S3.
 
 This chapter contains details about the implementations of \ac{BFDA} and
 \ac{CDA}.
+% TODO: Ikke fornøyd med denne
 
 \section{Brute Force and Dictionary Attack}
 
@@ -3309,14 +3307,14 @@ a users encrypted keyring. Details about the implementation follows.
 
 \subsection{Implementation Details}
 
-\ac{BFDA} is written in Java and utilize the \texttt{javax.crypto} library with Bouncy
-Castle version 1.34 as JCE provider to decrypt the encrypted keyring. The
-Bouncy Castle JCE provider seems to be necessary as Android 2.2 uses it by
-default to encrypt the keyring. To enable \emph{PBKDF2} before decryption, \ac{BFDA}
-utilize a \emph{PBKDF2} Java library \cite{pbkdf2}.
+\ac{BFDA} is written in Java and utilize the \texttt{javax.crypto} library with
+Bouncy Castle version 1.34 as JCE provider to decrypt the encrypted keyring.
+The Bouncy Castle JCE provider seems to be necessary as Android 2.2 uses it by
+default to encrypt the keyring. For \ac{PBKDF2} \ac{BFDA} utilizes a free 
+Java library\footnote{\url{http://rtner.de/software/PBKDF2.html}}.
 
 The program is divided into two functions, named \texttt{bruteForceAttack} and
-\texttt{dictionaryAttack} that correspondingly executes a brute force and
+\texttt{dictionaryAttack}, that correspondingly executes a brute force and
 dictionary attack. The \texttt{bruteForceAttack} function is shown in Listing
 \ref{lst:bffunc}.
 
@@ -3331,10 +3329,10 @@ ready to start their task. It then enters a while-loop, which executes a
 The task of \texttt{pushWord} is to simply create and push all possible words
 of a given length onto a stack of words. The length of the words to push are
 given by its integer argument. The whole attack is based on letting the main
-thread create and push words onto a stack, while the \texttt{BruteForceThreads} are
-pulling words from the stack. When a word is pulled from the stack, it is
-subject to \emph{PBKDF2}, where the result is used to decrypt the ciphertext. If
-decryption results in a given plaintext, the password is found.
+thread create and push words onto a stack, while the \texttt{BruteForceThreads}
+are pulling words from it. When a word is pulled, it is subject to
+\emph{PBKDF2}, where the result is used to decrypt the ciphertext. If
+decryption results is a given plaintext, the password has been recovered.
 
 The \texttt{dictionaryAttack} function is shown in Listing \ref{lst:dafunc}.
 
@@ -3345,9 +3343,9 @@ function]{listings/dictionaryAttack.java}
 \texttt{BufferedReader}. It then starts a given number of
 \texttt{DictionaryThreads}. The \texttt{DictionaryThreads} will read from the
 \texttt{BufferedReader} in a synchronized way. When a word is read from a
-\texttt{DictionaryThread} it will be subject to \emph{PBKDF2}, where the result is
-used to decrypt the ciphertext. If decryption results in a given plaintext, the
-password is found.
+\texttt{DictionaryThread} it will be subject to \ac{PBKDF2}, where the result is
+used to decrypt the ciphertext. If decryption results is a given plaintext, the
+password has been recovered.
 
 \section{Cluster Dictionary Attack}
 
@@ -3372,23 +3370,23 @@ computational work in Hadoop is organized and distributed using \emph{MapReduce}
 It is designed to process and generate large sets of data using a cluster of
 machines \cite{mapred}.
 
-In MapReduce, a large set of input data is divided into multiple key/value
-pairs. The key/value pairs are further distributed to multiple MapReduce tasks
+In MapReduce, a large set of input data is divided into multiple key-value
+pairs. The key-value pairs are further distributed to multiple MapReduce tasks
 running on multiple machines.
 
 A MapReduce task is divided into a \emph{mapper} and a \emph{reducer}. The task
-of a mapper is to perform an operation on a key/value pair and return a
-key/value pair as a result to the reducer. The reducer collects key/value pairs
+of a mapper is to perform an operation on a key-value pair and return a
+key-value pair as a result to the reducer. The reducer collects pairs
 from multiple mappers and combine the results into one or more output files.
 
 \subsection{Implementation Details}
 
 The \ac{CDA} attack is implemented as a MapReduce problem, with a large
 dictionary file as the data input set. The dictionary is split into separate
-key/value pairs, where each value is a single line in the dictionary and the
-key corresponds to the line's offset within the dictionary.
+key-value pairs, where each value is a single line in the dictionary and the
+key corresponds to the number of that line.
 
-The key/value pairs are handled by a map function implemented in
+The key-value pairs are handled by a map function implemented in
 \texttt{CDAMapper}. The
 map function has the responsibility of checking every word on a single
 dictionary line. Each line in the dictionary should contain a certain amount of
@@ -3401,28 +3399,25 @@ cluster. A detailed view of the map function, is given in Listing
 \lstinputlisting[language=java, label=lst:mapfunc, caption=Mapper function in
 CDAMapper]{listings/mapper.java}
 
-When receiving a key/value pair, the map function first splits the input line
-into an array of words called line. It then creates a given number of
-\texttt{DictionaryThread} threads and serves each thread a sub array of words from the
-line array. Each \texttt{DictionaryThread} will check all of its incoming words similar
-to the \texttt{DictionaryThread} in BFDA. If the correct password is found, the
-password will be written to the \texttt{sysout} folder on the machine where the mapper is
-running.
+When receiving a key-value pair, the map function first splits the input line
+into an array of words. It then creates a given number of
+\texttt{DictionaryThread}s and serves each a subarray of words from the
+array. Each \texttt{DictionaryThread} will check all of its incoming words
+similar to the \texttt{DictionaryThread} in \ac{BFDA}. If the correct password is
+found, the password will be written to the \texttt{sysout} folder.
 
 A class named \texttt{Processor} initializes the \ac{CDA} attack by configuring
 the mapper and reducer tasks. The number of mappers is set equal to the number
 of nodes used in the cluster. This is to ensure that each machine only runs one
 mapper at a time. The number of reducers are set to zero, because their
-behaviour in MapReduce is not needed.
+behaviour in MapReduce are not needed.
 
-\paragraph{Notice} The for-loop at Line 10 in Listing \ref{lst:mapfunc}
-requires the number of words per line, in the dictionary, to be equal to a
-multiple of the number of threads in use. It is recommended that the input
-dictionary follows this requirement.
-
-In this occasion, we have created a Bash script, named \texttt{dictmaker.sh},
-that changes a regular dictionary into an $N$ words-per-line dictionary. The
-script can be found on the attached disc.
+The for-loop at Line 10 in Listing \ref{lst:mapfunc} requires the number of
+words per line, in the dictionary, to be equal to a multiple of the number of
+threads in use. It is recommended that the input dictionary follows this
+requirement. In this occasion, we have created a Bash script, named
+\texttt{dictmaker.sh}, that changes a regular dictionary into an $N$
+words-per-line dictionary. The script can be found on the attached disc.
 
 %**************************************%
 \chapter{Attachments}
@@ -3430,7 +3425,7 @@ script can be found on the attached disc.
 %**************************************%
 
 This thesis comes with two available attachments -- one digitally uploaded to
-the DAIM system\footnote{\url{http://daim.idi.ntnu.no/}}, and one physical DVD.
+the DAIM system\footnote{\url{http://daim.idi.ntnu.no/}}, and one physical disc.
 
 \section{Electronic Attachment}
 
@@ -3442,16 +3437,11 @@ and directories:
   \item[Application] All files and source code of the proof of concept system,
     i.e. the background library, server and client. A patch file containing
     security fixes, is also included.
-  \item[Report] All files that is used to create this report, including images
-    and tables.
   \item[Other] Scripts and raw data from the experiments.
 \end{description}
 
-\section{Attached DVD}
-
-All the source code generated while working on this thesis, including the
-source code for the proof of concept client code, can be found on an attached
-DVD. In addition, all files related to the writing of this document, including
-images and most of the references, are also included on the same DVD.
+\section{Attached Disc}
+The attached disc contains all contents also provided in the electronic
+attachment, as well as a video demonstrating the Android client.
 
 \end{document}
