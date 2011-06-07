@@ -820,24 +820,21 @@ To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
 \label{sec:research}
 
 This section will elaborate on selected research concerning privacy
-within cloud computing. The scrutiny on this subject can be divided into
-proactive solutions that either reduce, or prevent the risk of leaking privacy
-related information. Only the latter type of solutions are further discussed.
+within cloud computing. The scrutiny of this subject will focus on 
+solutions that provide confidentiality within the cloud. Solutions that partially
+provide privacy are not considered as they are not topical to our research.
 
-We choose to present these papers as they provide possible solutions to the
+We choose to present the following papers as they provide possible solutions to the
 same problems handled in this thesis, although with a different approach.  
 
-A
-criterion for secure cloud storage, as described in Section \ref{sec:criteria},
-is that unauthorized access to the encrypted files stored on the server should
-be avoided, but that it should not be crucial for the security of the content
-of the files. 
+%A criterion for secure cloud storage, as described in Section \ref{sec:criteria},
+%is that unauthorized access to the encrypted files stored on the server should
+%be avoided, but that it should not be crucial for the security of the content
+%of the files. 
 
-% TODO: Eivind
-
-The following first three security systems seek to secure the cloud server
+The first three security systems seek to secure the cloud server
 itself, and the last one argues for building a secure system on top of
-non-trusted cloud servers.
+a non-trusted cloud provider.
 
 \subsection{Privacy as a Service}
 
@@ -1045,7 +1042,8 @@ primitive, which makes it hard to define it's level of security.
 The verification procedure is proposed to utilize a proof of storage
 protocol to provide integrity. The protocol utilize small portions of
 information independent of the size of the verified data and can be executed an
-arbitrary number of times. The protocol is defined in \cite{proofofstorage}.
+arbitrary number of times. Applicable protocols for proof of storage are defined
+in \cite{proofofstorage1, proofofstorage2}.
 
 The solution for an enterprise scenario is similar to the one of a regular
 user, however computational components are rather dedicated to separated
