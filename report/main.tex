@@ -2991,6 +2991,18 @@ client security.
 % confidentiality holder på foldere Hviler også på kryptoprimitiver
 
 \subsubsection{Non-repudiation}
+
+It is possible, in the proposed cryptographic scheme, to confirm that a user
+with access to the correct capability has changed a folder, ie. uploaded or
+unlinked a file to the folder. The scheme does unfortunately not provide the
+information necessary to confirm which user changed the folder or when it
+happened. It is possible, however, to implement this functionality on top of the
+proposed scheme to provide non-repudiation. 
+
+%It is worth noticing that enabling non-repudiation will enable the cloud
+%provider to log user specific activities. Given a non-trusted cloud provider,
+%one can not guarantee that the logged activities are correct.
+
 % Man kan bekrefte at noen med den rette capabilitien har endret en mappe, men
 % man kan ikke stadfeste når og hvem
 
