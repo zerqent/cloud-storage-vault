@@ -2947,15 +2947,16 @@ Even though we regard the proposed scheme as secure, some information will be
 leaked both to the server, and potentially to an external attacker if a secure
 channel, encrypted and authenticated, for communication is not used.
 
-The server will figure out which folder a user uses for his root folder, this
-because it will be the first folder a user creates. In addition it will
-probably be the first folder a user creates. The server will also see which
-objects the users stores which is a folder and which is a file, because a write
-enabler is sent alongside. The sequence of objects that a user requests will
-also leak some information about the file and folder hierarchy. We do not
-consider any of this information to be dangerous to protect, but if an external
-attacker obtain the Write key for a folder this might cause some problems in
-regards to availability.
+The provider will be able to observe which folder is the root folder of a user.
+This is because it will probably be the first folder a user creates, in
+addition it will probably be the first folder a user accesses during each
+session. The provider will also see which objects the users stores is a folder
+and which is a file, because a write enabler is sent alongside a folder. The
+sequence of objects that a user requests will also leak some information about
+the file and folder hierarchy. We do not consider any of this information to be
+dangerous for the server to possess, but if an external attacker obtain the
+Write key for a folder this might cause some problems in regards to
+availability.
 
 \subsubsection{Confidentiality}
 
@@ -2967,8 +2968,9 @@ Security of the client is discussed in Section \ref{sec:clientsecurity}.
 It is obvious that confidentiality weights heavily on the strength of the
 utilized cryptographic primitives. The recommended primitives in Section
 \ref{sec:cryptoprimitivechoice} are believed to ensure confidentiality.
-Alternative cryptographic primitives are also adaptive to the cryptographic
-scheme, as long as they provide the necessary cryptographic strength.
+It is also possible to exchange the recommended alternative cryptographic primitives
+with future or existing algorithms, confidentiality will then rest on the new
+primitives.
 
 The proposed cryptographic scheme has an additional weakness that can possibly
 end with a breach of confidentiality. This is the procedure taken to derive the
