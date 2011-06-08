@@ -93,7 +93,7 @@ has access to the stored data, since the encryption is performed with an
 encryption key known by the service provider.\\
 
 \noindent The candidates will design an application in which all data stored in
-the cloud are encrypted with a key that can not be obtained by the service
+the cloud are encrypted with a key that cannot be obtained by the service
 provider.\\
 
 \noindent Other goals of the application should be the ability to share
@@ -146,7 +146,7 @@ several performance tests were conducted.
 The proof of concept system shows that it is possible to implement the proposed
 scheme and that the cryptographic operations does not significantly affect the
 user experience on an Android device. Weaknesses of the scheme are identified,
-and the key that has to be stored client side is found to be the greatest risk.
+and the key that has to be stored client-side is found to be the greatest risk.
 
 We have presented a scheme for secure storage and sharing of files on an
 untrusted server, and argued for its validity. To support streaming
@@ -1228,7 +1228,7 @@ Android application, and consists of separate server and client functionality.
 The chapter will start by giving an overview of the proposed architecture
 followed by a more detailed description of the corresponding cryptographic
 scheme. The chapter will end by describing the implementation details for both
-the server and client side functionality of the Cloud Storage Vault.
+the server and client-side functionality of the Cloud Storage Vault.
 
 \section{Architectural Overview}
 %**************************************%
@@ -1257,7 +1257,7 @@ users to realize sharing of files or directories.
 \label{sec:AS:FS}
 
 The solution for file storage proposed in this thesis, is that only a simple
-\emph{key-value store} is needed on the server side. The key works as a lookup
+\emph{key-value store} is needed on the server-side. The key works as a lookup
 index for a specific value, while the corresponding value equals an encrypted
 file object. The server will be required to support the operations of uploading
 and downloading key-value pairs to this store.
@@ -1282,7 +1282,7 @@ space-conservative structure, since any file object may be found in multiple
 directories, but does only exist once in the cloud.
 
 A user will have to have some way of storing the capabilities of her file
-objects. This could potentially be done client side, but a problem arises if
+objects. This could potentially be done client-side, but a problem arises if
 the user wants to use several terminals. Thus, we introduce the \emph{root
 folder}, a folder from which all other files and folders can be reached. The
 user will only need to know of one single capability to reach all her stored
@@ -1301,7 +1301,7 @@ illustrated in Figure \ref{fig:AS:filesystem}.
 \label{sec:accounting}
 The possession of a capability gives a user access to read a file or read or
 write a folder, and hence serves as the primary access control. There are
-however some properties that the server provider might want that can not be
+however some properties that the server provider might want that cannot be
 given by the capability. Therefore a layer implementing authentication,
 accounting and authorization might be preferable.
 
@@ -1329,7 +1329,7 @@ should have the rights to delete it.
 
 \subsubsection{Accounting}
 
-If the server side of the system is held by a cloud storage provider, it is
+If the server-side of the system is held by a cloud storage provider, it is
 important to be able to decide which users should be billed for the \emph{file
 storage} and generated \emph{network traffic}.
 
@@ -1342,7 +1342,7 @@ cloud provider. For instance an employee who leaves the organization, might be
 tempted to copy all the data stored on the server. The organization should then
 be able to discover what has been done, using some form of an audit trail.
 
-It is however worth noting that if the accounting happens server side, there is
+It is however worth noting that if the accounting happens server-side, there is
 no real way to verify that all logs stored there are correct, since the cloud
 provider will have access to modify or delete them.
 
@@ -1681,7 +1681,7 @@ scheme.
 The \ac{SHA}-family is the current standard for cryptographic hash functions,
 and from this we recommend double \ac{SHA}-256. The cryptographic scheme
 requires the hash function to have an output of at least the size of the key
-used for encryption. The \ac{SHA}-1 has an output of 160 bits and could have
+used for encryption. \ac{SHA}-1 has an output of 160 bits and could have
 been used for 128 bit key size, but is not not recommended for use in new
 systems\cite{nist_sha1}. The use of double \ac{SHA}-256 compared to single, is
 to prevent a length-extension attack \cite{schneier}.
@@ -1879,7 +1879,7 @@ experience and its superb documentation.
 \paragraph{\acs{WSGI}} The Python \ac{WSGI} is, as the name suggests, an
 interface between a web server and a Python application. It is defined in
 \ac{PEP} 3333, and specifies both sides of the interface -- the
-\emph{application} and the \emph{server} \cite{PEP-3333}. The server side is
+\emph{application} and the \emph{server} \cite{PEP-3333}. The server-side is
 implemented in the form of an Apache module, namely \texttt{mod\_wsgi}, and the
 application is where we put our code.
 
@@ -2053,7 +2053,7 @@ cryptographic keys and information to identify a corresponding object. They
 will will contain information to identify an object as either a file or a
 folder, and have the information to read, write or verify that object.
 
-Capabilities are stored server side in folders in its serialized form shown
+Capabilities are stored server-side in folders in its serialized form shown
 in Figure \ref{fig:CAP:serial}. \emph{Object Type} specifies if the capability
 represents a file or a directory, with values \emph{F} or \emph{D}
 respectively.
@@ -2296,7 +2296,7 @@ indications of the performance of the scheme and implementation and not exact
 measurements. The Android measurements are our main objective, since that is
 what the client is primarily made for. The server was never considered as a
 possible bottleneck for the system, due to all heavy operations being performed
-client side.
+client-side.
 
 \input{tables/exp_desire.tex}
 \input{tables/exp_hero.tex}
@@ -2423,7 +2423,7 @@ start with \texttt{D:RW:}, followed by 16-byte of Base32-encoded data, another
 To perform a brute force or dictionary attack on the encrypted keyring, one
 must decrypt the keyring for each password guessed. The decryption involves
 both key derivation with \ac{PBKDF2}, and decryption with 128-bit \ac{AES} in
-\ac{ECB} mode. The \ac{PBKDF2} is a function that can be used with a
+\ac{ECB} mode. \ac{PBKDF2} is a function that can be used with a
 varying number of iterations, with the purpose of having a customizable way for
 users to increase key strength. Our attacks are tested on 500, 1000, 2000 and
 4000 iterations.
@@ -3057,7 +3057,7 @@ needed between the client and the server.
 \subsubsection{Supporting Multiple Cryptographic Primitives}
 
 The main problem with selecting cryptographic primitives for our scheme, is
-that one can not be sure how long they will remain secure. A recommended
+that one cannot be sure how long they will remain secure. A recommended
 approach is to build systems that can easily change the cryptographic
 primitives, in case of discoveries enabling an attacker to break a primitive
 \cite{schneier}. The main problem with this approach is that if for instance
@@ -3452,7 +3452,7 @@ password has been recovered.
 
 \section{Cluster Dictionary Attack}
 
-The \ac{CDA} is written in Java, and is built around the same procedure as the
+\ac{CDA} is written in Java, and is built around the same procedure as the
 dictionary attack in \ac{BFDA}. However, the difference lays in the cooperation
 of multiple computers. To enable a cluster of computers to cooperate, we used
 the following environment.
