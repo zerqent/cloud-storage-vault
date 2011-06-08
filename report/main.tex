@@ -2991,9 +2991,34 @@ By storing encrypted cryptographic hashvalues of the stored content
 % unntaket er Write Enabler, denne gir autentication/authorization for å
 % overskrive en folder.
 
+One could argue both that the proposed scheme does not include authentication,
+at the sime time one could argue that the posession of a capability
+authenticates a user. If authentication is not implemented as an extra layer
+desribed in Section XX, the server does not really authenticate the user.
+Granted the knowledge of the Storage Index does indicate possession of the
+capability, but this value can theoretically be stolen by using traffic
+analysis if the communication channel is not secured.  The posession of a
+capability does authentication in some way, but not of the user, rather it
+authenticates the capability, and at the same time grants authorization to the
+otherwise useless encrypted data.
+
 \subsubsection{Access Control}
-% TODO: Denne står ikke i lista over security services
-% Dra denne sammen med hva som er nevnt i availability
+% TODO: Denne står ikke i lista over security services Dra denne sammen med hva
+% som er nevnt i availability
+Access Control to a resource in the proposed scheme is given by capabilities.
+Anyone can download any encrypted data from the server if they possess a
+Storage Index, but that does not give access to the data. The possession of a
+capability does however grant this access. 
+
+The server will only need to handle Write enablers in regard to access control.
+Knowledge of the Write enabler indicates knowledge of the write key which again
+indicates possession of the whole capability. This means that access control in
+this context is also given by the capability. The Write enabler is vulnerable
+to Traffic analysis and other attacks that compromise availability if it is not
+sent over a secure channel. An improvement of the scheme that could reduce the
+risk of this is to have the server actually verify that folders uploaded have a
+correct signature. With that improvement the Write enabler is strictly not
+necessary but this will increase the requirements of the server.
 
 \subsubsection{Availability}
 % Vi er sårbare for en del her, gitt at man ikke bruker en secure channel
@@ -3005,6 +3030,24 @@ By storing encrypted cryptographic hashvalues of the stored content
 % availability (delvis authentication), aldri confidentiality eller integrity.
 % Serveren kan også slette alt - dette er ikke hva vi prøver å sikre oss mot,
 % men alt dette peker på at vi trenger en sikker kanal.
+The proposed scheme does not try to provide availability in regards to the
+storage provider. The provider might chose to delete all data, or shut down the
+server at any time. Tahoe-\ac{LAFS} has solved this by using erasure coding and
+storing the data on different nodes. The result is that some nodes might be
+taken down, but as long as a sufficient number is available the data will also
+be. This would also be possible with our scheme, but is considered out of
+scope for this thesis.
+
+If a secure communication channel is not used availability will be a problem in
+regards to an external attacker as well. By using traffic analysis Write
+enablers for folders can be obtain, which means that the data can also be
+overwritten. A \ac{MITM} attack could use modification of message to either
+prevent a user from storing data or to make the user store wrong data. These
+attack do not compromise the confidentiality of the data, and they will be
+discovered when the attacker goes away and the integrity check will fail.  A
+possible attack, that is not detected by the integrity check, is the replay
+attack. The attacker can record an update of a folder and replay that message
+when the folder has further been updated causing possible loss of data.
 
 \subsubsection{Secure Communication Channel}
 % Her må vi nevne kravene til en protokoll - og hvorfor denne er viktig (den er
