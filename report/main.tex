@@ -1729,14 +1729,14 @@ based key derivation function. For this \ac{NIST} recommend \ac{PBKDF2}
 \cite{pbkdf_nist}. The iteration count is recommended to be set at high as
 possible while at the same time maintaining acceptable performance, but with a
 minimum of 1000. The salt should be at least 128 bit and randomly generated.
-For the pseudorandom function, the recommendation is to use \ac{HMAC} with any
+For the pseudorandom function, the recommendation is to use H\ac{MAC} with any
 \ac{NIST} approved hash function.
 
 To come up with a secure recommendation, we also looked at the usage of
 \ac{PBKDF2} in \ac{WPA}, and what security it provides against brute force
 attacks.  \ac{WPA} is used because the utilization of \ac{PBKDF2} is quite
 similar to the one in our scheme. It uses 4096 iterations, and
-\ac{HMAC}-\ac{SHA}-1 as the pseudorandom function. So far, the most sensational
+H\ac{MAC}-\ac{SHA}-1 as the pseudorandom function. So far, the most sensational
 brute force attack against \ac{WPA} was published on Black Hat DC 2011 by a
 security researcher named Thomas Roth. He proved that anyone can crack \ac{WPA}
 passwords with a speed of up to about 400 000 passwords per second, using
@@ -1750,7 +1750,7 @@ used in our scheme as in \ac{WPA}, i.e. 4096. This should yield acceptable
 performance on most devices. The most elegant solution would be to fine tune
 this on a per device basis. The client can time the calculation of 4096
 iterations, and increase the number if this is too fast. The pseudorandom
-function should be \ac{HMAC}-\ac{SHA}256, since \ac{NIST} recommends against
+function should be H\ac{MAC}-\ac{SHA}-256, since \ac{NIST} recommends against
 utilizing \ac{SHA}-1 in new applications. The salt should be at least 128 bit.
 
 \paragraph{Password requirements}
@@ -2126,9 +2126,30 @@ data from our server, while \texttt{CSVFileManager.java} provides specific
 methods for sending and receiving the encrypted objects, \texttt{CSVFile} and
 \texttt{CSVFolder}.
 
+\subsubsection{Deviations in the Choice of Cryptographic Primitives}
+\label{sec:client:deviations}
+% TODO: Fix appendix
+The implementation of the proof of concept client deviates from the
+recommendation given in Section \ref{sec:cryptoprimitivechoice}.  This occurred
+as a result of new discoveries that were made while analysing the system. All
+unfortunate deviations are corrected with a patch file submitted along with the
+code attachment, described in Appendix \ref{ap:attachments}. The following
+deviations exist.
+
+\paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
+bits, in contrast to the argued 2048 bits. It is therefore important to notice
+that all measurements, presented in Chapter \ref{ch:experimental} and
+\ref{ch:results}, are based on an RSA key length of 1024 bits.
+
+\paragraph{AES Key Length} The key length used in our implementation is 128 bit
+for \ac{AES}. The reason to prefer a shorter key length in \ac{CSV} is to make
+manual key exchange less cumbersome. 256 bits are however preferred.
+
+For the other primitives we follow the recommendation. For a cryptographic hash
+function this means double \ac{SHA}-256 and for the \ac{MAC} function this
+means H\ac{MAC}-\ac{SHA}-256.
+
 \subsection{Sharing}
-% Sequence Diagram - How we use the cryptographic solutions (and which ones) to
-% achieve sharing, securely
 
 A \emph{shared folder} is basically just a folder object which two or more
 people have the required encryption keys for.
@@ -2184,7 +2205,7 @@ to remember, so the capability will have to be stored on the client.  The
 client might be stolen or broken into by some means, and if the capability is
 stored in clear text, it is easily compromised. We therefore implement a
 locally stored encrypted keyring which contain this capability. We use
-\ac{PBKDF2} with 4096 iterations and \ac{HMAC}-\ac{SHA}256 together with a user
+\ac{PBKDF2} with 4096 iterations and H\ac{MAC}-\ac{SHA}-256 together with a user
 defined password to derive a 128 bit encryption key. The keyring is then
 encrypted with \ac{AES} and the derived key.
 
@@ -2525,7 +2546,10 @@ presented that target the local keyring.
 \section{Performance of the Client}
 
 This section presents the numbers obtained from benchmarking the client, and
-highlights the most important results.
+highlights the most important results.  As mentioned in Section
+\ref{sec:client:deviations} we first implemented the \ac{CSV} client with a key
+length of 128 bit for \ac{AES} and 1024 bit for \ac{RSA}. The results displayed
+in this chapter are based on this first client.
 
 \subsection{Files}
 
@@ -2919,6 +2943,72 @@ and folder, containing the utilized cryptographic primitives. In addition, the
 capability would have to contain which cryptographic hash function that should
 be used, to be able to deduce the storage index from the key.
 
+\subsection{Security of the Cryptographic Scheme}
+
+The proposed cryptographic scheme is subject to certain weaknesses that
+currently, or in the future, may be utilized by an attacker. The following
+subsections will discuss possible weaknesses and their consequences.
+
+\subsubsection{Information leakage}
+
+The storage provider can access all encrypted data on the server, and also know
+whether a stored data object corresponds to a file or a folder. This is
+revealed by the difference in header content and size between folder and file
+objects. Folders are specially recognizable by the server, as their write
+enabler is revealed during upload procedure.
+
+Additionally, a user's root folder is known, since it is the first object
+accessed in a newly created session. It is also possible for the provider to
+reveal the structure of the directory tree of a user. The series of file and
+folder requests from a user enables the provider to learn which files are
+contained in which folders.
+
+Considering the findings in various research, information can also be leaked to
+other potential attackers besides the untrusted cloud provider. External
+attackers can locate the server in the cloud, used by the application, and
+further set up a \ac{VM} on the same server \cite{cloud_getoff}. In a worst
+case scenario the attacker gets access to the same amount of information as the
+cloud provider, which should not be dangerous.
+
+\subsubsection{Content Disclosure}
+
+The confidentiality of both files and folders relies primarily on the symmetric
+cipher used to encrypt the data. But for folders one can obtain this key if one
+manages to obtain the asymmetric private key belonging to the folder, as seen
+in Figure \ref{fig:CS:CD}. In other words, files and folders are attackable
+both trough the asymmetric and the symmetric cipher used.
+
+Disclosing folder content through the asymmetric cipher may be avoided by
+changing the usage of the private key. Instead of hashing the private key to
+derive the write key of a folder, the write key could rather be generated from
+a random key generator. In this way, even though the asymmetric private key is
+revealed, the symmetric keys used to provide confidentiality are not retrieved.
+However, revealing the private key would still breach the integrity of the
+cryptographic scheme.
+
+If the confidentiality of a folder is breached, it will additionally enable the
+attacker to decrypt all of the corresponding subfolders and files. In
+contrast, cracking the confidentiality of a file will only compromise that
+specific file. It is also important to note that if the confidentiality of a
+user's root folder is breached, all files, belonging to that user, are
+effectively compromised.
+
+
+\subsubsection{The Weakest Link}
+% TODO: Annet navn
+Considering the potential weaknesses discussed above, the weakest link in the
+secure cloud storage scheme presented, is potentially the locally encrypted
+keyring. To provide usability, users are given the possibility of choosing
+their own password, to indirectly encrypt their keyring. However, it is fairly
+well known that users can not be trusted to generate and use long, secure
+passwords.
+
+As mentioned earlier, even with the recommended password constraints, the
+keyring is still vulnerable to dictionary attacks. However, disclosing the
+keyring is only possible if the keyring is accessible to an attacker. Getting
+access to a locally stored keyring is defined as an \emph{active attack}, and is
+further discussed in the next section.
+
 \section{Implementation}
 \label{sec:DIS:impl}
 
@@ -2949,23 +3039,6 @@ smart phones also makes the process of actually handing over a key much easier.
 In addition the manual import option in the client grants every user the
 possibility of using any other channel for transferring keys.
 
-\subsection{Deviations in the Choice of Cryptographic Primitives}
-
-The implementation of the proof of concept client deviates from the
-recommendation given in Section \ref{sec:cryptoprimitivechoice}.  This occurred
-as a result of new discoveries that were made while analysing the system. All
-unfortunate deviations are corrected with a patch file submitted along with the
-code attachment, described in Appendix \ref{ap:attachments}. The following
-deviations exist.
-
-\paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
-bits, in contrast to the argued 2048 bits. It is therefore important to notice
-that all measurements, presented in Chapter \ref{ch:experimental} and
-\ref{ch:results}, are based on an RSA key length of 1024 bits.
-
-\paragraph{AES Key Length} The key length used in our implementation is 128 bit
-for \ac{AES}. The reason to prefer a shorter key length in \ac{CSV} is to make
-manual key exchange less cumbersome. 256 bits are however preferred.
 
 \subsection{Simplifying the Server}
 
@@ -2985,7 +3058,7 @@ presented in Section \ref{chap:CS}, are loosely coupled with the \ac{ACL}
 layer, so extending the proof of concept software to use a dumb file store
 should not pose any great concerns.
 
-\section{Performance}
+\subsection{Performance}
 
 The measurements performed on our client reveal that it is not as fast as
 desirable. For files, a perfect client would render the network or the SD card
@@ -3041,83 +3114,6 @@ given that it has to be downloaded from the server, decrypted and verified, we
 keep the currently opened folder and its parents in a stack. This can be seen
 on as a kind of cache, and could be extended to include all folders opened
 in the active session.
-
-\section{Security}
-
-The secure storage system described in this thesis is based on the idea of
-hiring storage from an untrusted provider. Thus, the security of the
-application should primarily reflect that. With this as a starting point, we
-can assume that all data stored on the server is obtainable by the provider.
-
-This section will discuss the general security provided by the \acl{CSV}, and
-is further divided into security of the cryptographic scheme and security of
-the user client.
-
-\subsection{Security of the Cryptographic Scheme}
-
-The proposed cryptographic scheme is subject to certain weaknesses that
-currently, or in the future, may be utilized by an attacker. The following
-subsections will discuss possible weaknesses and their consequences.
-
-\subsubsection{Information leakage}
-
-The storage provider can access all encrypted data on the server, and also know
-whether a stored data object corresponds to a file or a folder. This is
-revealed by the difference in header content and size between folder and file
-objects. Folders are specially recognizable by the server, as their write
-enabler is revealed during upload procedure.
-
-Additionally, a user's root folder is known, since it is the first object
-accessed in a newly created session. It is also possible for the provider to
-reveal the structure of the directory tree of a user. The series of file and
-folder requests from a user enables the provider to learn which files are
-contained in which folders.
-
-Considering the findings in various research, information can also be leaked to
-other potential attackers besides the untrusted cloud provider. External
-attackers can locate the server in the cloud, used by the application, and
-further set up a \ac{VM} on the same server \cite{cloud_getoff}. In a worst
-case scenario the attacker gets access to the same amount of information as the
-cloud provider, which should not be dangerous.
-
-\subsubsection{Content Disclosure}
-
-The confidentiality of both files and folders relies primarily on the symmetric
-cipher used to encrypt the data. But for folders one can obtain this key if one
-manages to obtain the asymmetric private key belonging to the folder, as seen
-in Figure \ref{fig:CS:CD}. In other words, files and folders are attackable
-both trough the asymmetric and the symmetric cipher used.
-
-Disclosing folder content through the asymmetric cipher may be avoided by
-changing the usage of the private key. Instead of hashing the private key to
-derive the write key of a folder, the write key could rather be generated from
-a random key generator. In this way, even though the asymmetric private key is
-revealed, the symmetric keys used to provide confidentiality are not retrieved.
-However, revealing the private key would still breach the integrity of the
-cryptographic scheme.
-
-If the confidentiality of a folder is breached, it will additionally enable the
-attacker to decrypt all of the corresponding subfolders and files. In
-contrast, cracking the confidentiality of a file will only compromise that
-specific file. It is also important to note that if the confidentiality of a
-user's root folder is breached, all files, belonging to that user, are
-effectively compromised.
-
-
-\subsubsection{The Weakest Link}
-
-Considering the potential weaknesses discussed above, the weakest link in the
-secure cloud storage scheme presented, is potentially the locally encrypted
-keyring. To provide usability, users are given the possibility of choosing
-their own password, to indirectly encrypt their keyring. However, it is fairly
-well known that users can not be trusted to generate and use long, secure
-passwords.
-
-As mentioned earlier, even with the recommended password constraints, the
-keyring is still vulnerable to dictionary attacks. However, disclosing the
-keyring is only possible if the keyring is accessible to an attacker. Getting
-access to a locally stored keyring is defined as an \emph{active attack}, and is
-further discussed in the next section.
 
 \subsection{Client Security}
 
@@ -3195,6 +3191,19 @@ the sensitive information in memory.
 Another scenario would involve the attacker installing a \emph{keylogger} on
 the compromised client. This type of software can further detect the keyring
 password when the user logs in to the application.
+
+%\section{Security}
+%
+%The secure storage system described in this thesis is based on the idea of
+%hiring storage from an untrusted provider. Thus, the security of the
+%application should primarily reflect that. With this as a starting point, we
+%can assume that all data stored on the server is obtainable by the provider.
+%
+%This section will discuss the general security provided by the \acl{CSV}, and
+%is further divided into security of the cryptographic scheme and security of
+%the user client.
+
+
 
 %**************************************%
 \chapter{Conclusion and Future Work}
