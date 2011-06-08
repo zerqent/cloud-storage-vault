@@ -1297,7 +1297,7 @@ illustrated in Figure \ref{fig:AS:filesystem}.
 \end{figure}
 
 \subsection{Authorization, Authentication and Accounting Layer}
-
+\label{sec:accounting}
 The possession of a capability gives a user access to read a file or read or
 write a folder, and hence serves as the primary access control. There are
 however some properties that the server provider might want that can not be
@@ -2925,22 +2925,6 @@ hinder duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
-\subsection{Supporting Multiple Cryptographic Primitives}
-
-The main problem with selecting cryptographic primitives for our scheme, is
-that one can not be sure how long they will remain secure. A recommended
-approach is to build systems that can easily change the cryptographic
-primitives, in case of discoveries enabling an attacker to break a primitive
-\cite{schneier}. The main problem with this approach is that if for instance
-\ac{AES} is broken, and the cloud provider keeps backups of all user data on
-their server, that information is compromised with regard to the provider.
-
-A change of a cryptographic primitive in our scheme would lead to backward
-compatibility being broken, i.e. one would be unable to obtain files or folders
-stored before the change. This could be remedied by a meta-block for each file
-and folder, containing the utilized cryptographic primitives. In addition, the
-capability would have to contain which cryptographic hash function that should
-be used, to be able to deduce the storage index from the key.
 
 \subsection{Security}
 Even though we regard the proposed scheme as secure, some information will be
@@ -3005,16 +2989,16 @@ By storing encrypted cryptographic hashvalues of the stored content
 % unntaket er Write Enabler, denne gir autentication/authorization for å
 % overskrive en folder.
 
-One could argue both that the proposed scheme does not include authentication,
-at the sime time one could argue that the posession of a capability
-authenticates a user. If authentication is not implemented as an extra layer
-desribed in Section XX, the server does not really authenticate the user.
-Granted the knowledge of the Storage Index does indicate possession of the
-capability, but this value can theoretically be stolen by using traffic
-analysis if the communication channel is not secured.  The posession of a
-capability does authentication in some way, but not of the user, rather it
-authenticates the capability, and at the same time grants authorization to the
-otherwise useless encrypted data.
+One could argue that the proposed scheme does not include authentication, but
+at the same time one could argue that the possession of a capability
+authenticates a user. If authentication is not implemented as an extra layer as
+described in Section \ref{sec:accounting}, the server does not really
+authenticate the user.  Granted the knowledge of the Storage Index does
+indicate possession of the capability, but this value can theoretically be
+stolen by using traffic analysis if the communication channel is not secured.
+The possession of a capability does authentication in some way, but not of the
+user, rather it authenticates the capability, and at the same time grants
+authorization to the otherwise useless encrypted data.
 
 \subsubsection{Access Control}
 % TODO: Denne står ikke i lista over security services Dra denne sammen med hva
@@ -3049,12 +3033,12 @@ storage provider. The provider might chose to delete all data, or shut down the
 server at any time. Tahoe-\ac{LAFS} has solved this by using erasure coding and
 storing the data on different nodes. The result is that some nodes might be
 taken down, but as long as a sufficient number is available the data will also
-be. This would also be possible with our scheme, but is considered out of
-scope for this thesis.
+be. This would also be possible with the proposed scheme, but is considered out
+of scope for this thesis.
 
 If a secure communication channel is not used availability will be a problem in
 regards to an external attacker as well. By using traffic analysis Write
-enablers for folders can be obtain, which means that the data can also be
+enablers for folders can be obtained, which means that the data can also be
 overwritten. A \ac{MITM} attack could use modification of message to either
 prevent a user from storing data or to make the user store wrong data. These
 attack do not compromise the confidentiality of the data, and they will be
@@ -3066,7 +3050,25 @@ when the folder has further been updated causing possible loss of data.
 \subsubsection{Secure Communication Channel}
 % Her må vi nevne kravene til en protokoll - og hvorfor denne er viktig (den er
 % viktig fordi vi kan ha eksterne angripere, og ikke bare en untrusted server)
+Due to the risk of an external attacker, a secure communication channel is
+needed between the client and the server.
 
+\subsection{Supporting Multiple Cryptographic Primitives}
+
+The main problem with selecting cryptographic primitives for our scheme, is
+that one can not be sure how long they will remain secure. A recommended
+approach is to build systems that can easily change the cryptographic
+primitives, in case of discoveries enabling an attacker to break a primitive
+\cite{schneier}. The main problem with this approach is that if for instance
+\ac{AES} is broken, and the cloud provider keeps backups of all user data on
+their server, that information is compromised with regard to the provider.
+
+A change of a cryptographic primitive in our scheme would lead to backward
+compatibility being broken, i.e. one would be unable to obtain files or folders
+stored before the change. This could be remedied by a meta-block for each file
+and folder, containing the utilized cryptographic primitives. In addition, the
+capability would have to contain which cryptographic hash function that should
+be used, to be able to deduce the storage index from the key.
 
 %The proposed cryptographic scheme is subject to certain weaknesses that
 %currently, or in the future, may be utilized by an attacker. The following
