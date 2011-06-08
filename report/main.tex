@@ -2949,24 +2949,25 @@ be used, to be able to deduce the storage index from the key.
 \subsubsection{Confidentiality}
 
 Confidentiality is provided by encrypting data locally before it is stored in
-the cloud. This implies that confidentiality can be breached by attacking the
-client equipment or the encrypted keyring stored within the client.
+the cloud. This implies that confidentiality can only be breached by weaknesses
+in the cryptographic primitives, side-channel attacks or attacks on the client.
 Security of the client is discussed in Section \ref{sec:clientsecurity}. 
 
-Apart from client security, it is obvious that confidentiality weights heavily
-on the strength of the utilized cryptographic primitives. The recommended
-primitives in Section \ref{sec:cryptoprimitivechoice} are believed to ensure
-confidentiality. Alternative cryptographic primitives are also adaptive to the
-cryptographic scheme, as long as they provide the necessary cryptographic
-strength.
+It is obvious that confidentiality weights heavily on the strength of the
+utilized cryptographic primitives. The recommended primitives in Section
+\ref{sec:cryptoprimitivechoice} are believed to ensure confidentiality.
+Alternative cryptographic primitives are also adaptive to the cryptographic
+scheme, as long as they provide the necessary cryptographic strength.
 
 The proposed cryptographic scheme has an additional weakness that can possibly
-end with breached confidentiality. This is the procedure taken to derive the
+end with a breach of confidentiality. This is the procedure taken to derive the
 write key of a folder. The write key is the result of hashing the private key
-used to sign a folder. Given an attack that can derive the private
-key from the corresponding public key, it will be easy for an attacker to
-retrieve the folder's write key. The weakness can be avoided by deriving folder
-write keys from a random key generator, instead of hashing the private key.
+used to sign a folder. Given an attack that can derive the private key from the
+corresponding public key, it will be easy for an attacker to retrieve the
+folder's write key. While the cryptographic primitives recommended should make
+this infeasible to do at the current time, it might be possible in the future.
+The write key could instead be generated from a \ac{CSPRNG}, which is the case
+for the read key of files.
 
 % Krypterer lokalt, så denne kan ikke breaches utenom å angripe lokalt lagret
 % keyring eller kjørende klient (Ref framover til client security)
