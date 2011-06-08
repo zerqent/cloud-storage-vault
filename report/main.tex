@@ -2973,7 +2973,20 @@ for the read key of files.
 % RSA->AES nøkkel på mapper er dumt (gir performance)
 
 \subsubsection{Integrity}
-By storing encrypted cryptographic hashvalues of the stored content 
+
+The cryptographic scheme provides integrity by adding a cryptographic hash value
+into a cloud object's encrypted parent folder that is stored in the cloud. The
+hash value from a cloud file is derived from its content, while the hash value
+from a cloud folder is generated from its public key. To breach integrity, an
+attacker must therefore be able to change a cryptographic hash value stored
+inside a cloud folder. This implies that both reading and writing to a cloud
+folder is achieved.
+
+With this in mind, the integrity of the cryptographic scheme relies on the
+confidentiality provided by the encrypted cloud folders. In other words, the
+integrity relies on the underlying cryptographic primitives as well as the
+client security.
+
 % Umulig å endre innhold, cryptographic hash lagres lokalt og holder så lenge
 % confidentiality holder på foldere Hviler også på kryptoprimitiver
 
