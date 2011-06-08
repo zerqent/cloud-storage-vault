@@ -2133,8 +2133,10 @@ The implementation of the proof of concept client deviates from the
 recommendation given in Section \ref{sec:cryptoprimitivechoice}.  This occurred
 as a result of new discoveries that were made while analysing the system. All
 unfortunate deviations are corrected with a patch file submitted along with the
-code attachment, described in Appendix \ref{ap:attachments}. The following
-deviations exist.
+code attachment, described in Appendix \ref{ap:attachments}.  For the other
+primitives we follow the recommendation. For a cryptographic hash function this
+means double \ac{SHA}-256 and for the \ac{MAC} function this means
+H\ac{MAC}-\ac{SHA}-256.  The following deviations exist.
 
 \paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
 bits, in contrast to the argued 2048 bits. It is therefore important to notice
@@ -2145,9 +2147,6 @@ that all measurements, presented in Chapter \ref{ch:experimental} and
 for \ac{AES}. The reason to prefer a shorter key length in \ac{CSV} is to make
 manual key exchange less cumbersome. 256 bits are however preferred.
 
-For the other primitives we follow the recommendation. For a cryptographic hash
-function this means double \ac{SHA}-256 and for the \ac{MAC} function this
-means H\ac{MAC}-\ac{SHA}-256.
 
 \subsection{Sharing}
 
