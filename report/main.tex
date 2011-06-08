@@ -2943,8 +2943,19 @@ capability would have to contain which cryptographic hash function that should
 be used, to be able to deduce the storage index from the key.
 
 \subsection{Security}
+Even though we regard the proposed scheme as secure, some information will be
+leaked both to the server, and potentially to an external attacker if a secure
+channel, encrypted and authenticated, for communication is not used.
 
-% Intro / Hva vet serveren
+The server will figure out which folder a user uses for his root folder, this
+because it will be the first folder a user creates. In addition it will
+probably be the first folder a user creates. The server will also see which
+objects the users stores which is a folder and which is a file, because a write
+enabler is sent alongside. The sequence of objects that a user requests will
+also leak some information about the file and folder hierarchy. We do not
+consider any of this information to be dangerous to protect, but if an external
+attacker obtain the Write key for a folder this might cause some problems in
+regards to availability.
 
 \subsubsection{Confidentiality}
 
