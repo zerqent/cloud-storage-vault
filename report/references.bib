@@ -30,25 +30,6 @@
     year = "2006",
     edition = "Fourth",
 }
-
-@techreport{cloud_nistdef,
-    author = "P. Mell and T. Grance",
-    title = "{The NIST Definition of Cloud Computing (Draft)}",
-    institution = "NIST",
-    year = "2011",
-    note = "From
-        \url{http://csrc.nist.gov/publications/drafts/800-145/Draft-SP-800-145_cloud-definition.pdf}"
-}
-@techreport{pbkdf_nist,
-    author = "Meltem Sönmez Turan and Elaine Barker and William Burr and Lily Chen",
-    title = "{Recommendation for Password-Based Key Derivation}",
-    institution = "NIST",
-    year = "2010",
-    month = "December",
-    note = "From
-        \url{http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf}",
-}
-
 @inproceedings{cloud_getoff,
     author = "Thomas Ristenpart and Eran Tromer and Hovav Shacham and Stefan Savage",
     title = "{Hey, You, Get Off of My Cloud: Exploring Information Leakage in
@@ -92,7 +73,7 @@
 }
 
 @techreport{PasS,
-    author = "W. Itani and A. Kayssi and A. Chehab",
+    author = "Wassim Itani and Ayman Kayssi and Ali Chehab",
     title = "{Privacy as a Service: Privacy-Aware Data Storage and Processing in
     Cloud Computing Architectures}",
     institution = "American University of Beirut",
@@ -102,15 +83,15 @@
 }
 
 @techreport{privacymanager,
-    author = "S. Pearson and Y. Shen and M. Mowbray",
+    author = "Siani Pearson and Yun Shen and Miranda Mowbray",
     title = "{A Privacy Manager for Cloud Computing}",
     institution = "HP Labs",
     year = "2009",
-    note = "From \url{http://www.hpl.hp.com/techreports/2009/HPL-2009-156.html}"
+    note = "From \url{http://www.hpl.hp.com/techreports/2009/HPL-2009-156.pdf}"
 }
 
 @techreport{yao,
-    author = "A. C. Yao",
+    author = "Andrew C. Yao",
     title = "{Protocols for Secure Computations}",
     institution = "University of California Berkeley",
     year = "1982",
@@ -118,12 +99,15 @@
     \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.103.7844&rep=rep1&type=pdf}"
 }
 
-@techreport{gentry,
-    author = "C. Gentry",
+@inproceedings{gentry,
+    author = "Craig Gentry",
     title = "{Fully Homomorphic Encryption Using Ideal Lattices}",
+    booktitle = {Proceedings of the 41st annual ACM symposium on Theory of
+        computing},
+    series = {STOC '09},
     institution = "Stanford University and IBM Watson",
     year = "2009",
-    note = "From \url{http://www.math.uni-bielefeld.de/~mitrofan/p169-gentry.pdf}"
+    note = "From \url{http://portal.acm.org/citation.cfm?id=1536440}"
 }
 
 @techreport{obfuscationmethod,
@@ -184,6 +168,7 @@
 @misc{tahoe,
     author = "Zooko Wilcox-O'Hearn and Brian Warner",
     title = "{Tahoe - The Least-Authority Filesystem}",
+    organization = "allmydata.com",
     year = "2008",
     note = "From \url{http://tahoe-lafs.org/~zooko/lafs.pdf}"
 }
@@ -225,6 +210,7 @@
 @misc{mapred,
     author = "Jeffrey Dean and Sanjay Ghemawat" ,
     title = "{MapReduce: Simplified Data Processing on Large Clusters}",
+    organization = "Google Inc.",
     year = "2004",
     note = "From \url{http://labs.google.com/papers/mapreduce-osdi04.pdf}",
 }
@@ -235,17 +221,11 @@
     howpublished = "\url{http://www.dalvikvm.com/}",
     note = "Retrieved 05.21.11",
 }
-@misc{pbkdf2std,
-    author = "{RSA Laboratories}",
-    title = "{PKCS \#5 v2.1: Password-Based Cryptography Standard}",
-    year = "1999",
-    howpublished = "\url{http://csrc.nist.gov/publications/drafts/800-145/Draft-SP-800-145_cloud-definition.pdf}",
-    note = "Retrieved 05.10.11"
-}
 @misc{rothwpa,
     author = "Thomas Roth",
     title ="{Breaking encryptions using GPU accelerated cloud instances}",
     year = "2011",
+    month = "January",
     howpublished = "\url{https://media.blackhat.com/bh-dc-11/Roth/BlackHat_DC_2011_Roth_Breaking_encryptions-wp.pdf}",
     note = "Retrieved 05.10.11"
 }
@@ -389,13 +369,16 @@
 @misc{AES-FIPS, 
    title = "{Specification for the Advanced Encryption Standard (AES)}", 
    howpublished = "Federal Information Processing Standards Publication 197", 
-   year = "2001", 
+   year = "2001",
+   month = "November",
+   institution = "NIST",
    note = "From \url{http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf}" 
 }
 
 @misc{SHA-FIPS, 
    title = "{Secure Hash Standard (SHS)}", 
    howpublished = "Federal Information Processing Standards Publication 180-3", 
+   institution = "NIST",
    year = "2008",
    month = "October",
    note = "From \url{http://csrc.nist.gov/publications/fips/fips180-3/fips180-3_final.pdf}" 
@@ -404,6 +387,7 @@
 @misc{DSS-FIPS, 
    title = "{Digital Signature Standard (DSS)}", 
    howpublished = "Federal Information Processing Standards Publication 186-3", 
+   institution = "NIST",
    year = "2009",
    month = "June",
    note = "From \url{http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf}" 
@@ -445,3 +429,23 @@
     \url{http://portal.acm.org/ft_gateway.cfm?id=1315317&ftid=476752&dwn=1&CFID=26114085&CFTOKEN=59848555}"
 }
 
+@misc{cloud_nistdef,
+    author = "Peter Mell and Timothy Grance",
+    title = "{The NIST Definition of Cloud Computing (Draft)}",
+    howpublished = "Federal Information Processing Standards Publication 180-145", 
+    institution = "NIST",
+    year = "2011",
+    note = "From
+        \url{http://csrc.nist.gov/publications/drafts/800-145/Draft-SP-800-145_cloud-definition.pdf}"
+}
+
+@misc{pbkdf_nist,
+    author = "Meltem Sönmez Turan and Elaine Barker and William Burr and Lily Chen",
+    title = "{Recommendation for Password-Based Key Derivation}",
+    institution = "NIST",
+    howpublished = "Federal Information Processing Standards Publication 180-132", 
+    year = "2010",
+    month = "December",
+    note = "From
+        \url{http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf}",
+}
