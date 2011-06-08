@@ -1906,7 +1906,7 @@ The code was structured as illustrated in Figure \ref{fig:IM:layout}. The file
 \texttt{handler.py} provides the interface for \texttt{mod\_wsgi} and the server
 application, and basically includes the \ac{URL} scheme in
 \texttt{fileserver.py}. An example \ac{URL} mapping is shown in Listing
-\ref{lst:IM:get}. The function \texttt{get\_file} is registered to have the
+\ref{lst:IM:get}. The function \texttt{get\_file()} is registered to have the
 \ac{URL} \texttt{/get} through the decorator provided by Pyroutes. After
 retrieving the file from disk, a proper \ac{HTTP} response is returned,
 containing required headers.
