@@ -2947,12 +2947,34 @@ be used, to be able to deduce the storage index from the key.
 % Intro / Hva vet serveren
 
 \subsubsection{Confidentiality}
+
+Confidentiality is provided by encrypting data locally before it is stored in
+the cloud. This implies that confidentiality can be breached by attacking the
+client equipment or the encrypted keyring stored within the client.
+Security of the client is discussed in Section \ref{sec:clientsecurity}. 
+
+Apart from client security, it is obvious that confidentiality weights heavily
+on the strength of the utilized cryptographic primitives. The recommended
+primitives in Section \ref{sec:cryptoprimitivechoice} are believed to ensure
+confidentiality. Alternative cryptographic primitives are also adaptive to the
+cryptographic scheme, as long as they provide the necessary cryptographic
+strength.
+
+The proposed cryptographic scheme has an additional weakness that can possibly
+end with breached confidentiality. This is the procedure taken to derive the
+write key of a folder. The write key is the result of hashing the private key
+used to sign a folder. Given an attack that can derive the private
+key from the corresponding public key, it will be easy for an attacker to
+retrieve the folder's write key. The weakness can be avoided by deriving folder
+write keys from a random key generator, instead of hashing the private key.
+
 % Krypterer lokalt, så denne kan ikke breaches utenom å angripe lokalt lagret
 % keyring eller kjørende klient (Ref framover til client security)
 % Hviler på styrken til primtivene, dra inn at man kanskje bør støtte flere?
 % RSA->AES nøkkel på mapper er dumt (gir performance)
 
 \subsubsection{Integrity}
+By storing encrypted cryptographic hashvalues of the stored content 
 % Umulig å endre innhold, cryptographic hash lagres lokalt og holder så lenge
 % confidentiality holder på foldere Hviler også på kryptoprimitiver
 
@@ -3160,7 +3182,7 @@ on as a kind of cache, and could be extended to include all folders opened
 in the active session.
 
 \subsection{Client Security}
-
+\label{sec:clientsecurity}
 If a user physically looses his device, and the \ac{CSV} software is running,
 anyone who finds the device can get access to the user's private files and
 folders. This is because the client software will have to keep the root
