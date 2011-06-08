@@ -569,8 +569,9 @@ attacker \cite{stallings}.
 upon demand by an authorized system entity, are defined by the availability
 service \cite{stallings}.
 
+% TODO: She/he her eller noe helt annet?
 \paragraph{Authentication} Authentication is the act of a user, service or
-similar to prove that he is what he claims to be \cite{stallings}.
+similar to prove that she is what she claims to be \cite{stallings}.
 
 \paragraph{Non-Repudiation} Non-repudiation prevents both the sender and the
 receiver of a message from refuting the authenticity of transmitted message. In
@@ -657,7 +658,7 @@ throughout this thesis.
 
 Randomness is a basic property that multiple of the cryptographic
 primitives rely on, and hence deserves an explanation. Random data is
-informally defined as unpredictable to the attacker, even if he is taking
+informally defined as unpredictable to the attacker, even if she is taking
 active steps to defeat the randomness \cite[p. 137]{schneier}.
 
 A \emph{\ac{CSPRNG}} produces pseudo random numbers based on a generated seed
@@ -799,7 +800,7 @@ referred to as a \ac{PKI}.
 
 \ac{PGP} is a scheme similar to \ac{PKI}, but with no \ac{CA} that all users
 trust \cite{stallings}. Instead, trust is made between users by somehow
-verifying their public key, for instance by meeting face to face. A user can
+verifying their public keys, for instance by meeting face to face. A user can
 then sign the key of another user, set a trust level for the user, and publish
 this information to a key server. Other users can then calculate a trust on an
 unknown person, based on the trust set by people that they trust, from
@@ -841,7 +842,7 @@ a non-trusted cloud provider.
 A concept entitled \ac{PasS}, was suggested in 2009 \cite{PasS}. \ac{PasS} is a
 set of security protocols ensuring privacy of customer data in cloud computing
 architectures. The main design goal with \ac{PasS}, is to maximize the user's
-control over his sensitive data, both processed and stored within a cloud.
+control over her sensitive data, both processed and stored within a cloud.
 
 The \ac{PasS} concept is based on a fundamental \emph{system model} and
 \emph{trust model}. The system model consists of three communicating parties,
@@ -1203,7 +1204,7 @@ Cryptree \cite{cryptree, wuala}, which is based on the notion that no
 information should be revealed to the computer holding the access control
 structure, i.e. the hosting server or the \ac{P2P} network. Keys for nodes in
 the tree are derived from the keys of the parents, implying that if a user has
-a key to a folder, he also has access to all the subfolders and files.
+a key to a folder, she also has access to all the subfolders and files.
 
 However, since the source of Wuala is not available for scrutiny by the public, none of
 these security features can easily be verified.
@@ -1241,8 +1242,8 @@ directories. We also introduce the concept of \emph{capabilities}.
 
 Figure \ref{fig:AS:overview} represents an overview of the functionality that
 the architecture must support. The illustration exhibits a user uploading a
-file to the cloud, and adding this to a parent directory. After he has done
-this, it is possible for him to distribute the capability of the file to other
+file to the cloud, and adding this to a parent directory. After she has done
+this, it is possible for her to distribute the capability of the file to other
 users to realize sharing of files or directories.
 
 \begin{figure}[h!]
@@ -1280,11 +1281,11 @@ corresponding capabilities. In addition, there exist a human readable name, an
 space-conservative structure, since any file object may be found in multiple
 directories, but does only exist once in the cloud.
 
-A user will have to have some way of storing the capabilities of his file
+A user will have to have some way of storing the capabilities of her file
 objects. This could potentially be done client side, but a problem arises if
 the user wants to use several terminals. Thus, we introduce the \emph{root
 folder}, a folder from which all other files and folders can be reached. The
-user will only need to know of one single capability to reach all his stored
+user will only need to know of one single capability to reach all her stored
 data. This capability has to be stored in a secure manner, e.g. in an
 \emph{encrypted keyring}. The resulting structure is a directed graph, as
 illustrated in Figure \ref{fig:AS:filesystem}.
@@ -1297,7 +1298,7 @@ illustrated in Figure \ref{fig:AS:filesystem}.
 \end{figure}
 
 \subsection{Authorization, Authentication and Accounting Layer}
-
+\label{sec:accounting}
 The possession of a capability gives a user access to read a file or read or
 write a folder, and hence serves as the primary access control. There are
 however some properties that the server provider might want that can not be
@@ -1322,7 +1323,7 @@ write enabler is needed for the server to grant access to modify or possibly
 delete a folder.
 
 For immutable files, there is no concept of write access, only read. A user
-might not want to pay for storage of files that he no longer needs.  A layer
+might not want to pay for storage of files that she no longer needs.  A layer
 that identifies the creators of a file, can by the same method decide who
 should have the rights to delete it.
 
@@ -1354,7 +1355,7 @@ describe the external properties of the system. The fundamental operations are
 \subsubsection{Download File}
 
 The download procedure is depicted in Figure \ref{fig:AS:download}. The client
-sends a download request with the identifier of a folder, which he possesses
+sends a download request with the identifier of a folder, which she possesses
 the capability of. The server will respond with the encrypted directory.
 The user will use the capability to decrypt the directory.
 
@@ -1367,7 +1368,7 @@ The user will use the capability to decrypt the directory.
 
 In the directory, the user finds the aliases and necessary capabilities to gain
 access to the children of that folder. If the user now wants to download a file
-from the accessed folder, he obtains the identifier from the capability, and
+from the accessed folder, she obtains the identifier from the capability, and
 requests the server for this file. Once downloaded, the capability provides
 means of decrypting and verifying that the data has not been tampered with.
 
@@ -1410,8 +1411,8 @@ proposed in this thesis are discussed in Section \ref{sec:DI:keydist}.
 
 After receiving the capabilities for the shared folder from Alice, Bob requests
 and receives the encrypted shared directory, in addition to linking it with a
-parent directory for future usage. He can then download shared files as if they
-where his own.
+parent directory for future usage. She can then download shared files as if they
+where her own.
 
 \paragraph{Read-Only Shares}
 
@@ -1493,8 +1494,8 @@ files respectively.
 
 \input{tables/capability.tex}
 
-\paragraph{Encrypted Keyring} Every user will need to possess his root
-capability to access his files. Due to the amount and randomness of data in a
+\paragraph{Encrypted Keyring} Every user will need to possess a root
+capability to access their files. Due to the amount and randomness of data in a
 capability, it will be a impossible for most users to remember. To keep a copy
 of the capability on the user terminal is a possible solution, but since such a
 device could be lost or stolen it should be protected in an encrypted keyring.
@@ -2174,8 +2175,8 @@ support out-of-band methods for establishing a share, e.g. through the use of
 
 The other possibility is to make use of a \emph{\ac{QR} code}, which is a
 matrix barcode that can store information. This means that one user will
-generate a barcode on his device, and the other user can scan that code using
-the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
+generate a barcode, and the other user can scan that code using
+the camera on their device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
 this code will look. The barcode contains both the key and the verification for
 the shared folder. Once two users have shared a folder once, that folder can be
 used for all future shares, which means that the two people will never have to
@@ -2198,7 +2199,7 @@ the wish of the user.
 
 \subsection{Securing the Client}
 
-For a user to access his root folder, the client will have to know the
+For a user to access her root folder, the client will have to know the
 capability of that folder. This is clearly too much random data for most users
 to remember, so the capability will have to be stored on the client.  The
 client might be stolen or broken into by some means, and if the capability is
@@ -2223,9 +2224,9 @@ in the client.
 \paragraph{Main Screen}
 
 The main screen of the application is shown in Figure
-\ref{fig:CSVAndroid:mainscreen}. Before the user gets to this screen, he will
-have to unlock his local keyring with his password. If it is the first time the
-user starts the application, he will have to enter his online credentials, and
+\ref{fig:CSVAndroid:mainscreen}. Before the user gets to this screen, she will
+have to unlock her encrypted keyring with her password. If it is the first time the
+user starts the application, she will have to enter her online credentials, and
 gets a choice to either import an existing root folder, or to generate a new
 one. In both cases the user will have to choose a password to encrypt the root
 capability in to the local keyring. The most common action from the main screen
@@ -2256,7 +2257,7 @@ tapping a folder will open that folder.
 
 Selecting files to upload is treated in a similar way. To reveal this option,
 the user have to press the \emph{Menu}-button. The user will then be allowed to
-browse his local file system for the file he wishes to upload, and tapping that
+browse her local file system for the file she wishes to upload, and tapping that
 file will start the upload.
 
 A long press on a file, or a folder item, will reveal the context menu shown in
@@ -2385,7 +2386,7 @@ The locally stored and encrypted keyring can be considered a security risk if
 it somehow ends up in an attacker's hands, either by a device being lost or by
 an intrusion in to a device. Even though the keyring is encrypted, it might be
 prone to a brute force or dictionary attack. If an attacker is able to decrypt
-the keyring, he will obtain enough information to access a user's root folder,
+the keyring, she will obtain enough information to access a user's root folder,
 and thus all the other files stored by the user as well.
 
 When considering brute force attacks, it must be emphasized that it is the
@@ -2753,7 +2754,7 @@ If the cryptographic scheme presented in Section \ref{chap:CS} should be used
 in an organization, a \ac{PKI} is probably the best solution. In this setting,
 the organization can itself be the trusted third party that enforces that all
 certificates granted to users are correct. A user could then simply be prompted
-by the name of the user he would like to share a file with, and the rest could
+by the name of the user she would like to share a file with, and the rest could
 be handled by software logic and the trust of the \ac{PKI}.
 
 \subsection{Deletion of Files}
@@ -2816,7 +2817,7 @@ with a stack containing visited nodes.
 
 The verification scheme for immutable files is suboptimal in every way a user
 wants to use an ordinary file. The problem is that the user will have to
-download the entire file, before he can verify that the file is what it is
+download the entire file, before she can verify that the file is what it is
 supposed to be. If it turns out that the file does not pass this check, and the
 error was in the very first byte, the user has wasted time and bandwidth
 downloading a lot of useless data. The same scenario applies if the user only
@@ -2925,48 +2926,46 @@ hinder duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
-\subsection{Supporting Multiple Cryptographic Primitives}
-
-The main problem with selecting cryptographic primitives for our scheme, is
-that one can not be sure how long they will remain secure. A recommended
-approach is to build systems that can easily change the cryptographic
-primitives, in case of discoveries enabling an attacker to break a primitive
-\cite{schneier}. The main problem with this approach is that if for instance
-\ac{AES} is broken, and the cloud provider keeps backups of all user data on
-their server, that information is compromised with regard to the provider.
-
-A change of a cryptographic primitive in our scheme would lead to backward
-compatibility being broken, i.e. one would be unable to obtain files or folders
-stored before the change. This could be remedied by a meta-block for each file
-and folder, containing the utilized cryptographic primitives. In addition, the
-capability would have to contain which cryptographic hash function that should
-be used, to be able to deduce the storage index from the key.
 
 \subsection{Security}
+Even though we regard the proposed scheme as secure, some information will be
+leaked both to the server, and potentially to an external attacker if a secure
+channel, encrypted and authenticated, for communication is not used.
 
-% Intro / Hva vet serveren
+The provider will be able to observe which folder is the root folder of a user.
+This is because it will probably be the first folder a user creates, in
+addition it will probably be the first folder a user accesses during each
+session. The provider will also see which objects the users stores is a folder
+and which is a file, because a write enabler is sent alongside a folder. The
+sequence of objects that a user requests will also leak some information about
+the file and folder hierarchy. We do not consider any of this information to be
+dangerous for the server to possess, but if an external attacker obtain the
+Write key for a folder this might cause some problems in regards to
+availability.
 
 \subsubsection{Confidentiality}
 
 Confidentiality is provided by encrypting data locally before it is stored in
-the cloud. This implies that confidentiality can be breached by attacking the
-client equipment or the encrypted keyring stored within the client.
+the cloud. This implies that confidentiality can only be breached by weaknesses
+in the cryptographic primitives, side-channel attacks or attacks on the client.
 Security of the client is discussed in Section \ref{sec:clientsecurity}. 
 
-Apart from client security, it is obvious that confidentiality weights heavily
-on the strength of the utilized cryptographic primitives. The recommended
-primitives in Section \ref{sec:cryptoprimitivechoice} are believed to ensure
-confidentiality. Alternative cryptographic primitives are also adaptive to the
-cryptographic scheme, as long as they provide the necessary cryptographic
-strength.
+It is obvious that confidentiality weights heavily on the strength of the
+utilized cryptographic primitives. The recommended primitives in Section
+\ref{sec:cryptoprimitivechoice} are believed to ensure confidentiality.
+It is also possible to exchange the recommended alternative cryptographic primitives
+with future or existing algorithms, confidentiality will then rest on the new
+primitives.
 
 The proposed cryptographic scheme has an additional weakness that can possibly
-end with breached confidentiality. This is the procedure taken to derive the
+end with a breach of confidentiality. This is the procedure taken to derive the
 write key of a folder. The write key is the result of hashing the private key
-used to sign a folder. Given an attack that can derive the private
-key from the corresponding public key, it will be easy for an attacker to
-retrieve the folder's write key. The weakness can be avoided by deriving folder
-write keys from a random key generator, instead of hashing the private key.
+used to sign a folder. Given an attack that can derive the private key from the
+corresponding public key, it will be easy for an attacker to retrieve the
+folder's write key. While the cryptographic primitives recommended should make
+this infeasible to do at the current time, it might be possible in the future.
+The write key could instead be generated from a \ac{CSPRNG}, which is the case
+for the read key of files.
 
 % Krypterer lokalt, så denne kan ikke breaches utenom å angripe lokalt lagret
 % keyring eller kjørende klient (Ref framover til client security)
@@ -3004,16 +3003,16 @@ client security.
 % unntaket er Write Enabler, denne gir autentication/authorization for å
 % overskrive en folder.
 
-One could argue both that the proposed scheme does not include authentication,
-at the sime time one could argue that the posession of a capability
-authenticates a user. If authentication is not implemented as an extra layer
-desribed in Section XX, the server does not really authenticate the user.
-Granted the knowledge of the Storage Index does indicate possession of the
-capability, but this value can theoretically be stolen by using traffic
-analysis if the communication channel is not secured.  The posession of a
-capability does authentication in some way, but not of the user, rather it
-authenticates the capability, and at the same time grants authorization to the
-otherwise useless encrypted data.
+One could argue that the proposed scheme does not include authentication, but
+at the same time one could argue that the possession of a capability
+authenticates a user. If authentication is not implemented as an extra layer as
+described in Section \ref{sec:accounting}, the server does not really
+authenticate the user.  Granted the knowledge of the Storage Index does
+indicate possession of the capability, but this value can theoretically be
+stolen by using traffic analysis if the communication channel is not secured.
+The possession of a capability does authentication in some way, but not of the
+user, rather it authenticates the capability, and at the same time grants
+authorization to the otherwise useless encrypted data.
 
 \subsubsection{Access Control}
 % TODO: Denne står ikke i lista over security services Dra denne sammen med hva
@@ -3048,12 +3047,12 @@ storage provider. The provider might chose to delete all data, or shut down the
 server at any time. Tahoe-\ac{LAFS} has solved this by using erasure coding and
 storing the data on different nodes. The result is that some nodes might be
 taken down, but as long as a sufficient number is available the data will also
-be. This would also be possible with our scheme, but is considered out of
-scope for this thesis.
+be. This would also be possible with the proposed scheme, but is considered out
+of scope for this thesis.
 
 If a secure communication channel is not used availability will be a problem in
 regards to an external attacker as well. By using traffic analysis Write
-enablers for folders can be obtain, which means that the data can also be
+enablers for folders can be obtained, which means that the data can also be
 overwritten. A \ac{MITM} attack could use modification of message to either
 prevent a user from storing data or to make the user store wrong data. These
 attack do not compromise the confidentiality of the data, and they will be
@@ -3065,7 +3064,25 @@ when the folder has further been updated causing possible loss of data.
 \subsubsection{Secure Communication Channel}
 % Her må vi nevne kravene til en protokoll - og hvorfor denne er viktig (den er
 % viktig fordi vi kan ha eksterne angripere, og ikke bare en untrusted server)
+Due to the risk of an external attacker, a secure communication channel is
+needed between the client and the server.
 
+\subsubsection{Supporting Multiple Cryptographic Primitives}
+
+The main problem with selecting cryptographic primitives for our scheme, is
+that one can not be sure how long they will remain secure. A recommended
+approach is to build systems that can easily change the cryptographic
+primitives, in case of discoveries enabling an attacker to break a primitive
+\cite{schneier}. The main problem with this approach is that if for instance
+\ac{AES} is broken, and the cloud provider keeps backups of all user data on
+their server, that information is compromised with regard to the provider.
+
+A change of a cryptographic primitive in our scheme would lead to backward
+compatibility being broken, i.e. one would be unable to obtain files or folders
+stored before the change. This could be remedied by a meta-block for each file
+and folder, containing the utilized cryptographic primitives. In addition, the
+capability would have to contain which cryptographic hash function that should
+be used, to be able to deduce the storage index from the key.
 
 %The proposed cryptographic scheme is subject to certain weaknesses that
 %currently, or in the future, may be utilized by an attacker. The following
@@ -3214,7 +3231,7 @@ new cryptographic keys. For a user of the Android client, this should not be a
 problem, since the folder creation is done as an asynchronous task while the
 user enters the name of the new folder. Another solution is to have the
 application maintain a pool of keys before they are requested by the user. In
-this way a key can almost always be ready for the user when he needs it.
+this way a key can almost always be ready for the user when she needs it.
 
 The other cryptographic operations on folders completes quite quickly, but the
 performance for serializing the folder contents is too low when folders contain
@@ -3239,7 +3256,7 @@ in the active session.
 
 \subsection{Client Security}
 \label{sec:clientsecurity}
-If a user physically looses his device, and the \ac{CSV} software is running,
+If a user physically looses her device, and the \ac{CSV} software is running,
 anyone who finds the device can get access to the user's private files and
 folders. This is because the client software will have to keep the root
 capability from the keyring in memory, and will potentially have copies of the
@@ -3303,7 +3320,7 @@ as needed for the \ac{WPA} attack.
 
 While the encrypted key ring may resist some dictionary and brute force
 attacks, other problems arise when facing an active attacker. If the attacker
-is able to read the memory of the device, he can also read the root capability
+is able to read the memory of the device, she can also read the root capability
 if this is unlocked by the user.
 
 A mechanism that decrease the risk of this happening, is to have the software
