@@ -1584,7 +1584,7 @@ and the resulting ciphertext is signed with the signing key. The signing key is
 further encrypted with the read key, and together with the ciphertext, the
 public key, the \ac{IV} and the signature, uploaded to the server.
 
-The \emph{write enabler} is deduced from the write key with the use of a
+The write enabler is deduced from the write key with the use of a
 \ac{MAC} function and a fixed message. It is transferred alongside the
 directory.  The write key is stored together with a hash of the public key in
 the capability.
@@ -1825,7 +1825,7 @@ constraints, or \emph{patterns}, as follows:
 
   \item[Uniform interface] \hfill \\
     The interface between clients and server(s) are given by the URI scheme in
-    Table \ref{tbl:IM:restinterface}. A Write Enabler
+    Table \ref{tbl:IM:restinterface}. A write enabler
     must also be provided together with the storage index when a folder is
     uploaded.
 \end{description}
@@ -1860,7 +1860,7 @@ whole. Thus, the server application are designed in a \acs{REST}ful manner.
 easily add an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more
 difficult for potential attackers to intercept messages, and also provides
 protection against the \ac{MITM} attacks. It also provides protection against
-eavesdropping, which would have revealed the Write Enabler for folders and
+eavesdropping, which would have revealed the write enabler for folders and
 enabling an attacker to delete folders. The top-most layer of Figure
 \ref{fig:IM:layers} thus refers to \ac{TLS}.
 
@@ -1947,14 +1947,14 @@ The only functionality of the authorization layer implemented, is the
 server-side verification that a client has proper access to overwrite a folder,
 e.g. when a client wishes to update a folder with new contents.
 
-When a client first uploads a new folder, it provides a \emph{Write enabler},
+When a client first uploads a new folder, it provides a write enabler,
 which the server adds to the database along with the \emph{Storage Index} of
 the folder.  For every subsequent request to write to this folder, the server
-verifies that the provided Write enabler is equal to that in the database.
+verifies that the provided write enabler is equal to that in the database.
 
 If a client tries to put a folder with a Storage Index that already exists, the
 server replies with an error code if the client in addition does not provide
-the correct Write enabler.
+the correct write enabler.
 
 \section{Client Implementation - Android}
 
@@ -2722,7 +2722,7 @@ capability of a folder is shared, the user holding the write capability are
 guaranteed to be the only one capable of making valid changes to the folder.
 
 The server denies people with only the read capability to make changes to the
-folder by the use of the \emph{write enabler}. The write enabler serves the
+folder by the use of the write enabler. The write enabler serves the
 purpose of proving to the server that one holds the correct write capability.
 If someone with access to the file system on the server, e.g. a cloud
 provider employee, decides to make changes on a folder, the integrity check
@@ -3035,14 +3035,14 @@ Anyone can download any encrypted data from the server if they possess a
 Storage Index, but that does not give access to the data. The possession of a
 capability does however grant this access. 
 
-The server will only need to handle Write enablers in regard to access control.
-Knowledge of the Write enabler indicates knowledge of the write key which again
+The server will only need to handle write enablers in regard to access control.
+Knowledge of the write enabler indicates knowledge of the write key which again
 indicates possession of the whole capability. This means that access control in
-this context is also given by the capability. The Write enabler is vulnerable
+this context is also given by the capability. The write enabler is vulnerable
 to Traffic analysis and other attacks that compromise availability if it is not
 sent over a secure channel. An improvement of the scheme that could reduce the
 risk of this is to have the server actually verify that folders uploaded have a
-correct signature. With that improvement the Write enabler is strictly not
+correct signature. With that improvement the write enabler is strictly not
 necessary but this will increase the requirements of the server.
 
 \subsubsection{Availability}
