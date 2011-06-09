@@ -136,7 +136,7 @@ To address these issues, a cryptographic architecture is proposed, that ensures
 the confidentiality and integrity of the data stored by users, independent of
 the trust of the underlying provider. It also includes secure sharing of
 private data among customers of the same provider. The scheme was further
-implemented in a proof of concept server and client.
+implemented as a proof of concept.
 
 The underlying cryptographic architecture is based on existing open source
 systems and cryptographic primitives. The architecture was further implemented
@@ -146,8 +146,7 @@ several performance tests were conducted\footnote{Source code available at
 
 The proof of concept system shows that it is possible to implement the proposed
 scheme and that the cryptographic operations does not significantly affect the
-user experience on an Android device. Weaknesses of the scheme are identified,
-and the key that has to be stored client-side is found to be the greatest risk.
+user experience on an Android device. Weaknesses of the scheme are identified.
 
 We present a scheme for secure storage and sharing of files on an untrusted
 server, and argue for its validity. To support streaming functionality, the
@@ -167,7 +166,7 @@ assigned by Ernst \& Young AS Norway, and acknowledged by ITEM.
 
 We would like to thank our external supervisors Carsten Maartmann-Moe and
 Antonio Martiradonna, at Ernst \& Young AS, for their valuable contributions.
-We would also like to thank Danilo Gligorosky at the Department of Telematics
+We would also like to thank Danilo Gligoroski at the Department of Telematics
 for providing constructive feedback throughout the semester, and for giving us
 the opportunity to write this thesis. In addition, we would like to thank all
 contributors of code and documentation to the open source software Tahoe-LAFS,
@@ -295,7 +294,7 @@ cloud. The amount of flexibility and cost savings this provides, can be quite
 extensive.
 
 Today, we take the services that the established cloud providers offer us for
-granted. For example, both Google and Microsoft provides the services of online
+granted. For example, both Google and Microsoft provide services for online
 document editing, email, file storage and more for free, and available at any
 time from anywhere \cite{googleservices, microsoftservices}.
 
@@ -307,8 +306,8 @@ trust the security policies of the providers, or is it possible to handle the
 privacy issues locally?
 
 This thesis deals with these question and suggests a scheme to make data stored
-in the cloud secure. We define the criteria of a secure storage system by the
-following:
+in the cloud secure. We define the criteria of a secure storage system as
+follows.
 
 \begin{enumerate}
   \item Only authorized people can access the data.
@@ -388,10 +387,10 @@ designed for personal users and implement the most necessary features, and be
 measured in security and performance.
 
 Finally, it is important that the implementation of the cryptographic scheme
-should be available as open source and well documented. This because the
-security should be verifiable to anyone interested in using the software. In
-addition, we believe open source encourages participation and analysis of the
-system which in turn will lead to a more secure system.
+should be available as open source and well documented. This criterion exists
+because the security should be verifiable to anyone interested in using the
+software. In addition, we believe open source encourages participation and
+analysis of the system which in turn will lead to a more secure system.
 
 \section{Limitations}
 
@@ -516,7 +515,7 @@ In this section, we will extend from the definitions given in Chapter
 \emph{Cloud Computing}.
 
 \subsection{Service Models} \ac{NIST} defines three service models which deals
-with what kind of service the consumer can rent from a provider
+with which kind of service the consumer can rent from a provider
 \cite{cloud_nistdef}.
 
 \paragraph{\ac{SaaS}} The capability of a consumer to run application of the
@@ -705,10 +704,10 @@ standardized \ac{AES} in 2001 \cite{AES-FIPS}.
 \paragraph{The Mode of Operation} The mode of operation used for
 symmetric-key encryption enables subsequent safe use of the same key.
 
-In a simple scenario, this could be to encrypt the normal data block-by-block
-with which is called the \emph{\ac{ECB}} mode of operation. The problem with
-this, is that some information of the plaintext will leak, i.e. the same
-plaintext will always be encrypted as the same ciphertext.
+In a simple scenario, this could be to encrypt the normal data block-by-block.
+This mode of operation is called the \emph{\ac{ECB}}. One problem with this, is
+that some information of the plaintext will leak, i.e. the same plaintext will
+always be encrypted as the same ciphertext.
 
 \emph{\ac{CBC}} is another example of a well known mode of operation, and is
 illustration in Figure \ref{fig:cbc}. In \ac{CBC}, a non-predictable and unique
@@ -836,7 +835,7 @@ To transfer files securely over \ac{HTTP}, \ac{TLS}/\ac{SSL} is used to form
 This section will elaborate on selected research concerning privacy within
 cloud computing. The review of this subject will focus on solutions that
 provide confidentiality within the cloud. Solutions that partially provide
-privacy are not considered as they are not topical to our research.
+privacy are not considered as they are not relevant to our research.
 
 We choose to present the following papers as they provide possible solutions to
 the same problems handled in this thesis, although with a different approach.
@@ -873,7 +872,7 @@ customer's data.
 
 The cryptographic coprocessors are used in the cloud because they are
 supposedly tamper-proof against physical attacks. The coprocessors are
-pre-configured by the \ac{TTP} before they are installed. By using this
+preconfigured by the \ac{TTP} before they are installed. By using this
 procedure,a safe computational environment for the cloud customer is provided,
 which is kept secret from the cloud provider.
 
@@ -1121,15 +1120,15 @@ in Figure \ref{fig:B:tahoe}.
 
 \subsubsection{Architecture of Tahoe-LAFS}
 
-Tahoe-\ac{LAFS} has a three layer architecture: the key-value store, the file system, and
-the application \cite{tahoe}.
+Tahoe-\ac{LAFS} has a three layer architecture: the key-value store, the file
+system, and the application \cite{tahoe}.
 
-The \emph{key-value store}, is the lowest layer and is implemented by a grid
-of Tahoe-LAFS storage servers. Data is kept on the storage servers in the form
-of \emph{shares}, which are encrypted and encoded parts of files. Capabilities
-are short ASCII strings, containing information on where to find, decrypt and
-verify a file or folder.  Nodes in the grid learn about each other through an
-\emph{introducer}.
+The \emph{key-value store}, is the lowest layer and is implemented by a grid of
+Tahoe-LAFS storage servers. Data is kept on the storage servers in the form of
+\emph{shares}, which are encrypted and encoded parts of files.
+\emph{Capabilities} are short ASCII strings, containing information on where to
+find, decrypt and verify a file or folder. Nodes in the grid learn about each
+other through an \emph{introducer}.
 
 The \emph{file system} layer is responsible for mapping human-meaningful
 pathnames to pieces of data. Each directory contains a table of capabilities
@@ -1147,11 +1146,11 @@ exactly once. Mutable files can be modified, and everyone who has access to the
 signing key can make new versions of the mutable file. Directories are
 implemented as mutable files.
 
-\paragraph{Erasure Coding} Erasure coding with the Solomon-Reed scheme, enables
-Tahoe-\ac{LAFS} to recover a file using only a predefined subset of the parts
-distributed to the storage servers. Erasure coding is a type of \ac{FEC} code,
-which extends a message with $C$ characters into a longer message with $N$
-symbols \cite{t_reed-solomon}. The original $C$ characters can then be
+\paragraph{Erasure Coding} By using the Solomon-Reed erasure coding scheme,
+Tahoe-\ac{LAFS} is able to recover a file using only a predefined subset of the
+parts distributed to the storage servers. Erasure coding is a type of \ac{FEC}
+code, which extends a message with $C$ characters into a longer message with
+$N$ symbols \cite{t_reed-solomon}. The original $C$ characters can then be
 recovered from a subset of the $N$ symbols.
 
 \paragraph{Sharing} To share a folder, and hence its subfolders and files, the
@@ -1292,7 +1291,7 @@ corresponding capabilities. In addition, there exist a human readable name, an
 space-conservative structure, since any file object may be found in multiple
 directories, but does only exist once in the cloud.
 
-A user will have to have some way of storing the capabilities of her file
+A user will need to have some way of storing the capabilities of her file
 objects. This could potentially be done client-side, but a problem arises if
 the user wants to use several terminals. Thus, we introduce the \emph{root
 folder}, a folder from which all other files and folders can be reached. The
@@ -1428,7 +1427,7 @@ were his own.
 
 \paragraph{Read-Only Shares}
 
-If Alice wants to share a directory in Read-Only mode, she can simply share the
+If Alice wants to share a directory in read-only mode, she can simply share the
 read capability with Bob, instead of the write capability. This will work as
 intended, but might prove somewhat cumbersome for Alice. If Alice wants to
 write to the directory she has shared with Bob, she cannot enter it through
@@ -1441,13 +1440,13 @@ individually among her private files, while storing the read capability in the
 shared parent directory. The solution can easily be implemented by using a
 specialized \emph{write key folder} under Alice's root folder. The write key
 folder will then contain write capabilities to every folder that Alice has
-shared in Read-Only mode. The idea behind the write key folder is illustrated
+shared in read-only mode. The idea behind the write key folder is illustrated
 in Figure \ref{fig:AS:readonly}.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\columnwidth]{ArchitectureShareReadOnlyFolder.pdf}
-    \caption{Sharing read only folders}
+    \caption{Sharing read-only folders}
     \label{fig:AS:readonly}
 \end{figure}
 
@@ -1537,9 +1536,9 @@ could work instead of \ac{AES}, any signing function that uses both a private
 and public key could be used instead of \ac{RSA}, any \ac{MAC} could be used
 instead of HMAC-\ac{SHA} and any cryptographic hash function could be used.
 
-Though, the security of the system does rely on these choices, and a
-recommendation with rationale for each of the needed primitives will be given
-in Section \ref{sec:cryptoprimitivechoice}.
+The security of the system does rely on these choices, and a recommendation
+with rationale for each of the needed primitives will be given in Section
+\ref{sec:cryptoprimitivechoice}.
 
 The scheme used for directory operations, are influenced and similar to the one
 found in Tahoe-\ac{LAFS}.
@@ -1553,7 +1552,7 @@ random symmetric encryption key is generated. This is hashed once to obtain the
 then hashed again to form the \ac{IV} for the file.
 
 Next, the file is hashed and the resulting digest is stored together with the
-encryption key in the capability. Lastly, the file is encrypted with the
+encryption key in the capability. Finally, the file is encrypted with the
 encryption key and the \ac{IV}, before being transferred to the server.
 
 \begin{figure}[h!]
@@ -1583,7 +1582,7 @@ capability. If these two match, the file has not been tampered with.
 \subsubsection{Create Directory}
 
 Creating and uploading a directory are illustrated in Figure \ref{fig:CS:CD}.
-The process is a bit more complex than for files, because it has to support
+The process is more complex than for files, because it has to support
 changing the contents of the folder.
 
 \begin{figure}[h!]
@@ -1681,7 +1680,7 @@ saying data encrypted with a key size of 128 bit should be secure until
 The gain of not choosing a larger key is a somewhat greater performance --
 \ac{AES}-128 uses 10 transformation rounds while \ac{AES}-256 uses 14 -- and
 of course that the keys are smaller to store. However, for a new system there
-are not really any reason to not select a key size of 256 bit \cite{schneier}.
+are really no reason not to select a key size of 256 bit \cite{schneier}.
 
 \paragraph{Mode of operation} The mode of operation we recommend is \ac{CBC}
 for the encryption of file and folder contents. This is based more on
@@ -1705,7 +1704,7 @@ The \ac{SHA}-family is the current standard for cryptographic hash functions,
 and from this we recommend double \ac{SHA}-256. The cryptographic scheme
 requires the hash function to have an output of at least the size of the key
 used for encryption. \ac{SHA}-1 has an output of 160 bits and could have
-been used for 128 bit key size, but is not not recommended for use in new
+been used for 128 bit key size, but is not recommended for use in new
 systems \cite{nist_sha1}. The use of double \ac{SHA}-256 compared to single, is
 to prevent a length-extension attack \cite{schneier}.
 
@@ -1724,7 +1723,7 @@ signatures. Verification, in the form of opening a folder, is an operation we
 believe most users will do significantly more than updating and creating
 folders.
 
-Multiple sources \cite{keylength} recommend at least 2048 bit as the key length
+Multiple sources cited in \citet{keylength} recommend at least 2048 bit as the key length
 used in \ac{RSA}.
 
 \subsubsection{\ac{MAC}}
@@ -1746,10 +1745,10 @@ this, \citet{schneier} recommend HMAC-SHA256.
 \subsubsection{Secure Channel}
 
 The secure channel can be provided in the form of the client and the server
-communicating over \ac{TLS}. As this is a technology under continuous
-scrutiny, we recommend setting the available parameters as high as possible to
-meet the demands of the current situation. The reason for not specifying this
-more thorough, is that libraries and software used both server- and client-side
+communicating over \ac{TLS}. As this is a technology under continuous scrutiny,
+we recommend setting the available parameters as high as possible to meet the
+demands of the current situation. The reason for not specifying this more
+thorough, is that libraries and software, used both server- and client-side,
 may have limitations.
 
 As an example, in the proof of concept system created, we used \ac{RSA} with a
@@ -1785,9 +1784,10 @@ With this in mind, we recommend at least the same amount of iterations to be
 used in our scheme as in \ac{WPA}, i.e. 4096 rounds. This should yield
 acceptable performance on most devices. The most elegant solution, would be to
 fine tune this on a per device basis. The client can time the calculation of
-4096 iterations, and increase the number if this is too fast. The pseudorandom
-function should be H\ac{MAC}-\ac{SHA}-256, since \ac{NIST} recommends against
-utilizing \ac{SHA}-1 in new applications. The salt should be at least 128 bits.
+4096 iterations, and increase the number if the computation is too fast. The
+pseudorandom function should be H\ac{MAC}-\ac{SHA}-256, since \ac{NIST}
+recommends against utilizing \ac{SHA}-1 in new applications. The salt should be
+at least 128 bits.
 
 \paragraph{Password Requirements}
 
@@ -1816,6 +1816,7 @@ one number.
 The server, in the most basic form, has to support two operations -- sending
 and receiving files. In addition, an extra layer is needed to support user
 management and access control to able to allow modification of folders.
+This section describes the server implementation for the proposed scheme.
 
 \subsection{Communication and Architectural Patterns}
 
@@ -2086,10 +2087,10 @@ all part of \texttt{CSVlib}. Their relationship can be seen in Figure
     \label{fig:CSVlib:overview}
 \end{figure}
 
-\paragraph{Capabilities} Capabilities are containers for
-cryptographic keys and information to identify a corresponding object. They
-will will contain information to identify an object as either a file or a
-folder, and have the information to read, write and verify that object.
+\paragraph{Capabilities} Capabilities are containers for cryptographic keys and
+information to identify a corresponding object. They will will contain
+information to identify an object as either a file or a folder, and have the
+information to read, write and verify that object.
 
 Capabilities are stored server-side in folders in its serialized form shown
 in Figure \ref{fig:CAP:serial}. \emph{Object Type} specifies if the capability
@@ -2104,7 +2105,7 @@ respectively.
 \end{figure}
 
 \emph{Key Type} specifies the permissions the key will grant on the object, and
-can be either \emph{RO} (Read Only) or \emph{RW} (Read and write).
+can be either \emph{RO} (Read-only) or \emph{RW} (Read-write).
 
 The different parts are separated by the colon character. The key and verify
 strings are encoded in Base32 \cite{rfc4648}, which means that the 128 bits
@@ -2167,7 +2168,7 @@ methods for sending and receiving the encrypted objects, \texttt{CSVFile} and
 
 \subsubsection{Deviations in the Choice of Cryptographic Primitives}
 \label{sec:client:deviations}
-% TODO: Fix appendix
+
 The implementation of the proof of concept client deviates from the
 recommendation given in Section \ref{sec:cryptoprimitivechoice}.  This occurred
 as a result of new discoveries that were made while analysing the system. All
@@ -2261,8 +2262,8 @@ We have tried to make a user interface that is easily understandable by a
 novice user, both in terms of \emph{where to click} and in terms of how we name
 cryptographic operations. For instance we never use the word \emph{capability}
 in the client. To make the \ac{GUI} even easier to understand, we have created
-a video that examines the most important user interactions with the client
-implementation. The video is available in the attachment, which is further
+a video that examines the most important user interactions with the
+application. The video is available in the attachment, which is further
 described in Appendix \ref{ap:attachments}.
 
 In addition to the attached video, this section will present the most important
@@ -2273,12 +2274,12 @@ parts of the implemented \ac{GUI}.
 The main screen of the application is shown in Figure
 \ref{fig:CSVAndroid:mainscreen}. Before the user gets to this screen, she will
 have to unlock her encrypted keyring with her password. If it is the first time
-the user starts the application, she have to enter her online credentials, and
-get a choice to either import an existing root folder, or to generate a new
-one. In both cases the user will have to choose a password to encrypt the root
+the application is started, she have to enter her online credentials, and get a
+choice to either import an existing root folder, or to generate a new one. In
+both cases, the user will have to choose a password to encrypt the root
 capability. The most common action from the main screen would be to
-\emph{Browse the Vault} -- in other words to see the files that the user has
-stored on the server.
+\emph{Browse the Vault} -- in other words to explore the available files stored
+on the server.
 
 \begin{figure}[h!]
     \centering
@@ -2519,6 +2520,7 @@ $ java -jar BFDA.jar /path/to/keyring  \
     maximum_password_length number_of_threads
 \end{lstlisting}
 
+\clearpage
 \lstset{label=lst:da, caption=Running local dictionary attack}
 \begin{lstlisting}
 $ java -jar BFDA.jar /path/to/keyring \
@@ -3340,14 +3342,14 @@ This chapter contains details about the implementations of \ac{BFDA} and
 \section{Brute Force and Dictionary Attack}
 
 \emph{\ac{BFDA}} includes a plain brute force attack and a dictionary attack against
-a users encrypted keyring. Details about the implementation follows.
+a user's encrypted keyring. Details about the implementation follows.
 
 \subsection{Implementation Details}
 
 \ac{BFDA} is written in Java and utilize the \texttt{javax.crypto} library with
 Bouncy Castle version 1.34 as JCE provider to decrypt the encrypted keyring.
-The Bouncy Castle JCE provider seems to be necessary as Android 2.2 uses it by
-default to encrypt the keyring. For \ac{PBKDF2} \ac{BFDA} utilizes a free
+The Bouncy Castle JCE provider seems to be necessary as Android uses it by
+default to encrypt using AES. For \ac{PBKDF2} \ac{BFDA} utilizes a free
 Java library\footnote{\url{http://rtner.de/software/PBKDF2.html}}.
 
 The program is divided into two functions, named \texttt{bruteForceAttack} and
@@ -3355,6 +3357,7 @@ The program is divided into two functions, named \texttt{bruteForceAttack} and
 dictionary attack. The \texttt{bruteForceAttack} function is shown in Listing
 \ref{lst:bffunc}.
 
+\clearpage
 \lstinputlisting[language=java, label=lst:bffunc, caption=bruteForceAttack
 function]{listings/bruteForceAttack.java}
 
@@ -3380,9 +3383,9 @@ function]{listings/dictionaryAttack.java}
 \texttt{BufferedReader}. It then starts a given number of
 \texttt{DictionaryThreads}. The \texttt{DictionaryThreads} will read from the
 \texttt{BufferedReader} in a synchronized way. When a word is read from a
-\texttt{DictionaryThread} it will be subject to \ac{PBKDF2}, where the result is
-used to decrypt the ciphertext. If decryption results is a given plaintext, the
-password has been recovered.
+\texttt{DictionaryThread} it will be subject to \ac{PBKDF2}, where the result
+is used to decrypt the ciphertext. If decryption results in a recognizable
+plaintext, the password has been recovered.
 
 \section{Cluster Dictionary Attack}
 
