@@ -1507,6 +1507,15 @@ device could be lost or stolen it should be protected in an encrypted keyring.
 Something the user is able to remember can unlock this keyring, such as a
 password.
 
+\paragraph{Secure Channel} Even though the security of the contents of the
+files relies on cryptographic operations performed client-side, a secure
+channel between the client and the server has to be formed. This is because of
+the possibility for an attacker, Mallory, to do various unwanted procedures if
+such a channel is not in place. Firstly, she can discover write enablers, and
+thus be able to replace directories. Similarly, Mallory can replay recorded
+messages, e.g. to set a folder back to a previous state. By extracting the
+username and password, she can also manipulate accounting features by saving
+files taking up place in the quota of another user.
 
 \subsection{File and Directory Operations}
 \label{sec:CS:DO}
@@ -1641,6 +1650,8 @@ cryptographic primitives. More specific, it needs a symmetric cipher, a
 cryptographic hash function, a \ac{MAC} function, a key stretching function,
 and a function for digital signatures, as observed in Figures \ref{fig:CS:CF},
 \ref{fig:CS:OF}, \ref{fig:CS:CD}, \ref{fig:CS:VOD} and \ref{fig:CS:OD}.
+Additionally, primitives for a secure channel between the client and the server
+has to be established.
 
 These primitives needs to be set in accordance with the security requirements
 established in Section \ref{sec:criteria}. Additionally, the hard part of
@@ -1691,7 +1702,6 @@ been used for 128 bit key size, but is not not recommended for use in new
 systems\cite{nist_sha1}. The use of double \ac{SHA}-256 compared to single, is
 to prevent a length-extension attack \cite{schneier}.
 
-
 \subsubsection{Signature Algorithm}
 
 For a signature scheme, the most commonly used algorithm seem to be either
@@ -1725,6 +1735,19 @@ Because of the usage of the \ac{MAC} as a simple key derivation function, the
 most important factor to consider when choosing a primitive, is that it should
 be infeasible to go from the result, back to the original key. On the basis of
 this, \citet{schneier} recommend HMAC-SHA256.
+
+\subsubsection{Secure Channel}
+
+The secure channel can be provided in the form of the client and the server
+communicating over \ac{TLS}. As this is a technology under continuous
+scrutiny, we recommend setting the available parameters as high as possible to
+meet the demands of the current situation. The reason for not specifying this
+more thorough, is that libraries and software used both server- and client-side
+may have limitations.
+
+As an example, in the proof of concept system created, we used \ac{RSA} with a
+key length of 4096 bits and \ac{SHA}-256 to create the certificate, and set the
+server to only allow the strongest ciphers available.
 
 \subsubsection{Encrypted Keyring} 
 \label{sec:PBKD}
