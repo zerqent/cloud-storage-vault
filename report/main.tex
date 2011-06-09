@@ -289,7 +289,7 @@ resources (e.g., networks, servers, storage, applications, and services) that
 can be rapidly provisioned and released with minimal management effort or
 service provider interaction.'' \end{quote}
 
-More and more of the traditionally locally hosted services is moving to the
+More and more of the traditionally locally hosted services are moving to the
 cloud. The amount of flexibility and cost savings this provides, can be quite
 extensive.
 
@@ -305,25 +305,42 @@ accident, or by purpose by unfaithful servants. Should it be sufficient to
 trust the security policies of the providers, or is it possible to handle the
 privacy issues locally?
 
+This thesis deals with this question and suggest a scheme to make data stored
+in the cloud secure . We define the criteria of a secure storage system by the
+following requirements:
+
+\begin{enumerate}
+  \item Only authorized people can access the data.
+  \item Confidentiality is to be assured in a safe environment prior to
+  storing data at the provider.
+  \item An intrusion of the server does not affect the confidentiality of the
+  data.
+  \item It is possible to verify the integrity of the stored data.
+  \item The storage scheme is documented in detail, such that users can
+      easily understand the scheme and accept it on that basis.
+  \item An implementation of the storage scheme is open source.
+  \item The use of a trusted third party is not mandatory.
+\end{enumerate}
+
 \section{Motivation}
 
-In the last decade, the available supply for services that offer data storage
-remotely in the cloud has increased considerable. Storing private data at a
-third party provider, in contrast to self-hosted storage devices, has proven to
-be preferable due to low storage costs and high reliability, scalability and
-capacity.
+%In the last decade, the available supply for services that offer data storage
+%remotely in the cloud has increased considerable. Storing private data at a
+%third party provider, in contrast to self-hosted storage devices, has proven to
+%be preferable due to low storage costs and high reliability, scalability and
+%capacity.
+%
+%However, storing data at a remote location prevents users from physically
+%protecting their storage medium. With this in mind, there is no guarantee that
+%the data of customers is kept private and secure from unfaithful servants at the
+%storage provider.
 
-However, storing data at a remote location prevents users from physically
-protecting their storage medium. With this in mind, there is no guarantee that
-the data of customers is kept private and secure from unfaithful servants at the
-storage provider.
-
-To solve this issue, there has lately been introduced numerous applications and
-architectures \cite{tahoe, tccp, PasS} that ensure privacy and integrity of
-data stored at the provider. However, all of these alternative systems are
-missing one or more properties towards being, as we will define it, a
-completely secure cloud storage solution. This has motivated us to create a
-scheme that answers all of these challenges.
+There has lately been introduced numerous applications and architectures
+\cite{tahoe, tccp, PasS} that ensure privacy and integrity of data stored at an
+untrusted provider. However, many of these alternative systems are missing one
+or more properties towards being, we will define it, a completely secure cloud
+storage solution. This has motivated us to create a scheme that solves all of
+these challenges.
 
 Additionally, we do also see this as a golden opportunity to learn more
 about software development, development methodologies, team work, and practical
@@ -354,31 +371,15 @@ attention. This is because it is an open source and a well documented piece of
 software, that answers most of the problems arising in an untrusted cloud
 storage environment, thus it relates closely to the work performed in this thesis.
 
-\section{Scope and Objectives}
-\label{sec:criteria}
+\section{Scope and Objectives} 
+\label{sec:criteria} 
 
-This thesis has two main objectives. The first objective is to create
-a cryptographic scheme that can provide secure storage of data by using an
-untrusted cloud storage provider. We define the criteria of a secure storage
-system by the following points:
-
-\begin{enumerate}
-  \item It is possible to verify the integrity of the stored data.
-  \item Only authorized people can access the data.
-  \item Confidentiality is to be assured in a safe environment prior to
-  storing data at the provider.
-  \item The storage scheme is documented in detail, such that users can
-      easily understand the scheme and accept it on that basis.
-  \item An implementation of the storage scheme is open source.
-  \item An intrusion of the server does not affect the confidentiality of the
-  data.
-  \item The use of a trusted third party is not mandatory.
-\end{enumerate}
-
-The cryptographic scheme shall in addition provide the possibility of sharing
-stored data between multiple cloud storage users, while sustaining desired
-security. The underlying scheme for sharing data should further be applicable
-for both enterprise and personal user scenarios.
+There are two main objectives for this thesis, the first is to make a cryptographic
+scheme that fulfils the criteria mentioned in the introduction. The cryptographic
+scheme shall in addition provide the possibility of sharing stored data between
+multiple cloud storage users, while sustaining desired security. The underlying
+scheme for sharing data should further be applicable for both enterprise and
+personal user scenarios.
 
 The second main objective is to implement the proposed scheme as part of a
 proof of concept application for Android devices. The application shall be
@@ -386,7 +387,8 @@ designed for personal users and implement the most necessary features,
 and be measured in security and performance.
 
 Finally, it is important that the implementation of the cryptographic scheme
-is available as open source.
+is available as open source. This because it is important that any supposedly
+secure scheme can 
 
 \section{Limitations}
 
