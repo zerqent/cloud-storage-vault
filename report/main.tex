@@ -706,14 +706,22 @@ standardized \ac{AES} in 2001 \cite{AES-FIPS}.
 symmetric-key encryption enables subsequent safe use of the same key.
 
 In a simple scenario, this could be to encrypt the normal data block-by-block
-with which is called the \ac{ECB} mode of operation. The problem with
+with which is called the \emph{\ac{ECB}} mode of operation. The problem with
 this, is that some information of the plaintext will leak, i.e. the same
 plaintext will always be encrypted as the same ciphertext.
 
-Another mode is \emph{\ac{CBC}}. In \ac{CBC}, a non-predictable and unique
+\emph{\ac{CBC}} is another example of a well known mode of operation, and is
+illustration in Figure \ref{fig:cbc}. In \ac{CBC}, a non-predictable and unique
 \ac{IV} is used. The \ac{IV} is XORed with the first block of plaintext, which
 again is encrypted with the cipher. The resulting ciphertext is used as an
-``\ac{IV}'' for the next block \cite[p. 183]{stallings}, and so on.
+``\ac{IV}'' for the next block \cite[p.  183]{stallings}, and so on.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.8]{CBCMode.pdf}
+    \caption{An illustration of the CBC mode of operation}
+    \label{fig:cbc}
+\end{figure}
 
 \paragraph{Asymmetric-key Encryption} Asymmetric-key encryption is an
 encryption scheme where different keys are used for encryption and decryption
