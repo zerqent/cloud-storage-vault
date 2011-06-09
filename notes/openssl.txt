@@ -3,3 +3,9 @@ openssl req -x509 -utf8 -nodes -days 365 -newkey rsa:4096 -keyout server.key -ou
 
 # Start test server, returns an HTML with info.
 sudo openssl s_server -accept 444 -cert cert.pem -key server.key -www
+
+# Debug SSL client
+openssl s_client -connect localhost:443
+
+# Show which combinations of primitives are applied to SSLCipherSuite:
+openssl ciphers -v 'TLSv1:+HIGH:+MEDIUM'
