@@ -17,6 +17,9 @@ BufferedInputStream readBuffer = new BufferedInputStream(
 
 // HttpClient uploads data by reading from readBuffer
 
-// The digest from the file just uploaded
-byte[] digest = md.digest();
+byte[] tmpdigest = md.digest();
+md.reset();
+md.update(tmpdigest);
 
+// The digest (double SHA-256) from the file just uploaded)
+byte[] digest = md.digest();
