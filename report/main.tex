@@ -3113,12 +3113,6 @@ possible attack, that is not detected by the integrity check, is the replay
 attack. The attacker can record an update of a folder and replay that message
 when the folder has further been updated causing possible loss of data.
 
-\subsubsection{Secure Communication Channel}
-% Her må vi nevne kravene til en protokoll - og hvorfor denne er viktig (den er
-% viktig fordi vi kan ha eksterne angripere, og ikke bare en untrusted server)
-Due to the risk of an external attacker, a secure communication channel is
-needed between the client and the server.
-
 \subsubsection{Supporting Multiple Cryptographic Primitives}
 
 The main problem with selecting cryptographic primitives for our scheme, is
@@ -3135,70 +3129,6 @@ stored before the change. This could be remedied by a meta-block for each file
 and folder, containing the utilized cryptographic primitives. In addition, the
 capability would have to contain which cryptographic hash function that should
 be used, to be able to deduce the storage index from the key.
-
-%The proposed cryptographic scheme is subject to certain weaknesses that
-%currently, or in the future, may be utilized by an attacker. The following
-%subsections will discuss possible weaknesses and their consequences.
-%
-%\subsubsection{Information leakage}
-%
-%The storage provider can access all encrypted data on the server, and also know
-%whether a stored data object corresponds to a file or a folder. This is
-%revealed by the difference in header content and size between folder and file
-%objects. Folders are specially recognizable by the server, as their write
-%enabler is revealed during upload procedure.
-%
-%Additionally, a user's root folder is known, since it is the first object
-%accessed in a newly created session. It is also possible for the provider to
-%reveal the structure of the directory tree of a user. The series of file and
-%folder requests from a user enables the provider to learn which files are
-%contained in which folders.
-%
-%Considering the findings in various research, information can also be leaked to
-%other potential attackers besides the untrusted cloud provider. External
-%attackers can locate the server in the cloud, used by the application, and
-%further set up a \ac{VM} on the same server \cite{cloud_getoff}. In a worst
-%case scenario the attacker gets access to the same amount of information as the
-%cloud provider, which should not be dangerous.
-%
-%\subsubsection{Content Disclosure}
-%
-%The confidentiality of both files and folders relies primarily on the symmetric
-%cipher used to encrypt the data. But for folders one can obtain this key if one
-%manages to obtain the asymmetric private key belonging to the folder, as seen
-%in Figure \ref{fig:CS:CD}. In other words, files and folders are attackable
-%both trough the asymmetric and the symmetric cipher used.
-%
-%Disclosing folder content through the asymmetric cipher may be avoided by
-%changing the usage of the private key. Instead of hashing the private key to
-%derive the write key of a folder, the write key could rather be generated from
-%a random key generator. In this way, even though the asymmetric private key is
-%revealed, the symmetric keys used to provide confidentiality are not retrieved.
-%However, revealing the private key would still breach the integrity of the
-%cryptographic scheme.
-%
-%If the confidentiality of a folder is breached, it will additionally enable the
-%attacker to decrypt all of the corresponding subfolders and files. In
-%contrast, cracking the confidentiality of a file will only compromise that
-%specific file. It is also important to note that if the confidentiality of a
-%user's root folder is breached, all files, belonging to that user, are
-%effectively compromised.
-%
-%
-%\subsubsection{The Weakest Link}
-%% TODO: Annet navn
-%Considering the potential weaknesses discussed above, the weakest link in the
-%secure cloud storage scheme presented, is potentially the locally encrypted
-%keyring. To provide usability, users are given the possibility of choosing
-%their own password, to indirectly encrypt their keyring. However, it is fairly
-%well known that users can not be trusted to generate and use long, secure
-%passwords.
-%
-%As mentioned earlier, even with the recommended password constraints, the
-%keyring is still vulnerable to dictionary attacks. However, disclosing the
-%keyring is only possible if the keyring is accessible to an attacker. Getting
-%access to a locally stored keyring is defined as an \emph{active attack}, and is
-%further discussed in the next section.
 
 \section{Implementation}
 \label{sec:DIS:impl}
@@ -3598,8 +3528,7 @@ the DAIM system\footnote{\url{http://daim.idi.ntnu.no/}}, and one physical disc.
 
 \section{Electronic Attachment}
 
-The electronic attachment, uploaded to
-DAIM, consists of the following files
+The electronic attachment, uploaded to DAIM, consists of the following files
 and directories:
 
 \begin{description}
