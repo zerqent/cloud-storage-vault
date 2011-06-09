@@ -1745,48 +1745,48 @@ server to only allow the strongest ciphers available.
 \subsubsection{Encrypted Keyring} 
 \label{sec:PBKD}
 
-It is recommended that the locally stored root capability is encrypted in some
-form, and a scheme that should be compatible with most terminals is a password
-based key derivation function. For this \ac{NIST} recommend \ac{PBKDF2}
-\cite{pbkdf_nist}. The iteration count is recommended to be set at high as
+The locally stored root capability should be encrypted in some form, and a
+scheme that should be compatible with most terminals is a password based key
+derivation function. For this \ac{NIST} recommend \ac{PBKDF2}
+\cite{pbkdf_nist}. The iteration count is to be set at high as
 possible while at the same time maintaining acceptable performance, but with a
 minimum of 1000. The salt should be at least 128 bit and randomly generated.
 For the pseudorandom function, the recommendation is to use H\ac{MAC} with any
 \ac{NIST} approved hash function.
 
-To come up with a secure recommendation, we also looked at the usage of
-\ac{PBKDF2} in \ac{WPA}, and what security it provides against brute force
-attacks.  \ac{WPA} is used because the utilization of \ac{PBKDF2} is quite
-similar to the one in our scheme. It uses 4096 iterations, and
-H\ac{MAC}-\ac{SHA}-1 as the pseudorandom function. So far, the most sensational
-brute force attack against \ac{WPA} was published on Black Hat DC 2011 by a
-security researcher named Thomas Roth. He proved that anyone can crack \ac{WPA}
-passwords with a speed of up to about 400 000 passwords per second, using
-multiple Amazon \ac{EC2} cluster \ac{GPU} instances \cite{rothwpa}. His
-findings also indicate that Amazon themselves can reach an even higher unknown
-brute force speed. The same researcher has also hinted that he might be able to
-reach 1 million keys per second with a similar setup \cite{rothblog}.
+We also looked at the usage of \ac{PBKDF2} in \ac{WPA}, and what security it
+provides against brute force attacks. \ac{WPA} is used because the utilization
+of \ac{PBKDF2} is quite similar to the one in our scheme. It uses 4096
+iterations, and H\ac{MAC}-\ac{SHA}-1 as the pseudorandom function. So far, the
+most effective brute force attack against \ac{WPA} was published on Black Hat
+DC 2011 by a security researcher named Thomas Roth. He proved that anyone can
+crack \ac{WPA} passwords with a speed of up to about 400 000 passwords per
+second, using multiple Amazon \ac{EC2} cluster \ac{GPU} instances
+\cite{rothwpa}. His findings also indicate that Amazon themselves can reach an
+even higher unknown brute force speed. The same researcher has also hinted that
+he might be able to reach 1 million keys per second with a similar setup
+\cite{rothblog}.
 
 With this in mind, we recommend at least the same amount of iterations to be
-used in our scheme as in \ac{WPA}, i.e. 4096. This should yield acceptable
-performance on most devices. The most elegant solution would be to fine tune
-this on a per device basis. The client can time the calculation of 4096
-iterations, and increase the number if this is too fast. The pseudorandom
+used in our scheme as in \ac{WPA}, i.e. 4096 rounds. This should yield
+acceptable performance on most devices. The most elegant solution, would be to
+fine tune this on a per device basis. The client can time the calculation of
+4096 iterations, and increase the number if this is too fast. The pseudorandom
 function should be H\ac{MAC}-\ac{SHA}-256, since \ac{NIST} recommends against
-utilizing \ac{SHA}-1 in new applications. The salt should be at least 128 bit.
+utilizing \ac{SHA}-1 in new applications. The salt should be at least 128 bits.
 
-\paragraph{Password requirements}
+\paragraph{Password Requirements}
 
 \ac{NIST} also recommends that passwords should be at least 10 characters long.
-If we assume that every password can only consist of the English letters, both
-upper-case and lower-case, and the numbers 0-9, there exists $62^n$ different
+If we assume that every password is alphanumeric, there exists $62^n$ different
 passwords for a password of length $n$. With the stated theoretical results of
-1 million passwords per second, this means that any password of length 9 and 10
-is cracked in at most 429 and 26614 years respectively. These calculation does
-not take anything but the claimed current cracking speed by Roth into account.
+1 million passwords per second, this means that \emph{any} password of length 9
+and 10 is cracked in at most 429 and 26614 years respectively. These
+calculation does not take anything but the claimed current cracking speed by
+Roth into account.
 
-The results only holds in the real world if we can guarantee that a user
-actually chooses a random password, which is probably not true. A more
+The results are only applicable in the real world if we can guarantee that a
+user actually chooses a random password, which is probably not true. A more
 realistic setting is that the attacker uses some dictionary, and that a user's
 password is not strictly random. By this rationale, it is more important to be
 safe than sorry, and for password guidelines we therefore recommend:
@@ -1814,14 +1814,14 @@ To get a working server, we can also use any existing web server as a
 foundation, which will decrease total development time. Thus, \ac{HTTP} was
 chosen as our communication protocol.
 
-\subsubsection{\acs{REST}} The Web is built around an architectural style called
-\ac{REST} \cite[ch. 5]{fielding}, which is defined by four interface
+\subsubsection{\acs{REST}} The Web is built around an architectural style
+called \ac{REST} \cite[ch. 5]{fielding}, which is defined by four interface
 constraints: identification of resources, manipulation of resources through
 representations, self-descriptive messages, and, hypermedia as the engine of
 application state. In addition, \ac{REST} dictates five\footnote{And one
-optional, Code on demand, which is not applicable for our system.} architectural
-constraints \cite{fielding}. Our server application adheres to these
-constraints, or \emph{patterns}, as follows:
+optional, Code on demand, which is not applicable for our system.}
+architectural constraints \cite{fielding}. Our server application adheres to
+these constraints, or \emph{patterns}, as follows:
 
 \begin{description}
   \item[Client-server] \hfill \\
@@ -1872,9 +1872,9 @@ constraints, or \emph{patterns}, as follows:
 
 In this context, resources are the encrypted files, and the architectural
 constraints of \ac{REST} also matches that of our system as a
-whole. Thus, the server application are designed in a \acs{REST}ful manner.
+whole. Thus, the server application is designed in a \acs{REST}ful manner.
 
-\subsubsection{Network Security} Since we are utilizing \ac{HTTP}, we can
+\subsubsection{Secure Channel} Since we are utilizing \ac{HTTP}, we can
 easily add an extra layer of \ac{TLS} to form \ac{HTTPS}. This makes it more
 difficult for potential attackers to intercept messages, and also provides
 protection against the \ac{MITM} attacks. It also provides protection against
@@ -1966,11 +1966,11 @@ server-side verification that a client has proper access to overwrite a folder,
 e.g. when a client wishes to update a folder with new contents.
 
 When a client first uploads a new folder, it provides a write enabler,
-which the server adds to the database along with the \emph{Storage Index} of
-the folder.  For every subsequent request to write to this folder, the server
+which the server adds to the database along with the storage index of
+the folder. For every subsequent request to write to this folder, the server
 verifies that the provided write enabler is equal to that in the database.
 
-If a client tries to put a folder with a Storage Index that already exists, the
+If a client tries to put a folder with a storage index that already exists, the
 server replies with an error code if the client in addition does not provide
 the correct write enabler.
 
@@ -1981,11 +1981,11 @@ Android operating system, which is based on Linux. The \ac{SDK} for making
 Android applications, is essentially a somewhat modified version of Java.
 
 Most devices that use the Android operating system are mobile phones or
-tablets, which implies that they are limited in terms of computational power
-and memory. The point of making the client for such a device, i.e. a
-\emph{smart phone}, is the growing availability, and the flexibility these
-devices provide. A user carries the device everywhere, it provides network
-connectivity, and is almost always on.
+tablets, which implies that they are more limited in terms of computational
+power and memory, compared to a modern computer. The point of making
+the client for such a device, i.e. a \emph{smart phone}, is the growing
+availability, and the flexibility these devices provide. A user carries the
+device everywhere, it provides network connectivity, and is almost always on.
 
 A nice side effect of developing on a smart phone platform, is that if the
 software performs well on a constrained device, it will almost certainly
@@ -2033,8 +2033,8 @@ creating our own code to generate barcodes.
 
 \subsection{Architectural Patterns}
 
-\paragraph{Client-Server} It should be obvious that the client we have
-implemented is the client part of the overall client-server pattern.
+\paragraph{Client-Server} The client we have implemented is the client part of
+the overall client-server pattern of the system.
 
 \paragraph{Pipe-and-Filter} The basis of the pipe-and-filter pattern is that
 there exist a chain of processing elements, where the output of one element is
@@ -2047,6 +2047,9 @@ interface from hanging and to deliver a smoother user experience in general.
 
 \subsection{Implementation Details}
 \label{sec:cli:impl:det}
+
+The following section describes the code structure of the client
+implementation, in addition to cryptographic entities used.
 
 \subsubsection{Structure}
 The source of our client is logically separated into two entities --
@@ -2072,7 +2075,7 @@ all part of \texttt{CSVlib}. Their relationship can be seen in Figure
 \paragraph{Capabilities} Capabilities are containers for
 cryptographic keys and information to identify a corresponding object. They
 will will contain information to identify an object as either a file or a
-folder, and have the information to read, write or verify that object.
+folder, and have the information to read, write and verify that object.
 
 Capabilities are stored server-side in folders in its serialized form shown
 in Figure \ref{fig:CAP:serial}. \emph{Object Type} specifies if the capability
@@ -2089,35 +2092,35 @@ respectively.
 \emph{Key Type} specifies the permissions the key will grant on the object, and
 can be either \emph{RO} (Read Only) or \emph{RW} (Read and write).
 
-The different parts are separated by the colon character. The key and
-verify string are encoded in Base32, which means that the 128 bits these
-strings are represented by, will be replaced by an alphabet of 32 different
-symbols, namely A-Z and 2-7. This transformation will give some overhead in
-storage and transfer (26 bytes compared to 16), but makes it possible to read for a human
-with few mistakes or misunderstandings.
+The different parts are separated by the colon character. The key and verify
+strings are encoded in Base32 \cite{rfc4648}, which means that the 128 bits
+these strings are represented by, will be replaced by an alphabet of 32
+different symbols, namely A-Z and 2-7. This makes it possible to read for a
+human with few mistakes or misunderstandings.
 
 \paragraph{Folders}
 
-A folder is represented by the class \texttt{CSVFolder}. A \texttt{CSVFolder} object is
-a collection of aliases and their corresponding capabilities. For
-the most part, the data stored in a folder is so small that it can easily live for
+A folder is represented by the class \texttt{CSVFolder}. A \texttt{CSVFolder}
+object is a collection of aliases and their corresponding capabilities. For the
+most part, the data stored in a folder is so small that it can easily live for
 as long as needed in the memory of the client.
 
 When a folder is created or updated, the content is serialized and encrypted,
 before it is uploaded to the server directly from memory. The serialization for
-each item in a folder is simply \textbf{alias;capability}, where the capability
-itself is also serialized.
+each item in a folder is on the form \textbf{alias;capability}, where the
+capability itself is also serialized.
 
 \paragraph{Files}
 
-A file is represented by the class \texttt{CSVFile}. While a folder in general is small,
-a file can be of any size, even larger than the \ac{RAM} on the device.
+A file is represented by the class \texttt{CSVFile}. While a folder in general
+is small, a file can be of any size, even larger than the \ac{RAM} on the
+device.
 
 To keep the memory footprint low, we use the pipe-and-filter architectural
 pattern to stream data all the way from the server to the device, or vice
 versa, through encryption and verification.
 
-An example of how we do this for uploads is shown in Listing
+An example of how we do this for uploads, is shown in Listing
 \ref{lst:inputstream}.
 
 \lstinputlisting[label=lst:inputstream, caption=Pipe and filter upload of a file]
@@ -2155,10 +2158,8 @@ The implementation of the proof of concept client deviates from the
 recommendation given in Section \ref{sec:cryptoprimitivechoice}.  This occurred
 as a result of new discoveries that were made while analysing the system. All
 unfortunate deviations are corrected with a patch file submitted along with the
-code attachment, described in Appendix \ref{ap:attachments}.  For the other
-primitives we follow the recommendation. For a cryptographic hash function this
-means double \ac{SHA}-256 and for the \ac{MAC} function this means
-H\ac{MAC}-\ac{SHA}-256.  The following deviations exist.
+code attachment, described in Appendix \ref{ap:attachments}. For the other
+primitives we follow the recommendation.
 
 \paragraph{RSA Key Length} The key length chosen for the RSA cipher is 1024
 bits, in contrast to the argued 2048 bits. It is therefore important to notice
@@ -2169,11 +2170,10 @@ that all measurements, presented in Chapter \ref{ch:experimental} and
 for \ac{AES}. The reason to prefer a shorter key length in \ac{CSV} is to make
 manual key exchange less cumbersome. 256 bits are however preferred.
 
-
 \subsection{Sharing}
 
-A \emph{shared folder} is basically just a folder object which two or more
-people have the required encryption keys for.
+A \emph{shared folder} is a folder which two or more people have the required
+capability for.
 
 The problem of creating a share with someone, is that you have to verify that
 you are actually sharing with the correct person. The data, or \emph{secret},
@@ -2197,7 +2197,7 @@ support out-of-band methods for establishing a share, e.g. through the use of
 The other possibility is to make use of a \emph{\ac{QR} code}, which is a
 matrix barcode that can store information. This means that one user will
 generate a barcode, and the other user can scan that code using
-the camera on their device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
+the camera on his device. Figure \ref{fig:CSVAndroid:barcode} illustrates how
 this code will look. The barcode contains both the key and the verification for
 the shared folder. Once two users have shared a folder once, that folder can be
 used for all future shares, which means that the two people will never have to
@@ -2225,40 +2225,36 @@ capability of that folder. This is clearly too much random data for most users
 to remember, so the capability will have to be stored on the client.  The
 client might be stolen or broken into by some means, and if the capability is
 stored in clear text, it is easily compromised. We therefore implement a
-locally stored encrypted keyring which contain this capability. We use
-\ac{PBKDF2} with 4096 iterations and H\ac{MAC}-\ac{SHA}-256 together with a user
-defined password to derive a 128 bit encryption key. The keyring is then
-encrypted with \ac{AES} and the derived key.
+locally stored encrypted keyring which contains this capability.
+
+\ac{PBKDF2} is used with 4096 iterations and H\ac{MAC}-\ac{SHA}-256, together
+with a user defined password to derive a 128 bit encryption key. The keyring is
+then encrypted with \ac{AES} and the derived key, in \ac{ECB} mode.
 
 \subsection{User Interface}
-% goal: As easy as possible!
-% First start: Generate new cap/import an old one (Adding a new client section)
-% Browsing remote file(s)/folders
-% Sharing a file - first/following times - Key Distribution
-% Uploading/Downloading file
 
-We have tried to make a user interface that is easily understandable by a novice
-user, both in terms of \emph{where to click} and in terms of how we name
+We have tried to make a user interface that is easily understandable by a
+novice user, both in terms of \emph{where to click} and in terms of how we name
 cryptographic operations. For instance we never use the word \emph{capability}
-in the client. To make the \ac{GUI} even easier to understand, we have created a
-video that examines the most important user interactions with the client
+in the client. To make the \ac{GUI} even easier to understand, we have created
+a video that examines the most important user interactions with the client
 implementation. The video is available in the attachment, which is further
 described in Appendix \ref{ap:attachments}.
 
-In addition to the attached video, this section will scrutinize the most
-important parts of the implemented \ac{GUI}. 
+In addition to the attached video, this section will present the most important
+parts of the implemented \ac{GUI}. 
 
 \paragraph{Main Screen}
 
 The main screen of the application is shown in Figure
 \ref{fig:CSVAndroid:mainscreen}. Before the user gets to this screen, she will
-have to unlock her encrypted keyring with her password. If it is the first time the
-user starts the application, she will have to enter her online credentials, and
-gets a choice to either import an existing root folder, or to generate a new
+have to unlock her encrypted keyring with her password. If it is the first time
+the user starts the application, she have to enter her online credentials, and
+get a choice to either import an existing root folder, or to generate a new
 one. In both cases the user will have to choose a password to encrypt the root
-capability in to the local keyring. The most common action from the main screen
-would be to \emph{Browse the vault} -- in other words to see the files that the
-user has stored on the server.
+capability. The most common action from the main screen would be to
+\emph{Browse the Vault} -- in other words to see the files that the user has
+stored on the server.
 
 \begin{figure}[h!]
     \centering
@@ -2267,11 +2263,11 @@ user has stored on the server.
     \label{fig:CSVAndroid:mainscreen}
 \end{figure}
 
-\paragraph{Browse the Cloud}
+\paragraph{Browse the Vault}
 
 The interface for browsing files stored in the cloud, is made in what we
 understand as a common and understandable way of interpreting users actions on
-the android platform, and can be seen in Figure
+the Android platform, and can be seen in Figure
 \ref{fig:CSVAndroid:remotebrowse}. Tapping a file will download that file, and
 tapping a folder will open that folder.
 
@@ -2291,7 +2287,8 @@ A long press on a file, or a folder item, will reveal the context menu shown in
 Figure \ref{fig:CSVAndroid:remotecontext}. The least understandable action is
 probably \emph{Unlink}, which will remove a file or a folder from the parent
 folder.  The reason why it says unlink and not delete, is that the architecture
-does not specify a way for deleting files. This is further discussed in Section
+does not specify a way for deleting files. The implementation does not make
+this choice either. This is further discussed in Section
 \ref{sec:deletion_of_files}.
 
 \begin{figure}[h!]
@@ -2309,16 +2306,16 @@ does not specify a way for deleting files. This is further discussed in Section
 This chapter describes the experimentation performed on the \acl{CSV}. It will
 start by explaining the measurements on the performance of the application.
 Finally, the chapter will go through the experimental procedures taken to
-measure the security of locally encrypted keyring.
+measure the security of the locally encrypted keyring.
 
 \section{Performance of the Client}
 
-We have tested the android client on two Android smartphones, an HTC Desire and
+We have tested the Android client on two Android smartphones, an HTC Desire and
 an HTC Hero. We have also tested the Java libraries on a desktop computer. The
 specifications for HTC Desire can be seen in Table \ref{tbl:device:desire}, for
 HTC Hero in Table \ref{tbl:device:hero}, and the desktop computer in Table
 \ref{tab:hwbf}. The server has identical specifications as the
-computer used. We emphasize that the measurements are meant to be taken as
+computer. We emphasize that the measurements are meant to be taken as
 indications of the performance of the scheme and implementation and not exact
 measurements. The Android measurements are our main objective, since that is
 what the client is primarily made for. The server was never considered as a
@@ -2838,7 +2835,7 @@ One could argue that the proposed scheme does not include authentication, but
 at the same time one could argue that the possession of a capability
 authenticates a user. If authentication is not implemented as an extra layer as
 described in Section \ref{sec:accounting}, the server does not really
-authenticate the user.  Granted the knowledge of the Storage Index does
+authenticate the user.  Granted the knowledge of the storage index does
 indicate possession of the capability, but this value can theoretically be
 stolen by using traffic analysis if the communication channel is not secured.
 The possession of a capability does authentication in some way, but not of the
@@ -2848,7 +2845,7 @@ authorization to the otherwise useless encrypted data.
 \subsubsection{Access Control}
 Access Control to a resource in the proposed scheme is given by capabilities.
 Anyone can download any encrypted data from the server if they possess a
-Storage Index, but that does not give access to the data. The possession of a
+storage index, but that does not give access to the data. The possession of a
 capability does however grant this access. 
 
 The server will only need to handle write enablers in regard to access control.
