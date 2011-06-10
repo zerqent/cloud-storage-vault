@@ -1,0 +1,11 @@
+# 1. Locally:
+git remote add <remote_name> username@server:/path/to/repo
+
+# 2. Server (only needed once):
+git config receive.denyCurrentBranch warn
+
+# 3. Locally:
+git push <remote_name> master
+
+# 4. Server (to actually see the new files):
+git reset --hard
