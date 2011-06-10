@@ -2879,213 +2879,6 @@ and folder, containing the utilized cryptographic primitives. In addition, the
 capability would have to contain which cryptographic hash function that should
 be used, to be able to deduce the storage index from the key.
 
-\subsection{Improving the Scheme}
-
-The proposed cryptographic scheme has multiple features that can be added and
-improved. In the following sections, we present what we see as the most
-important ones.
-
-\subsubsection{Key Distribution}
-\label{sec:DI:keydist}
-
-The challenge of key distribution in a user friendly way is hard. To
-successfully authenticate a user and transfer a key, it is possible to choose
-from the following methods:
-
-\begin{itemize}
- \item Use a trusted third party
- \item Meet a user in person
- \item Use some sort of safe out of bound channel
-\end{itemize}
-
-Since one of the basic problems of this thesis is that the cloud provider is
-not to be trusted, it is not desirable to use a trusted third party. This
-implies that the only option left, is to verify another user in person,
-although an out of band scheme like \ac{PGP} could be used.
-
-In \ac{PGP}, users can publish that they have verified other users and to which
-degree they trust them \cite{stallings}. Other users can use this information
-to calculate the probability that a certain user is legit. The reason why this
-scheme is not implemented, is that it is fairly complex for a standard user to
-grasp. There are however nothing that stops a user that want to use the
-\ac{PGP} scheme to transfer capabilities.
-
-If the cryptographic scheme presented in Section \ref{chap:CS} should be used
-in an organization, a \ac{PKI} is probably the best solution. In this setting,
-the organization can itself be the trusted third party that enforces that all
-certificates granted to users are correct. A user could then simply be prompted
-by the name of the user she would like to share a file with, and the rest could
-be handled by software logic and the trust of the \ac{PKI}.
-
-\subsubsection{Deletion of Files}
-\label{sec:deletion_of_files}
-
-To support deletion of files, various alternatives has to be assessed.
-Consider the following scenarios:
-
-\begin{enumerate}
-  \item A folder is shared between two users, and one of the users has
-    linked in the files in other directories as well. What should happen if the
-    other user deletes the files in the shared folder?
-
-  \item A folder contains a folder which is a link to a folder ``higher''
-    in the folder tree, and thus creating a loop. By deleting the folder,
-    should all subdirectories be deleted as well, i.e. cascading delete?
-\end{enumerate}
-
-The choice of the alternatives presented shortly, are not taken by the proposed
-cryptographic scheme, as it is merely a practical decision.
-
-To remedy the problem of cascading deletion with loops, the system could
-utilize an algorithm for finding \emph{strongly connected components} of a
-graph, before actually deleting any files.
-
-Two components are strongly connected if there exist a path from $A$ to $B$,
-and from $B$ to $A$, as depicted in Figure \ref{fig:DSC:cycles} where a
-directory is linked in at a higher level in the directory tree. The dashed line
-represents the actual path in the graph. If the folder $X$ is requested to be
-deleted, the $A$ and $Y$ directories are also removed. This behaviour may not be
-expected nor desired by the user.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[scale=0.6]{CyclesintheDAG.pdf}
-    \caption{Theoretical cycle in the directory graph}
-    \label{fig:DSC:cycles}
-\end{figure}
-
-\emph{Tarjan's Algorithm} \cite{tarjan} is an example of algorithm that can be
-implemented to do this kind of check, and is basically a depth first search,
-with a stack containing visited nodes.
-
-\paragraph{Creator} The accounting layer on the server could store the
-username of the creator of the file along with each storage index, and use this
-to decide who should be granted access to delete files.
-
-\paragraph{Write Enabler} Similarly, the server could grant removal rights to
-whoever provides the write enabler, in the same manner as when updating
-folders. This requires that \emph{delete enablers} is produced for immutable
-files.
-
-\paragraph{Link Count} The files could include a link count in its meta data,
-which is updated whenever a user links or unlinks it from a folder. When the
-link count reaches zero, the user notifies the server to delete it. This would
-have to be combined with the use of delete enablers for files.
-
-\subsubsection{Verification of Files}
-
-The verification scheme for immutable files is suboptimal in every way a user
-wants to use an ordinary file. The problem is that the user will have to
-download the entire file, before she can verify that the file is what it is
-supposed to be. If it turns out that the file does not pass this check, and the
-error was in the very first byte, the user has wasted time and bandwidth
-downloading a lot of useless data. The same scenario applies if the user only
-wants to look at a small part of a file, e.g. the middle section of a movie, or
-to utilize the file while it is still downloading.
-
-A possible solution to support this kind of verification, would be to build a
-\emph{hash tree} of the whole file, as shown in Figure \ref{fig:hashtree}. With
-a hash tree, smaller parts of the file can be verified, and errors can be
-detected earlier. The hash tree could be stored encrypted on the server
-together with the encrypted file, and the capability could hold the root hash
-of the tree. The downside to this approach, is that performance would be
-affected due to the substantial amount of hash operations required to compute
-the hash tree. This idea of a hash tree is implemented in Tahoe-\ac{LAFS}
-\cite{tahoe}.
-
-\begin{figure}[!h]
-\centering
-\includegraphics[scale=0.55]{hash-tree.pdf}
-\caption{Hash tree of a file}
-\label{fig:hashtree}
-\end{figure}
-
-\subsubsection{Version Control System}
-
-Some of the currently available cloud storage systems, as Wuala and Dropbox
-mentioned in Section \ref{sec:existing}, support a kind of \emph{version
-control} of the files stored. This means that the data lost during a
-modification of a file are saved alongside the current file, so that the user
-has enough information to restore the file to a previous state.  In practice,
-this often mean to store multiple versions of the same file, or the difference
-between two versions. This could be implemented in \ac{CSV} by one of the
-following methods.
-
-\paragraph{Extension to Folders} By adding a list of subsequent files to the
-directory structure exemplified in Section \ref{sec:cli:impl:det}, we can link
-previous versions of a file in the serialization form:
-
-\begin{quote}
-    \centering
-    \textbf{alias;capability;capability;capability}
-\end{quote}
-
-To make this feasible and user friendly, a time stamp would have to be added to
-the capability. This would increase the size of the folder.
-
-\paragraph{Type of Mutable File} A new form of mutable file could be
-implemented in practically the same form as a directory, containing timestamps
-instead of aliases, and pointing to corresponding storage indexes. With this
-procedure, it should be easy to configure for the user which files and folders
-that should be under version control.
-
-\subsubsection{Deduplication}
-
-The term \emph{data deduplication} implies not having to store redundant data.
-By implementing a deduplication scheme, multiple advantages can arise in the
-sense of a storage system. For the service provider, this could mean cost
-savings in the form of not having to store the same file twice, but still claim
-money from users for the given storage. For the users of the service, this
-could mean better network utilization, as uploading a big file that already
-exist on the server would take no time at all.
-
-However, there are practical disadvantages and great privacy concerns related
-to deduplication, in addition to some solutions that address these issues.  The
-scheme does not support deduplication. This is because all encryption keys are
-randomly selected, neither the server or the client is able to detect whether a
-file already exists in the system.
-
-\paragraph{Practical Disadvantages} Deduplication relies on the use of hash
-functions to check whether a file or a block of data exist on the storage node.
-In general, as long as you hash something larger than the length of the digest,
-there exists collisions, and hence data corruption.
-
-Further on, the additional hash operations and queries to the server pose
-extra computational overhead, which increase if the deduplication is on block
-level.
-
-\paragraph{Privacy} If deduplication is used on file-basis globally -- i.e.
-for all users -- there exist a privacy risk. The provider will be able to prove
-that a certain file exists on the system, and has the ability to figure out
-which user has saved this file thus effectively compromising the
-confidentiality of that file. If the deduplication scheme works in a manner in
-which the file is not uploaded if it already exists on the server any user is
-able to prove that a file is already stored.
-
-\paragraph{Customizable Deduplication} Tahoe-\ac{LAFS} tries to provide a
-solution that has all the advantages and none of the issues related to
-deduplication, by \emph{convergent encryption with an added secret}
-\cite{tahoe}.
-
-Convergent encryption implies using the hash of the plaintext as the key to the
-symmetric encryption algorithm, i.e. the same plaintext will always yield the
-same ciphertext, making it relatively easy to implement deduplication.
-
-Tahoe-\ac{LAFS} adds a per-client secret to the hashing procedure, as
-depicted in Figure \ref{fig:tahoe:dedup}, before using the result as a key to
-encrypt the file. This enables per-client deduplication, or per-group
-deduplication if the user shares the secret with other users. Since the storage
-index is based on the encryption key, and the plaintext will always lead to the
-same encryption key, the client can check for file existence on the server and
-prevent duplication.
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=0.55]{TahoeDeduplication.pdf}
-    \caption{Tahoe-LAFS deduplication scheme}
-    \label{fig:tahoe:dedup}
-\end{figure}
-
 \section{Implementation}
 \label{sec:DIS:impl}
 
@@ -3273,8 +3066,215 @@ Another scenario would involve the attacker installing a \emph{keylogger} on
 the compromised client. This type of software can further detect the keyring
 password when the user logs in to the application.
 
+\chapter{Future Work}
+The proposed cryptographic scheme has multiple features that can be added and
+improved. In the following sections, we present what we see as the most
+important ones.
+
+\section{Key Distribution}
+\label{sec:DI:keydist}
+
+The challenge of key distribution in a user friendly way is hard. To
+successfully authenticate a user and transfer a key, it is possible to choose
+from the following methods:
+
+\begin{itemize}
+ \item Use a trusted third party
+ \item Meet a user in person
+ \item Use some sort of safe out of bound channel
+\end{itemize}
+
+Since one of the basic problems of this thesis is that the cloud provider is
+not to be trusted, it is not desirable to use a trusted third party. This
+implies that the only option left, is to verify another user in person,
+although an out of band scheme like \ac{PGP} could be used.
+
+In \ac{PGP}, users can publish that they have verified other users and to which
+degree they trust them \cite{stallings}. Other users can use this information
+to calculate the probability that a certain user is legit. The reason why this
+scheme is not implemented, is that it is fairly complex for a standard user to
+grasp. There are however nothing that stops a user that want to use the
+\ac{PGP} scheme to transfer capabilities.
+
+If the cryptographic scheme presented in Section \ref{chap:CS} should be used
+in an organization, a \ac{PKI} is probably the best solution. In this setting,
+the organization can itself be the trusted third party that enforces that all
+certificates granted to users are correct. A user could then simply be prompted
+by the name of the user she would like to share a file with, and the rest could
+be handled by software logic and the trust of the \ac{PKI}.
+
+\section{Deletion of Files}
+\label{sec:deletion_of_files}
+
+To support deletion of files, various alternatives has to be assessed.
+Consider the following scenarios:
+
+\begin{enumerate}
+  \item A folder is shared between two users, and one of the users has
+    linked in the files in other directories as well. What should happen if the
+    other user deletes the files in the shared folder?
+
+  \item A folder contains a folder which is a link to a folder ``higher''
+    in the folder tree, and thus creating a loop. By deleting the folder,
+    should all subdirectories be deleted as well, i.e. cascading delete?
+\end{enumerate}
+
+The choice of the alternatives presented shortly, are not taken by the proposed
+cryptographic scheme, as it is merely a practical decision.
+
+To remedy the problem of cascading deletion with loops, the system could
+utilize an algorithm for finding \emph{strongly connected components} of a
+graph, before actually deleting any files.
+
+Two components are strongly connected if there exist a path from $A$ to $B$,
+and from $B$ to $A$, as depicted in Figure \ref{fig:DSC:cycles} where a
+directory is linked in at a higher level in the directory tree. The dashed line
+represents the actual path in the graph. If the folder $X$ is requested to be
+deleted, the $A$ and $Y$ directories are also removed. This behaviour may not be
+expected nor desired by the user.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{CyclesintheDAG.pdf}
+    \caption{Theoretical cycle in the directory graph}
+    \label{fig:DSC:cycles}
+\end{figure}
+
+\emph{Tarjan's Algorithm} \cite{tarjan} is an example of algorithm that can be
+implemented to do this kind of check, and is basically a depth first search,
+with a stack containing visited nodes.
+
+\paragraph{Creator} The accounting layer on the server could store the
+username of the creator of the file along with each storage index, and use this
+to decide who should be granted access to delete files.
+
+\paragraph{Write Enabler} Similarly, the server could grant removal rights to
+whoever provides the write enabler, in the same manner as when updating
+folders. This requires that \emph{delete enablers} is produced for immutable
+files.
+
+\paragraph{Link Count} The files could include a link count in its meta data,
+which is updated whenever a user links or unlinks it from a folder. When the
+link count reaches zero, the user notifies the server to delete it. This would
+have to be combined with the use of delete enablers for files.
+
+\section{Verification of Files}
+
+The verification scheme for immutable files is suboptimal in every way a user
+wants to use an ordinary file. The problem is that the user will have to
+download the entire file, before she can verify that the file is what it is
+supposed to be. If it turns out that the file does not pass this check, and the
+error was in the very first byte, the user has wasted time and bandwidth
+downloading a lot of useless data. The same scenario applies if the user only
+wants to look at a small part of a file, e.g. the middle section of a movie, or
+to utilize the file while it is still downloading.
+
+A possible solution to support this kind of verification, would be to build a
+\emph{hash tree} of the whole file, as shown in Figure \ref{fig:hashtree}. With
+a hash tree, smaller parts of the file can be verified, and errors can be
+detected earlier. The hash tree could be stored encrypted on the server
+together with the encrypted file, and the capability could hold the root hash
+of the tree. The downside to this approach, is that performance would be
+affected due to the substantial amount of hash operations required to compute
+the hash tree. This idea of a hash tree is implemented in Tahoe-\ac{LAFS}
+\cite{tahoe}.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.55]{hash-tree.pdf}
+\caption{Hash tree of a file}
+\label{fig:hashtree}
+\end{figure}
+
+\section{Version Control System}
+
+Some of the currently available cloud storage systems, as Wuala and Dropbox
+mentioned in Section \ref{sec:existing}, support a kind of \emph{version
+control} of the files stored. This means that the data lost during a
+modification of a file are saved alongside the current file, so that the user
+has enough information to restore the file to a previous state.  In practice,
+this often mean to store multiple versions of the same file, or the difference
+between two versions. This could be implemented in \ac{CSV} by one of the
+following methods.
+
+\paragraph{Extension to Folders} By adding a list of subsequent files to the
+directory structure exemplified in Section \ref{sec:cli:impl:det}, we can link
+previous versions of a file in the serialization form:
+
+\begin{quote}
+    \centering
+    \textbf{alias;capability;capability;capability}
+\end{quote}
+
+To make this feasible and user friendly, a time stamp would have to be added to
+the capability. This would increase the size of the folder.
+
+\paragraph{Type of Mutable File} A new form of mutable file could be
+implemented in practically the same form as a directory, containing timestamps
+instead of aliases, and pointing to corresponding storage indexes. With this
+procedure, it should be easy to configure for the user which files and folders
+that should be under version control.
+
+\section{Deduplication}
+
+The term \emph{data deduplication} implies not having to store redundant data.
+By implementing a deduplication scheme, multiple advantages can arise in the
+sense of a storage system. For the service provider, this could mean cost
+savings in the form of not having to store the same file twice, but still claim
+money from users for the given storage. For the users of the service, this
+could mean better network utilization, as uploading a big file that already
+exist on the server would take no time at all.
+
+However, there are practical disadvantages and great privacy concerns related
+to deduplication, in addition to some solutions that address these issues.  The
+scheme does not support deduplication. This is because all encryption keys are
+randomly selected, neither the server or the client is able to detect whether a
+file already exists in the system.
+
+\paragraph{Practical Disadvantages} Deduplication relies on the use of hash
+functions to check whether a file or a block of data exist on the storage node.
+In general, as long as you hash something larger than the length of the digest,
+there exists collisions, and hence data corruption.
+
+Further on, the additional hash operations and queries to the server pose
+extra computational overhead, which increase if the deduplication is on block
+level.
+
+\paragraph{Privacy} If deduplication is used on file-basis globally -- i.e.
+for all users -- there exist a privacy risk. The provider will be able to prove
+that a certain file exists on the system, and has the ability to figure out
+which user has saved this file thus effectively compromising the
+confidentiality of that file. If the deduplication scheme works in a manner in
+which the file is not uploaded if it already exists on the server any user is
+able to prove that a file is already stored.
+
+\paragraph{Customizable Deduplication} Tahoe-\ac{LAFS} tries to provide a
+solution that has all the advantages and none of the issues related to
+deduplication, by \emph{convergent encryption with an added secret}
+\cite{tahoe}.
+
+Convergent encryption implies using the hash of the plaintext as the key to the
+symmetric encryption algorithm, i.e. the same plaintext will always yield the
+same ciphertext, making it relatively easy to implement deduplication.
+
+Tahoe-\ac{LAFS} adds a per-client secret to the hashing procedure, as
+depicted in Figure \ref{fig:tahoe:dedup}, before using the result as a key to
+encrypt the file. This enables per-client deduplication, or per-group
+deduplication if the user shares the secret with other users. Since the storage
+index is based on the encryption key, and the plaintext will always lead to the
+same encryption key, the client can check for file existence on the server and
+prevent duplication.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.55]{TahoeDeduplication.pdf}
+    \caption{Tahoe-LAFS deduplication scheme}
+    \label{fig:tahoe:dedup}
+\end{figure}
+
+
 %**************************************%
-\chapter{Conclusion and Future Work}
+\chapter{Conclusion}
 \label{ch:conclusion}
 %**************************************%
 
