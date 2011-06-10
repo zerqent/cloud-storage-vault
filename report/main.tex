@@ -290,7 +290,7 @@ can be rapidly provisioned and released with minimal management effort or
 service provider interaction.'' \end{quote}
 
 More and more of the traditionally locally hosted services are moving to the
-cloud. The amount of flexibility and cost savings this provides, can be quite
+cloud. The amount of flexibility and cost savings this provides, can be
 extensive.
 
 Today, we take the services that the established cloud providers offer us for
@@ -907,11 +907,11 @@ users, stored and processed in a cloud facility \cite{privacymanager}. Their
 solution was partially implemented as a software program called \emph{privacy
 manager}.
 
-The privacy manager uses a feature called \emph{obfuscation}, which is quite
-similar to encryption. However, the obfuscation method is different from
-encryption in the sense that the obfuscated data can be processed in the
-cloud, without the cloud provider knowing the encryption key or the original
-data. \citet{privacymanager} mention the following obfuscation methods:
+The privacy manager uses a feature called \emph{obfuscation}, which is similar
+to encryption. However, the obfuscation method is different from encryption in
+the sense that the obfuscated data can be processed in the cloud, without the
+cloud provider knowing the encryption key or the original data.
+\citet{privacymanager} mention the following obfuscation methods:
 
 \begin{itemize}
 \item Yao's protocol for secure two-party computation \cite{yao}
@@ -1769,10 +1769,10 @@ For the pseudorandom function, the recommendation is to use H\ac{MAC} with any
 
 We also looked at the usage of \ac{PBKDF2} in \ac{WPA}, and what security it
 provides against brute force attacks. \ac{WPA} is used because the utilization
-of \ac{PBKDF2} is quite similar to the one in our scheme. It uses 4096
-iterations, and H\ac{MAC}-\ac{SHA}-1 as the pseudorandom function. So far, the
-most effective brute force attack against \ac{WPA} was published on Black Hat
-DC 2011 by a security researcher named Thomas Roth. He proved that anyone can
+of \ac{PBKDF2} is similar to the one in our scheme. It uses 4096 iterations,
+and H\ac{MAC}-\ac{SHA}-1 as the pseudorandom function. So far, the most
+effective brute force attack against \ac{WPA} was published on Black Hat DC
+2011 by a security researcher named Thomas Roth. He proved that anyone can
 crack \ac{WPA} passwords with a speed of up to about 400 000 passwords per
 second, using multiple Amazon \ac{EC2} cluster \ac{GPU} instances
 \cite{rothwpa}. His findings also indicate that Amazon themselves can reach an
@@ -2414,7 +2414,7 @@ class number indicates.
 \subsection{Sources of Error}
 
 The trouble with measuring performance on operations that are relatively quick,
-is that they are very vulnerable to \emph{noise} from the system. The Android
+is that they are vulnerable to \emph{noise} from the system. The Android
 system comes with a lot of built-in services that runs sporadically, and hence
 affect the measurements. However, the small and quick operations are not
 necessarily fascinating to measure -- the interesting behaviour to observe is
@@ -2529,11 +2529,11 @@ $ java -jar BFDA.jar /path/to/keyring \
 
 \subsubsection{Cloud Dictionary Attack}
 
-\ac{CDA} was executed on 20 of the previously specified Amazon EC2
-nodes. One instance was configured as both a Hadoop \emph{master} and
-\emph{slave} node, while the 19 other instances were configured as slaves.
-This was done to utilize as much as possible out of the available nodes, as the
-master node performs quite a bit less computational work than the slave nodes.
+\ac{CDA} was executed on 20 of the previously specified Amazon EC2 nodes. One
+instance was configured as both a Hadoop \emph{master} and \emph{slave} node,
+while the 19 other instances were configured as slaves.  This was done to
+utilize as much as possible out of the available nodes, as the master node
+performs less computational work than the slave nodes.
 
 Multiple scripts are needed to initiate the distributed attack.
 The commands executed to start the Hadoop master and slaves, and mount up the
@@ -3255,7 +3255,7 @@ deduplication, by \emph{convergent encryption with an added secret}
 
 Convergent encryption implies using the hash of the plaintext as the key to the
 symmetric encryption algorithm, i.e. the same plaintext will always yield the
-same ciphertext, making it relatively easy to implement deduplication.
+same ciphertext, making it easy to implement deduplication.
 
 Tahoe-\ac{LAFS} adds a per-client secret to the hashing procedure, as
 depicted in Figure \ref{fig:tahoe:dedup}, before using the result as a key to
@@ -3272,6 +3272,192 @@ prevent duplication.
     \label{fig:tahoe:dedup}
 \end{figure}
 
+\section{Implementation}
+\label{sec:DIS:impl}
+
+This section will discuss and deal with the different choices taken to fulfil
+the implementation of the cryptographic scheme. We will start by discussing the
+use case we chose to implement. Further on, we will analyse our choice of key
+distribution scheme and look at alternative solutions. Lastly, we will discuss
+the performance and security of the client implementation.
+
+\subsection{Choice of Use Case}
+
+There are mainly two types of user groups interested in a cloud storage
+solution -- personal or enterprise. The proof of concept implementation is more
+aimed against the personal use case, than the enterprise market.
+
+In an enterprise, the use of a \ac{TTP} are often already in place, usually in
+the form of an IT department. An additional fundamental difference, is that it
+would usually be more defined who the users are supposed to share files with,
+and what they should have access to. An organization might not approve of a
+model where all users can forward read rights to other users.
+
+\subsection{Key Distribution}
+
+Our solution for key distribution is by no means revolutionary, it does require
+two users to meet each other to exchange keys. However, the scheme only require
+that users meet each other once, all sharing after that can be done with no
+contact between the two parties. The use of barcodes for transferring keys on
+smart phones also makes the process of actually handing over a key much easier.
+In addition, the manual import option in the client grants every user the
+possibility of using any other channel for transferring keys.
+
+
+\subsection{Simplifying the Server}
+
+The implemented proof of concept server generally performs well, and was never
+identified as a bottleneck during the performance measurements. However, by
+making the server-side contain less logic, \ac{CSV} could be used against for
+instance the Amazon S3 service. This would more easily enable users that are
+not comfortable with setting up a web server, to set up the whole system from
+scratch. Another possibility is that the cloud provider could run the server as
+\ac{IaaS}.
+
+By redesigning the scheme to use a \emph{dumb file store}, the write enabler
+functionality will be lost. However, a service like Amazon S3 do provide some
+access control, and in the scenario of a \emph{friend net}, this could actually
+be considered as a better solution. Luckily, the cryptographic architecture
+presented in Section \ref{chap:CS}, are loosely coupled with the accounting
+layer, so extending the proof of concept software to use a dumb file store
+should not pose any great concerns.
+
+\subsection{Performance}
+
+The measurements performed on our client reveal that it has some performance
+issues with regards to the speed of downloads and uploads. For files, a perfect
+client would render the network or the memory card as the bottleneck, but our
+measurements state that this is not the case. However, we find the
+performance obtained by both the computer and the HTC Desire as satisfiable.
+The HTC Hero struggles with certain operations, but is at the same time an
+older device with limitations in both \ac{CPU} and memory capacity.
+
+Because of the cryptographic operations, the download and upload speed for a
+given file is decreased by around 50-80\% on all three devices. The results for
+the individual operations performed on HTC Desire shown in Table
+\ref{tbl:desire:pinpoint}, indicates that encryption and decryption are the
+slowest elements in the process pipeline, and responsible for most of the
+performance drop.
+
+\paragraph{Limitations of Libraries} Another thing to note, is that the
+implementations of the \texttt{InputStream} and \texttt{OutputStream} objects
+in Java and the Apache HttpComponents seems to read and write the requested
+number of bytes stream by stream. This implies that the implementation will
+never reach the speed achieved by the slowest component in the pipeline.
+
+\paragraph{Multiple CPU Cores} Branching the operations in the pipeline to
+different threads should make it possible to gain better performance,
+especially in an environment which spots multiple processor cores. Multiple
+\ac{CPU} cores is standard on modern computers, and there is no reason to
+suspect otherwise than that also smart phones will be equipped with this in the
+nearest future. In addition, dedicated cryptographic coprocessors may
+relieve the \ac{CPU} from additional work.
+
+\paragraph{Folders} The performance of the folder operations in the
+implementation is good, if we look at the cryptographic functionality. We
+identify the slowest operation to be the generation of new cryptographic keys.
+For a user of the Android client, this should not be a problem, since the
+folder creation is done as an asynchronous task while the user enters the name
+of the new folder. Another solution is to have the application maintain a pool
+of keys before they are requested by the user. In this way a key can almost
+always be ready for the user when needed.
+
+The other cryptographic operations on folders completes quickly, but the
+performance for serializing the folder contents is too low when folders contain
+a large number of items. A folder with thousands of children is not something
+we expect an ordinary user of the Android client to have, but if we change the
+scenario to backing up an entire computer, the serialization part might become
+a problem.
+
+The slow serialization operation can partially be blamed on our own
+implementation. The folder items are stored in a \texttt{HashMap}, which is
+serialized to a string to make it ready for encryption. Ideally, this step is
+not necessary, given that the folder contents exists in its correct form in
+memory. This might not be possible due to reasons such as decreased performance
+when manipulating the folder content. But we believe it is possible to create a
+faster implementation of the currently utilized serialization algorithm.
+
+\paragraph{Cache} Since opening folders is a relatively expensive procedure,
+given that it has to be downloaded from the server, decrypted and verified, we
+keep the currently opened folder and its parents in a stack. This can be seen
+as a kind of cache, and could be extended to include all folders opened
+in the active session.
+
+\subsection{Client Security}
+\label{sec:clientsecurity}
+
+If a user physically looses her device, and the \ac{CSV} software is running,
+anyone who finds the device can get access to the user's private files and
+folders. This is because the client software will have to keep the root
+capability from the keyring in memory, and will potentially have copies of the
+files on the device. The same applies if the device is broken into, e.g.
+through a vulnerability in the operating system.
+
+\subsubsection{Downloaded Files}
+
+An attacker who gains access to the device running \ac{CSV} will be able to
+read downloaded files. It is possible to avoid writing downloaded files to the
+persistent storage medium. This can be implemented using a temporary file
+system that only persists in the memory of the client, e.g. \emph{ramfs}. This
+is a file system for clients running Unix-like operating systems.  However,
+utilizing this method will limit the possible size of the downloaded files to
+the size of the available memory.
+
+In case limited file size is not an acceptable solution, it is possible to use
+a temporary file system that supports swapping, e.g. \emph{tmpfs}.  This will,
+however, potentially keep parts of a large file on the persistent storage
+medium, revealing information about a downloaded file. A practical feature
+would be to store the encrypted files on the persistent storage medium, and
+only put them in the temporary file system when needed.
+
+\subsubsection{Disclosing the Root Capability}
+
+The confidentiality of the root capability is held by an encrypted keyring that
+is stored client-side. The keyring is encrypted with a key derived from a
+password provided by the user. Unfortunately, using a password to encrypt the
+keyring, makes the keyring a suitable target for brute force and dictionary
+attacks. The vulnerability of the keyring against brute force and dictionary
+attacks was questioned in Section \ref{sec:BFLK}.
+
+\paragraph{Brute Forcing the Keyring} From the results in Section
+\ref{sec:R:BFLK}, we noticed that the choice of iterations in \ac{PBKDF2} were
+conclusive to the efficiency of a brute force attack against the encrypted
+keyring. By doubling the number of iterations in \ac{PBKDF2}, the efficiency of
+a brute force attack would decrease by a corresponding 50\%.
+
+When following the recommendations for \ac{PBKDF2} and password constraints
+given in Section \ref{sec:PBKD}, it is infeasible to perform a brute force
+attack against the encrypted keyring. However, even though the keyring is
+secured against a brute force attack, it is still vulnerable to dictionary
+attacks due to the passwords being made by humans. To completely prevent such
+attacks, one would have to make sure that the encrypted keyring is never
+disclosed.
+
+Our implemented attacks were not effective against the keyring, but both
+\ac{CDA} and \ac{BFDA} may be subject to improvement. An example to increase
+efficiency would be to design the programs to run on \acp{GPU} rather than
+\acp{CPU}. We are also not sure that the cryptographic primitives supplied by
+Bouncy Castle are the fastest available. Considering findings by
+\citet{rothwpa}, it is reasonable to believe that the keyring is more
+vulnerable to brute force attacks than what our attacks imply. However, even
+with the speed obtained by Roth, a brute force attack seems infeasible, while a
+dictionary attack will always be possible and its success strongly dependant on
+the chosen password.
+
+\paragraph{Active Attacks}
+
+While the encrypted key ring may resist some dictionary and brute force
+attacks, other problems arise when facing an active attacker. If the attacker
+is able to read the memory of the device, she can also read the root capability
+if this is unlocked by the user.
+
+A mechanism that decrease the risk of this happening, is to have the software
+time out after a specified interval. At the timeout the software can overwrite
+the sensitive information in memory.
+
+Another scenario would involve the attacker installing a \emph{keylogger} on
+the compromised client. This type of software can further detect the keyring
+password when the user logs in to the application.
 
 %**************************************%
 \chapter{Conclusion}
