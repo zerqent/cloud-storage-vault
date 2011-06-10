@@ -907,11 +907,11 @@ users, stored and processed in a cloud facility \cite{privacymanager}. Their
 solution was partially implemented as a software program called \emph{privacy
 manager}.
 
-The privacy manager uses a feature called \emph{obfuscation}, which is quite
-similar to encryption. However, the obfuscation method is different from
-encryption in the sense that the obfuscated data can be processed in the
-cloud, without the cloud provider knowing the encryption key or the original
-data. \citet{privacymanager} mention the following obfuscation methods:
+The privacy manager uses a feature called \emph{obfuscation}, which is similar
+to encryption. However, the obfuscation method is different from encryption in
+the sense that the obfuscated data can be processed in the cloud, without the
+cloud provider knowing the encryption key or the original data.
+\citet{privacymanager} mention the following obfuscation methods:
 
 \begin{itemize}
 \item Yao's protocol for secure two-party computation \cite{yao}
@@ -1769,10 +1769,10 @@ For the pseudorandom function, the recommendation is to use H\ac{MAC} with any
 
 We also looked at the usage of \ac{PBKDF2} in \ac{WPA}, and what security it
 provides against brute force attacks. \ac{WPA} is used because the utilization
-of \ac{PBKDF2} is quite similar to the one in our scheme. It uses 4096
-iterations, and H\ac{MAC}-\ac{SHA}-1 as the pseudorandom function. So far, the
-most effective brute force attack against \ac{WPA} was published on Black Hat
-DC 2011 by a security researcher named Thomas Roth. He proved that anyone can
+of \ac{PBKDF2} is similar to the one in our scheme. It uses 4096 iterations,
+and H\ac{MAC}-\ac{SHA}-1 as the pseudorandom function. So far, the most
+effective brute force attack against \ac{WPA} was published on Black Hat DC
+2011 by a security researcher named Thomas Roth. He proved that anyone can
 crack \ac{WPA} passwords with a speed of up to about 400 000 passwords per
 second, using multiple Amazon \ac{EC2} cluster \ac{GPU} instances
 \cite{rothwpa}. His findings also indicate that Amazon themselves can reach an
@@ -2414,7 +2414,7 @@ class number indicates.
 \subsection{Sources of Error}
 
 The trouble with measuring performance on operations that are relatively quick,
-is that they are very vulnerable to \emph{noise} from the system. The Android
+is that they are vulnerable to \emph{noise} from the system. The Android
 system comes with a lot of built-in services that runs sporadically, and hence
 affect the measurements. However, the small and quick operations are not
 necessarily fascinating to measure -- the interesting behaviour to observe is
@@ -2529,11 +2529,11 @@ $ java -jar BFDA.jar /path/to/keyring \
 
 \subsubsection{Cloud Dictionary Attack}
 
-\ac{CDA} was executed on 20 of the previously specified Amazon EC2
-nodes. One instance was configured as both a Hadoop \emph{master} and
-\emph{slave} node, while the 19 other instances were configured as slaves.
-This was done to utilize as much as possible out of the available nodes, as the
-master node performs quite a bit less computational work than the slave nodes.
+\ac{CDA} was executed on 20 of the previously specified Amazon EC2 nodes. One
+instance was configured as both a Hadoop \emph{master} and \emph{slave} node,
+while the 19 other instances were configured as slaves.  This was done to
+utilize as much as possible out of the available nodes, as the master node
+performs less computational work than the slave nodes.
 
 Multiple scripts are needed to initiate the distributed attack.
 The commands executed to start the Hadoop master and slaves, and mount up the
@@ -3120,13 +3120,13 @@ possibility of using any other channel for transferring keys.
 
 \subsection{Simplifying the Server}
 
-The implemented proof of concept server generally performs quite well, and was
-never identified as a bottleneck during the performance measurements. However,
-by making the server-side contain less logic, \ac{CSV} could be used against
-for instance the Amazon S3 service. This would more easily enable users that
-are not comfortable with setting up a web server, to set up the whole system
-from scratch. Another possibility is that the cloud provider could run the
-server as \ac{IaaS}.
+The implemented proof of concept server generally performs well, and was never
+identified as a bottleneck during the performance measurements. However, by
+making the server-side contain less logic, \ac{CSV} could be used against for
+instance the Amazon S3 service. This would more easily enable users that are
+not comfortable with setting up a web server, to set up the whole system from
+scratch. Another possibility is that the cloud provider could run the server as
+\ac{IaaS}.
 
 By redesigning the scheme to use a \emph{dumb file store}, the write enabler
 functionality will be lost. However, a service like Amazon S3 do provide some
@@ -3168,20 +3168,20 @@ nearest future. In addition, dedicated cryptographic coprocessors may
 relieve the \ac{CPU} from additional work.
 
 \paragraph{Folders} The performance of the folder operations in the
-implementation is quite good, if we look at the cryptographic
-functionality. We identify the slowest operation to be the generation of
-new cryptographic keys. For a user of the Android client, this should not be a
-problem, since the folder creation is done as an asynchronous task while the
-user enters the name of the new folder. Another solution is to have the
-application maintain a pool of keys before they are requested by the user. In
-this way a key can almost always be ready for the user when needed.
+implementation is good, if we look at the cryptographic functionality. We
+identify the slowest operation to be the generation of new cryptographic keys.
+For a user of the Android client, this should not be a problem, since the
+folder creation is done as an asynchronous task while the user enters the name
+of the new folder. Another solution is to have the application maintain a pool
+of keys before they are requested by the user. In this way a key can almost
+always be ready for the user when needed.
 
-The other cryptographic operations on folders completes quite quickly, but the
+The other cryptographic operations on folders completes quickly, but the
 performance for serializing the folder contents is too low when folders contain
-a large number of items. A folder with thousands of children is not
-something we expect an ordinary user of the Android client to have, but if we
-change the scenario to backing up an entire computer, the serialization part
-might become a problem.
+a large number of items. A folder with thousands of children is not something
+we expect an ordinary user of the Android client to have, but if we change the
+scenario to backing up an entire computer, the serialization part might become
+a problem.
 
 The slow serialization operation can partially be blamed on our own
 implementation. The folder items are stored in a \texttt{HashMap}, which is
@@ -3247,7 +3247,7 @@ attacks due to the passwords being made by humans. To completely prevent such
 attacks, one would have to make sure that the encrypted keyring is never
 disclosed.
 
-Our implemented attacks were not very effective against the keyring, but both
+Our implemented attacks were not effective against the keyring, but both
 \ac{CDA} and \ac{BFDA} may be subject to improvement. An example to increase
 efficiency would be to design the programs to run on \acp{GPU} rather than
 \acp{CPU}. We are also not sure that the cryptographic primitives supplied by
