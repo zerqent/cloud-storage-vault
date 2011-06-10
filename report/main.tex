@@ -2453,11 +2453,13 @@ our approach to attack the keyring.
 The format of the encrypted keyring is given in Figure \ref{fig:KeyringFormat}.
 It is encrypted with 128-bit \ac{AES} in \ac{ECB} mode, but the key is not
 randomly generated. The key is given by the key strengthening function
-\ac{PBKDF2}, but this is based on a password set by the user, which is why this
-key is potentially weaker than the keys for files and folders.
+\ac{PBKDF2}. As previously described, \ac{PBKDF2} utilize a password set by the
+user to generate the encryption key. Due to the known fact that users are bad at
+choosing long and random passwords, this will probably make the derived
+encryption key weaker than the keys used for files and folders.
 
-An attacker will also know some of the plaintext of the keyring. The
-serialization of a capability for a writeable folder will start with
+Another weakness is that parts of the keyring plaintext are known by an
+attacker. The serialization of a capability for a writeable folder will start with
 \textbf{D:RW:}, followed by 16-byte of Base32-encoded data, another colon
 (\textbf{:}) and then 16 more bytes of Base32-encoded data. In addition, the
 fields in the decrypted form of the keyring are separated by the pipe character
@@ -2648,7 +2650,7 @@ data gets larger. The serialization part behaves the exact opposite, where
 performance drops when the amount of data gets larger. We also note that our
 implementation struggles to handle large folders on the HTC Hero.
 
-\section{Brute Force Local Keyring}
+\section{Security of the Encrypted Keyring}
 \label{sec:R:BFLK}
 
 Results from running the \ac{BFDA} and \ac{CDA} against an encrypted keyring
@@ -3314,7 +3316,7 @@ cryptographic scheme for a secure cloud storage system, supporting sharing.
 The scheme does not require a specific key distribution method, but provides
 the choice of implementing any desired solution on top. We have also
 implemented an open source, proof of concept server and client for Android
-devices, that have further been measured in performance and evaluated in
+devices, that has further been measured in performance and evaluated in
 security. The client support easy exchange of keys by using barcodes.
 
 While our scheme solves some of the basic challenges of security within cloud
