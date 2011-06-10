@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
     <name>CSV</name>
 
-    <description>CSV Android with instrumentation</description>
+    <description>CSV Android</description>
 
     <profiles>
         <profile>
@@ -18,15 +18,6 @@
             <modules>
                 <module>CSVlib</module>
                 <module>CSVAndroid</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>instrumentation</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>CSVAndroid-instrumentation</module>
             </modules>
         </profile>
     </profiles>
