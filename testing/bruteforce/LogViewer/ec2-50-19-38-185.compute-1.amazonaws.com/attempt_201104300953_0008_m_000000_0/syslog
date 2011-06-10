@@ -1,5 +1,0 @@
-2011-04-30 16:16:05,123 INFO org.apache.hadoop.metrics.jvm.JvmMetrics: Initializing JVM Metrics with processName=MAP, sessionId=
-2011-04-30 16:16:05,281 INFO org.apache.hadoop.mapred.MapTask: numReduceTasks: 20
-2011-04-30 16:16:05,289 INFO org.apache.hadoop.mapred.MapTask: io.sort.mb = 100
-2011-04-30 16:16:05,407 INFO org.apache.hadoop.mapred.MapTask: data buffer = 79691776/99614720
-2011-04-30 16:16:05,407 INFO org.apache.hadoop.mapred.MapTask: record buffer = 262144/327680

@@ -1,10 +1,3 @@
-Specs:
-SD: Samsung micro SD HC Class 2 4 GB
-
-Qualcomm Snapdragon (system on chip) - QSD8250
-http://en.wikipedia.org/wiki/Qualcomm_Snapdragon
-
-
 Wired:
 File Upload UNEncrypted (w/ssl) (CSVClient): 2,62 MB/s (dønn stabilt)
 File Download UnEncrypted (w/ssl) (CSVClient): 2,3 MB/s (svingende)
@@ -22,3 +15,44 @@ U: 2,36 MB/s dønn stabilt
 
 Android 2.2 (no hashing)
 Ingen forskjell
+
+The sizer of 1 entry is: 86bytes
+BlankFolder AVG: 1330.0
+Running test: Update folder (lines, timetotal)
+1 39
+5 40
+10 47
+50 78
+100 86
+250 33
+500 43
+750 52
+1000 69
+2500 123
+5000 317
+7500 394
+Running test: Verify folder (lines, timetotal)
+1 3
+5 3
+10 3
+50 3
+100 2
+250 3
+500 4
+750 5
+1000 5
+2500 8
+5000 14
+7500 19
+Running test: Serialize folder (lines, timetotal)1 0
+5 1
+10 3
+50 10
+100 236
+250 943
+500 3561
+750 8152
+1000 14190
+2500 90462
+5000 362558
+7500 806255

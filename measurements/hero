@@ -7,3 +7,42 @@ D: 1,75 MB
 Encryption and Hashing
 U: 209 kB
 D: 486 kB
+
+I/System.out( 5691): running test: Update folder
+I/System.out( 5691): Updatefolder point: 1 time: 72
+I/System.out( 5691): Updatefolder point: 5 time: 69
+I/System.out( 5691): Updatefolder point: 10 time: 80
+I/System.out( 5691): Updatefolder point: 50 time: 201
+I/System.out( 5691): Updatefolder point: 100 time: 272
+I/System.out( 5691): Updatefolder point: 250 time: 323
+I/System.out( 5691): Updatefolder point: 500 time: 295
+I/System.out( 5691): Updatefolder point: 750 time: 185
+I/System.out( 5691): Updatefolder point: 1000 time: 206
+I/System.out( 5691): Updatefolder point: 2500 time: 434
+I/System.out( 5691): Updatefolder point: 5000 time: 793
+
+The sizer of 1 entry is: 86bytes
+BlankFolder AVG: 2060.0
+Running test: Verify folder (lines, timetotal)
+1 13
+5 12
+10 12
+50 10
+100 9
+250 11
+500 11
+750 13
+1000 17
+2500 26
+5000 41
+Running test: Serialize folder (lines, timetotal)1 3
+5 5
+10 8
+50 263
+100 376
+250 2164
+500 8223
+750 17230
+1000 30397
+2500 191312
+5000 756426
