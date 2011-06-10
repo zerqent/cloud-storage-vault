@@ -82,7 +82,7 @@ public class MenuActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Exit program");
-		menu.add("Benchmark");
+		//menu.add("Benchmark");
 		return super.onCreateOptionsMenu(menu);
 	}
 
