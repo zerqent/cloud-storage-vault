@@ -125,28 +125,27 @@ design.\\
 %
 %  Each section is typically a single sentence, although there is room for
 %  creativity.
-
 Today, major IT-companies, such as Microsoft, Amazon and Google, are offering
 online storage services to their customers. This is a favourable solution -- as
 opposed to regular storage -- in terms of low costs, reliability, scalability
 and capacity. However, important security features such as data privacy and
 integrity are often absent.
 
-To address these issues, a cryptographic architecture is proposed, that ensures
+To address these issues, a cryptographic architecture is proposed that ensures
 the confidentiality and integrity of the data stored by users, independent of
-the trust of the underlying provider. The architecture does also support secure sharing of
-private data among customers of the same provider. The scheme was further
-implemented as a proof of concept.
+the trust of the provider. This includes secure sharing of private data among
+users of the same service.
 
 The underlying cryptographic architecture is based on existing open source
-systems and cryptographic primitives. The architecture was further implemented
-as a reusable general library in Java. An Android client was created and
-several performance tests were conducted\footnote{Source code available at
+systems and cryptographic primitives. The architecture was implemented as a
+reusable general library in Java. An Android client was created, and several
+performance tests were conducted\footnote{Source code available at
 \url{https://github.com/zerqent/cloud-storage-vault/}}.
 
 The proof of concept system shows that it is possible to implement the proposed
-scheme and that the cryptographic operations does not significantly affect the
-user experience on an Android device. Weaknesses of the scheme are identified.
+scheme, and that the cryptographic operations does not significantly affect the
+user experience on an Android device. Possible weaknesses of the scheme are
+identified.
 
 We present a scheme for secure storage and sharing of files on an untrusted
 server, and argue for its validity. To support streaming functionality, the
