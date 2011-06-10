@@ -36,9 +36,7 @@
         Third-Party Compute Clouds}",
     booktitle = {Proceedings of the 16th ACM conference on Computer and
         communications security},
-    series = {CCS '09},
     publisher = {ACM},
-    address = {New York, NY, USA},
     year = "2009",
 }
     note = "From
@@ -47,10 +45,8 @@
    author = "Nuno Santos and Krishna P. Gummadi and Rodrigo Rodrigues",
    title = {Towards Trusted Cloud Computing},
    booktitle = {Proceedings of the 2009 conference on Hot topics in cloud computing},
-   series = {HotCloud'09},
    year = {2009},
    publisher = {USENIX Association},
-   address = {Berkeley, CA, USA},
 }
    note = "From \url{http://www.mpi-sws.org/~gummadi/papers/trusted_cloud.pdf}",
 @inproceedings{keystretch,
@@ -103,7 +99,6 @@
     title = "{Fully Homomorphic Encryption Using Ideal Lattices}",
     booktitle = {Proceedings of the 41st annual ACM symposium on Theory of
         computing},
-    series = {STOC '09},
     institution = "Stanford University and IBM Watson",
     year = "2009",
 }
@@ -164,24 +159,23 @@
     address = "Irvine",
 }
 
-@misc{tahoe,
+@inproceedings{tahoe,
     author = "Zooko Wilcox-O'Hearn and Brian Warner",
     title = "{Tahoe - The Least-Authority Filesystem}",
-    organization = "allmydata.com",
-    year = "2008",
-    howpublished = "\url{http://tahoe-lafs.org/~zooko/lafs.pdf}",
-    note = "Retrieved April 28, 2011",
+    booktitle = {Proceedings of the 4th ACM international workshop on Storage security and survivability},
+    year = {2008},
+    publisher = {ACM}
 }
+
 @inproceedings{cryptree,
     author = "Dominik Grolimund and Luzius Meisser and Stefan Schmid and Roger
         Wattenhofer",
     title = "{Cryptree: A Folder Tree Structure for Cryptographic File Systems}",
     booktitle = "SRDS'06",
     institution = "Computer Engineering and Networks laboratory (TIK)",
-    pages = {189-198},
-    address = "ETH Zurich, CH-8092 Zurich",
-    year = "2006",
+    year = "2006"
 }
+
     note = "From \url{http://dcg.ethz.ch/publications/srds06.pdf}"
 @misc{jce+bc,
     author = "Zachary Peterson",
@@ -207,10 +201,10 @@
     howpublished = "\url{http://wiki.apache.org/hadoop/ProjectDescription}",
     note = "Retrieved May 6, 2011",
 }
-@misc{mapred,
+@techreport{mapred,
     author = "Jeffrey Dean and Sanjay Ghemawat" ,
     title = "{MapReduce: Simplified Data Processing on Large Clusters}",
-    organization = "Google Inc.",
+    institution = "Google Inc.",
     year = "2004",
 }
     note = "From \url{http://labs.google.com/papers/mapreduce-osdi04.pdf}",
@@ -272,7 +266,7 @@
 
 @techreport{dsa_sha2,
     institution = "IETF",
-    title = "DSA with SHA-2 for DNSSEC Draft",
+    title = "{DSA with SHA-2 for DNSSEC (Draft)}",
     author = "P. Hoffman",
     year = "2009",
     month = "July",
@@ -371,14 +365,14 @@
    howpublished = "Federal Information Processing Standards Publication 197", 
    year = "2001",
    month = "November",
-   institution = "NIST",
+   author = "National Institute of Standards and Technology",
 }
    note = "From \url{http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf}" 
 
 @misc{SHA-FIPS, 
    title = "{Secure Hash Standard (SHS)}", 
    howpublished = "Federal Information Processing Standards Publication 180-3", 
-   institution = "NIST",
+   author = "National Institute of Standards and Technology",
    year = "2008",
    month = "October",
 }
@@ -387,7 +381,7 @@
 @misc{DSS-FIPS, 
    title = "{Digital Signature Standard (DSS)}", 
    howpublished = "Federal Information Processing Standards Publication 186-3", 
-   institution = "NIST",
+   institution = "National Institute of Standards and Technology",
    year = "2009",
    month = "June",
 }
@@ -404,9 +398,10 @@
 @misc{nist_sha1,
     title = "{Brief Comments on Recent Cryptoanalytic Attacks on Secure
         Hashing Functions and the Continued Security Provided by SHA-1}",
-    institution = "NIST",
+    institution = "National Institute of Standards and Technology",
     year = "2004",
     month = "August",
+    author = "National Institute on Standards and Technology"
 }
     note = "From \url{http://csrc.nist.gov/groups/ST/toolkit/documents/shs/hash_standards_comments.pdf}"
 @techreport{proofofstorage1,
@@ -432,9 +427,10 @@
 @misc{cloud_nistdef,
     author = "Peter Mell and Timothy Grance",
     title = "{The NIST Definition of Cloud Computing (Draft)}",
-    howpublished = "Federal Information Processing Standards Publication 180-145", 
-    institution = "NIST",
+    howpublished = "NIST Special Publication 800-145", 
+    institution = "National Institute of Standards and Technology",
     year = "2011",
+    month = "January"
 }
     note = "From
         \url{http://csrc.nist.gov/publications/drafts/800-145/Draft-SP-800-145_cloud-definition.pdf}"
@@ -442,8 +438,8 @@
 @misc{pbkdf_nist,
     author = "Meltem Sönmez Turan and Elaine Barker and William Burr and Lily Chen",
     title = "{Recommendation for Password-Based Key Derivation}",
-    institution = "NIST",
-    howpublished = "Federal Information Processing Standards Publication 180-132", 
+    institution = "National Institute of Standards and Technology",
+    howpublished = "NIST Special Publication 180-132", 
     year = "2010",
     month = "December",
 }
