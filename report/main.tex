@@ -2452,11 +2452,9 @@ our approach to attack the keyring.
 
 The format of the encrypted keyring is given in Figure \ref{fig:KeyringFormat}.
 It is encrypted with 128-bit \ac{AES} in \ac{ECB} mode, but the key is not
-randomly generated. The key is given by the key strengthening function
-\ac{PBKDF2}. As previously described, \ac{PBKDF2} utilize a password set by the
-user to generate the encryption key. Due to the known fact that users are bad at
-choosing long and random passwords, this will probably make the derived
-encryption key weaker than the keys used for files and folders.
+randomly generated. The key is is derived from a password using \ac{PBKDF2}. The
+weakness of this, compared to a random 128 bit key, is that users probably
+chose shorter and less random passwords.
 
 Another weakness is that parts of the keyring plaintext are known by an
 attacker. The serialization of a capability for a writeable folder will start with
